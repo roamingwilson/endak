@@ -20,8 +20,6 @@ class UserManagementController extends Controller
         $now = Carbon::now()->toDateTimeString();
         if ($request->bulk_action_btn === 'update_status' && $request->status && is_array($ids) && count($ids)) {
             $data = ['status' => $request->status];
-
-          
             User::whereIn('id', $ids)->update($data);
             return back()->with('success', __('general.updated_successfully'));
         }

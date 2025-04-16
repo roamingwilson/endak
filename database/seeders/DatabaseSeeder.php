@@ -24,9 +24,9 @@ class DatabaseSeeder extends Seeder
         //     'role_name' => 'admin',
         //     'role_id' => 2,
         // ]);
-        $this->call(RolesTableSeeder::class);
-        $this->call(SectionsTableSeeder::class);
-        $this->call(PermissionsTableSeeder::class);
+        // $this->call(RolesTableSeeder::class);
+        // $this->call(SectionsTableSeeder::class);
+        // $this->call(PermissionsTableSeeder::class);
         $this->call(InputsSeeder::class);
 
     }

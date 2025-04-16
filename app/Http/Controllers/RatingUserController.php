@@ -15,6 +15,8 @@ use Illuminate\Http\Request;
 use App\Models\CarWaterOrder;
 use App\Models\CleaningOrder;
 use App\Models\PublicGeOrder;
+use App\Models\ContractingOrder;
+use App\Models\MaintenanceOrder;
 use App\Models\FollowCameraOrder;
 use App\Models\CounterInsectsOrder;
 use App\Models\PartyPreparationOrder;
@@ -39,6 +41,8 @@ class RatingUserController extends Controller
         $value12 = ['water'];
         $value13 = ['car_water'];
         $value14 = ['big_car'];
+        $value15 = ['contracting'];
+        $value16 = ['maintenance'];
         if (array_intersect($url, $value1)) {
             $order = FurnitureTransportationOrder::find($id);
             $department_name = 'furniture_transportations';
@@ -93,6 +97,14 @@ class RatingUserController extends Controller
         elseif(array_intersect($url, $value14)){
             $order = BigCarOrder::find($id);
             $department_name = 'big_car';
+        }
+        elseif(array_intersect($url, $value15)){
+            $order = ContractingOrder::find($id);
+            $department_name = 'contracting';
+        }
+        elseif(array_intersect($url, $value16)){
+            $order = MaintenanceOrder::find($id);
+            $department_name = 'maintenance';
         }
         else{
             $order = Order::findOrFail($id);
@@ -159,6 +171,12 @@ class RatingUserController extends Controller
         }
         elseif($request->department_name == 'big_car'){
             $order = BigCarOrder::where('id' , $request->order_id)->first();
+        }
+        elseif($request->department_name == 'contracting'){
+            $order = ContractingOrder::where('id' , $request->order_id)->first();
+        }
+        elseif($request->department_name == 'maintenance'){
+            $order = MaintenanceOrder::where('id' , $request->order_id)->first();
         }
         else{
 

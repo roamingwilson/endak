@@ -94,7 +94,6 @@
                             <h5 class="mb-4 d-flex align-items-center justify-content-center">
                                 {{ $lang == 'ar' ? 'العروض' : 'Offers' }}</h5>
                             <div class="d-block mb-4 overflow-visible d-block d-sm-flex">
-                                {{-- <div class="row">--}}
                                     <div class="container"> 
                                         @forelse ($service->comments as $comment)
                                             <div class="col-12 border mb-4 p-4 br-5">

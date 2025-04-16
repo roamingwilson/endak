@@ -10,7 +10,19 @@ use App\Http\Controllers\Api\OrderApiController;
 use App\Http\Controllers\Api\RatingApiController;
 use App\Http\Controllers\Api\DepartmentController;
 use App\Http\Controllers\Api\MessageApiController;
-use App\Http\Controllers\api\ProfileApiController;
+use App\Http\Controllers\Api\ProfileApiController;
+use App\Http\Controllers\Api\Furniture\ApiAdsController;
+use App\Http\Controllers\Api\Furniture\ApiWaterController;
+use App\Http\Controllers\Api\Furniture\ApiBigCarController;
+use App\Http\Controllers\Api\Furniture\ApiFamilyController;
+use App\Http\Controllers\Api\Furniture\ApiGardenController;
+use App\Http\Controllers\Api\Furniture\ApiWorkerController;
+use App\Http\Controllers\Api\Furniture\ApiTeacherController;
+use App\Http\Controllers\Api\Furniture\ApiCarWaterController;
+use App\Http\Controllers\Api\Furniture\ApiCleaningController;
+use App\Http\Controllers\Api\Furniture\ApiPublicGeController;
+use App\Http\Controllers\Api\Furniture\ApiCounterInsectsController;
+use App\Http\Controllers\Api\Furniture\ApiPartyPreparationController;
 use App\Http\Controllers\Api\Furniture\ApiServeillanceCamerasController;
 use App\Http\Controllers\Api\Furniture\ApiFurnitureTransportationsController;
 
@@ -83,7 +95,7 @@ Route::post('/rating' , [RatingApiController::class , 'store'])->name('api.ratin
 // Profile
 
 Route::group(['prefix' => "my_profile"] , function(){
-    Route::get('/' , [ProfileApiController::class , 'index'])->name('api.my_profile');
+    Route::get('/{id}' , [ProfileApiController::class , 'index'])->name('api.my_profile');
 });
 
 // furniture_transportations 
@@ -114,4 +126,171 @@ Route::group(['prefix' => 'surveillance_cameras' ] , function(){
 Route::group(['prefix' => 'surveillance_cameras/service_provider' ] , function(){
     Route::get('/' , [ApiServeillanceCamerasController::class , 'service_provider_index']);
     Route::post('/add_offer' , [ApiServeillanceCamerasController::class , 'service_provider_add_offer']);
+});
+
+// Party Preparation
+Route::group(['prefix' => 'party_preparation' ] , function(){
+    Route::get('/' , [ApiPartyPreparationController::class , 'index']);
+    Route::post('/store_service' , [ApiPartyPreparationController::class , 'storeService']);
+    Route::post('/accept_offer' , [ApiPartyPreparationController::class , 'accept_offer']);
+    Route::post('/accept_rate' , [ApiPartyPreparationController::class , 'storeRate']);
+    Route::get('/show_service/{id}' , [ApiPartyPreparationController::class , 'showService']);
+
+});
+Route::group(['prefix' => 'party_preparation/service_provider' ] , function(){
+    Route::get('/' , [ApiPartyPreparationController::class , 'service_provider_index']);
+    Route::post('/add_offer' , [ApiPartyPreparationController::class , 'service_provider_add_offer']);
+});
+
+// Garden
+Route::group(['prefix' => 'garden' ] , function(){
+    Route::get('/' , [ApiGardenController::class , 'index']);
+    Route::post('/store_service' , [ApiGardenController::class , 'storeService']);
+    Route::post('/accept_offer' , [ApiGardenController::class , 'accept_offer']);
+    Route::post('/accept_rate' , [ApiGardenController::class , 'storeRate']);
+    Route::get('/show_service/{id}' , [ApiGardenController::class , 'showService']);
+
+});
+Route::group(['prefix' => 'garden/service_provider' ] , function(){
+    Route::get('/' , [ApiGardenController::class , 'service_provider_index']);
+    Route::post('/add_offer' , [ApiGardenController::class , 'service_provider_add_offer']);
+});
+
+// CounterInsects
+Route::group(['prefix' => 'counter_insects' ] , function(){
+    Route::get('/' , [ApiCounterInsectsController::class , 'index']);
+    Route::post('/store_service' , [ApiCounterInsectsController::class , 'storeService']);
+    Route::post('/accept_offer' , [ApiCounterInsectsController::class , 'accept_offer']);
+    Route::post('/accept_rate' , [ApiCounterInsectsController::class , 'storeRate']);
+    Route::get('/show_service/{id}' , [ApiCounterInsectsController::class , 'showService']);
+
+});
+Route::group(['prefix' => 'counter_insects/service_provider' ] , function(){
+    Route::get('/' , [ApiCounterInsectsController::class , 'service_provider_index']);
+    Route::post('/add_offer' , [ApiCounterInsectsController::class , 'service_provider_add_offer']);
+});
+
+// Cleaning
+Route::group(['prefix' => 'cleaning' ] , function(){
+    Route::get('/' , [ApiCleaningController::class , 'index']);
+    Route::post('/store_service' , [ApiCleaningController::class , 'storeService']);
+    Route::post('/accept_offer' , [ApiCleaningController::class , 'accept_offer']);
+    Route::post('/accept_rate' , [ApiCleaningController::class , 'storeRate']);
+    Route::get('/show_service/{id}' , [ApiCleaningController::class , 'showService']);
+
+});
+Route::group(['prefix' => 'cleaning/service_provider' ] , function(){
+    Route::get('/' , [ApiCleaningController::class , 'service_provider_index']);
+    Route::post('/add_offer' , [ApiCleaningController::class , 'service_provider_add_offer']);
+});
+// Teacher
+Route::group(['prefix' => 'teacher' ] , function(){
+    Route::get('/' , [ApiTeacherController::class , 'index']);
+    Route::post('/store_service' , [ApiTeacherController::class , 'storeService']);
+    Route::post('/accept_offer' , [ApiTeacherController::class , 'accept_offer']);
+    Route::post('/add_rate' , [ApiTeacherController::class , 'storeRate']);
+    Route::get('/show_service/{id}' , [ApiTeacherController::class , 'showService']);
+
+});
+Route::group(['prefix' => 'teacher/service_provider' ] , function(){
+    Route::get('/' , [ApiTeacherController::class , 'service_provider_index']);
+    Route::post('/add_offer' , [ApiTeacherController::class , 'service_provider_add_offer']);
+});
+
+// Family
+Route::group(['prefix' => 'family' ] , function(){
+    Route::get('/' , [ApiFamilyController::class , 'index']);
+    Route::post('/store_service' , [ApiFamilyController::class , 'storeService']);
+    Route::post('/accept_offer' , [ApiFamilyController::class , 'accept_offer']);
+    Route::post('/add_rate' , [ApiFamilyController::class , 'storeRate']);
+    Route::get('/show_service/{id}' , [ApiFamilyController::class , 'showService']);
+
+});
+Route::group(['prefix' => 'family/service_provider' ] , function(){
+    Route::get('/' , [ApiFamilyController::class , 'service_provider_index']);
+    Route::post('/add_offer' , [ApiFamilyController::class , 'service_provider_add_offer']);
+});
+
+// Workers
+Route::group(['prefix' => 'workers' ] , function(){
+    Route::get('/' , [ApiWorkerController::class , 'index']);
+    Route::post('/store_service' , [ApiWorkerController::class , 'storeService']);
+    Route::post('/accept_offer' , [ApiWorkerController::class , 'accept_offer']);
+    Route::post('/add_rate' , [ApiWorkerController::class , 'storeRate']);
+    Route::get('/show_service/{id}' , [ApiWorkerController::class , 'showService']);
+
+});
+Route::group(['prefix' => 'workers/service_provider' ] , function(){
+    Route::get('/' , [ApiWorkerController::class , 'service_provider_index']);
+    Route::post('/add_offer' , [ApiWorkerController::class , 'service_provider_add_offer']);
+});
+
+// Public Ge
+Route::group(['prefix' => 'public_ge' ] , function(){
+    Route::get('/' , [ApiPublicGeController::class , 'index']);
+    Route::post('/store_service' , [ApiPublicGeController::class , 'storeService']);
+    Route::post('/accept_offer' , [ApiPublicGeController::class , 'accept_offer']);
+    Route::post('/add_rate' , [ApiPublicGeController::class , 'storeRate']);
+    Route::get('/show_service/{id}' , [ApiPublicGeController::class , 'showService']);
+
+});
+Route::group(['prefix' => 'public_ge/service_provider' ] , function(){
+    Route::get('/' , [ApiPublicGeController::class , 'service_provider_index']);
+    Route::post('/add_offer' , [ApiPublicGeController::class , 'service_provider_add_offer']);
+});
+
+// Ads
+Route::group(['prefix' => 'ads' ] , function(){
+    Route::get('/' , [ApiAdsController::class , 'index']);
+    Route::post('/store_service' , [ApiAdsController::class , 'storeService']);
+    Route::post('/accept_offer' , [ApiAdsController::class , 'accept_offer']);
+    Route::post('/add_rate' , [ApiAdsController::class , 'storeRate']);
+    Route::get('/show_service/{id}' , [ApiAdsController::class , 'showService']);
+
+});
+Route::group(['prefix' => 'ads/service_provider' ] , function(){
+    Route::get('/' , [ApiAdsController::class , 'service_provider_index']);
+    Route::post('/add_offer' , [ApiAdsController::class , 'service_provider_add_offer']);
+});
+
+// Water Filter
+Route::group(['prefix' => 'water' ] , function(){
+    Route::get('/' , [ApiWaterController::class , 'index']);
+    Route::post('/store_service' , [ApiWaterController::class , 'storeService']);
+    Route::post('/accept_offer' , [ApiWaterController::class , 'accept_offer']);
+    Route::post('/add_rate' , [ApiWaterController::class , 'storeRate']);
+    Route::get('/show_service/{id}' , [ApiWaterController::class , 'showService']);
+
+});
+Route::group(['prefix' => 'water/service_provider' ] , function(){
+    Route::get('/' , [ApiWaterController::class , 'service_provider_index']);
+    Route::post('/add_offer' , [ApiWaterController::class , 'service_provider_add_offer']);
+});
+
+// Car Water
+Route::group(['prefix' => 'car_water' ] , function(){
+    Route::get('/' , [ApiCarWaterController::class , 'index']);
+    Route::post('/store_service' , [ApiCarWaterController::class , 'storeService']);
+    Route::post('/accept_offer' , [ApiCarWaterController::class , 'accept_offer']);
+    Route::post('/add_rate' , [ApiCarWaterController::class , 'storeRate']);
+    Route::get('/show_service/{id}' , [ApiCarWaterController::class , 'showService']);
+
+});
+Route::group(['prefix' => 'car_water/service_provider' ] , function(){
+    Route::get('/' , [ApiCarWaterController::class , 'service_provider_index']);
+    Route::post('/add_offer' , [ApiCarWaterController::class , 'service_provider_add_offer']);
+});
+
+// Big Car
+Route::group(['prefix' => 'big_car' ] , function(){
+    Route::get('/' , [ApiBigCarController::class , 'index']);
+    Route::post('/store_service' , [ApiBigCarController::class , 'storeService']);
+    Route::post('/accept_offer' , [ApiBigCarController::class , 'accept_offer']);
+    Route::post('/add_rate' , [ApiBigCarController::class , 'storeRate']);
+    Route::get('/show_service/{id}' , [ApiBigCarController::class , 'showService']);
+
+});
+Route::group(['prefix' => 'big_car/service_provider' ] , function(){
+    Route::get('/' , [ApiBigCarController::class , 'service_provider_index']);
+    Route::post('/add_offer' , [ApiBigCarController::class , 'service_provider_add_offer']);
 });

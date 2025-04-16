@@ -110,43 +110,47 @@ $lang = config('app.locale');
 
         </section>
     @else
-    <section class="section">
-        <div class="container">
-            <div class="row">
-                <div class="col-xl-12">
-                    <div class="row">
-                        @forelse ($services as $service)
-                            <div class="col-md-6">
-                                <div class="card">
-                                    <div class="position-relative">
-                                        <a href="{{ route('main_family_show_my_service', $service->id) }}">
-                                            @if ($service->image)
-                                                <img class="card-img-top" src="{{ $service->image_url }}" alt="img"
-                                                    width="300" height="300">
-                                            @else
-                                                <img class="card-img-top" src="{{ asset('images/logo2.jpg') }}"
-                                                    alt="nn" width="300" height="300">
-                                            @endif
-                                        </a>
-                                    </div>
-                                    <div class="card-body d-flex flex-column">
-                                        <h5><a href="{{ route('main_family_show_my_service', $service->id) }}">
-                                                {{ $lang == 'ar' ? $service->name_ar : $service->name_en }}</a></h5>
-                                        <div class="tx-muted">
-                                            {{ $service->user->first_name .' '. $service->user->first_name }}
-                                        </div>
+    <section class="profile-cover-container mb-2" >
 
-                                    </div>
-                                </div>
-                            </div>
-
-                        @empty
-                            {!! no_data() !!}
-                        @endforelse
+        <div class="profile-content pt-40">
+            <div class="container position-relative d-flex justify-content-center ">
+                <form action="{{ route('register-page') }}" method="get" enctype="multipart/form-data"
+                    style="width:600px;margin-top:10px" class="profile-card rounded-lg shadow-xs bg-white p-15 p-md-30">
+                    @csrf                    
+                    <div class="form-group mt-2"> 
+                        <label for="name" class="mb-1 mt-2">{{ $lang == 'ar' ? 'نوع الاكل' : 'Food Type' }} : </label>
+                        <input type="text" class="form-control" name="type">
+                        <label for="name" class="mb-1">{{ $lang == 'ar' ? 'الوقت' : 'Time' }} : </label>
+                        <input type="time" class="form-control" name="time">
+                        <label for="name" class="mb-1">{{ $lang == 'ar' ? 'التاريخ' : 'Date' }} : </label>
+                        <input type="date" class="form-control" name="date">
                     </div>
-                    {!! $services->links() !!}
-                </div>
+
+                    <div class="form-group mt-2">
+                        <label for="" class="mb-1">{{ $lang == 'ar' ? 'ملاحظة عن العمل المطلوب' : 'Note About Work' }} :</label>
+                        <textarea class="form-control" name="notes" cols="30" rows="5"></textarea>
+                    </div>
+                    
+                    
+                    <div class="form-group mt-2"> 
+                        <label for="name" class="mb-1 mt-2">{{ $lang == 'ar' ? 'المدينة' : 'City' }} : </label>
+                        <input type="text" class="form-control" name="city">
+                        <label for="name" class="mb-1">{{ $lang == 'ar' ? 'الحي' : 'Neighborhood' }} : </label>
+                        <input type="text" class="form-control" name="neighborhood">
+                    </div>
+                    <hr>
+                    <div class="form-group mt-2" style="text-align: right;margin-right:10px">
+                        <button class="btn mt-2 form-control"  style="background-color: #fdca3d">{{ $lang == 'ar' ? 'ارسال' : 'Send' }}</button>
+                    </div>
+                </form>
+
+
             </div>
+
+
+        </div>
+
+
     </section>
     @endif
 @endsection

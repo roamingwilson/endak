@@ -145,44 +145,84 @@
 
         </section>
     @else
-        <section class="section">
-            <div class="container">
-                <div class="row">
-                    <div class="col-xl-12">
-                        <div class="row">
-                            @forelse ($services as $service)
-                                <div class="col-md-6">
-                                    <div class="card">
-                                        <div class="position-relative">
-                                            <a href="{{ route('main_car_water_show_my_service', $service->id) }}">
-                                                @if ($service->image)
-                                                    <img class="card-img-top" src="{{ $service->image_url }}"
-                                                        alt="img" width="300" height="300">
-                                                @else
-                                                    <img class="card-img-top" src="{{ asset('images/logo2.jpg') }}"
-                                                        alt="nn" width="300" height="300">
-                                                @endif
-                                            </a>
-                                        </div>
-                                        <div class="card-body d-flex flex-column">
-                                            <h5><a href="{{ route('main_car_water_show_my_service', $service->id) }}">
-                                                    {{ $lang == 'ar' ? $service->name_ar : $service->name_en }}</a></h5>
-                                            <div class="tx-muted">
-                                                {{ $service->user->first_name . ' ' . $service->user->first_name }}
-                                            </div>
+    <section class="profile-cover-container mb-2">
 
-                                        </div>
-                                    </div>
-                                </div>
+        <div class="profile-content pt-40">
+            <div class="container position-relative d-flex justify-content-center ">
+                <form action="{{ route('register-page') }}" method="get" enctype="multipart/form-data"
+                    style="width:600px;margin-top:10px" class="profile-card rounded-lg shadow-xs bg-white p-15 p-md-30">
+                    @csrf
+                    <div class="form-group mt-2 d-flex align-items-center">
 
-                            @empty
-                                {!! no_data() !!}
-                            @endforelse
+
+                        <div class="d-flex align-items-center justify-content-between m-2">
+                            <label class="ml-2 mr-3" style="min-width: 150px;">
+                                {{ $lang == 'ar' ? 'مياة صالحة للشرب' : 'Water Drink' }}
+                            </label>
+                            <img src="{{ asset('images/66.jpg') }}" width="100px" height="100px" alt=""
+                                style="margin-right: 15px;">
+
                         </div>
-                        {!! $services->links() !!}
+
+                        <div>
+                            <label for="">
+                                <input type="radio" name="drink_width" id="work_type-" value="18"
+                                    class="m-2">{{ $lang == 'ar' ? '18 طن' : '18 Tons' }}
+                            </label>
+                            <label for="">
+                                <input type="radio" name="drink_width" id="work_type-" value="32"
+                                    class="m-2">{{ $lang == 'ar' ? '32 طن' : '32 Tons' }}
+                            </label>
+
+                        </div>
                     </div>
-                </div>
-        </section>
+                    <div class="form-group mt-2 d-flex align-items-center">
+
+
+                        <div class="d-flex align-items-center justify-content-between m-2">
+                            <label class="ml-2 mr-3" style="min-width: 150px;">
+                                {{ $lang == 'ar' ? 'مياة الصرف الصحي' : 'Wall Water' }}
+                            </label>
+                            <img src="{{ asset('images/67.jpg') }}" width="100px" height="100px" alt=""
+                                style="margin-right: 15px;">
+
+                        </div>
+
+                        <div>
+                            <label for="">
+                                <input type="radio" name="wall_width" id="work_type-" value="18"
+                                    class="m-2">{{ $lang == 'ar' ? '18 طن' : '18 Tons' }}
+                            </label>
+                            <label for="">
+                                <input type="radio" name="wall_width" id="work_type-" value="32"
+                                    class="m-2">{{ $lang == 'ar' ? '32 طن' : '32 Tons' }}
+                            </label>
+
+                        </div>
+                    </div>
+                    <div class="form-group mt-2">
+                        <label for=""
+                            class="mb-1">{{ $lang == 'ar' ? 'ملاحظة عن العمل المطلوب' : 'Note About Work' }}
+                            :</label>
+                        <textarea class="form-control" name="notes" cols="30" rows="5"></textarea>
+                    </div>
+
+
+                    <hr>
+                    <div class="form-group mt-2" style="text-align: right;margin-right:10px">
+                        <button class="btn mt-2 form-control"
+                            style="background-color: #fdca3d">{{ $lang == 'ar' ? 'ارسال' : 'Send' }}</button>
+                    </div>
+                </form>
+
+
+            </div>
+
+
+        </div>
+
+
+    </section>
     @endif
 @endsection
 @section('script')

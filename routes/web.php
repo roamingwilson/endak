@@ -11,6 +11,8 @@ use App\Models\TeacherOrder;
 use App\Models\CarWaterOrder;
 use App\Models\CleaningOrder;
 use App\Models\PublicGeOrder;
+use App\Models\ContractingOrder;
+use App\Models\MaintenanceOrder;
 use App\Models\FollowCameraOrder;
 use App\Models\CounterInsectsOrder;
 use App\Models\PartyPreparationOrder;
@@ -40,6 +42,8 @@ use App\Http\Controllers\departments\CarWaterController;
 use App\Http\Controllers\departments\OrderAdsController;
 use App\Http\Controllers\departments\PublicGeController;
 use App\Http\Controllers\departments\OrderWaterController;
+use App\Http\Controllers\departments\ContractingController;
+use App\Http\Controllers\departments\MaintenanceController;
 use App\Http\Controllers\departments\OrderBigCarController;
 use App\Http\Controllers\departments\OrderFamilyController;
 use App\Http\Controllers\departments\OrderGardenController;
@@ -48,6 +52,8 @@ use App\Http\Controllers\departments\OrderTeacherController;
 use App\Http\Controllers\departments\OrderCarWaterController;
 use App\Http\Controllers\departments\OrderPublicGeController;
 use App\Http\Controllers\departments\CounterInsectsController;
+use App\Http\Controllers\departments\OrderContractingController;
+use App\Http\Controllers\departments\OrderMaintenanceController;
 use App\Http\Controllers\departments\PartyPreparationController;
 use App\Http\Controllers\departments\OrderCounterInsectsController;
 use App\Http\Controllers\Surveillance\SurveillanceCamerasController;
@@ -378,6 +384,44 @@ Route::group(['prefix' => "big_car"], function(){
         BigCarOrder::find($id)->update(['status' => "completed"]);
         return redirect()->back();
     })->name('accept_project_big_car');
+});
+
+
+
+// Contractings
+Route::group(['prefix' => "contracting"], function(){
+    Route::get('/show' , [ContractingController::class , 'show'])->name('contracting_show');
+    Route::get('/contracting_sub_show/{id}' , [ContractingController::class , 'contracting_sub_show'])->name('contracting_sub_show');
+    Route::post('/add_service' , [ContractingController::class , 'store_service'])->name('contracting_store_service');
+    Route::get('/',[ContractingController::class , 'index'])->name('main_contracting');
+    Route::get('/service/{id}',[ContractingController::class , 'show_my_service'])->name('main_contracting_show_my_service');
+    Route::get('/edit/{id}',[ContractingController::class , 'edit'])->name('main_contracting.edit');
+    Route::patch('/update/{id}',[ContractingController::class , 'update'])->name('main_contracting.update');
+    Route::post('/accept_offer' , [OrderContractingController::class , 'store'])->name('accept_offer_contracting');
+    Route::get('/order' , [OrderContractingController::class , 'show_orders'])->name('show_orders_contracting');
+    Route::get('/order/{id}' , [OrderContractingController::class , 'show'])->name('show_order_contracting');
+    Route::get('/accept_project_contracting/{id}' , function($id) {
+        ContractingOrder::find($id)->update(['status' => "completed"]);
+        return redirect()->back();
+    })->name('accept_project_contracting');
+});
+
+// Car Maintenance
+Route::group(['prefix' => "maintenance"], function(){
+    Route::get('/show' , [MaintenanceController::class , 'show'])->name('maintenance_show');
+    Route::get('/maintenance_sub_show/{id}' , [MaintenanceController::class , 'maintenance_sub_show'])->name('maintenance_sub_show');
+    Route::post('/add_service' , [MaintenanceController::class , 'store_service'])->name('maintenance_store_service');
+    Route::get('/',[MaintenanceController::class , 'index'])->name('main_maintenance');
+    Route::get('/service/{id}',[MaintenanceController::class , 'show_my_service'])->name('main_maintenance_show_my_service');
+    Route::get('/edit/{id}',[MaintenanceController::class , 'edit'])->name('main_maintenance.edit');
+    Route::patch('/update/{id}',[MaintenanceController::class , 'update'])->name('main_maintenance.update');
+    Route::post('/accept_offer' , [OrderMaintenanceController::class , 'store'])->name('accept_offer_maintenance');
+    Route::get('/order' , [OrderMaintenanceController::class , 'show_orders'])->name('show_orders_maintenance');
+    Route::get('/order/{id}' , [OrderMaintenanceController::class , 'show'])->name('show_order_maintenance');
+    Route::get('/accept_project_maintenance/{id}' , function($id) {
+        MaintenanceOrder::find($id)->update(['status' => "completed"]);
+        return redirect()->back();
+    })->name('accept_project_maintenance');
 });
 
 

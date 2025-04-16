@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Support\Str;
+
 if (!function_exists('clean_html')) {
     function clean_html($text = null)
     {
@@ -29,7 +31,6 @@ if (!function_exists('str_slug')) {
         return Str::slug($title, $separator, $language);
     }
 }
-
 if (!function_exists('unique_slug')) {
 
     function unique_slug($title = '', $model = 'Course', $skip_id = 0)

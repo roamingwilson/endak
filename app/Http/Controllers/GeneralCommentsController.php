@@ -15,6 +15,7 @@ use App\Models\CarWaterService;
 use App\Models\CleaningService;
 use App\Models\GeneralComments;
 use App\Models\PublicGeService;
+use App\Models\ContractingService;
 use App\Models\FollowCameraService;
 use App\Models\CounterInsectsService;
 use App\Models\PartyPreparationService;
@@ -40,6 +41,7 @@ class GeneralCommentsController extends Controller
         $value12 = ['water'];
         $value13 = ['car_water'];
         $value14 = ['big_car'];
+        $value15 = ['contracting'];
         if (array_intersect($url, $value1)) {
             $service = FurnitureTransportationService::where('id' , $request->service_id)->first();
         }
@@ -82,10 +84,13 @@ class GeneralCommentsController extends Controller
         elseif(array_intersect($url, $value14)){
             $service = BigCarService::where('id' , $request->service_id)->first();
         }
+        elseif(array_intersect($url, $value15)){
+            $service = ContractingService::where('id' , $request->service_id)->first();
+        }
         $customer = User::where('id' ,$service->user_id )->first();
         $user = auth()->user();
         $data = $request->except('image'); 
-         $comment = new GeneralComments([
+        $comment = new GeneralComments([
             'service_provider'                      => $user->id,
             'body'                                  => $request->body  ?? null,
             'price'                                 => $request->price  ?? null,

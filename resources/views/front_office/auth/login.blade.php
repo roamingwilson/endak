@@ -14,4 +14,14 @@
         </div>
 
     </section>
+
+    @if (isset($message))
+        <script>
+            swal("Message", "{{ $message }}", 'success', {
+                button: true,
+                button: "Ok",
+                timer: 5000,
+            })
+        </script>
+    @endif
 @endsection

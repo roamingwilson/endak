@@ -113,6 +113,7 @@ class User extends Authenticatable
         $otherOrder12 = WaterOrder::where('service_provider_id' , $this->id)->where('status', 'completed')->get(); 
         $otherOrder13 = CarWaterOrder::where('service_provider_id' , $this->id)->where('status', 'completed')->get(); 
         $otherOrder14 = BigCarOrder::where('service_provider_id' , $this->id)->where('status', 'completed')->get(); 
+        $otherOrder15 = ContractingOrder::where('service_provider_id' , $this->id)->where('status', 'completed')->get(); 
 
         $mergedOrders = $orders->merge($otherOrder1)
         ->merge($otherOrder2)
@@ -128,6 +129,7 @@ class User extends Authenticatable
         ->merge($otherOrder12)
         ->merge($otherOrder13)
         ->merge($otherOrder14)
+        ->merge($otherOrder15)
         ;
         $rate = 0;
 
@@ -167,6 +169,10 @@ class User extends Authenticatable
     public function getImageUrlAttribute()
     {
         return asset('storage/' . $this->image);
+    }
+    public function departments()
+    {
+        return $this->hasMany(UserDepartment::class, 'user_id');
     }
   
 }

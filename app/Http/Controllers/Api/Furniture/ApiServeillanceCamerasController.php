@@ -77,7 +77,9 @@ class ApiServeillanceCamerasController extends Controller
 
         $department_name = 'surveillance_cameras';
         $order = FollowCameraOrder::where('id' , $request->order_id)->first();
-        
+        $order->update([
+            'status'    => 'completed',
+        ]);
         $data = $request->all();
         $data['creator_id'] = auth()->user()->id;
         $data['user_id'] = $order->service_provider_id;
@@ -149,7 +151,8 @@ class ApiServeillanceCamerasController extends Controller
     {
 
         $is_created = FollowCameraService::find($id);
-        $data = ['service' => $is_created ];
+        $offers = GeneralComments::where('commentable_id',$id)->where('commentable_type' ,'App\Models\FollowCameraService')->get();
+        $data = ['service' => $is_created , 'offers' => $offers];        
         return response()->apiSuccess($data, 'success', 200);
 
     }

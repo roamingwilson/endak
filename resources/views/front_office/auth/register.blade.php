@@ -2,6 +2,11 @@
 
 @section('title')
     {{ __('login') }}
+    <?php $lang = Session::get('locale'); ?>
+@endsection
+@section('style')
+<link rel="stylesheet" href="{{ asset('select2-4.0.3/css/select2.css') }}">
+
 @endsection
 @section('content')
     <section>
@@ -30,9 +35,17 @@
             
                     </div>
                     <div class="form-group">
-                        <label for="" class="m-2">{{ __('auth.email') }}</label>
-                        <input class="form-control" name="email" type="text" placeholder="{{ __('auth.email') }}" value="{{ old('email') }}">
-                        @error('email') <span class="error text-danger">{{ $message }}</span> @enderror
+                        <label for="departments" class="m-2">{{ __('department.departments') }}</label>
+                        <select name="departments[]" id="tags" class="form-control main_departments select2" multiple="multiple">
+                            {{-- <option value="">{{ __('department.select_product') }}</option> --}}
+                            @foreach ($merged_departments as $merged_department_item)
+                            {{-- <input class="form-control" name="department_type[]" type="hidden"  value="{{ old('email') }}"> --}}
+                                <option value="{{ $merged_department_item->name_en. '-'  . $merged_department_item ->id }}" >
+                                    {{ ($lang == 'ar') ? $merged_department_item->name_ar : $merged_department_item->name_en }}
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('departments') <span class="error text-danger">{{ $message }}</span> @enderror
             
                     </div>
                     <div class="form-group">
@@ -42,21 +55,25 @@
             
                     </div>
                     <div class="form-group">
-                        <label for="" class="m-2">{{ __('auth.password') }}</label>
-                        <input class="form-control" id="password_confirmation" name="password_confirmation"  type="password" placeholder="{{ __('auth.password') }}" >
-                        @error('password') <span class="error text-danger">{{ $message }}</span> @enderror
+                            <label for="">
+                                <input type="radio" name="role_id" id="work_type-" value="1"
+                                    class="m-2" checked>{{ $lang == 'en' ? 'Customer'  : 'عميل' }}
+                            </label>
+                            <label for="">
+                                <input type="radio" name="role_id" id="work_type-" value="3"
+                                    class="m-2">{{ $lang == 'en' ? 'Service Provider'  : 'مزود خدمة' }}
+                            </label>
             
                     </div>
-                    <div class="form-group">
+                    {{-- <div class="form-group">
                         <label for="" class="m-2">{{ __('general.image') }}</label>
                         <input class="form-control" name="image" type="file" placeholder="{{ __('general.image') }}" value="{{ old('image') }}">
                         @error('image') <span class="error text-danger">{{ $message }}</span> @enderror
             
-                    </div>
+                    </div> --}}
                     <div class="form-group">
                         <button type="submit" class="btn btn-lg w-100 btn-primary mt-2 mb-2">{{ __('auth.register') }}</button>
                        
-                        {{-- <a href="" class="m-5">{{ __('auth.Forget_Password') }}</a> --}}
                         <p class="m-2 d-inline">
                             <a href="{{ route('login-page') }}">{{ __('auth.Do_You_Have_Account') }}</a>
                         </p>
@@ -68,4 +85,28 @@
         </div>
 
     </section>
+    
+    @if (isset($message))
+        <script>
+            swal("Message", "{{ $message }}", 'success', {
+                button: true,
+                button: "Ok",
+                timer: 5000,
+            })
+        </script>
+    @endif
+@endsection
+@section('script')
+<script src="{{ asset('js/jquery/jquery.min.js') }}"></script>
+
+<script src="{{ asset('select2-4.0.3/js/select2.min.js') }}"></script>
+
+<script>
+    $(".main_departments").select2({
+        topics: true,
+        tokenSeparators: [',', ' ']
+    })
+</script>
+
+
 @endsection

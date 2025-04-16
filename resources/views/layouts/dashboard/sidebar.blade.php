@@ -179,6 +179,50 @@ $lang = config('app.locale');
                 @endcan
                 @can('Admin_Departments')
                     <li class="nav-item has-treeview">
+                        <a href="" class="nav-link {{ request()->is('admin/contracting*') ? 'active' : '' }}">
+                            <i class="fas fa-car nav-icon"></i>
+
+                            <p>
+                                {{ ($lang == 'ar')? 'المقاولات' : 'Contracting' }}
+                                <i class="right fas fa-angle-left"></i>
+                            </p>
+                        </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="{{ route('admin.contracting') }}" class="nav-link {{ request()->is('admin/contracting') ? 'active' : '' }}">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        {{ ($lang == 'ar')? 'المقاولات' : 'Contracting' }}
+                                    </a>
+                                </li>
+                               
+                            </ul>
+
+                    </li>
+                @endcan
+                @can('Admin_Departments')
+                    <li class="nav-item has-treeview">
+                        <a href="" class="nav-link {{ request()->is('admin/maintenance*') ? 'active' : '' }}">
+                            <i class="fas fa-car nav-icon"></i>
+
+                            <p>
+                                {{ ($lang == 'ar')? 'صيانة السيارات' : 'Car Maintenance' }}
+                                <i class="right fas fa-angle-left"></i>
+                            </p>
+                        </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="{{ route('admin.maintenance') }}" class="nav-link {{ request()->is('admin/maintenance') ? 'active' : '' }}">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        {{ ($lang == 'ar')? 'صيانة السيارات' : 'Car Maintenance' }}
+                                    </a>
+                                </li>
+                               
+                            </ul>
+
+                    </li>
+                @endcan
+                @can('Admin_Departments')
+                    <li class="nav-item has-treeview">
                         <a href="" class="nav-link {{ request()->is('admin/party_preparation*') ? 'active' : '' }}">
                             <i class="fas fa-car nav-icon"></i>
 

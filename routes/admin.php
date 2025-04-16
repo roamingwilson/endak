@@ -21,6 +21,8 @@ use App\Http\Controllers\departments\TeacherController;
 use App\Http\Controllers\Admin\UserManagementController;
 use App\Http\Controllers\departments\CarWaterController;
 use App\Http\Controllers\departments\PublicGeController;
+use App\Http\Controllers\departments\ContractingController;
+use App\Http\Controllers\departments\MaintenanceController;
 use App\Http\Controllers\departments\CounterInsectsController;
 use App\Http\Controllers\departments\PartyPreparationController;
 use App\Http\Controllers\Surveillance\SurveillanceCamerasController;
@@ -273,4 +275,29 @@ Route::group(['prefix' => "big_car"], function(){
     Route::get('/' , [BigCarController::class , 'index'])->name('admin.big_car');
     Route::get('/edit/{id}',[BigCarController::class , 'edit'])->name('admin.big_car.edit');
     Route::patch('/update/{id}',[BigCarController::class , 'update'])->name('admin.big_car.update');
+});
+
+
+// Contracting 
+Route::group(['prefix' => "contracting"], function(){
+    Route::get('/' , [ContractingController::class , 'index'])->name('admin.contracting');
+    Route::get('/edit/{id}',[ContractingController::class , 'edit'])->name('admin.contracting.edit');
+    Route::patch('/update/{id}',[ContractingController::class , 'update'])->name('admin.contracting.update');
+    Route::get('/add_sub_department',[ContractingController::class , 'add_sub_department'])->name('admin.contracting.add_sub_department');
+    Route::post('/store_sub_department',[ContractingController::class , 'store_sub_department'])->name('admin.contracting.store_sub_department');
+    Route::get('/show_sub_departments_list',[ContractingController::class , 'show_sub_departments_list'])->name('admin.contracting.show_sub_departments_list');
+    Route::get('/show_sub_department/{id}',[ContractingController::class , 'show_sub_department'])->name('admin.contracting.show_sub_department');
+    Route::get('/delete/{id}',[ContractingController::class , 'delete'])->name('admin.contracting.delete');
+});
+
+// Car Maintenance 
+Route::group(['prefix' => "maintenance"], function(){
+    Route::get('/' , [MaintenanceController::class , 'index'])->name('admin.maintenance');
+    Route::get('/edit/{id}',[MaintenanceController::class , 'edit'])->name('admin.maintenance.edit');
+    Route::patch('/update/{id}',[MaintenanceController::class , 'update'])->name('admin.maintenance.update');
+    Route::get('/add_sub_department',[MaintenanceController::class , 'add_sub_department'])->name('admin.maintenance.add_sub_department');
+    Route::post('/store_sub_department',[MaintenanceController::class , 'store_sub_department'])->name('admin.maintenance.store_sub_department');
+    Route::get('/show_sub_departments_list',[MaintenanceController::class , 'show_sub_departments_list'])->name('admin.maintenance.show_sub_departments_list');
+    Route::get('/show_sub_department/{id}',[MaintenanceController::class , 'show_sub_department'])->name('admin.maintenance.show_sub_department');
+    Route::get('/delete/{id}',[MaintenanceController::class , 'delete'])->name('admin.maintenance.delete');
 });

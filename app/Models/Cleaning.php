@@ -13,4 +13,8 @@ class Cleaning extends Model
     {
         return asset( 'storage/' . $this->image);
     }
+    public function departments()
+    {
+        return $this->morphMany(UserDepartment::class, 'commentable');
+    }
 }

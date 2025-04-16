@@ -25,7 +25,10 @@ class Department extends Model
     {
         return $this->belongsTo(Department::class, 'department_id', 'id');
     }
-
+    public function departments()
+    {
+        return $this->morphMany(UserDepartment::class, 'commentable');
+    }
     // public function departmentNameParent()
     // {
     //     $parent_id = $this->id;

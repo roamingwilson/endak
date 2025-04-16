@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use DB;
 use App\Models\Post;
 use App\Models\User;
 use App\Models\Order;
@@ -11,6 +10,7 @@ use Illuminate\Support\Str;
 use App\Models\ProductItems;
 use Illuminate\Http\Request;
 use App\Services\OrderServices;
+use Illuminate\Support\Facades\DB;
 use App\Notifications\OrderNotification;
 
 class OrderUserController extends Controller
@@ -64,7 +64,6 @@ class OrderUserController extends Controller
     {
         $user = auth()->user();
         if ($user->role_id == 1) {
-
             $orders = Order::where('customer_id', $id)->get();
             return view('front_office.orders.my_orders', compact('orders'));
 

@@ -68,10 +68,10 @@ class ApiFurnitureTransportationsController extends Controller
 
 
         if ($is_created) {
-            $products = []; // مصفوفة لتخزين المنتجات التي تم إنشاؤها
+            $products = []; 
             foreach ($selected_products as $key => $value) {
                 if (isset($quantities[$value]) && !is_null($quantities[$value])) {
-                    // إنشاء المنتج المرتبط بالخدمة
+                    
                     $products[] = FurnitureTransportationServiceProducts::create([
                         'service_id' => $is_created->id,
                         'product_id' => $value,
@@ -165,7 +165,9 @@ class ApiFurnitureTransportationsController extends Controller
 
         $department_name = 'furniture_transportations';
         $order = FurnitureTransportationOrder::where('id' , $request->order_id)->first();
-        
+        $order->update([
+            'status'    => 'completed',
+        ]);
         $data = $request->all();
         $data['creator_id'] = auth()->user()->id;
         $data['user_id'] = $order->service_provider_id;
@@ -206,7 +208,9 @@ class ApiFurnitureTransportationsController extends Controller
             $products[] = $product;
             $main_products[] = FurnitureTransportationProduct::find($product->product_id);
         }
-        $data = ['service' => $service , 'products' => $products , 'products->details' => $main_products];
+        $offers = GeneralComments::where('commentable_id',$id)->where('commentable_type' ,'App\Models\GardenService')->get();
+        $data = ['service' => $service , 'products' => $products , 'products->details' => $main_products , 'offers' => $offers];
+
         return response()->apiSuccess($data, 'success', 200);
 
     }

@@ -1,7 +1,7 @@
 @extends('layouts.home')
 @section('title')
     <?php $lang = config('app.locale'); ?>
-    {{ $lang == 'ar' ? 'المشاريع' : 'Projects' }}
+    {{ $lang == 'ar' ? 'منشوراتي' : 'Posts' }}
 @endsection
 @section('content')
     <div class="page">
@@ -25,6 +25,7 @@
         $car_water_services = App\Models\CarWaterService::where('user_id' , auth()->id())->get();
         $water_services = App\Models\WaterService::where('user_id' , auth()->id())->get();
         $big_car_services = App\Models\BigCarService::where('user_id' , auth()->id())->get();
+        $contracting_services = App\Models\ContractingService::where('user_id' , auth()->id())->get();
         ?>
 
         <div class="main-content app-content">
@@ -44,18 +45,15 @@
                 </div>
 
             </section>
-
             <section class="section">
                 <div class="container">
-                    <div class="row">
-                        <div class="col-xl-8">
-                            <div class="row">
+                    <div class="row d-flex justify-content-center">
+                        <div class="col-xl-10 mx-auto">
+                            <div class="row justify-content-center">
                                 @forelse ($posts as $post)
-                                    <div class="col-md-6">
-                                        <div class="card">
+                                    <div class="col-md-10"> <!-- عرض الكارد -->
+                                        <div class="card mx-auto"> <!-- توسيط الكارد -->
                                             <div class="position-relative">
-                                                
-                                                
                                                 <span class="badge bg-secondary blog-badge">{{ $post->add_order }}</span>
                                             </div>
                                             <div class="card-body d-flex flex-column">
@@ -69,19 +67,20 @@
                                                     <div>
                                                         <a href="javascript:void(0);"
                                                             class="h6">{{ $post->user->first_name . ' ' . $post->user->last_name }}</a>
-                                                        <small
-                                                            class="d-block tx-muted">{{ $post->created_at->shortAbsoluteDiffForHumans() }}</small>
+                                                        <small class="d-block tx-muted">{{ $post->created_at->shortAbsoluteDiffForHumans() }}</small>
                                                     </div>
-                                                    
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 @empty
-                                 @endforelse
+                                    <p class="text-center">لا توجد منشورات متاحة</p>
+                                @endforelse
+                            
+            
                                 @forelse ($furniture_transportation_services as $furniture_transportation_service)
-                                    <div class="col-md-4">
-                                        <div class="card">
+                                    <div class="col-md-10">
+                                        <div class="card mx-auto">
                                             <div class="position-relative">
                                             
                                                 <span class="badge bg-secondary blog-badge">{{ $furniture_transportation_service->add_order }}</span>
@@ -109,8 +108,8 @@
                                 @empty
                                 @endforelse
                                 @forelse ($follow_camera_services as $follow_camera_service)
-                                    <div class="col-md-4">
-                                        <div class="card">
+                                    <div class="col-md-10">
+                                        <div class="card mx-auto">
                                             <div class="position-relative">
                                                 
                                                 
@@ -139,8 +138,8 @@
                                 @empty
                                 @endforelse
                                 @forelse ($party_preparationservices as $party_preparationservice)
-                                    <div class="col-md-4">
-                                        <div class="card">
+                                    <div class="col-md-10">
+                                        <div class="card mx-auto">
                                             <div class="position-relative">
                                                 
                                                 
@@ -169,8 +168,8 @@
                                 @empty
                                 @endforelse
                                 @forelse ($garden_services as $garden_service)
-                                    <div class="col-md-4">
-                                        <div class="card">
+                                    <div class="col-md-10">
+                                        <div class="card mx-auto">
                                             <div class="position-relative">
                                                 
                                                 
@@ -199,8 +198,8 @@
                                 @empty
                                 @endforelse
                                 @forelse ($counter_insects_services as $counter_insects_service)
-                                    <div class="col-md-4">
-                                        <div class="card">
+                                    <div class="col-md-10">
+                                        <div class="card mx-auto">
                                             <div class="position-relative">
                                                 
                                                 
@@ -229,8 +228,8 @@
                                 @empty
                                 @endforelse
                                 @forelse ($teacher_services as $teacher_service)
-                                    <div class="col-md-4">
-                                        <div class="card">
+                                    <div class="col-md-10">
+                                        <div class="card mx-auto">
                                             <div class="position-relative">
                                                 
                                                 
@@ -259,8 +258,8 @@
                                 @empty
                                 @endforelse
                                 @forelse ($cleaning_services as $cleaning_service)
-                                    <div class="col-md-4">
-                                        <div class="card">
+                                    <div class="col-md-10">
+                                        <div class="card mx-auto">
                                             <div class="position-relative">
                                                 
                                                 
@@ -289,8 +288,8 @@
                                 @empty
                                 @endforelse
                                 @forelse ($family_services as $family_service)
-                                    <div class="col-md-4">
-                                        <div class="card">
+                                    <div class="col-md-10">
+                                        <div class="card mx-auto">
                                             <div class="position-relative">
                                                 
                                                 
@@ -319,8 +318,8 @@
                                 @empty
                                 @endforelse
                                 @forelse ($worker_services as $worker_service)
-                                    <div class="col-md-4">
-                                        <div class="card">
+                                    <div class="col-md-10">
+                                        <div class="card mx-auto">
                                             <div class="position-relative">
                                                 
                                                 
@@ -349,8 +348,8 @@
                                 @empty
                                 @endforelse
                                 @forelse ($public_ge_services as $public_ge_service)
-                                    <div class="col-md-4">
-                                        <div class="card">
+                                    <div class="col-md-10">
+                                        <div class="card mx-auto">
                                             <div class="position-relative">
                                                 
                                                 
@@ -379,8 +378,8 @@
                                 @empty
                                 @endforelse
                                 @forelse ($ads_services as $ads_service)
-                                    <div class="col-md-4">
-                                        <div class="card">
+                                    <div class="col-md-10">
+                                        <div class="card mx-auto">
                                             <div class="position-relative">
                                                 
                                                 
@@ -411,8 +410,8 @@
                                 @empty
                                 @endforelse
                                 @forelse ($car_water_services as $car_water_service)
-                                    <div class="col-md-4">
-                                        <div class="card">
+                                    <div class="col-md-10">
+                                        <div class="card mx-auto">
                                             <div class="position-relative">
                                                 
                                                 
@@ -443,8 +442,8 @@
                                 @empty
                                 @endforelse
                                 @forelse ($water_services as $water_service)
-                                    <div class="col-md-4">
-                                        <div class="card">
+                                    <div class="col-md-10">
+                                        <div class="card mx-auto">
                                             <div class="position-relative">
                                                 
                                                 
@@ -475,8 +474,8 @@
                                 @empty
                                 @endforelse
                                 @forelse ($big_car_services as $big_car_service)
-                                    <div class="col-md-4">
-                                        <div class="card">
+                                    <div class="col-md-10">
+                                        <div class="card mx-auto">
                                             <div class="position-relative">
                                                 
                                                 
@@ -506,15 +505,44 @@
                                     </div>
                                 @empty
                                 @endforelse
+                                @forelse ($contracting_services as $contracting_service)
+                                    <div class="col-md-10">
+                                        <div class="card mx-auto">
+                                            <div class="position-relative">
+                                                
+                                                
+                                                <span class="badge bg-secondary blog-badge">{{ $contracting_service->add_order }}</span>
+                                            </div>
+                                            <div class="card-body d-flex flex-column">
+                                                <h5><a href="{{ route('main_contracting_show_my_service' , $contracting_service->id) }}"> 
+                                                    {{ ($lang == 'ar')? 'سطحه' : "Big Car" }}
+                                                </a></h5>
+                                                <div class="tx-muted">   {{ ($lang == 'ar')?  $contracting_service->contracting->name_ar : $contracting_service->contracting->name_en }}
+                                                </div>
+                                                <div class="d-flex align-items-center pt-4 mt-auto">
+                                                    <div class="avatar me-3 cover-image rounded-circle">
+                                                        <img src="{{ $contracting_service->user->image ?? asset('images/user.png') }}"
+                                                            class="rounded-circle" alt="img" width="40">
+                                                    </div>
+                                                    <div>
+                                                        <a href="javascript:void(0);"
+                                                            class="h6">{{ $contracting_service->user->full_name }}</a>
+                                                        <small
+                                                            class="d-block tx-muted">{{ $contracting_service->created_at->shortAbsoluteDiffForHumans() }}</small>
+                                                    </div>
+                                                    
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @empty
+                                @endforelse
 
                             </div>
 
                         </div>
                         {!! $posts->links() !!}
-                        <div class="col-xl-4">
-                          
-
-                        </div>
+                        
                     </div>
                 </div>
             </section>
