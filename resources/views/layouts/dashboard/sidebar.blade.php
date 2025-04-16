@@ -1,5 +1,5 @@
-<?php $settings = App\Models\Settings::first(); 
-$lang = config('app.locale'); 
+<?php $settings = App\Models\Settings::first();
+$lang = config('app.locale');
 ?>
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <!-- Brand Logo -->
@@ -105,7 +105,7 @@ $lang = config('app.locale');
                         </ul>
                     </li>
                 @endcan
-                
+
                 @can('Admin_Departments')
                     <li class="nav-item has-treeview">
                         <a href="" class="nav-link {{ request()->is('admin/furniture_transportations*') ? 'active' : '' }}">
@@ -131,7 +131,7 @@ $lang = config('app.locale');
                                         {{ ($lang == 'ar')? 'منتجات قسم نقل عفش' : 'Product Furniture Transportations' }}
                                     </a>
                                 </li>
-                                
+
                                 {{-- <li class="nav-item">
                                     <a href="" class="nav-link {{ request()->is('admin/departments/edit') ? 'active' : '' }}">
                                         <i class="far fa-circle nav-icon"></i>
@@ -163,8 +163,8 @@ $lang = config('app.locale');
                                         {{ ($lang == 'ar')? 'قسم كاميرات مراقبة ' : 'Surveillance Cameras' }}
                                     </a>
                                 </li>
-                                
-                                
+
+
                                 {{-- <li class="nav-item">
                                     <a href="" class="nav-link {{ request()->is('admin/departments/edit') ? 'active' : '' }}">
                                         <i class="far fa-circle nav-icon"></i>
@@ -194,7 +194,7 @@ $lang = config('app.locale');
                                         {{ ($lang == 'ar')? 'المقاولات' : 'Contracting' }}
                                     </a>
                                 </li>
-                               
+
                             </ul>
 
                     </li>
@@ -216,7 +216,7 @@ $lang = config('app.locale');
                                         {{ ($lang == 'ar')? 'صيانة السيارات' : 'Car Maintenance' }}
                                     </a>
                                 </li>
-                               
+
                             </ul>
 
                     </li>
@@ -238,7 +238,7 @@ $lang = config('app.locale');
                                         {{ ($lang == 'ar')? 'قسم تجهيز حفلات ' : 'Party preparation' }}
                                     </a>
                                 </li>
-                               
+
                             </ul>
 
                     </li>
@@ -264,7 +264,7 @@ $lang = config('app.locale');
 
                                     </a>
                                 </li>
-                               
+
                             </ul>
 
                     </li>
@@ -288,7 +288,7 @@ $lang = config('app.locale');
 
                                     </a>
                                 </li>
-                               
+
                             </ul>
 
                     </li>
@@ -312,7 +312,7 @@ $lang = config('app.locale');
 
                                     </a>
                                 </li>
-                               
+
                             </ul>
 
                     </li>
@@ -336,7 +336,7 @@ $lang = config('app.locale');
 
                                     </a>
                                 </li>
-                               
+
                             </ul>
 
                     </li>
@@ -360,7 +360,7 @@ $lang = config('app.locale');
 
                                     </a>
                                 </li>
-                               
+
                             </ul>
 
                     </li>
@@ -384,7 +384,7 @@ $lang = config('app.locale');
 
                                     </a>
                                 </li>
-                               
+
                             </ul>
 
                     </li>
@@ -406,7 +406,7 @@ $lang = config('app.locale');
                                         {{ ($lang == 'ar')? 'خدمات عامة' : "General Services" }}
                                     </a>
                                 </li>
-                               
+
                             </ul>
 
                     </li>
@@ -429,7 +429,7 @@ $lang = config('app.locale');
 
                                     </a>
                                 </li>
-                               
+
                             </ul>
 
                     </li>
@@ -452,7 +452,7 @@ $lang = config('app.locale');
 
                                     </a>
                                 </li>
-                               
+
                             </ul>
 
                     </li>
@@ -475,7 +475,7 @@ $lang = config('app.locale');
 
                                     </a>
                                 </li>
-                               
+
                             </ul>
 
                     </li>
@@ -492,13 +492,39 @@ $lang = config('app.locale');
                         </a>
                             <ul class="nav nav-treeview">
                                 <li class="nav-item">
-                                    <a href="{{ route('admin.big_car') }}" class="nav-link {{ request()->is('admin/big_car') ? 'active' : '' }}">
+                                    <a href="#" class="nav-link ">
                                         <i class="far fa-circle nav-icon"></i>
                                         {{ ($lang == 'ar')? 'سطحه' : "Big Car" }}
 
                                     </a>
                                 </li>
-                               
+
+                            </ul>
+
+                    </li>
+                @endcan
+                @can('Admin_Departments')
+                    <li class="nav-item has-treeview">
+                        <a href="" class="nav-link {{ request()->is('admin/admin.heavy_equip*') ? 'active' : '' }}">
+                            <i class="fas fa-car nav-icon"></i>
+
+                            <p>
+                                {{ ($lang == 'ar')? 'معدات ثقيلة' : 'Heavy equipment' }}
+
+
+                                <i class="right fas fa-angle-left"></i>
+                            </p>
+                        </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="{{ route('admin.heavy_equip') }}" class="nav-link {{ request()->is('admin.heavy_equip') ? 'active' : '' }}">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        {{ ($lang == 'ar')? 'معدات ثقيلة' : 'Heavy equipment' }}
+
+
+                                    </a>
+                                </li>
+
                             </ul>
 
                     </li>
@@ -611,7 +637,7 @@ $lang = config('app.locale');
 
                     </li>
                 @endcan
-                
+
                     <li class="nav-item has-treeview">
                         <a href="{{ route('admin.orders') }}" class="nav-link {{ request()->is('admin/orders*') ? 'active' : '' }}">
                             <i class="fas fa-list nav-icon"></i>
@@ -620,10 +646,10 @@ $lang = config('app.locale');
                                 <i class="right fas fa-angle-left"></i>
                             </p>
                         </a>
-                     
+
 
                     </li>
-                    
+
                 @can('Admin_Pages')
                     <li class="nav-item has-treeview">
                         <a href="" class="nav-link {{ request()->is('admin/pages*') ? 'active' : '' }}">
@@ -702,7 +728,7 @@ $lang = config('app.locale');
                                 <i class="right fas fa-angle-left"></i>
                             </p>
                         </a>
-                 
+
 
                     </li>
 
@@ -740,7 +766,7 @@ $lang = config('app.locale');
 
 
 
-                
+
 
 
 

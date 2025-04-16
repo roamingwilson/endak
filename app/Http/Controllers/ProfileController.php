@@ -22,6 +22,7 @@ use App\Models\UserDepartment;
 use App\Models\PartyPreparation;
 use App\Http\Controllers\Controller;
 use App\Models\FurnitureTransportation;
+use App\Models\HeavyEquipment;
 use App\Models\Maintenance;
 use Illuminate\Support\Facades\Storage;
 
@@ -53,6 +54,7 @@ class ProfileController extends Controller
         $other14 = BigCar::first();
         $other15 = Contracting::first();
         $other16 = Maintenance::first();
+        $other17 = HeavyEquipment::first();
 
         $all_departments = Department::get();
 
@@ -76,6 +78,7 @@ class ProfileController extends Controller
             $other14,
             $other15,
             $other16,
+            $other17,
         ];
 
         foreach ($others as $item) {
@@ -103,7 +106,7 @@ class ProfileController extends Controller
             $data['image'] = $new_image;
         }
         $user_update = User::where('id', $user->id)->first();
-        
+
         if ($request->departments) {
             UserDepartment::where('user_id', $user->id)->delete();
             foreach ($request->departments as $item) {

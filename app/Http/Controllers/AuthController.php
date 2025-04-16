@@ -26,6 +26,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Models\FurnitureTransportation;
+use App\Models\HeavyEquipment;
 
 class AuthController extends Controller
 {
@@ -57,7 +58,7 @@ class AuthController extends Controller
         } else {
             $message = null;
         }
- 
+
         $otherOrder1 = FurnitureTransportation::first();
         $other2 = FollowCamera::first();
         $other3 = PartyPreparation::first();
@@ -73,10 +74,11 @@ class AuthController extends Controller
         $other13 = CarWater::first();
         $other14 = BigCar::first();
         $other15 = Contracting::first();
+        $other16 = HeavyEquipment::first();
 
         $all_departments = Department::get();
 
-        
+
         $merged_departments = $all_departments;
 
         $others = [
@@ -94,11 +96,12 @@ class AuthController extends Controller
             $other12,
             $other13,
             $other14,
-            $other15
+            $other15,
+            $other16
         ];
 
         foreach ($others as $item) {
-            if ($item) {  
+            if ($item) {
                 $merged_departments = $merged_departments->concat(collect([$item]));
             }
         }
@@ -136,7 +139,7 @@ class AuthController extends Controller
         $request->validate([
             'first_name' => "required",
             'last_name' => "required",
-            // 'email' => "email",                      
+            // 'email' => "email",
             'password' => "required|min:6",
             'phone' => "required|unique:users",
         ], [
@@ -166,15 +169,15 @@ class AuthController extends Controller
             'password' => Hash::make($request->password),
 
         ]);
-     
-        
+
+
         foreach ($request->departments as $item) {
             [$name, $id] = explode('-', $item);
-            
+
             $modelParts = explode(' ', $name);
             $modelName = implode('', array_map('ucfirst', $modelParts));
             // dd($modelName);
-        
+
             $modelClass = "App\\Models\\$modelName";
             $main_department = new UserDepartment([
                 'user_id' => $user->id,
@@ -186,7 +189,7 @@ class AuthController extends Controller
                 Department::find($id)->departments()->save($main_department);
             }
         }
- 
+
 
         auth()->login($user);
         return redirect()->route('home');

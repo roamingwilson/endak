@@ -2,29 +2,29 @@
 
 namespace App\Http\Controllers\departments;
 
-use App\Models\Water;
-use App\Models\GeneralImage;
-use App\Models\WaterService;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\GeneralImage;
+use App\Models\HeavyEquipment;
+use App\Models\HeavyEquipmentservice;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
-class WaterController extends Controller
+class HeavyEquipmentController extends Controller
 {
     public function index(){
-        $water = Water::first();
-        return view('admin.main_department.water.index' , compact('water'));
+        $heavy_Equip = HeavyEquipment::first();
+        return view('admin.main_department.heavy_equipment.index' , compact('heavy_Equip'));
     }
     public function edit($id){
-        $main = Water::find($id);
-        return view('admin.main_department.water.edit' , compact('main'));
+        $main = HeavyEquipment::find($id);
+        return view('admin.main_department.heavy_equipment.edit' , compact('main'));
     }
 
     public function update(Request $request , $id){
-        $main = Water::find($id);
+        $main = HeavyEquipment::find($id);
         $old_image = $main->image;
 
-        $path = uploadImage( $request , 'water' , 'image');
+        $path = uploadImage( $request , 'heavy_Equip' , 'image');
         $main->update([
             'name_ar'               => $request->name_ar,
             'name_en'               => $request->name_en,
@@ -33,21 +33,21 @@ class WaterController extends Controller
         if ($old_image && $path) {
             Storage::disk('public')->delete($old_image);
         }
-        return redirect()->route('admin.water')->with('success' , 'تم التحديث بنجاح');
+        return redirect()->route('admin.heavy_equip')->with('success' , 'تم التحديث بنجاح');
     }
 
     public function show(){
         $user = auth()->user();
-        $main = Water::first();
-        $services = WaterService::paginate();
+        $main = HeavyEquipment::first();
+        $services = HeavyEquipmentservice::paginate();
         if(isset($user) && $user->role_id == 1){
-            return view('admin.main_department.water.show' , compact(  'main' , 'services'));
+            return view('admin.main_department.heavy_equipment.show' , compact(  'main' , 'services'));
         }elseif(isset($user) && $user->role_id == 3){
-            $main = Water::first();
-            $services = WaterService::paginate();
-            return view('admin.main_department.water.show' , compact(  'main' , 'services'));
+            $main = HeavyEquipment::first();
+            $services = HeavyEquipmentservice::paginate();
+            return view('admin.main_department.heavy_equipment.show' , compact(  'main' , 'services'));
         }else{
-            return view('admin.main_department.water.show' , compact( 'main' , 'services'));
+            return view('admin.main_department.heavy_equipment.show' , compact( 'main' , 'services'));
 
         }
     }
@@ -56,7 +56,7 @@ class WaterController extends Controller
     {
         $data = $request->except('_token', 'images');
 
-        $is_created = WaterService::create($data);
+        $is_created = HeavyEquipmentservice::create($data);
 
         if ($is_created) {
             if ($request->hasFile('images')) {
@@ -67,7 +67,7 @@ class WaterController extends Controller
                 }
 
                 foreach ($files as $file) {
-                    $path = $file->store('water', [
+                    $path = $file->store('big_car', [
                         'disk' => 'public',
                     ]);
                         $image = new GeneralImage([
@@ -83,8 +83,8 @@ class WaterController extends Controller
 
     }
     public function show_my_service($id){
-        $service = WaterService::find($id);
-        $main = Water::first();
-        return view('admin.main_department.water.show_myservice' , compact( 'main' , 'service'));
+        $service = HeavyEquipmentservice::find($id);
+        $main = HeavyEquipment::first();
+        return view('admin.main_department.heavy_equipment.show_myservice' , compact( 'main' , 'service'));
     }
 }

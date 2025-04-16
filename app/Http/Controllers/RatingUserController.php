@@ -21,6 +21,8 @@ use App\Models\FollowCameraOrder;
 use App\Models\CounterInsectsOrder;
 use App\Models\PartyPreparationOrder;
 use App\Models\FurnitureTransportationOrder;
+use App\Models\HeavyEquipment;
+use App\Models\HeavyEquipmentOrder;
 
 class RatingUserController extends Controller
 {
@@ -43,6 +45,7 @@ class RatingUserController extends Controller
         $value14 = ['big_car'];
         $value15 = ['contracting'];
         $value16 = ['maintenance'];
+        $value17 = ['heavy_equip'];
         if (array_intersect($url, $value1)) {
             $order = FurnitureTransportationOrder::find($id);
             $department_name = 'furniture_transportations';
@@ -101,10 +104,13 @@ class RatingUserController extends Controller
         elseif(array_intersect($url, $value15)){
             $order = ContractingOrder::find($id);
             $department_name = 'contracting';
-        }
-        elseif(array_intersect($url, $value16)){
+        } elseif (array_intersect($url, $value16)) {
             $order = MaintenanceOrder::find($id);
             $department_name = 'maintenance';
+        }
+        elseif(array_intersect($url, $value17)){
+            $order = HeavyEquipmentOrder::find($id);
+            $department_name = 'heavy_equip';
         }
         else{
             $order = Order::findOrFail($id);
@@ -177,6 +183,9 @@ class RatingUserController extends Controller
         }
         elseif($request->department_name == 'maintenance'){
             $order = MaintenanceOrder::where('id' , $request->order_id)->first();
+        }
+        elseif($request->department_name == 'heavy_equip'){
+            $order = HeavyEquipment::where('id' , $request->order_id)->first();
         }
         else{
 

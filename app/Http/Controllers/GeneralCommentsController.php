@@ -21,6 +21,7 @@ use App\Models\CounterInsectsService;
 use App\Models\PartyPreparationService;
 use App\Notifications\CommentNotification;
 use App\Models\FurnitureTransportationService;
+use App\Models\HeavyEquipment;
 
 class GeneralCommentsController extends Controller
 {
@@ -42,6 +43,7 @@ class GeneralCommentsController extends Controller
         $value13 = ['car_water'];
         $value14 = ['big_car'];
         $value15 = ['contracting'];
+        $value16 = ['heavy_equip'];
         if (array_intersect($url, $value1)) {
             $service = FurnitureTransportationService::where('id' , $request->service_id)->first();
         }
@@ -87,9 +89,12 @@ class GeneralCommentsController extends Controller
         elseif(array_intersect($url, $value15)){
             $service = ContractingService::where('id' , $request->service_id)->first();
         }
+        elseif(array_intersect($url, $value16)){
+            $service = HeavyEquipment::where('id' , $request->service_id)->first();
+        }
         $customer = User::where('id' ,$service->user_id )->first();
         $user = auth()->user();
-        $data = $request->except('image'); 
+        $data = $request->except('image');
         $comment = new GeneralComments([
             'service_provider'                      => $user->id,
             'body'                                  => $request->body  ?? null,

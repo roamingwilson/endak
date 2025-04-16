@@ -20,19 +20,19 @@
                         <label for="" class="m-2">{{ __('auth.first_name') }}</label>
                         <input class="form-control" name="first_name" type="text" placeholder="{{ __('auth.first_name') }}" value="{{ old('first_name') }}">
                         @error('first_name') <span class="error text-danger">{{ $message }}</span> @enderror
-            
+
                     </div>
                     <div class="form-group">
                         <label for="" class="m-2">{{ __('auth.last_name') }}</label>
                         <input class="form-control" name="last_name" type="text" placeholder="{{ __('auth.last_name') }}" value="{{ old('last_name') }}">
                         @error('last_name') <span class="error text-danger">{{ $message }}</span> @enderror
-            
+
                     </div>
                     <div class="form-group">
                         <label for="" class="m-2">{{ __('auth.phone') }}</label>
                         <input class="form-control" name="phone" type="text" placeholder="{{ __('auth.phone') }}" value="{{ old('phone') }}">
                         @error('phone') <span class="error text-danger">{{ $message }}</span> @enderror
-            
+
                     </div>
                     <div class="form-group">
                         <label for="departments" class="m-2">{{ __('department.departments') }}</label>
@@ -46,13 +46,13 @@
                             @endforeach
                         </select>
                         @error('departments') <span class="error text-danger">{{ $message }}</span> @enderror
-            
+
                     </div>
                     <div class="form-group">
                         <label for="" class="m-2">{{ __('auth.password') }}</label>
                         <input class="form-control" name="password" type="password" placeholder="{{ __('auth.password') }}" value="{{ old('password') }}">
                         @error('password') <span class="error text-danger">{{ $message }}</span> @enderror
-            
+
                     </div>
                     <div class="form-group">
                             <label for="">
@@ -63,21 +63,21 @@
                                 <input type="radio" name="role_id" id="work_type-" value="3"
                                     class="m-2">{{ $lang == 'en' ? 'Service Provider'  : 'مزود خدمة' }}
                             </label>
-            
+
                     </div>
                     {{-- <div class="form-group">
                         <label for="" class="m-2">{{ __('general.image') }}</label>
                         <input class="form-control" name="image" type="file" placeholder="{{ __('general.image') }}" value="{{ old('image') }}">
                         @error('image') <span class="error text-danger">{{ $message }}</span> @enderror
-            
+
                     </div> --}}
                     <div class="form-group">
                         <button type="submit" class="btn btn-lg w-100 btn-primary mt-2 mb-2">{{ __('auth.register') }}</button>
-                       
+
                         <p class="m-2 d-inline">
                             <a href="{{ route('login-page') }}">{{ __('auth.Do_You_Have_Account') }}</a>
                         </p>
-                        
+
                     </div>
                 </form>
             </div>
@@ -85,7 +85,7 @@
         </div>
 
     </section>
-    
+
     @if (isset($message))
         <script>
             swal("Message", "{{ $message }}", 'success', {

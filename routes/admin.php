@@ -24,10 +24,12 @@ use App\Http\Controllers\departments\PublicGeController;
 use App\Http\Controllers\departments\ContractingController;
 use App\Http\Controllers\departments\MaintenanceController;
 use App\Http\Controllers\departments\CounterInsectsController;
+use App\Http\Controllers\departments\HeavyEquipmentController;
 use App\Http\Controllers\departments\PartyPreparationController;
 use App\Http\Controllers\Surveillance\SurveillanceCamerasController;
 use App\Http\Controllers\Furniture\FurnitureTransportationsController;
 use App\Http\Controllers\Furniture\ProductFurnitureTransportationsController;
+use App\Models\HeavyEquipment;
 
 /*
 |--------------------------------------------------------------------------
@@ -56,7 +58,7 @@ Route::group(['prefix' => 'roles'], function () {
 });
 
 
-// Settings 
+// Settings
 
 Route::group(['prefix' => 'settings'], function () {
 
@@ -65,7 +67,7 @@ Route::group(['prefix' => 'settings'], function () {
     Route::put('/update/{setting}' , [SettingsController::class , 'update'])->name('admin.settings.update');
 });
 
-// Categories 
+// Categories
 Route::group(['prefix' => 'categories'], function () {
 
     Route::get('/' , [CategoryController::class , 'index'])->name('admin.categories');
@@ -114,7 +116,7 @@ Route::group(['prefix' => 'orders'], function () {
 
 });
 
-// Posts 
+// Posts
 
 Route::group(['prefix' => 'posts'], function () {
 
@@ -144,7 +146,7 @@ Route::group(['prefix' => 'products'], function () {
 
 });
 
-// User Management 
+// User Management
     Route::get('/inputs' , [UserManagementController::class , 'inputs'])->name('admin.inputs');
 
 Route::group(['prefix' => 'user_management'], function () {
@@ -270,7 +272,7 @@ Route::group(['prefix' => "car_water"], function(){
 });
 
 
-// Big Car 
+// Big Car
 Route::group(['prefix' => "big_car"], function(){
     Route::get('/' , [BigCarController::class , 'index'])->name('admin.big_car');
     Route::get('/edit/{id}',[BigCarController::class , 'edit'])->name('admin.big_car.edit');
@@ -278,7 +280,7 @@ Route::group(['prefix' => "big_car"], function(){
 });
 
 
-// Contracting 
+// Contracting
 Route::group(['prefix' => "contracting"], function(){
     Route::get('/' , [ContractingController::class , 'index'])->name('admin.contracting');
     Route::get('/edit/{id}',[ContractingController::class , 'edit'])->name('admin.contracting.edit');
@@ -290,7 +292,7 @@ Route::group(['prefix' => "contracting"], function(){
     Route::get('/delete/{id}',[ContractingController::class , 'delete'])->name('admin.contracting.delete');
 });
 
-// Car Maintenance 
+// Car Maintenance
 Route::group(['prefix' => "maintenance"], function(){
     Route::get('/' , [MaintenanceController::class , 'index'])->name('admin.maintenance');
     Route::get('/edit/{id}',[MaintenanceController::class , 'edit'])->name('admin.maintenance.edit');
@@ -300,4 +302,10 @@ Route::group(['prefix' => "maintenance"], function(){
     Route::get('/show_sub_departments_list',[MaintenanceController::class , 'show_sub_departments_list'])->name('admin.maintenance.show_sub_departments_list');
     Route::get('/show_sub_department/{id}',[MaintenanceController::class , 'show_sub_department'])->name('admin.maintenance.show_sub_department');
     Route::get('/delete/{id}',[MaintenanceController::class , 'delete'])->name('admin.maintenance.delete');
+});
+//Heavy Equipment
+Route::group(['prefix' => "big_car"], function(){
+    Route::get('/' , [HeavyEquipmentController::class , 'index'])->name('admin.heavy_equip');
+    Route::get('/edit/{id}',[HeavyEquipmentController::class , 'edit'])->name('admin.heavy_equip.edit');
+    Route::patch('/update/{id}',[HeavyEquipmentController::class , 'update'])->name('admin.heavy_equip.update');
 });

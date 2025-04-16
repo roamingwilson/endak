@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\departments\OrderHeavyEquipController;
 use App\Models\AdsOrder;
 use App\Models\Department;
 use App\Models\WaterOrder;
@@ -52,6 +53,7 @@ use App\Http\Controllers\departments\OrderTeacherController;
 use App\Http\Controllers\departments\OrderCarWaterController;
 use App\Http\Controllers\departments\OrderPublicGeController;
 use App\Http\Controllers\departments\CounterInsectsController;
+use App\Http\Controllers\departments\HeavyEquipmentController;
 use App\Http\Controllers\departments\OrderContractingController;
 use App\Http\Controllers\departments\OrderMaintenanceController;
 use App\Http\Controllers\departments\PartyPreparationController;
@@ -61,6 +63,7 @@ use App\Http\Controllers\departments\OrderPartyPreparationController;
 use App\Http\Controllers\Furniture\FurnitureTransportationsController;
 use App\Http\Controllers\Surveillance\OrderSurveillanceCamerasController;
 use App\Http\Controllers\Furniture\OrderFurnitureTransportationsController;
+use App\Models\HeavyEquipment;
 
 /*
 |--------------------------------------------------------------------------
@@ -99,7 +102,7 @@ Route::get('logout' , [AuthController::class , 'logout'])->middleware('auth')->n
 Route::get('/forgot-password', [AuthController::class , 'forgotPassword'])->name('forgot-password');
 
 
-// // Departments 
+// // Departments
 Route::get('/departments', [DepartmentsController::class , 'index'])->name('departments');
 Route::get('/departments/{id}', [DepartmentsController::class , 'show'])->name('departments.show');
 
@@ -123,16 +126,16 @@ Route::get('order/my_orders/{id}' , [OrderUserController::class , 'my_orders'])-
 Route::post('/order/create' , [OrderUserController::class , 'store'])->name('web.order.save');
 Route::get('/order/{id}' , [OrderUserController::class , 'show_order'])->name('web.order.view');
 Route::post('/order/complete' , [OrderUserController::class , 'finish'])->name('web.order.finish');
-// Rating 
+// Rating
 Route::get('/profile/{id}' ,[ProfileController::class , 'show'] )->name('web.profile');
 Route::get('/profile/edit/{id}' ,[ProfileController::class , 'edit'] )->name('web.profile.edit');
 Route::post('/profile/update' ,[ProfileController::class , 'update'] )->name('web.profile.update');
 
-// Users 
+// Users
 
 Route::get('/service_provider' , [ProfileController::class , 'users'])->name('web.user.service_provider');
 
-// Order Rating 
+// Order Rating
 
 Route::get('/add_rate/{id}' , [RatingUserController::class , 'add_rate'])->name('web.add_rate');
 Route::post('/web-rate/store' , [RatingUserController::class , 'store'])->name('web.add_rate.store');
@@ -141,11 +144,11 @@ Route::post('/web-rate/store' , [RatingUserController::class , 'store'])->name('
 
 Route::get('/send_message/{id}' , [MessageUserController::class , 'send'])->name('web.send_message');
 Route::post('/send' , [MessageUserController::class , 'store'])->name('messages.store')->middleware('auth');
-// order item 
+// order item
 
 Route::post('/order/items' , [OrderUserController::class , 'product_order'])->name('order_item');
 
-// furniture_transportations 
+// furniture_transportations
 Route::group(['prefix' => "furniture_transportations"], function(){
     Route::get('/show' , [FurnitureTransportationsController::class , 'show'])->name('furniture_transportations_show');
     Route::post('/add_service' , [FurnitureTransportationsController::class , 'store_service'])->name('furniture_transportations_store_service');
@@ -369,7 +372,7 @@ Route::group(['prefix' => "car_water"], function(){
 });
 
 
-// Big Car 
+// Big Car
 Route::group(['prefix' => "big_car"], function(){
     Route::get('/show' , [BigCarController::class , 'show'])->name('big_car_show');
     Route::post('/add_service' , [BigCarController::class , 'store_service'])->name('big_car_store_service');
@@ -422,6 +425,21 @@ Route::group(['prefix' => "maintenance"], function(){
         MaintenanceOrder::find($id)->update(['status' => "completed"]);
         return redirect()->back();
     })->name('accept_project_maintenance');
+});
+Route::group(['prefix' => "heavy_equip"], function(){
+    Route::get('/show' , [HeavyEquipmentController::class , 'show'])->name('heavy_equip_show');
+    Route::post('/add_service' , [HeavyEquipmentController::class , 'store_service'])->name('heavy_equip_store_service');
+    Route::get('/',[HeavyEquipmentController::class , 'index'])->name('main_heavy_equip');
+    Route::get('/service/{id}',[HeavyEquipmentController::class , 'show_my_service'])->name('main_heavy_equip_show_my_service');
+    Route::get('/edit/{id}',[HeavyEquipmentController::class , 'edit'])->name('main_heavy_equip.edit');
+    Route::patch('/update/{id}',[HeavyEquipmentController::class , 'update'])->name('main_heavy_equip.update');
+    Route::post('/accept_offer' , [OrderHeavyEquipController::class , 'store'])->name('accept_offer_heavy_equip');
+    Route::get('/order' , [OrderHeavyEquipController::class , 'show_orders'])->name('show_orders_heavy_equip');
+    Route::get('/order/{id}' , [OrderHeavyEquipController::class , 'show'])->name('show_order_heavy_equip');
+    Route::get('/accept_project_heavy_equip/{id}' , function($id) {
+        BigCarOrder::find($id)->update(['status' => "completed"]);
+        return redirect()->back();
+    })->name('accept_project_heavy_equip');
 });
 
 

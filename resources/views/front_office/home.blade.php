@@ -110,11 +110,11 @@
         $userDepartments = $user->departments()->with('commentable')->get();
         // $contracting = $userDepartments->first(function ($department) {
         //     if($department->commentable_type === \App\Models\Contracting::class){
-        //         return  \App\Models\Contracting::where('id' , $department->commentable_id)->first(); 
-        //     } 
+        //         return  \App\Models\Contracting::where('id' , $department->commentable_id)->first();
+        //     }
         //     return false;
         // });
-     
+
     $main_contracting = $userDepartments->first(function ($department) {
         return $department->commentable_type === \App\Models\Contracting::class;
     });
@@ -131,7 +131,7 @@
     if($main_maintenance ){
 
         $maintenance =  \App\Models\Maintenance::where('id' , $main_maintenance->commentable_id)->first();
-    } 
+    }
     $Follow_cameras = $userDepartments->first(function ($department) {
         return $department->commentable_type === \App\Models\FollowCamera::class;
     });
@@ -174,8 +174,11 @@
     $garden = $userDepartments->first(function ($department) {
         return $department->commentable_type === \App\Models\Garden::class;
     });
+    $heavy_equip = $userDepartments->first(function ($department) {
+        return $department->commentable_type === \App\Models\HeavyEquipment::class;
+    });
 }else{
-    $Follow_cameras =  \App\Models\FollowCamera::first(); 
+    $Follow_cameras =  \App\Models\FollowCamera::first();
     $furniture_transportations =  \App\Models\FurnitureTransportation::first();
     $PartyPreparation =   \App\Models\PartyPreparation::first();
     $counter_insects = \App\Models\CounterInsects::first();
@@ -191,16 +194,17 @@
     $garden = \App\Models\Garden::first();
     $contracting =   \App\Models\Contracting::first();
     $maintenance =   \App\Models\Maintenance::first();
-                 
+    $heavy_equip = \App\Models\HeavyEquipment::first();
+
 }
- 
-    
+
+
     $users_count = App\Models\User::count();
     $providers_count = App\Models\User::where('role_id', 3)->count();
     $users = App\Models\User::where('role_id', 3)->limit(6)->get();
-   
+
     ?>
-    
+
 
     <section class="section overflow-hidden">
         <div class="container">
@@ -257,6 +261,21 @@
                             <div class="card-body">
                                 <a href="{{ route('big_car_show') }}">
                                     <p class="card-text">{{ $lang == 'ar' ? $big_car->name_ar : $big_car->name_en }}</p>
+                                </a>
+                            </div>
+                        </div>
+                    @endif
+                    @if ($heavy_equip)
+                        <div class="card card-custom">
+                            @if ($heavy_equip->image)
+                                <a href="{{ route('heavy_equip_show') }}">
+                                    <img src="{{ $heavy_equip->image_url }}" class="card-img-top"
+                                        alt="{{ $heavy_equip->name_ar }}">
+                                </a>
+                            @endif
+                            <div class="card-body">
+                                <a href="{{ route('heavy_equip_show') }}">
+                                    <p class="card-text">{{ $lang == 'ar' ? $heavy_equip->name_ar : $heavy_equip->name_en }} asdasd</p>
                                 </a>
                             </div>
                         </div>
@@ -493,7 +512,7 @@
         </div>
     </section>
 
-    
+
     <section class="section bg-pattern-2 bg-image2">
         <div class="container">
             <div class="heading-section">
