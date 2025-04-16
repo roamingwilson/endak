@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('heavy_equipment_orders', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('service_id')->constrained('big_car_services')->cascadeOnDelete()->nullable();
+            $table->foreignId('service_id')->constrained('heavy_equipment_services')->cascadeOnDelete()->nullable();
             $table->foreignId('customer_id')->constrained('users')->cascadeOnDelete();
             $table->foreignId('service_provider_id')->constrained('users')->cascadeOnDelete();
             $table->enum('status' , ['pending' , 'completed' , 'cancel']);

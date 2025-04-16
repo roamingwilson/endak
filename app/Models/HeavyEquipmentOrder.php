@@ -25,6 +25,6 @@ class HeavyEquipmentOrder extends Model
 
     public function service_heavy_equip()
     {
-        return $this->belongsTo(GardenService::class, 'service_id', 'id');
+        return $this->belongsTo(HeavyEquipmentservice::class, 'service_id', 'id');
     }
 }
