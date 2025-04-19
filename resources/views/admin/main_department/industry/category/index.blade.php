@@ -32,7 +32,9 @@
     {{-- نموذج إضافة قسم --}}
     <form action="{{ route('indscategories.store') }}" method="POST">
         @csrf
-
+        @if(isset($industry))
+    <input type="hidden" name="industry_id" value="{{ $industry->id }}">
+@endif
 
 <div class="mb-3">
     <label for="name" class="form-label">اسم القسم</label>

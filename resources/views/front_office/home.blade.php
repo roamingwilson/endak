@@ -186,6 +186,9 @@
     $van_truck = $userDepartments->first(function ($department) {
         return $department->commentable_type === \App\Models\VanTruck::class;
     });
+    $industry = $userDepartments->first(function ($department) {
+        return $department->commentable_type === \App\Models\industries::class;
+    });
 }else{
     $Follow_cameras =  \App\Models\FollowCamera::first();
     $furniture_transportations =  \App\Models\FurnitureTransportation::first();
@@ -207,6 +210,7 @@
     $spare_part = \App\Models\SpareParts::first();
     $air_con = \App\Models\AirCondition::first();
     $van_truck = \App\Models\VanTruck::first();
+    $industry = \App\Models\industries::first();
 
 }
 
@@ -262,6 +266,20 @@
                             </div>
                         </div>
                     @endif
+                    @if ($industry)
+                        <div class="card card-custom">
+
+                            <div class="card-body">
+                                <a href="{{ route('indsproducts.products') }}">
+                                    <p class="card-text">{{ $industry->name }}
+                                    </p>
+                                </a>
+                            </div>
+                        </div>
+                    @endif
+
+
+
                     @if ($big_car)
                         <div class="card card-custom">
                             @if ($big_car->image)

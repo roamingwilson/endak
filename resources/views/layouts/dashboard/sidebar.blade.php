@@ -110,7 +110,7 @@ $lang = config('app.locale');
                     <li class="nav-item has-treeview">
                         <a href="" class="nav-link {{ request()->is('admin/furniture_transportations*') ? 'active' : '' }}">
                             {{-- <i class="nav-icon fas fa-cog"></i> --}}
-                            <i class="fas fa-car nav-icon"></i>
+                            <i class="fas fa-couch nav-icon"></i>
 
                             <p>
                                 {{ ($lang == 'ar')? 'قسم نقل عفش' : 'Furniture Transportations' }}
@@ -198,7 +198,7 @@ $lang = config('app.locale');
                     <li class="nav-item has-treeview">
                         <a href="" class="nav-link {{ request()->is('admin/surveillance_cameras*') ? 'active' : '' }}">
                             {{-- <i class="nav-icon fas fa-cog"></i> --}}
-                            <i class="fas fa-car nav-icon"></i>
+                            <i class="fas fa-video nav-icon"></i>
 
                             <p>
                                 {{ ($lang == 'ar')? 'قسم كاميرات مراقبة ' : 'Surveillance Cameras' }}
@@ -230,7 +230,7 @@ $lang = config('app.locale');
                 @can('Admin_Departments')
                     <li class="nav-item has-treeview">
                         <a href="" class="nav-link {{ request()->is('admin/contracting*') ? 'active' : '' }}">
-                            <i class="fas fa-car nav-icon"></i>
+                            <i class="far fa-building nav-icon"></i>
 
                             <p>
                                 {{ ($lang == 'ar')? 'المقاولات' : 'Contracting' }}
@@ -274,7 +274,7 @@ $lang = config('app.locale');
                 @can('Admin_Departments')
                     <li class="nav-item has-treeview">
                         <a href="" class="nav-link {{ request()->is('admin/maintenance*') ? 'active' : '' }}">
-                            <i class="fas fa-car nav-icon"></i>
+                            <i class="fas fa-wrench nav-icon"></i>
 
                             <p>
                                 {{ ($lang == 'ar')? 'صيانة السيارات' : 'Car Maintenance' }}
@@ -296,7 +296,7 @@ $lang = config('app.locale');
                 @can('Admin_Departments')
                     <li class="nav-item has-treeview">
                         <a href="" class="nav-link {{ request()->is('admin/party_preparation*') ? 'active' : '' }}">
-                            <i class="fas fa-car nav-icon"></i>
+                            <i class="fas fa-glass-cheers nav-icon"></i>
 
                             <p>
                                 {{ ($lang == 'ar')? 'قسم تجهيز حفلات ' : 'Party preparation' }}
@@ -318,7 +318,7 @@ $lang = config('app.locale');
                 @can('Admin_Departments')
                     <li class="nav-item has-treeview">
                         <a href="" class="nav-link {{ request()->is('admin/counter_insects*') ? 'active' : '' }}">
-                            <i class="fas fa-car nav-icon"></i>
+                            <i class="fas fa-spider nav-icon"></i>
 
                             <p>
                                 {{ ($lang == 'ar')? 'مكافحة الحشرات' : 'Counter Insects' }}
@@ -344,7 +344,7 @@ $lang = config('app.locale');
                 @can('Admin_Departments')
                     <li class="nav-item has-treeview">
                         <a href="" class="nav-link {{ request()->is('admin/garden*') ? 'active' : '' }}">
-                            <i class="fas fa-car nav-icon"></i>
+                            <i class="fas fa-tree nav-icon"></i>
 
                             <p>
                                 {{ ($lang == 'ar')? 'تنسيق حدائق وزراعة' : 'Garden and Agriculture Coordination' }}
@@ -392,7 +392,7 @@ $lang = config('app.locale');
                 @can('Admin_Departments')
                     <li class="nav-item has-treeview">
                         <a href="" class="nav-link {{ request()->is('admin/teacher*') ? 'active' : '' }}">
-                            <i class="fas fa-car nav-icon"></i>
+                            <i class="fas fa-graduation-cap nav-icon"></i>
 
                             <p>
                                 {{ ($lang == 'ar')? 'دروس خصوصي' : "Private Teacher" }}
@@ -416,7 +416,7 @@ $lang = config('app.locale');
                 @can('Admin_Departments')
                     <li class="nav-item has-treeview">
                         <a href="" class="nav-link {{ request()->is('admin/family*') ? 'active' : '' }}">
-                            <i class="fas fa-car nav-icon"></i>
+                            <i class="fas fa-hamburger nav-icon"></i>
 
                             <p>
                                 {{ ($lang == 'ar')? 'أسر منتجة' : "Productive Families" }}
@@ -440,7 +440,7 @@ $lang = config('app.locale');
                 @can('Admin_Departments')
                     <li class="nav-item has-treeview">
                         <a href="" class="nav-link {{ request()->is('admin/worker*') ? 'active' : '' }}">
-                            <i class="fas fa-car nav-icon"></i>
+                            <i class="fas fa-users nav-icon"></i>
 
                             <p>
                                 {{ ($lang == 'ar')? 'عمال وحرفيين باليومية' : "Worker By Days" }}
@@ -486,7 +486,7 @@ $lang = config('app.locale');
                 @can('Admin_Departments')
                     <li class="nav-item has-treeview">
                         <a href="" class="nav-link {{ request()->is('admin/ads*') ? 'active' : '' }}">
-                            <i class="fas fa-car nav-icon"></i>
+                            <i class="fas fa-ad nav-icon"></i>
 
                             <p>
                                 {{ ($lang == 'ar')? 'دعاية واعلان' : "Advertising" }}
@@ -532,7 +532,7 @@ $lang = config('app.locale');
                 @can('Admin_Departments')
                     <li class="nav-item has-treeview">
                         <a href="" class="nav-link {{ request()->is('admin/car_water*') ? 'active' : '' }}">
-                            <i class="fas fa-car nav-icon"></i>
+                            <i class="fas fa-shuttle-van nav-icon"></i>
 
                             <p>
                                 {{ ($lang == 'ar')? 'صهريج مياة' : "Water Tank" }}
@@ -555,7 +555,7 @@ $lang = config('app.locale');
                 @can('Admin_Departments')
                     <li class="nav-item has-treeview">
                         <a href="" class="nav-link {{ request()->is('admin/big_car*') ? 'active' : '' }}">
-                            <i class="fas fa-car nav-icon"></i>
+                            <i class="fas fa-truck-monster nav-icon"></i>
 
                             <p>
                                 {{ ($lang == 'ar')? 'سطحه' : "Big Car" }}
@@ -578,7 +578,7 @@ $lang = config('app.locale');
                 @can('Admin_Departments')
                     <li class="nav-item has-treeview">
                         <a href="" class="nav-link {{ request()->is('admin/heavy_equip*') ? 'active' : '' }}">
-                            <i class="fas fa-car nav-icon"></i>
+                            <i class="fas fa-snowplow nav-icon"></i>
 
                             <p>
                                 {{ ($lang == 'ar')? 'معدات ثقيلة' : 'Heavy equipment' }}
@@ -604,7 +604,7 @@ $lang = config('app.locale');
                 @can('Admin_Departments')
                     <li class="nav-item has-treeview">
                         <a href="" class="nav-link {{ request()->is('admin/spare_part*') ? 'active' : '' }}">
-                            <i class="fas fa-car nav-icon"></i>
+                            <i class="	fas fa-oil-can nav-icon"></i>
 
                             <p>
                                 {{ ($lang == 'ar')? 'قطع غيار' : 'spare parts' }}
@@ -630,7 +630,7 @@ $lang = config('app.locale');
                 @can('Admin_Departments')
                     <li class="nav-item has-treeview">
                         <a href="" class="nav-link {{ request()->is('admin/air_con*') ? 'active' : '' }}">
-                            <i class="fas fa-car nav-icon"></i>
+                            <i class="fas fa-wind nav-icon"></i>
 
                             <p>
                                 {{ ($lang == 'ar')? 'تصليح تكييفات' : 'ِair condition' }}

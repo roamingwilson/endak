@@ -510,6 +510,7 @@ Route::group(['prefix' => "heavy_equip"], function(){
 Route::group(['prefix' => "plastic"], function(){
     Route::get('/products', [indsProductController::class, 'index'])->name('indsproducts.index');
     Route::get('/products/{id}', [indsProductController::class, 'show'])->name('indsproducts.show');
+    Route::get('/Viewproducts', [indsProductController::class, 'viewProduct'])->name('indsproducts.products');
 
     Route::post('/accept_offer' , [VanTruckOrderController::class , 'store'])->name('accept_offer_plastic');
     Route::get('/order' , [VanTruckOrderController::class , 'show_orders'])->name('show_orders_plastic');

@@ -49,7 +49,7 @@ class indsProductController extends Controller
         $products = indsProduct::all();
         $categories = indsCategory::all();
         $subcategories = IndSubCategory::all();
-        return view('admin.main_department.industry.product.index', compact( 'products','categories', 'subcategories'));
+        return view('admin.main_department.industry.product.create', compact( 'products','categories', 'subcategories'));
     }
     public function store(Request $request) {
         $fields = $request->validate([
@@ -70,7 +70,7 @@ class indsProductController extends Controller
 
         IndsProduct::create($fields);
 
-        // هنا كنا نسيت نجيب المنتجات
+
         $products = IndsProduct::all();
 
         return view('admin.main_department.industry.product.index', compact('products'));
@@ -78,5 +78,11 @@ class indsProductController extends Controller
     public function show($id) {
         $product = indsProduct::with(['category', 'subcategory', 'filters'])->findOrFail($id);
         return view('products.show', compact('product'));
+    }
+    public function viewProduct(){
+        $products = indsProduct::latest()->get();
+        $categories = indsCategory::all();
+        $subcategories = IndSubCategory::all();
+        return view('admin.main_department.industry.product.viewproduct', compact('products', 'categories', 'subcategories'));
     }
 }
