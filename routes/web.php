@@ -32,6 +32,8 @@ use App\Http\Controllers\DepartmentsController;
 use App\Http\Controllers\MessageUserController;
 use App\Http\Controllers\OrderCleaningController;
 use App\Http\Controllers\departments\AdsController;
+use App\Http\Controllers\departments\Aircondition\AirconController;
+use App\Http\Controllers\departments\Aircondition\OrderAirconController;
 use App\Http\Controllers\GeneralCommentsController;
 use App\Http\Controllers\departments\WaterController;
 use App\Http\Controllers\departments\BigCarController;
@@ -60,10 +62,14 @@ use App\Http\Controllers\departments\PartyPreparationController;
 use App\Http\Controllers\departments\OrderCounterInsectsController;
 use App\Http\Controllers\Surveillance\SurveillanceCamerasController;
 use App\Http\Controllers\departments\OrderPartyPreparationController;
+use App\Http\Controllers\departments\SpareParts\OrderSparePartController;
+use App\Http\Controllers\departments\SpareParts\SparePartController;
 use App\Http\Controllers\Furniture\FurnitureTransportationsController;
 use App\Http\Controllers\Surveillance\OrderSurveillanceCamerasController;
 use App\Http\Controllers\Furniture\OrderFurnitureTransportationsController;
+use App\Models\AirCondition;
 use App\Models\HeavyEquipment;
+use App\Models\SpareParts;
 
 /*
 |--------------------------------------------------------------------------
@@ -437,9 +443,39 @@ Route::group(['prefix' => "heavy_equip"], function(){
     Route::get('/order' , [OrderHeavyEquipController::class , 'show_orders'])->name('show_orders_heavy_equip');
     Route::get('/order/{id}' , [OrderHeavyEquipController::class , 'show'])->name('show_order_heavy_equip');
     Route::get('/accept_project_heavy_equip/{id}' , function($id) {
-        BigCarOrder::find($id)->update(['status' => "completed"]);
+        HeavyEquipment::find($id)->update(['status' => "completed"]);
         return redirect()->back();
     })->name('accept_project_heavy_equip');
+});
+Route::group(['prefix' => "spare_part"], function(){
+    Route::get('/show' , [SparePartController::class , 'show'])->name('spare_part_show');
+    Route::post('/add_service' , [SparePartController::class , 'store_service'])->name('spare_part_store_service');
+    Route::get('/',[SparePartController::class , 'index'])->name('main_spare_part');
+    Route::get('/service/{id}',[SparePartController::class , 'show_my_service'])->name('main_spare_part_show_my_service');
+    Route::get('/edit/{id}',[SparePartController::class , 'edit'])->name('main_spare_part.edit');
+    Route::patch('/update/{id}',[SparePartController::class , 'update'])->name('main_spare_part.update');
+    Route::post('/accept_offer' , [OrderSparePartController::class , 'store'])->name('accept_offer_spare_part');
+    Route::get('/order' , [OrderSparePartController::class , 'show_orders'])->name('show_orders_spare_part');
+    Route::get('/order/{id}' , [OrderSparePartController::class , 'show'])->name('show_order_spare_part');
+    Route::get('/accept_project_spare_part/{id}' , function($id) {
+        SpareParts::find($id)->update(['status' => "completed"]);
+        return redirect()->back();
+    })->name('accept_project_spare_part');
+});
+Route::group(['prefix' => "air_con"], function(){
+    Route::get('/show' , [AirconController::class , 'show'])->name('air_con_show');
+    Route::post('/add_service' , [AirconController::class , 'store_service'])->name('air_con_store_service');
+    Route::get('/',[AirconController::class , 'index'])->name('main_air_con');
+    Route::get('/service/{id}',[AirconController::class , 'show_my_service'])->name('main_air_con_show_my_service');
+    Route::get('/edit/{id}',[AirconController::class , 'edit'])->name('main_air_con.edit');
+    Route::patch('/update/{id}',[AirconController::class , 'update'])->name('main_air_con.update');
+    Route::post('/accept_offer' , [OrderAirconController::class , 'store'])->name('accept_offer_air_con');
+    Route::get('/order' , [OrderAirconController::class , 'show_orders'])->name('show_orders_air_con');
+    Route::get('/order/{id}' , [OrderAirconController::class , 'show'])->name('show_order_air_con');
+    Route::get('/accept_project_air_con/{id}' , function($id) {
+        AirCondition::find($id)->update(['status' => "completed"]);
+        return redirect()->back();
+    })->name('accept_project_air_con');
 });
 
 

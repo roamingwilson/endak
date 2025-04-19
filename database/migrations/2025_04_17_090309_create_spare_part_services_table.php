@@ -11,14 +11,19 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('heavy_equipment_services', function (Blueprint $table) {
+        Schema::create('spare_part_services', function (Blueprint $table) {
             $table->id();
-            $table->string('location')->nullable();
-            $table->string('equip_type')->nullable();
-            $table->time('time')->nullable();
+            $table->string('brand');
+            $table->string('year_made');
+            $table->string('part_number');
+            $table->string('name');
+            $table->string('from_city');
+            $table->string('from_neighborhood');
+            $table->string('to_city');
+            $table->string('to_neighborhood');
+            $table->text('notes')->nullable();
             $table->enum('status',['open' , 'close' , 'pending' , 'confirm']);
             $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
-            $table->longText('notes')->nullable();
             $table->timestamps();
         });
     }
@@ -28,6 +33,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('heavy_equipment_services');
+        Schema::dropIfExists('spare_part_services');
     }
 };

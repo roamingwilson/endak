@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\AdsService;
+use App\Models\AirCondition;
 use App\Models\WaterService;
 use Illuminate\Http\Request;
 use App\Models\BigCarService;
@@ -22,6 +23,7 @@ use App\Models\PartyPreparationService;
 use App\Notifications\CommentNotification;
 use App\Models\FurnitureTransportationService;
 use App\Models\HeavyEquipment;
+use App\Models\SpareParts;
 
 class GeneralCommentsController extends Controller
 {
@@ -44,6 +46,8 @@ class GeneralCommentsController extends Controller
         $value14 = ['big_car'];
         $value15 = ['contracting'];
         $value16 = ['heavy_equip'];
+        $value17 = ['spare_part'];
+        $value18 = ['air_con'];
         if (array_intersect($url, $value1)) {
             $service = FurnitureTransportationService::where('id' , $request->service_id)->first();
         }
@@ -91,6 +95,12 @@ class GeneralCommentsController extends Controller
         }
         elseif(array_intersect($url, $value16)){
             $service = HeavyEquipment::where('id' , $request->service_id)->first();
+        }
+        elseif(array_intersect($url, $value17)){
+            $service = SpareParts::where('id' , $request->service_id)->first();
+        }
+        elseif(array_intersect($url, $value18)){
+            $service = AirCondition::where('id' , $request->service_id)->first();
         }
         $customer = User::where('id' ,$service->user_id )->first();
         $user = auth()->user();

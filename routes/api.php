@@ -12,6 +12,7 @@ use App\Http\Controllers\Api\DepartmentController;
 use App\Http\Controllers\Api\MessageApiController;
 use App\Http\Controllers\Api\ProfileApiController;
 use App\Http\Controllers\Api\Furniture\ApiAdsController;
+use App\Http\Controllers\Api\furniture\ApiAirconController;
 use App\Http\Controllers\Api\Furniture\ApiWaterController;
 use App\Http\Controllers\Api\Furniture\ApiBigCarController;
 use App\Http\Controllers\Api\Furniture\ApiFamilyController;
@@ -49,13 +50,13 @@ Route::get('/{dapartment_id}/posts', [PostController::class ,'index'])->name('al
 Route::post('/posts/store', [PostController::class ,'store'])->name('post.store');
 
 
-// Departments 
+// Departments
 
 Route::get('/departments' ,[DepartmentController::class , 'index'])->name('api.departments');
 Route::get('/departments/{id}' ,[DepartmentController::class , 'childern'])->name('api.departments.childern');
 Route::get('/departments/show_post_inputs/{id}' ,[DepartmentController::class , 'showDepartment'])->name('api.departments.show');
 
-// Categories 
+// Categories
 
 Route::get('/categories' ,[CategoryController::class , 'index'])->name('api.Categories');
 Route::get('/categories/{id}' ,[CategoryController::class , 'childern'])->name('api.Categories.childern');
@@ -67,7 +68,7 @@ Route::post('/comments/create' , [CommentController::class , 'store'])->name('ap
 Route::get('/comments/{id}' , [CommentController::class , 'index'])->name('api.comments');
 
 
-// Orders 
+// Orders
 
 Route::group(['prefix' => 'orders'], function () {
 
@@ -77,7 +78,7 @@ Route::group(['prefix' => 'orders'], function () {
 });
 
 
-// Messages 
+// Messages
 
 Route::group(['prefix' => 'messages'], function () {
     Route::get('/conversation' , [MessageApiController::class , 'conversation'])->name('api.messages.myconversation')->middleware('auth:sanctum');
@@ -98,7 +99,7 @@ Route::group(['prefix' => "my_profile"] , function(){
     Route::get('/{id}' , [ProfileApiController::class , 'index'])->name('api.my_profile');
 });
 
-// furniture_transportations 
+// furniture_transportations
 
 Route::group(['prefix' => 'furniture_transportations' ] , function(){
     Route::get('/' , [ApiFurnitureTransportationsController::class , 'index']);
@@ -114,7 +115,7 @@ Route::group(['prefix' => 'furniture_transportations/service_provider' ] , funct
 });
 
 
-// Systems and surveillance cameras 
+// Systems and surveillance cameras
 Route::group(['prefix' => 'surveillance_cameras' ] , function(){
     Route::get('/' , [ApiServeillanceCamerasController::class , 'index']);
     Route::post('/store_service' , [ApiServeillanceCamerasController::class , 'storeService']);
@@ -293,4 +294,16 @@ Route::group(['prefix' => 'big_car' ] , function(){
 Route::group(['prefix' => 'big_car/service_provider' ] , function(){
     Route::get('/' , [ApiBigCarController::class , 'service_provider_index']);
     Route::post('/add_offer' , [ApiBigCarController::class , 'service_provider_add_offer']);
+});
+Route::group(['prefix' => 'air_con' ] , function(){
+    Route::get('/' , [ApiAirconController::class , 'index']);
+    Route::post('/store_service' , [ApiAirconController::class , 'storeService']);
+    Route::post('/accept_offer' , [ApiAirconController::class , 'accept_offer']);
+    Route::post('/add_rate' , [ApiAirconController::class , 'storeRate']);
+    Route::get('/show_service/{id}' , [ApiAirconController::class , 'showService']);
+
+});
+Route::group(['prefix' => 'air_con/service_provider' ] , function(){
+    Route::get('/' , [ApiAirconController::class , 'service_provider_index']);
+    Route::post('/add_offer' , [ApiAirconController::class , 'service_provider_add_offer']);
 });

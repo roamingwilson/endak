@@ -108,7 +108,7 @@
                                 {{ $lang == 'ar' ? 'العروض' : 'Offers' }}</h5>
                             <div class="d-block mb-4 overflow-visible d-block d-sm-flex">
                                 {{-- <div class="row">--}}
-                                    <div class="container"> 
+                                    <div class="container">
                                         @forelse ($service->comments as $comment)
                                             <div class="col-12 border mb-4 p-4 br-5">
                                                 <div class="d-flex align-items-center">
@@ -130,7 +130,7 @@
                                                         </form>
                                                     @endif
                                                 </div>
-                                
+
                                                 @if (isset($comment->price))
                                                     <p>{{ __('general.price') . ' : ' . $comment->price }}</p>
                                                 @endif
@@ -167,7 +167,7 @@
                                         @endforelse
                                      </div>
                                 {{--</div> --}}
-                                
+
                                 {{-- <div class="row">
                                     <div class="container">
                                         <div class="d-flex flex-wrap justify-content-between">
@@ -179,8 +179,8 @@
                                                             {{ $comment->user->first_name . ' ' . $comment->user->last_name }}
                                                         </h5>
                                                         @if(auth()->check() && auth()->id() == $service->user_id)
- 
-                                                        
+
+
                                                         <a class="dropdown-item mb-2" href="{{ route('web.send_message', $comment->user->id) }}">
                                                             <i class="fe fe-mail mx-1"></i> {{ __('messages.send_message') }}
                                                         </a>
@@ -195,7 +195,7 @@
                                                         </form>
                                                         @endif
                                                     </div>
-                                                    
+
                                                     @if (isset($comment->price))
                                                         <p>{{ __('general.price') . ' : ' . $comment->price }}</p>
                                                     @endif
@@ -242,11 +242,11 @@
                                 </div> --}}
                             </div>
 
-                            
+
 
 
                         </div>
- 
+
                         <?php
                         $user = auth()->user();
                         if($user){
@@ -255,7 +255,7 @@
                             ->where('service_provider', $user->id)
                             ->first();
                         }
-                        
+
                         ?>
 
                     </div>
@@ -310,7 +310,7 @@
         });
     </script>
 
-    
+
 @endsection --}}
 <div class="me-3 mb-3">
     {{-- <a href="javascript:void(0);"> <img class="avatar avatar-lg rounded-circle thumb-sm"
@@ -326,7 +326,7 @@ alt="64x64" src="../assets/images/profile/2.jpg"> </a> --}}
 <p class="tx-muted"> {{ $comment->description }}</p>
 @if (isset($comment->files))
 @foreach ($comment->files as $item)
- 
+
 <img width="100px" height="100px" src="{{ Storage::url( $item->file) }}" alt="">
 <a href="{{ Storage::url($item->file) }}" target="_blank">Download</a>
 @endforeach

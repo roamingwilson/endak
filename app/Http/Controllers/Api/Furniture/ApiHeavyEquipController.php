@@ -1,31 +1,24 @@
 <?php
 
-namespace App\Http\Controllers\Api\Furniture;
+namespace App\Http\Controllers\Api\furniture;
 
-use App\Models\User;
-use App\Models\Rating;
-use App\Models\BigCarOrder;
-use App\Models\GeneralImage;
-use Illuminate\Http\Request;
-use App\Models\BigCarService;
-
-use App\Models\GeneralComments;
 use App\Http\Controllers\Controller;
-use App\Notifications\CommentNotification;
-use Carbon\Carbon;
+use Illuminate\Http\Request;
 
-class ApiBigCarController extends Controller
+class ApiHeavyEquipController extends Controller
 {
     public function index()
     {
         $inputs_name = [
-            'user_id' => "auth user id ",
-            'images' => "array",
-            'location' => ['type' => "text" , 'drink_width' => 'neighborhood' , 'title'  => "الموقع الحالي"],
-            'destination' => ['type' => "text" , 'name' => 'destination' , 'title' => "الوجهة"],
-            'car_type' => ['type' => "text" , 'name' => 'car_type' , 'title' => "نوع السيارة"],
-            'time' => ['type' => "text" , 'name' => 'time' , 'title' => "الوقت"],
-            'notes' => ['type'=> 'text','name' => 'notes' , 'title' => 'ملاحظات عن العمل المطلوب'],
+       'user_id' => "auth user id ",
+
+            'location' => "location",
+            'notes' => 'notes',
+
+            'city' => 'city',
+            'neighborhood' => 'neighborhood',
+            'time' => 'time',
+            'date' => 'date',
         ];
         $data = ['inputs_name' => $inputs_name];
         return response()->apiSuccess($data, 'success', 200);
@@ -34,11 +27,20 @@ class ApiBigCarController extends Controller
     public function storeService(Request $request)
     {
 
-        $is_created = BigCarService::create([
+        $is_created = AirConditionService::create([
             'user_id' => $request->user_id ?? auth('sanctum')->id(),
-            'drink_width' => $request->drink_width,
-            'wall_width' => $request->wall_width,
+            'split' => $request->split,
+            'window' => $request->window,
+            'feryoun' => $request->feryoun,
+            'maintance' => $request->maintance,
+            'quantity' => $request->quantity,
             'notes' => $request->notes,
+            'model' => $request->model,
+            'city' => $request->city,
+            'neighborhood' => $request->neighborhood,
+            'time' => $request->time,
+            'date' => $request->date,
+
         ]);
         if ($is_created) {
             if ($request->hasFile('images')) {
@@ -49,7 +51,7 @@ class ApiBigCarController extends Controller
                 }
 
                 foreach ($files as $file) {
-                    $path = $file->store('big_car', [
+                    $path = $file->store('air_con', [
                         'disk' => 'public',
                     ]);
                         $image = new GeneralImage([
@@ -65,13 +67,13 @@ class ApiBigCarController extends Controller
     }
     public function accept_offer(Request $request){
 
-        $is_create = BigCarOrder::create([
+        $is_create = AirConditionOrder::create([
             'service_id'    => $request->service_id,
             'customer_id'    => $request->customer_id,
             'service_provider_id'    => $request->service_provider_id,
         ]);
         if($is_create){
-            $service = BigCarService::find($request->service_id);
+            $service = AirConditionService::find($request->service_id);
             $service->update(['status' => "pending"]);
         }
 
@@ -91,8 +93,8 @@ class ApiBigCarController extends Controller
             'deal_with_him_again' => 'required',
         ]);
 
-        $department_name = 'big_car';
-        $order = BigCarOrder::where('id' , $request->order_id)->first();
+        $department_name = 'air_con';
+        $order = AirConditionOrder::where('id' , $request->order_id)->first();
         $order->update([
             'status'    => 'completed',
         ]);
@@ -129,13 +131,13 @@ class ApiBigCarController extends Controller
     // service_provider
 
     public function service_provider_index(){
-        $services = BigCarService::get();
+        $services = AirConditionService::get();
         return response()->apiSuccess($services);
     }
 
 
     public function service_provider_add_offer(Request $request){
-        $service = BigCarService::where('id' , $request->service_id)->first();
+        $service = AirConditionService::where('id' , $request->service_id)->first();
         $customer = User::where('id' ,$service->user_id )->first();
         $user = auth('sanctum')->user();
         $data = $request->except('image');
@@ -167,11 +169,10 @@ class ApiBigCarController extends Controller
     public function showService($id)
     {
 
-        $is_created = BigCarService::find($id);
-        $offers = GeneralComments::where('commentable_id',$id)->where('commentable_type' ,'App\Models\BigCarService')->get();
+        $is_created = AirConditionService::find($id);
+        $offers = GeneralComments::where('commentable_id',$id)->where('commentable_type' ,'App\Models\CarWaterService')->get();
         $data = ['service' => $is_created , 'offers' => $offers];
         return response()->apiSuccess($data, 'success', 200);
 
     }
-
 }

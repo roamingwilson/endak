@@ -21,9 +21,11 @@ use App\Models\CounterInsects;
 use App\Models\UserDepartment;
 use App\Models\PartyPreparation;
 use App\Http\Controllers\Controller;
+use App\Models\AirCondition;
 use App\Models\FurnitureTransportation;
 use App\Models\HeavyEquipment;
 use App\Models\Maintenance;
+use App\Models\SpareParts;
 use Illuminate\Support\Facades\Storage;
 
 class ProfileController extends Controller
@@ -55,6 +57,8 @@ class ProfileController extends Controller
         $other15 = Contracting::first();
         $other16 = Maintenance::first();
         $other17 = HeavyEquipment::first();
+        $other18 = SpareParts::first();
+        $other19 = AirCondition::first();
 
         $all_departments = Department::get();
 
@@ -79,6 +83,8 @@ class ProfileController extends Controller
             $other15,
             $other16,
             $other17,
+            $other18,
+            $other19,
         ];
 
         foreach ($others as $item) {

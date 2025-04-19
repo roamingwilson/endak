@@ -25,7 +25,7 @@ class DepartmentsController extends Controller
             $sub_departments = $main->sub_Departments;
             $products = $main->products;
             $inputs = $main->inputs;
-            if(isset($products) && isset($inputs) && $products->count() > 0 && $inputs->count() > 0) {  
+            if(isset($products) && isset($inputs) && $products->count() > 0 && $inputs->count() > 0) {
                 return view('front_office.main_departments.show_products_inputs', compact('main', 'services' , 'products' , 'inputs'));
             }
             // if (count($services) > 0) {
@@ -44,10 +44,10 @@ class DepartmentsController extends Controller
             $inputs = $sub->inputs;
             if (count($sub_departments) > 0) {
                 return view('admin.main_department.general.show_sub_departments', compact('main', 'sub_departments'));
-            } 
+            }
             // elseif (count($services) > 0) {
             //     return view('admin.main_department.general.show', compact('main', 'services'));
-            // } 
+            // }
 
             elseif ((count($products) > 0 && count($inputs) > 0)  ) {
                 return view('admin.main_department.general.show_products_inputs', compact('main', 'products' ,'inputs', 'sub' ,'services' ));

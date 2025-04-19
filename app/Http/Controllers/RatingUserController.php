@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Order;
 use App\Models\Rating;
 use App\Models\AdsOrder;
+use App\Models\AirCondition;
+use App\Models\AirConditionOrder;
 use App\Models\WaterOrder;
 use App\Models\BigCarOrder;
 use App\Models\FamilyOrder;
@@ -23,6 +25,8 @@ use App\Models\PartyPreparationOrder;
 use App\Models\FurnitureTransportationOrder;
 use App\Models\HeavyEquipment;
 use App\Models\HeavyEquipmentOrder;
+use App\Models\SparePartOrder;
+use App\Models\SpareParts;
 
 class RatingUserController extends Controller
 {
@@ -46,6 +50,8 @@ class RatingUserController extends Controller
         $value15 = ['contracting'];
         $value16 = ['maintenance'];
         $value17 = ['heavy_equip'];
+        $value18 = ['spare_part'];
+        $value19 = ['air_con'];
         if (array_intersect($url, $value1)) {
             $order = FurnitureTransportationOrder::find($id);
             $department_name = 'furniture_transportations';
@@ -111,6 +117,14 @@ class RatingUserController extends Controller
         elseif(array_intersect($url, $value17)){
             $order = HeavyEquipmentOrder::find($id);
             $department_name = 'heavy_equip';
+        }
+        elseif(array_intersect($url, $value18)){
+            $order = SparePartOrder::find($id);
+            $department_name = 'spare_part';
+        }
+        elseif(array_intersect($url, $value19)){
+            $order = AirConditionOrder::find($id);
+            $department_name = 'air_con';
         }
         else{
             $order = Order::findOrFail($id);
@@ -185,7 +199,13 @@ class RatingUserController extends Controller
             $order = MaintenanceOrder::where('id' , $request->order_id)->first();
         }
         elseif($request->department_name == 'heavy_equip'){
-            $order = HeavyEquipment::where('id' , $request->order_id)->first();
+            $order = HeavyEquipmentOrder::where('id' , $request->order_id)->first();
+        }
+        elseif($request->department_name == 'spare_part'){
+            $order = SparePartOrder::where('id' , $request->order_id)->first();
+        }
+        elseif($request->department_name == 'air_con'){
+            $order = AirConditionOrder::where('id' , $request->order_id)->first();
         }
         else{
 

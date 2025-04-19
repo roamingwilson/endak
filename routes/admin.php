@@ -19,6 +19,7 @@ use App\Http\Controllers\departments\GardenController;
 use App\Http\Controllers\departments\WorkerController;
 use App\Http\Controllers\departments\TeacherController;
 use App\Http\Controllers\Admin\UserManagementController;
+use App\Http\Controllers\departments\Aircondition\AirconController;
 use App\Http\Controllers\departments\CarWaterController;
 use App\Http\Controllers\departments\PublicGeController;
 use App\Http\Controllers\departments\ContractingController;
@@ -26,6 +27,7 @@ use App\Http\Controllers\departments\MaintenanceController;
 use App\Http\Controllers\departments\CounterInsectsController;
 use App\Http\Controllers\departments\HeavyEquipmentController;
 use App\Http\Controllers\departments\PartyPreparationController;
+use App\Http\Controllers\departments\SpareParts\SparePartController;
 use App\Http\Controllers\Surveillance\SurveillanceCamerasController;
 use App\Http\Controllers\Furniture\FurnitureTransportationsController;
 use App\Http\Controllers\Furniture\ProductFurnitureTransportationsController;
@@ -304,8 +306,19 @@ Route::group(['prefix' => "maintenance"], function(){
     Route::get('/delete/{id}',[MaintenanceController::class , 'delete'])->name('admin.maintenance.delete');
 });
 //Heavy Equipment
-Route::group(['prefix' => "big_car"], function(){
+Route::group(['prefix' => "heavy_equip"], function(){
     Route::get('/' , [HeavyEquipmentController::class , 'index'])->name('admin.heavy_equip');
     Route::get('/edit/{id}',[HeavyEquipmentController::class , 'edit'])->name('admin.heavy_equip.edit');
     Route::patch('/update/{id}',[HeavyEquipmentController::class , 'update'])->name('admin.heavy_equip.update');
+});
+//spare_part
+Route::group(['prefix' => "spare_part"], function(){
+    Route::get('/' , [SparePartController::class , 'index'])->name('admin.spare_part');
+    Route::get('/edit/{id}',[SparePartController::class , 'edit'])->name('admin.spare_part.edit');
+    Route::patch('/update/{id}',[SparePartController::class , 'update'])->name('admin.spare_part.update');
+});
+Route::group(['prefix' => "air_con"], function(){
+    Route::get('/' , [AirconController::class , 'index'])->name('admin.air_con');
+    Route::get('/edit/{id}',[AirconController::class , 'edit'])->name('admin.air_con.edit');
+    Route::patch('/update/{id}',[AirconController::class , 'update'])->name('admin.air_con.update');
 });

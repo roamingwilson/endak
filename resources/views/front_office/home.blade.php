@@ -177,6 +177,12 @@
     $heavy_equip = $userDepartments->first(function ($department) {
         return $department->commentable_type === \App\Models\HeavyEquipment::class;
     });
+    $spare_part = $userDepartments->first(function ($department) {
+        return $department->commentable_type === \App\Models\SpareParts::class;
+    });
+    $air_con = $userDepartments->first(function ($department) {
+        return $department->commentable_type === \App\Models\AirCondition::class;
+    });
 }else{
     $Follow_cameras =  \App\Models\FollowCamera::first();
     $furniture_transportations =  \App\Models\FurnitureTransportation::first();
@@ -195,6 +201,8 @@
     $contracting =   \App\Models\Contracting::first();
     $maintenance =   \App\Models\Maintenance::first();
     $heavy_equip = \App\Models\HeavyEquipment::first();
+    $spare_part = \App\Models\SpareParts::first();
+    $air_con = \App\Models\AirCondition::first();
 
 }
 
@@ -265,21 +273,7 @@
                             </div>
                         </div>
                     @endif
-                    @if ($heavy_equip)
-                        <div class="card card-custom">
-                            @if ($heavy_equip->image)
-                                <a href="{{ route('heavy_equip_show') }}">
-                                    <img src="{{ $heavy_equip->image_url }}" class="card-img-top"
-                                        alt="{{ $heavy_equip->name_ar }}">
-                                </a>
-                            @endif
-                            <div class="card-body">
-                                <a href="{{ route('heavy_equip_show') }}">
-                                    <p class="card-text">{{ $lang == 'ar' ? $heavy_equip->name_ar : $heavy_equip->name_en }} asdasd</p>
-                                </a>
-                            </div>
-                        </div>
-                    @endif
+
                     @if ($family)
                         <div class="card card-custom">
                             @if ($family->image)
@@ -479,6 +473,57 @@
                                 <a href="{{ route('maintenance_show') }}">
                                     <p class="card-text">
                                         {{ $lang == 'ar' ? $maintenance->name_ar : $maintenance->name_en }}
+                                    </p>
+                                </a>
+                            </div>
+                        </div>
+                    @endif
+                    @if ($heavy_equip)
+                        <div class="card card-custom">
+                            @if ($heavy_equip->image)
+                                <a href="{{ route('heavy_equip_show') }}">
+                                    <img src="{{ $heavy_equip->image_url }}" class="card-img-top mt-2"
+                                        alt="{{ $heavy_equip->name_ar }}">
+                                </a>
+                            @endif
+                            <div class="card-body">
+                                <a href="{{ route('heavy_equip_show') }}">
+                                    <p class="card-text">
+                                        {{ $lang == 'ar' ? $heavy_equip->name_ar : $heavy_equip->name_en }}
+                                    </p>
+                                </a>
+                            </div>
+                        </div>
+                    @endif
+                    @if ($spare_part)
+                        <div class="card card-custom">
+                            @if ($spare_part->image)
+                                <a href="{{ route('spare_part_show') }}">
+                                    <img src="{{ $spare_part->image_url }}" class="card-img-top mt-2"
+                                        alt="{{ $spare_part->name_ar }}">
+                                </a>
+                            @endif
+                            <div class="card-body">
+                                <a href="{{ route('spare_part_show') }}">
+                                    <p class="card-text">
+                                        {{ $lang == 'ar' ? $spare_part->name_ar : $spare_part->name_en }}
+                                    </p>
+                                </a>
+                            </div>
+                        </div>
+                    @endif
+                    @if ($air_con)
+                        <div class="card card-custom">
+                            @if ($air_con->image)
+                                <a href="{{ route('air_con_show') }}">
+                                    <img src="{{ $air_con->image_url }}" class="card-img-top mt-2"
+                                        alt="{{ $air_con->name_ar }}">
+                                </a>
+                            @endif
+                            <div class="card-body">
+                                <a href="{{ route('air_con_show') }}">
+                                    <p class="card-text">
+                                        {{ $lang == 'ar' ? $air_con->name_ar : $air_con->name_en }}
                                     </p>
                                 </a>
                             </div>

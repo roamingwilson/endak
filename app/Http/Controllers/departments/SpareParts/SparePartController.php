@@ -1,30 +1,30 @@
 <?php
 
-namespace App\Http\Controllers\departments;
+namespace App\Http\Controllers\departments\SpareParts;
 
 use App\Http\Controllers\Controller;
 use App\Models\GeneralImage;
-use App\Models\HeavyEquipment;
-use App\Models\HeavyEquipmentservice;
+use App\Models\SpareParts;
+use App\Models\SparePartServices;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
-class HeavyEquipmentController extends Controller
+class SparePartController extends Controller
 {
     public function index(){
-        $heavy_Equip = HeavyEquipment::first();
-        return view('admin.main_department.heavy_equipment.index' , compact('heavy_Equip'));
+        $spare_part = SpareParts::first();
+        return view('admin.main_department.spare_part.index' , compact('spare_part'));
     }
     public function edit($id){
-        $main = HeavyEquipment::find($id);
-        return view('admin.main_department.heavy_equipment.edit' , compact('main'));
+        $main = SpareParts::find($id);
+        return view('admin.main_department.spare_part.edit' , compact('main'));
     }
 
     public function update(Request $request , $id){
-        $main = HeavyEquipment::find($id);
+        $main = SpareParts::find($id);
         $old_image = $main->image;
 
-        $path = uploadImage( $request , 'heavy_Equip' , 'image');
+        $path = uploadImage( $request , 'spare_part' , 'image');
         $main->update([
             'name_ar'               => $request->name_ar,
             'name_en'               => $request->name_en,
@@ -33,21 +33,21 @@ class HeavyEquipmentController extends Controller
         if ($old_image && $path) {
             Storage::disk('public')->delete($old_image);
         }
-        return redirect()->route('admin.heavy_equip')->with('success' , 'تم التحديث بنجاح');
+        return redirect()->route('admin.spare_part')->with('success' , 'تم التحديث بنجاح');
     }
 
     public function show(){
         $user = auth()->user();
-        $main = HeavyEquipment::first();
-        $services = HeavyEquipmentservice::paginate();
+        $main = SpareParts::first();
+        $services = SparePartServices::paginate();
         if(isset($user) && $user->role_id == 1){
-            return view('admin.main_department.heavy_equipment.show' , compact(  'main' , 'services'));
+            return view('admin.main_department.spare_part.show' , compact(  'main' , 'services'));
         }elseif(isset($user) && $user->role_id == 3){
-            $main = HeavyEquipment::first();
-            $services = HeavyEquipmentservice::paginate();
-            return view('admin.main_department.heavy_equipment.show' , compact(  'main' , 'services'));
+            $main = SpareParts::first();
+            $services = SparePartServices::paginate();
+            return view('admin.main_department.spare_part.show' , compact(  'main' , 'services'));
         }else{
-            return view('admin.main_department.heavy_equipment.show' , compact( 'main' , 'services'));
+            return view('admin.main_department.spare_part.show' , compact( 'main' , 'services'));
 
         }
     }
@@ -56,7 +56,8 @@ class HeavyEquipmentController extends Controller
     {
         $data = $request->except('_token', 'images');
 
-        $is_created = HeavyEquipmentservice::create($data);
+        $is_created = SparePartServices::create($data);
+
 
         if ($is_created) {
             if ($request->hasFile('images')) {
@@ -67,7 +68,7 @@ class HeavyEquipmentController extends Controller
                 }
 
                 foreach ($files as $file) {
-                    $path = $file->store('heavy_equip', [
+                    $path = $file->store('spare_part', [
                         'disk' => 'public',
                     ]);
                         $image = new GeneralImage([
@@ -83,8 +84,8 @@ class HeavyEquipmentController extends Controller
 
     }
     public function show_my_service($id){
-        $service = HeavyEquipmentservice::find($id);
-        $main = HeavyEquipment::first();
-        return view('admin.main_department.heavy_equipment.show_myservice' , compact( 'main' , 'service'));
+        $service = SparePartServices::find($id);
+        $main = SpareParts::first();
+        return view('admin.main_department.spare_part.show_myservice' , compact( 'main' , 'service'));
     }
 }

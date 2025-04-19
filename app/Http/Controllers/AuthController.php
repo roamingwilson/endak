@@ -23,10 +23,12 @@ use App\Models\UserDepartment;
 use App\Models\PartyPreparation;
 use App\Services\Auth\UserServices;
 use App\Http\Controllers\Controller;
+use App\Models\AirCondition;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Models\FurnitureTransportation;
 use App\Models\HeavyEquipment;
+use App\Models\SpareParts;
 
 class AuthController extends Controller
 {
@@ -75,6 +77,8 @@ class AuthController extends Controller
         $other14 = BigCar::first();
         $other15 = Contracting::first();
         $other16 = HeavyEquipment::first();
+        $other17 = SpareParts::first();
+        $other18 = AirCondition::first();
 
         $all_departments = Department::get();
 
@@ -97,7 +101,9 @@ class AuthController extends Controller
             $other13,
             $other14,
             $other15,
-            $other16
+            $other16,
+            $other17,
+            $other18,
         ];
 
         foreach ($others as $item) {
