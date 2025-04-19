@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class HeavyEquipmentservice extends Model
+class HeavyEquipmentService extends Model
 {
     use HasFactory;
     protected $guarded = [];
@@ -18,6 +18,10 @@ class HeavyEquipmentservice extends Model
 
     public function user(){
         return $this->belongsTo(User::class , 'user_id');
+    }
+    public function heavyEquipment()
+    {
+        return $this->belongsTo(HeavyEquipment::class, 'heavy_equip_id');
     }
     public function comments()
     {

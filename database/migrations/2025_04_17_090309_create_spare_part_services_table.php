@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('spare_part_services', function (Blueprint $table) {
             $table->id();
+            $table->integer('spare_part_id')->default(0)->nullable();
             $table->string('brand');
             $table->string('year_made');
             $table->string('part_number');

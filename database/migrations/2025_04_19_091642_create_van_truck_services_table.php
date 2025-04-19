@@ -11,15 +11,20 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('heavy_equipment_services', function (Blueprint $table) {
+        Schema::create('van_truck_services', function (Blueprint $table) {
             $table->id();
+            $table->integer('vantruck_id')->default(0)->nullable();
+            $table->string('from_city')->nullable();
+            $table->string('from_neighborhood')->nullable();
+            $table->string('to_city')->nullable();
+            $table->string('to_neighborhood')->nullable();
             $table->string('location')->nullable();
-            $table->string('equip_type')->nullable();
-            $table->time('time')->nullable();
             $table->enum('status',['open' , 'close' , 'pending' , 'confirm']);
             $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
             $table->longText('notes')->nullable();
+            $table->time('time')->nullable();
             $table->timestamps();
+
         });
     }
 
@@ -28,6 +33,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('heavy_equipment_services');
+        Schema::dropIfExists('van_truck_services');
     }
 };

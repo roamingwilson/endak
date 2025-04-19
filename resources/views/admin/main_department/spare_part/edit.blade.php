@@ -3,12 +3,11 @@
 @section('title')
     <?php $lang = config('app.locale'); ?>
 
-    {{ ($lang == 'ar')?  'سطحه' : "Big Car" }}
-
+    {{ ($lang == 'ar')?'قطع غيار' : "spare part" }}
     @endsection
 
 @section('page_name')
-{{ ($lang == 'ar')?  'سطحه' : "Big Car" }}
+{{ ($lang == 'ar')?'قطع غيار' : "spare part" }}
 
 @endsection
 
@@ -24,7 +23,7 @@
                 </ul>
             </div>
         @endif
-        <form action="{{ route('admin.big_car.update', $main->id) }}" method="post"
+        <form action="{{ route('admin.spare_part.update', $main->id) }}" method="post"
             enctype="multipart/form-data">
             @csrf
             @method('patch')

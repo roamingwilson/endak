@@ -1,7 +1,7 @@
 @extends('layouts.home')
 @section('title')
     <?php $lang = config('app.locale'); ?>
-    {{ $lang == 'ar' ? 'معدات ثقيلة' : 'Heavy equipment' }}
+    {{ $lang == 'ar' ? 'شاحنات' : "Van Truck" }}
 @endsection
 
 @section('content')
@@ -15,8 +15,10 @@
                     <div class="row align-items-center">
                         <div class="col-md-12 text-center">
                             <div class="">
-                                <p class="mb-3 content-1 h5 text-white">
-                                    {{ $lang == 'ar' ? 'معدات ثقيلة' : 'Heavy equipment' }}
+                                <p class="mb-3 content-1 h5 text-black">
+                                    {{ $lang == 'ar' ? $main->name_ar : 'Cleaning Services' }}
+
+
                                 </p>
                             </div>
                         </div>
@@ -25,7 +27,6 @@
             </div>
         </section>
     </div>
-
 
 
     <section class="profile-cover-container mb-2">
@@ -40,75 +41,80 @@
                                 <img width="80px" height="80px" src="{{ asset('storage/' . $item->path) }}"
                                     alt="">
                             @endforeach
+                            <hr>
                         @endif
                     </div>
 
-                    @if ($service->drink_width != 0)
-                        <div class="form-group mt-2 d-flex align-items-center">
+                    <div class="profile-content pt-40">
+                        <div class="container position-relative d-flex justify-content-center ">
+                            <?php $user = auth()->user(); ?>
+                            <div style="width:600px" class="profile-card rounded-lg shadow-xs bg-white p-15 p-md-30">
 
+                                <div class="form-group">
+                                    <label for="" class="mb-1">{{ $lang == 'ar' ? 'الوقت' : 'Time' }}
+                                        :</label>
+                                    @if (isset($service->time))
+                                        <p>{{ \Carbon\Carbon::parse($service->time)->format('h:i A') }}</p>
+                                    @endif
+                                </div>
+                                <div class="form-group">
+                                    <label for="" class="mb-1">{{ $lang == 'ar' ? ' نوع الشاحنة ' : 'truck type' }}
+                                        :</label>
+                                        @if (isset($service->vanTruck))
+                                        <p>{{ $lang == 'ar' ? $service->vanTruck->name_ar : $service->vanTruck->name_en }}</p>
+                                    @endif
 
-                            <div class="d-flex align-items-center justify-content-between m-2">
-                                <label class="ml-2 mr-3" style="min-width: 150px;">
-                                    {{ $lang == 'ar' ? 'مياة صالحة للشرب' : 'Water Drink' }}
-                                </label>
-                                <img src="{{ asset('images/66.jpg') }}" width="100px" height="100px" alt=""
-                                    style="margin-right: 15px;">
-
+                                </div>
+                                <div class="form-group">
+                                    <label for="" class="mb-1">{{ $lang == 'ar' ? ' من المدينة ' : 'from City' }}
+                                        :</label>
+                                    @if (isset($service->from_city))
+                                        <p>{{ $service->from_city }}</p>
+                                    @endif
+                                </div>
+                                <div class="form-group">
+                                    <label for="" class="mb-1">{{ $lang == 'ar' ? ' من الحي ' : 'from Neighborhood' }}
+                                        :</label>
+                                    @if (isset($service->from_neighborhood))
+                                        <p>{{ $service->from_neighborhood }}</p>
+                                    @endif
+                                </div>
+                                <div class="form-group">
+                                    <label for="" class="mb-1">{{ $lang == 'ar' ? ' الي المدينة' : 'to City' }}
+                                        :</label>
+                                    @if (isset($service->to_city))
+                                        <p>{{ $service->to_city }}</p>
+                                    @endif
+                                </div>
+                                <div class="form-group">
+                                    <label for="" class="mb-1">{{ $lang == 'ar' ? ' الي الحي' : 'to Neighborhood' }}
+                                        :</label>
+                                    @if (isset($service->to_neighborhood))
+                                        <p>{{ $service->to_neighborhood }}</p>
+                                    @endif
+                                </div>
+                                <div class="form-group">
+                                    <label for=""
+                                        class="mb-1">{{ $lang == 'ar' ? 'ملاحظة عن العمل المطلوب' : 'Note About Work' }}
+                                        :</label>
+                                    @if (isset($service->notes))
+                                        <p>{{ $service->notes }}</p>
+                                    @else
+                                        {{ $lang == 'ar' ? 'لا يوجد ملاحظات' : 'No Notes' }}
+                                    @endif
+                                </div>
+                                <div class="form-group">
+                                    <label for="" class="mb-1">{{ $lang == 'ar' ? 'صاحب العمل' : 'Customer' }}
+                                        :</label>
+                                    <span class="">{{ $service->user->full_name }} </span>
+                                    @if (isset($service->user->image))
+                                        <img width="250px" height="250px" src="{{ asset($service->user->image_url) }}"
+                                            alt="user">
+                                    @endif
+                                </div>
                             </div>
-
-                            @if ($service->drink_width == 18)
-                                <label for="">
-                                    {{ $lang == 'ar' ? '18 طن' : '18 Tons' }}
-                                </label>
-                            @else
-                                <label for=""> {{ $lang == 'ar' ? '32 طن' : '32 Tons' }}
-                                </label>
-                            @endif
                         </div>
-                    @endif
-                    @if ($service->wall_width != 0)
-                        <div class="form-group mt-2 d-flex align-items-center">
 
-
-                            <div class="d-flex align-items-center justify-content-between m-2">
-                                <label class="ml-2 mr-3" style="min-width: 150px;">
-                                    {{ $lang == 'ar' ? 'مياة الصرف الصحي' : 'Wall Water' }}
-                                </label>
-                                <img src="{{ asset('images/67.jpg') }}" width="100px" height="100px" alt=""
-                                    style="margin-right: 15px;">
-
-                            </div>
-
-                            <div>
-                                @if ($service->wall_width == 18)
-                                    <label for=""> {{ $lang == 'ar' ? '18 طن' : '18 Tons' }}
-                                    </label>
-                                @else
-                                    <label for=""> {{ $lang == 'ar' ? '32 طن' : '32 Tons' }}
-                                    </label>
-                                @endif
-                            </div>
-                        </div>
-                    @endif
-                    <hr>
-
-                    <div class="form-group">
-                        <label for=""
-                            class="mb-1">{{ $lang == 'ar' ? 'ملاحظة عن العمل المطلوب' : 'Note About Work' }}
-                            :</label>
-                        @if (isset($service->notes))
-                            <p>{{ $service->notes }}</p>
-                        @else
-                            {{ $lang == 'ar' ? 'لا يوجد ملاحظات' : 'No Notes' }}
-                        @endif
-                    </div>
-                    <div class="form-group">
-                        <label for="" class="mb-1">{{ $lang == 'ar' ? 'صاحب العمل' : 'Customer' }}
-                            :</label>
-                        <span class="">{{ $service->user->full_name }} </span>
-                        @if (isset($service->user->image))
-                            <img width="250px" height="250px" src="{{ asset($service->user->image_url) }}" alt="user">
-                        @endif
                     </div>
                 </div>
             </div>
@@ -126,7 +132,6 @@
                             <h5 class="mb-4 d-flex align-items-center justify-content-center">
                                 {{ $lang == 'ar' ? 'العروض' : 'Offers' }}</h5>
                             <div class="d-block mb-4 overflow-visible d-block d-sm-flex">
-                                {{-- <div class="row"> --}}
                                 <div class="container">
                                     @forelse ($service->comments as $comment)
                                         <div class="col-12 border mb-4 p-4 br-5">
@@ -139,7 +144,7 @@
                                                         href="{{ route('web.send_message', $comment->user->id) }}">
                                                         <i class="fe fe-mail mx-1"></i> {{ __('messages.send_message') }}
                                                     </a>
-                                                    <form action="{{ route('accept_offer_car_water') }}" method="post">
+                                                    <form action="{{ route('accept_offer_contracting') }}" method="post">
                                                         @csrf
                                                         <input type="hidden" name="service_id"
                                                             value="{{ $service->id }}">
@@ -194,6 +199,7 @@
                                         {!! no_data() !!}
                                     @endforelse
                                 </div>
+
                             </div>
 
 
@@ -205,7 +211,7 @@
                         $user = auth()->user();
                         if ($user) {
                             $is_add = App\Models\GeneralComments::where('commentable_id', $service->id)
-                                ->where('commentable_type', 'App\Models\CarWaterService')
+                                ->where('commentable_type', 'App\Models\ContractingService')
                                 ->where('service_provider', $user->id)
                                 ->first();
                         }

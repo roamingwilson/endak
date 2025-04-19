@@ -9,10 +9,14 @@ class indsProduct extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'ind_sub_category_id', 'description', 'price'];
+    protected $fillable = ['title', 'ind_sub_category_id', 'description', 'price','inds_category_id','image'];
 
     public function subcategory() {
         return $this->belongsTo(indSubCategory::class);
     }
+    public function category() {
+        return $this->belongsTo(indsCategory::class);
+    }
+
 
 }

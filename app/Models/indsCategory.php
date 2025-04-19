@@ -16,5 +16,8 @@ class indsCategory extends Model
     public function subcategories() {
         return $this->hasMany(indSubCategory::class);
     }
+    public function products() {
+        return $this->hasMany(indsProduct::class);
+    }
 
 }

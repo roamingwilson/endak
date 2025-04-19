@@ -14,9 +14,12 @@ return new class extends Migration
         Schema::create('inds_products', function (Blueprint $table) {
             $table->id();
             $table->foreignId('ind_sub_category_id')->constrained()->onDelete('cascade');
-            $table->string('name');
+            $table->foreignId('inds_category_id')->constrained()->cascadeOnDelete();
+            $table->string('title');
+            $table->string('image');
             $table->text('description')->nullable();
-            $table->decimal('price', 10, 2)->nullable();
+            $table->decimal('price', 10, 2);
+
             $table->timestamps();
         });
     }

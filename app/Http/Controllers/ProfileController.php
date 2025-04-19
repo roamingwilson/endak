@@ -26,6 +26,7 @@ use App\Models\FurnitureTransportation;
 use App\Models\HeavyEquipment;
 use App\Models\Maintenance;
 use App\Models\SpareParts;
+use App\Models\VanTruck;
 use Illuminate\Support\Facades\Storage;
 
 class ProfileController extends Controller
@@ -59,6 +60,7 @@ class ProfileController extends Controller
         $other17 = HeavyEquipment::first();
         $other18 = SpareParts::first();
         $other19 = AirCondition::first();
+        $other20 = VanTruck::first();
 
         $all_departments = Department::get();
 
@@ -85,6 +87,7 @@ class ProfileController extends Controller
             $other17,
             $other18,
             $other19,
+            $other20,
         ];
 
         foreach ($others as $item) {

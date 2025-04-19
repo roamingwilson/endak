@@ -29,6 +29,7 @@ use Illuminate\Support\Facades\Hash;
 use App\Models\FurnitureTransportation;
 use App\Models\HeavyEquipment;
 use App\Models\SpareParts;
+use App\Models\VanTruck;
 
 class AuthController extends Controller
 {
@@ -79,6 +80,7 @@ class AuthController extends Controller
         $other16 = HeavyEquipment::first();
         $other17 = SpareParts::first();
         $other18 = AirCondition::first();
+        $other19 = VanTruck::first();
 
         $all_departments = Department::get();
 
@@ -104,6 +106,7 @@ class AuthController extends Controller
             $other16,
             $other17,
             $other18,
+            $other19,
         ];
 
         foreach ($others as $item) {

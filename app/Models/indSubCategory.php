@@ -10,7 +10,7 @@ class indSubCategory extends Model
     use HasFactory;
     protected $fillable = ['name', 'inds_category_id'];
     public function category() {
-        return $this->belongsTo(indsCategory::class);
+        return $this->belongsTo(indsCategory::class,'inds_category_id');
     }
 
     public function products() {

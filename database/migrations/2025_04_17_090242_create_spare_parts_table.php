@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('name_ar');
             $table->string('name_en');
             $table->string('image');
+            $table->integer('spare_part_id')->default(0)->nullable();
             $table->timestamps();
         });
     }

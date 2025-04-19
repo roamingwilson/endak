@@ -19,6 +19,10 @@ class SparePartServices extends Model
     public function user(){
         return $this->belongsTo(User::class , 'user_id');
     }
+    public function sparePart()
+    {
+        return $this->belongsTo(SpareParts::class, 'spare_part_id');
+    }
     public function comments()
     {
         return $this->morphMany(GeneralComments::class, 'commentable');

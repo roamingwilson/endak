@@ -1,9 +1,9 @@
 @extends('layouts.home')
 @section('title')
-    <?php
-    $lang = config('app.locale');
-    ?>
-    {{ $lang == 'ar' ? 'معدات ثقيلة' : 'Heavy equipment' }}
+<?php
+$lang = config('app.locale');
+?>
+{{ ($lang == 'ar')? $main->name_ar : $main->name_en }}
 @endsection
 
 @section('content')
@@ -15,7 +15,7 @@
                     <div class="row align-items-center">
                         <div class="col-md-12 text-center">
                             <div class="">
-                                <p class="mb-3 content-1 h5 fs-1">{{ $lang == 'ar' ? 'معدات ثقيلة' : 'Heavy equipment' }}
+                                <p class="mb-3 content-1 h5 fs-1">{{ ($lang == 'ar')? $main->name_ar : $main->name_en }}
                                 </p>
                             </div>
                         </div>
@@ -25,22 +25,22 @@
         </section>
     </div>
     @if (auth()->check() && auth()->user()->role_id == 3)
-    <section class="section">
-        <div class="container">
-            <div class="row">
-                <div class="col-xl-12">
-                    <div class="row">
-                        @forelse ($services as $service)
+        <section class="section">
+            <div class="container">
+                <div class="row">
+                    <div class="col-xl-12">
+                        <div class="row">
+                            @forelse ($services as $service)
                             <div class="col-md-4">
                                 <div class="card">
                                     <div class="position-relative">
                                         <a href="{{ route('main_heavy_equip_show_my_service', $service->id) }}">
                                             @if ($service->image)
-                                                <img class="card-img-top" src="" alt="img"
+                                                <img class="card-img-top" src="{{ $service->image_url }}" alt="img"
                                                     width="300" height="300">
                                             @else
-                                                <img class="card-img-top" src="{{ $main->image_url }}" alt="nn"
-                                                    width="300" height="300">
+                                                <img class="card-img-top" src="{{ $main->image_url }}"
+                                                    alt="nn" width="300" height="300">
                                             @endif
                                         </a>
                                     </div>
@@ -56,65 +56,68 @@
                             </div>
 
                         @empty
-                            {!! no_data() !!}
-                        @endforelse
+                                {!! no_data() !!}
+                            @endforelse
+                        </div>
+                        {!! $services->links() !!}
                     </div>
-                    {!! $services->links() !!}
                 </div>
-            </div>
-    </section>
+        </section>
     @elseif(auth()->check() && auth()->user()->role_id == 1)
-    <section class="profile-cover-container mb-2">
+        <section class="profile-cover-container mb-2" >
 
-        <div class="profile-content pt-40">
-            <div class="container position-relative d-flex justify-content-center ">
-                <?php $user = auth()->user(); ?>
-                <form action="{{ route('heavy_equip_store_service') }}" method="POST" enctype="multipart/form-data"
-                    style="width:600px;margin-top:10px" class="profile-card rounded-lg shadow-xs bg-white p-15 p-md-30">
-                    @csrf
-                    <input type="hidden" name="user_id" value="{{ $user->id }}">
-                    <div class="form-group mt-2">
-                        <label for=""
-                            class="mb-1">{{ $lang == 'ar' ? 'ملاحظة عن العمل المطلوب' : 'Note About Work' }}
-                            :</label>
-                        <textarea class="form-control" name="notes" cols="30" rows="5"></textarea>
-                    </div>
+            <div class="profile-content pt-40">
+                <div class="container position-relative d-flex justify-content-center ">
+                    <?php $user = auth()->user(); ?>
+                    <form action="{{ route('heavy_equip_store_service' ) }}" method="POST" enctype="multipart/form-data"
+                        style="width:600px;margin-top:10px" class="profile-card rounded-lg shadow-xs bg-white p-15 p-md-30">
+                        @csrf
+                        <input type="hidden" name="user_id" value="{{ $user->id }}">
+                        <input type="hidden" name="heavy_equip_id" value="{{ $main->id }}">
 
-                    <div class="form-group mt-2">
-                        <label for="name" class="mb-1">{{ $lang == 'ar' ? 'الموقع' : 'Location' }} : </label>
-                        <input type="text" class="form-control" name="location">
-                    </div>
+                        <div class="form-group mt-2">
+                            <label for=""
+                                class="mb-1">{{ $lang == 'ar' ? 'ملاحظة عن العمل المطلوب' : 'Note About Work' }}
+                                :</label>
+                            <textarea class="form-control" name="notes" cols="30" rows="5"></textarea>
+                        </div>
+
+                        <div class="form-group mt-2">
+                            <label for="name" class="mb-1">{{ $lang == 'ar' ? 'الموقع' : 'Location' }} : </label>
+                            <input type="text" class="form-control" name="location">
+                        </div>
 
 
 
-                    <div class="form-group mt-2">
-                        <label for="" class="mb-1">{{ $lang == 'ar' ? 'ارفاق صور' : 'Share Photos' }}
-                            :</label>
-                        <input class="form-control" name="images[]" type="file" multiple>
-                    </div>
-                    <div class="form-group mt-2">
-                        <label for="name" class="mb-1">{{ $lang == 'ar' ? 'الوقت' : 'Time' }} : </label>
-                        <input type="time" class="form-control" name="time">
-                    </div>
+                        <div class="form-group mt-2">
+                            <label for="" class="mb-1">{{ $lang == 'ar' ? 'ارفاق صور' : 'Share Photos' }}
+                                :</label>
+                            <input class="form-control" name="images[]" type="file" multiple>
+                        </div>
+                        <div class="form-group mt-2">
+                            <label for="name" class="mb-1">{{ $lang == 'ar' ? 'الوقت' : 'Time' }} : </label>
+                            <input type="time" class="form-control" name="time">
+                        </div>
+                        <hr>
 
-                    <hr>
 
-                    <div class="form-group mt-2" style="text-align: right;margin-right:10px">
-                        <button class="btn mt-2 form-control"
-                            style="background-color: #fdca3d">{{ $lang == 'ar' ? 'ارسال' : 'Send' }}</button>
-                    </div>
-                </form>
+                        </div>
+                        <hr>
+                        <div class="form-group mt-2" style="text-align: right;margin-right:10px">
+                            <button class="btn mt-2 form-control"  style="background-color: #fdca3d">{{ $lang == 'ar' ? 'ارسال' : 'Send' }}</button>
+                        </div>
+                    </form>
+
+
+                </div>
 
 
             </div>
 
 
-        </div>
-
-
-    </section>
+        </section>
     @else
-    <section class="profile-cover-container mb-2">
+    <section class="profile-cover-container mb-2" >
 
         <div class="profile-content pt-40">
             <div class="container position-relative d-flex justify-content-center ">
@@ -127,6 +130,7 @@
                             :</label>
                         <textarea class="form-control" name="notes" cols="30" rows="5"></textarea>
                     </div>
+
                     <div class="form-group mt-2">
                         <label for="name" class="mb-1">{{ $lang == 'ar' ? 'الموقع' : 'Location' }} : </label>
                         <input type="text" class="form-control" name="location">
@@ -143,12 +147,11 @@
                         <label for="name" class="mb-1">{{ $lang == 'ar' ? 'الوقت' : 'Time' }} : </label>
                         <input type="time" class="form-control" name="time">
                     </div>
-
                     <hr>
 
+                    <hr>
                     <div class="form-group mt-2" style="text-align: right;margin-right:10px">
-                        <button class="btn mt-2 form-control"
-                            style="background-color: #fdca3d">{{ $lang == 'ar' ? 'ارسال' : 'Send' }}</button>
+                        <button class="btn mt-2 form-control"  style="background-color: #fdca3d">{{ $lang == 'ar' ? 'ارسال' : 'Send' }}</button>
                     </div>
                 </form>
 

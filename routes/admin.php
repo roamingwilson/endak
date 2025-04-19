@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\departments\Industry\indSubCategoryController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CleaningController;
 use App\Http\Controllers\Admin\PageController;
@@ -26,12 +27,16 @@ use App\Http\Controllers\departments\ContractingController;
 use App\Http\Controllers\departments\MaintenanceController;
 use App\Http\Controllers\departments\CounterInsectsController;
 use App\Http\Controllers\departments\HeavyEquipmentController;
+use App\Http\Controllers\departments\Industry\indsCategoryController;
+use App\Http\Controllers\departments\Industry\indsProductController;
 use App\Http\Controllers\departments\PartyPreparationController;
 use App\Http\Controllers\departments\SpareParts\SparePartController;
+use App\Http\Controllers\departments\VanTruck\VanTruckController;
 use App\Http\Controllers\Surveillance\SurveillanceCamerasController;
 use App\Http\Controllers\Furniture\FurnitureTransportationsController;
 use App\Http\Controllers\Furniture\ProductFurnitureTransportationsController;
 use App\Models\HeavyEquipment;
+use App\Models\indsProduct;
 
 /*
 |--------------------------------------------------------------------------
@@ -310,15 +315,46 @@ Route::group(['prefix' => "heavy_equip"], function(){
     Route::get('/' , [HeavyEquipmentController::class , 'index'])->name('admin.heavy_equip');
     Route::get('/edit/{id}',[HeavyEquipmentController::class , 'edit'])->name('admin.heavy_equip.edit');
     Route::patch('/update/{id}',[HeavyEquipmentController::class , 'update'])->name('admin.heavy_equip.update');
+    Route::get('/add_sub_department',[HeavyEquipmentController::class , 'add_sub_department'])->name('admin.heavy_equip.add_sub_department');
+    Route::post('/store_sub_department',[HeavyEquipmentController::class , 'store_sub_department'])->name('admin.heavy_equip.store_sub_department');
+    Route::get('/show_sub_departments_list',[HeavyEquipmentController::class , 'show_sub_departments_list'])->name('admin.heavy_equip.show_sub_departments_list');
+    Route::get('/show_sub_department/{id}',[HeavyEquipmentController::class , 'show_sub_department'])->name('admin.heavy_equip.show_sub_department');
+    Route::get('/delete/{id}',[HeavyEquipmentController::class , 'delete'])->name('admin.heavy_equip.delete');
+
 });
 //spare_part
 Route::group(['prefix' => "spare_part"], function(){
     Route::get('/' , [SparePartController::class , 'index'])->name('admin.spare_part');
     Route::get('/edit/{id}',[SparePartController::class , 'edit'])->name('admin.spare_part.edit');
     Route::patch('/update/{id}',[SparePartController::class , 'update'])->name('admin.spare_part.update');
+    Route::get('/add_sub_department',[SparePartController::class , 'add_sub_department'])->name('admin.spare_part.add_sub_department');
+    Route::post('/store_sub_department',[SparePartController::class , 'store_sub_department'])->name('admin.spare_part.store_sub_department');
+    Route::get('/show_sub_departments_list',[SparePartController::class , 'show_sub_departments_list'])->name('admin.spare_part.show_sub_departments_list');
+    Route::get('/show_sub_department/{id}',[SparePartController::class , 'show_sub_department'])->name('admin.spare_part.show_sub_department');
+    Route::get('/delete/{id}',[SparePartController::class , 'delete'])->name('admin.spare_part.delete');
+
 });
 Route::group(['prefix' => "air_con"], function(){
     Route::get('/' , [AirconController::class , 'index'])->name('admin.air_con');
     Route::get('/edit/{id}',[AirconController::class , 'edit'])->name('admin.air_con.edit');
     Route::patch('/update/{id}',[AirconController::class , 'update'])->name('admin.air_con.update');
 });
+Route::group(['prefix' => "van_truck"], function(){
+    Route::get('/' , [VanTruckController::class , 'index'])->name('admin.van_truck');
+    Route::get('/edit/{id}',[VanTruckController::class , 'edit'])->name('admin.van_truck.edit');
+    Route::patch('/update/{id}',[VanTruckController::class , 'update'])->name('admin.van_truck.update');
+    Route::get('/add_sub_department',[VanTruckController::class , 'add_sub_department'])->name('admin.van_truck.add_sub_department');
+    Route::post('/store_sub_department',[VanTruckController::class , 'store_sub_department'])->name('admin.van_truck.store_sub_department');
+    Route::get('/show_sub_departments_list',[VanTruckController::class , 'show_sub_departments_list'])->name('admin.van_truck.show_sub_departments_list');
+    Route::get('/show_sub_department/{id}',[VanTruckController::class , 'show_sub_department'])->name('admin.van_truck.show_sub_department');
+    Route::get('/delete/{id}',[VanTruckController::class , 'delete'])->name('admin.van_truck.delete');
+
+});
+Route::group(['prefix' => "plastic"], function(){
+    Route::resource('indscategories', indsCategoryController::class);
+    Route::resource('indsubcategories', indSubCategoryController::class);
+    Route::resource('indproducts', indsProductController::class);
+
+});
+
+

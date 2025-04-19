@@ -3,11 +3,11 @@
 @section('title')
 <?php $lang = config('app.locale'); ?>
 
-    {{ ($lang == 'ar')?  'قطع غيار' : "spare part" }}
+{{ ($lang == 'ar')? 'قطع غيار' : "spare part"}}
 
 @endsection
 @section('page_name')
-    {{ ($lang == 'ar')?  'قطع غيار' : "spare part" }}
+{{ ($lang == 'ar')?'قطع غيار' : "spare part"}}
 
 @endsection
 @section('content')
@@ -15,7 +15,7 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-header">
-                    <h3 class="card-title">    {{ ($lang == 'ar')?  'قطع غيار' : "spare part" }}
+                    <h3 class="card-title">    {{ ($lang == 'ar')?'قطع غيار' : "spare part" }}
 
                     </h3>
                 </div>
@@ -51,7 +51,34 @@
                                     </a>
                                 </td>
                             </tr>
+                            @if ($spare_part->spare_part_id == 0)
 
+
+                            <tr>
+                                <td class="width30">{{ ($lang == 'ar')?  'اضافة قسم فرعي' : "Add Sub Department" }} </td>
+                                <td>
+                                    <a href="{{ route('admin.spare_part.add_sub_department' , $spare_part->id) }}">
+                                        <button class="btn btn-info">
+                                            {{ __("general.add") }}
+                                        </button>
+                                    </a>
+                                </td>
+                            </tr>
+                            @endif
+                            @if ($spare_part->heavyequipment_id == 0)
+
+
+                            <tr>
+                                <td class="width30">{{ ($lang == 'ar')?  'عرض الاقسام الفرعية' : "Show Sub Department" }} </td>
+                                <td>
+                                    <a href="{{ route('admin.spare_part.show_sub_departments_list' , $spare_part->id) }}">
+                                        <button class="btn btn-info">
+                                            {{ __("general.show") }}
+                                        </button>
+                                    </a>
+                                </td>
+                            </tr>
+                            @endif
                         </thead>
                     </table>
                 </div>

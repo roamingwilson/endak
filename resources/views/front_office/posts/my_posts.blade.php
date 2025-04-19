@@ -26,6 +26,11 @@
         $water_services = App\Models\WaterService::where('user_id' , auth()->id())->get();
         $big_car_services = App\Models\BigCarService::where('user_id' , auth()->id())->get();
         $contracting_services = App\Models\ContractingService::where('user_id' , auth()->id())->get();
+        $air_condition = App\Models\AirConditionService::where('user_id' , auth()->id())->get();
+        $van_truck = App\Models\VanTruckService::where('user_id' , auth()->id())->get();
+        $heavy_equip = App\Models\HeavyEquipmentService::where('user_id' , auth()->id())->get();
+        $spare_part = App\Models\SparePartServices::where('user_id' , auth()->id())->get();
+
         ?>
 
         <div class="main-content app-content">
@@ -35,9 +40,9 @@
                         <div class="row align-items-center">
                             <div class="col-md-12 text-center">
                                 <div class="">
-                                    <p class="mb-3 content-1 h5 text-white">{{ __('posts.my_posts') }} 
+                                    <p class="mb-3 content-1 h5 text-white">{{ __('posts.my_posts') }}
                                     </p>
-                                   
+
                                 </div>
                             </div>
                         </div>
@@ -76,13 +81,13 @@
                                 @empty
                                     <p class="text-center">لا توجد منشورات متاحة</p>
                                 @endforelse
-                            
-            
+
+
                                 @forelse ($furniture_transportation_services as $furniture_transportation_service)
                                     <div class="col-md-10">
                                         <div class="card mx-auto">
                                             <div class="position-relative">
-                                            
+
                                                 <span class="badge bg-secondary blog-badge">{{ $furniture_transportation_service->add_order }}</span>
                                             </div>
                                             <div class="card-body d-flex flex-column">
@@ -100,7 +105,7 @@
                                                         <small
                                                             class="d-block tx-muted">{{ $furniture_transportation_service->created_at->shortAbsoluteDiffForHumans() }}</small>
                                                     </div>
-                                                    
+
                                                 </div>
                                             </div>
                                         </div>
@@ -111,8 +116,8 @@
                                     <div class="col-md-10">
                                         <div class="card mx-auto">
                                             <div class="position-relative">
-                                                
-                                                
+
+
                                                 <span class="badge bg-secondary blog-badge">{{ $follow_camera_service->add_order }}</span>
                                             </div>
                                             <div class="card-body d-flex flex-column">
@@ -130,7 +135,7 @@
                                                         <small
                                                             class="d-block tx-muted">{{ $follow_camera_service->created_at->shortAbsoluteDiffForHumans() }}</small>
                                                     </div>
-                                                    
+
                                                 </div>
                                             </div>
                                         </div>
@@ -141,8 +146,8 @@
                                     <div class="col-md-10">
                                         <div class="card mx-auto">
                                             <div class="position-relative">
-                                                
-                                                
+
+
                                                 <span class="badge bg-secondary blog-badge">{{ $party_preparationservice->add_order }}</span>
                                             </div>
                                             <div class="card-body d-flex flex-column">
@@ -160,7 +165,7 @@
                                                         <small
                                                             class="d-block tx-muted">{{ $party_preparationservice->created_at->shortAbsoluteDiffForHumans() }}</small>
                                                     </div>
-                                                    
+
                                                 </div>
                                             </div>
                                         </div>
@@ -171,8 +176,8 @@
                                     <div class="col-md-10">
                                         <div class="card mx-auto">
                                             <div class="position-relative">
-                                                
-                                                
+
+
                                                 <span class="badge bg-secondary blog-badge">{{ $garden_service->add_order }}</span>
                                             </div>
                                             <div class="card-body d-flex flex-column">
@@ -190,7 +195,7 @@
                                                         <small
                                                             class="d-block tx-muted">{{ $garden_service->created_at->shortAbsoluteDiffForHumans() }}</small>
                                                     </div>
-                                                    
+
                                                 </div>
                                             </div>
                                         </div>
@@ -201,8 +206,8 @@
                                     <div class="col-md-10">
                                         <div class="card mx-auto">
                                             <div class="position-relative">
-                                                
-                                                
+
+
                                                 <span class="badge bg-secondary blog-badge">{{ $counter_insects_service->add_order }}</span>
                                             </div>
                                             <div class="card-body d-flex flex-column">
@@ -220,7 +225,7 @@
                                                         <small
                                                             class="d-block tx-muted">{{ $counter_insects_service->created_at->shortAbsoluteDiffForHumans() }}</small>
                                                     </div>
-                                                    
+
                                                 </div>
                                             </div>
                                         </div>
@@ -231,8 +236,8 @@
                                     <div class="col-md-10">
                                         <div class="card mx-auto">
                                             <div class="position-relative">
-                                                
-                                                
+
+
                                                 <span class="badge bg-secondary blog-badge">{{ $teacher_service->add_order }}</span>
                                             </div>
                                             <div class="card-body d-flex flex-column">
@@ -250,7 +255,7 @@
                                                         <small
                                                             class="d-block tx-muted">{{ $teacher_service->created_at->shortAbsoluteDiffForHumans() }}</small>
                                                     </div>
-                                                    
+
                                                 </div>
                                             </div>
                                         </div>
@@ -261,8 +266,8 @@
                                     <div class="col-md-10">
                                         <div class="card mx-auto">
                                             <div class="position-relative">
-                                                
-                                                
+
+
                                                 <span class="badge bg-secondary blog-badge">{{ $cleaning_service->add_order }}</span>
                                             </div>
                                             <div class="card-body d-flex flex-column">
@@ -280,7 +285,7 @@
                                                         <small
                                                             class="d-block tx-muted">{{ $cleaning_service->created_at->shortAbsoluteDiffForHumans() }}</small>
                                                     </div>
-                                                    
+
                                                 </div>
                                             </div>
                                         </div>
@@ -291,8 +296,8 @@
                                     <div class="col-md-10">
                                         <div class="card mx-auto">
                                             <div class="position-relative">
-                                                
-                                                
+
+
                                                 <span class="badge bg-secondary blog-badge">{{ $family_service->add_order }}</span>
                                             </div>
                                             <div class="card-body d-flex flex-column">
@@ -310,7 +315,7 @@
                                                         <small
                                                             class="d-block tx-muted">{{ $family_service->created_at->shortAbsoluteDiffForHumans() }}</small>
                                                     </div>
-                                                    
+
                                                 </div>
                                             </div>
                                         </div>
@@ -321,8 +326,8 @@
                                     <div class="col-md-10">
                                         <div class="card mx-auto">
                                             <div class="position-relative">
-                                                
-                                                
+
+
                                                 <span class="badge bg-secondary blog-badge">{{ $worker_service->add_order }}</span>
                                             </div>
                                             <div class="card-body d-flex flex-column">
@@ -340,7 +345,7 @@
                                                         <small
                                                             class="d-block tx-muted">{{ $worker_service->created_at->shortAbsoluteDiffForHumans() }}</small>
                                                     </div>
-                                                    
+
                                                 </div>
                                             </div>
                                         </div>
@@ -351,8 +356,8 @@
                                     <div class="col-md-10">
                                         <div class="card mx-auto">
                                             <div class="position-relative">
-                                                
-                                                
+
+
                                                 <span class="badge bg-secondary blog-badge">{{ $public_ge_service->add_order }}</span>
                                             </div>
                                             <div class="card-body d-flex flex-column">
@@ -370,7 +375,7 @@
                                                         <small
                                                             class="d-block tx-muted">{{ $public_ge_service->created_at->shortAbsoluteDiffForHumans() }}</small>
                                                     </div>
-                                                    
+
                                                 </div>
                                             </div>
                                         </div>
@@ -381,12 +386,12 @@
                                     <div class="col-md-10">
                                         <div class="card mx-auto">
                                             <div class="position-relative">
-                                                
-                                                
+
+
                                                 <span class="badge bg-secondary blog-badge">{{ $ads_service->add_order }}</span>
                                             </div>
                                             <div class="card-body d-flex flex-column">
-                                                <h5><a href="{{ route('main_ads_show_my_service' , $ads_service->id) }}"> 
+                                                <h5><a href="{{ route('main_ads_show_my_service' , $ads_service->id) }}">
                                                     {{ ($lang == 'ar')? 'دعاية واعلان' : "Advertising" }}
                                                 </a></h5>
                                                 <div class="tx-muted">   {{ ($lang == 'ar')? 'دعاية واعلان' : "Advertising" }}
@@ -402,7 +407,7 @@
                                                         <small
                                                             class="d-block tx-muted">{{ $ads_service->created_at->shortAbsoluteDiffForHumans() }}</small>
                                                     </div>
-                                                    
+
                                                 </div>
                                             </div>
                                         </div>
@@ -413,12 +418,12 @@
                                     <div class="col-md-10">
                                         <div class="card mx-auto">
                                             <div class="position-relative">
-                                                
-                                                
+
+
                                                 <span class="badge bg-secondary blog-badge">{{ $car_water_service->add_order }}</span>
                                             </div>
                                             <div class="card-body d-flex flex-column">
-                                                <h5><a href="{{ route('main_car_water_show_my_service' , $car_water_service->id) }}"> 
+                                                <h5><a href="{{ route('main_car_water_show_my_service' , $car_water_service->id) }}">
                                                     {{ ($lang == 'ar')? 'صهريج مياة' : "Water Tank" }}
                                                 </a></h5>
                                                 <div class="tx-muted">   {{ ($lang == 'ar')? 'صهريج مياة' : "Water Tank" }}
@@ -434,7 +439,7 @@
                                                         <small
                                                             class="d-block tx-muted">{{ $car_water_service->created_at->shortAbsoluteDiffForHumans() }}</small>
                                                     </div>
-                                                    
+
                                                 </div>
                                             </div>
                                         </div>
@@ -445,12 +450,12 @@
                                     <div class="col-md-10">
                                         <div class="card mx-auto">
                                             <div class="position-relative">
-                                                
-                                                
+
+
                                                 <span class="badge bg-secondary blog-badge">{{ $water_service->add_order }}</span>
                                             </div>
                                             <div class="card-body d-flex flex-column">
-                                                <h5><a href="{{ route('main_water_show_my_service' , $water_service->id) }}"> 
+                                                <h5><a href="{{ route('main_water_show_my_service' , $water_service->id) }}">
                                                     {{ ($lang == 'ar')? 'فلاتر مياة شرب' : "Drinking water filters" }}
                                                 </a></h5>
                                                 <div class="tx-muted">   {{ ($lang == 'ar')? 'فلاتر مياة شرب' : "Drinking water filters" }}
@@ -466,7 +471,7 @@
                                                         <small
                                                             class="d-block tx-muted">{{ $water_service->created_at->shortAbsoluteDiffForHumans() }}</small>
                                                     </div>
-                                                    
+
                                                 </div>
                                             </div>
                                         </div>
@@ -477,12 +482,12 @@
                                     <div class="col-md-10">
                                         <div class="card mx-auto">
                                             <div class="position-relative">
-                                                
-                                                
+
+
                                                 <span class="badge bg-secondary blog-badge">{{ $big_car_service->add_order }}</span>
                                             </div>
                                             <div class="card-body d-flex flex-column">
-                                                <h5><a href="{{ route('main_big_car_show_my_service' , $big_car_service->id) }}"> 
+                                                <h5><a href="{{ route('main_big_car_show_my_service' , $big_car_service->id) }}">
                                                     {{ ($lang == 'ar')? 'سطحه' : "Big Car" }}
                                                 </a></h5>
                                                 <div class="tx-muted">   {{ ($lang == 'ar')? 'سطحه' : "Big Car" }}
@@ -498,7 +503,7 @@
                                                         <small
                                                             class="d-block tx-muted">{{ $big_car_service->created_at->shortAbsoluteDiffForHumans() }}</small>
                                                     </div>
-                                                    
+
                                                 </div>
                                             </div>
                                         </div>
@@ -509,12 +514,12 @@
                                     <div class="col-md-10">
                                         <div class="card mx-auto">
                                             <div class="position-relative">
-                                                
-                                                
+
+
                                                 <span class="badge bg-secondary blog-badge">{{ $contracting_service->add_order }}</span>
                                             </div>
                                             <div class="card-body d-flex flex-column">
-                                                <h5><a href="{{ route('main_contracting_show_my_service' , $contracting_service->id) }}"> 
+                                                <h5><a href="{{ route('main_contracting_show_my_service' , $contracting_service->id) }}">
                                                     {{ ($lang == 'ar')? 'سطحه' : "Big Car" }}
                                                 </a></h5>
                                                 <div class="tx-muted">   {{ ($lang == 'ar')?  $contracting_service->contracting->name_ar : $contracting_service->contracting->name_en }}
@@ -530,7 +535,135 @@
                                                         <small
                                                             class="d-block tx-muted">{{ $contracting_service->created_at->shortAbsoluteDiffForHumans() }}</small>
                                                     </div>
-                                                    
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @empty
+                                @endforelse
+                                @forelse ($van_truck as $van_truck_items)
+                                    <div class="col-md-10">
+                                        <div class="card mx-auto">
+                                            <div class="position-relative">
+
+
+                                                <span class="badge bg-secondary blog-badge">{{ $van_truck_items->add_order }}</span>
+                                            </div>
+                                            <div class="card-body d-flex flex-column">
+                                                <h5><a href="{{ route('main_van_truck_show_my_service' , $van_truck_items->id) }}">
+                                                    {{ ($lang == 'ar')? 'شاحنات' : "Van Truck" }}
+                                                </a></h5>
+                                                <div class="tx-muted">   {{ ($lang == 'ar')?  $van_truck_items->name_ar : $van_truck_items->name_en }}
+                                                </div>
+                                                <div class="d-flex align-items-center pt-4 mt-auto">
+                                                    <div class="avatar me-3 cover-image rounded-circle">
+                                                        <img src="{{ $van_truck_items->user->image ?? asset('images/user.png') }}"
+                                                            class="rounded-circle" alt="img" width="40">
+                                                    </div>
+                                                    <div>
+                                                        <a href="javascript:void(0);"
+                                                            class="h6">{{ $van_truck_items->user->full_name }}</a>
+                                                        <small
+                                                            class="d-block tx-muted">{{ $van_truck_items->created_at->shortAbsoluteDiffForHumans() }}</small>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @empty
+                                @endforelse
+                                @forelse ($heavy_equip as $heavy_equip_items)
+                                    <div class="col-md-10">
+                                        <div class="card mx-auto">
+                                            <div class="position-relative">
+
+
+                                                <span class="badge bg-secondary blog-badge">{{ $heavy_equip_items->add_order }}</span>
+                                            </div>
+                                            <div class="card-body d-flex flex-column">
+                                                <h5><a href="{{ route('main_heavy_equip_show_my_service' , $heavy_equip_items->id) }}">
+                                                    {{ ($lang == 'ar')? 'معدات ثقيلة' : "heavy equip" }}
+                                                </a></h5>
+                                                <div class="tx-muted">   {{ ($lang == 'ar')?  $heavy_equip_items->name_ar : $heavy_equip_items->name_en }}
+                                                </div>
+                                                <div class="d-flex align-items-center pt-4 mt-auto">
+                                                    <div class="avatar me-3 cover-image rounded-circle">
+                                                        <img src="{{ $heavy_equip_items->user->image ?? asset('images/user.png') }}"
+                                                            class="rounded-circle" alt="img" width="40">
+                                                    </div>
+                                                    <div>
+                                                        <a href="javascript:void(0);"
+                                                            class="h6">{{ $heavy_equip_items->user->full_name }}</a>
+                                                        <small
+                                                            class="d-block tx-muted">{{ $heavy_equip_items->created_at->shortAbsoluteDiffForHumans() }}</small>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @empty
+                                @endforelse
+                                @forelse ($spare_part as $spare_part_items)
+                                    <div class="col-md-10">
+                                        <div class="card mx-auto">
+                                            <div class="position-relative">
+
+
+                                                <span class="badge bg-secondary blog-badge">{{ $spare_part_items->add_order }}</span>
+                                            </div>
+                                            <div class="card-body d-flex flex-column">
+                                                <h5><a href="{{ route('main_spare_part_show_my_service' , $spare_part_items->id) }}">
+                                                    {{ ($lang == 'ar')? 'قطع غيار' : "spare part"  }}
+                                                </a></h5>
+                                                <div class="tx-muted">   {{ ($lang == 'ar')?  $spare_part_items->name_ar : $spare_part_items->name_en }}
+                                                </div>
+                                                <div class="d-flex align-items-center pt-4 mt-auto">
+                                                    <div class="avatar me-3 cover-image rounded-circle">
+                                                        <img src="{{ $spare_part_items->user->image ?? asset('images/user.png') }}"
+                                                            class="rounded-circle" alt="img" width="40">
+                                                    </div>
+                                                    <div>
+                                                        <a href="javascript:void(0);"
+                                                            class="h6">{{ $spare_part_items->user->full_name }}</a>
+                                                        <small
+                                                            class="d-block tx-muted">{{ $spare_part_items->created_at->shortAbsoluteDiffForHumans() }}</small>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @empty
+                                @endforelse
+                                @forelse ($air_condition as $air_condition_items)
+                                    <div class="col-md-10">
+                                        <div class="card mx-auto">
+                                            <div class="position-relative">
+
+
+                                                <span class="badge bg-secondary blog-badge">{{ $air_condition_items->add_order }}</span>
+                                            </div>
+                                            <div class="card-body d-flex flex-column">
+                                                <h5><a href="{{ route('main_air_con_show_my_service' , $air_condition_items->id) }}">
+                                                    {{ ($lang == 'ar')? 'تصلييح تكييفات' : "ِAir condition" }}
+                                                </a></h5>
+                                                <div class="tx-muted">   {{ ($lang == 'ar')?  $air_condition_items->name_ar : $air_condition_items->name_en }}
+                                                </div>
+                                                <div class="d-flex align-items-center pt-4 mt-auto">
+                                                    <div class="avatar me-3 cover-image rounded-circle">
+                                                        <img src="{{ $air_condition_items->user->image ?? asset('images/user.png') }}"
+                                                            class="rounded-circle" alt="img" width="40">
+                                                    </div>
+                                                    <div>
+                                                        <a href="javascript:void(0);"
+                                                            class="h6">{{ $air_condition_items->user->full_name }}</a>
+                                                        <small
+                                                            class="d-block tx-muted">{{ $air_condition_items->created_at->shortAbsoluteDiffForHumans() }}</small>
+                                                    </div>
+
                                                 </div>
                                             </div>
                                         </div>
@@ -542,7 +675,7 @@
 
                         </div>
                         {!! $posts->links() !!}
-                        
+
                     </div>
                 </div>
             </section>

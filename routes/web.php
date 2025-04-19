@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\departments\OrderHeavyEquipController;
 use App\Models\AdsOrder;
+use App\Models\AirConditionOrder;
 use App\Models\Department;
 use App\Models\WaterOrder;
 use App\Models\BigCarOrder;
@@ -56,6 +57,7 @@ use App\Http\Controllers\departments\OrderCarWaterController;
 use App\Http\Controllers\departments\OrderPublicGeController;
 use App\Http\Controllers\departments\CounterInsectsController;
 use App\Http\Controllers\departments\HeavyEquipmentController;
+use App\Http\Controllers\departments\Industry\indsProductController;
 use App\Http\Controllers\departments\OrderContractingController;
 use App\Http\Controllers\departments\OrderMaintenanceController;
 use App\Http\Controllers\departments\PartyPreparationController;
@@ -64,12 +66,18 @@ use App\Http\Controllers\Surveillance\SurveillanceCamerasController;
 use App\Http\Controllers\departments\OrderPartyPreparationController;
 use App\Http\Controllers\departments\SpareParts\OrderSparePartController;
 use App\Http\Controllers\departments\SpareParts\SparePartController;
+use App\Http\Controllers\departments\VanTruck\VanTruckController;
+use App\Http\Controllers\departments\VanTruck\VanTruckOrderController;
 use App\Http\Controllers\Furniture\FurnitureTransportationsController;
 use App\Http\Controllers\Surveillance\OrderSurveillanceCamerasController;
 use App\Http\Controllers\Furniture\OrderFurnitureTransportationsController;
 use App\Models\AirCondition;
 use App\Models\HeavyEquipment;
+use App\Models\HeavyEquipmentOrder;
+use App\Models\indsProduct;
+use App\Models\SparePartOrder;
 use App\Models\SpareParts;
+use App\Models\VanTruckOrder;
 
 /*
 |--------------------------------------------------------------------------
@@ -432,23 +440,10 @@ Route::group(['prefix' => "maintenance"], function(){
         return redirect()->back();
     })->name('accept_project_maintenance');
 });
-Route::group(['prefix' => "heavy_equip"], function(){
-    Route::get('/show' , [HeavyEquipmentController::class , 'show'])->name('heavy_equip_show');
-    Route::post('/add_service' , [HeavyEquipmentController::class , 'store_service'])->name('heavy_equip_store_service');
-    Route::get('/',[HeavyEquipmentController::class , 'index'])->name('main_heavy_equip');
-    Route::get('/service/{id}',[HeavyEquipmentController::class , 'show_my_service'])->name('main_heavy_equip_show_my_service');
-    Route::get('/edit/{id}',[HeavyEquipmentController::class , 'edit'])->name('main_heavy_equip.edit');
-    Route::patch('/update/{id}',[HeavyEquipmentController::class , 'update'])->name('main_heavy_equip.update');
-    Route::post('/accept_offer' , [OrderHeavyEquipController::class , 'store'])->name('accept_offer_heavy_equip');
-    Route::get('/order' , [OrderHeavyEquipController::class , 'show_orders'])->name('show_orders_heavy_equip');
-    Route::get('/order/{id}' , [OrderHeavyEquipController::class , 'show'])->name('show_order_heavy_equip');
-    Route::get('/accept_project_heavy_equip/{id}' , function($id) {
-        HeavyEquipment::find($id)->update(['status' => "completed"]);
-        return redirect()->back();
-    })->name('accept_project_heavy_equip');
-});
+
 Route::group(['prefix' => "spare_part"], function(){
     Route::get('/show' , [SparePartController::class , 'show'])->name('spare_part_show');
+    Route::get('/spare_part_sub_show/{id}' , [SparePartController::class , 'spare_part_sub_show'])->name('spare_part_sub_show');
     Route::post('/add_service' , [SparePartController::class , 'store_service'])->name('spare_part_store_service');
     Route::get('/',[SparePartController::class , 'index'])->name('main_spare_part');
     Route::get('/service/{id}',[SparePartController::class , 'show_my_service'])->name('main_spare_part_show_my_service');
@@ -458,7 +453,7 @@ Route::group(['prefix' => "spare_part"], function(){
     Route::get('/order' , [OrderSparePartController::class , 'show_orders'])->name('show_orders_spare_part');
     Route::get('/order/{id}' , [OrderSparePartController::class , 'show'])->name('show_order_spare_part');
     Route::get('/accept_project_spare_part/{id}' , function($id) {
-        SpareParts::find($id)->update(['status' => "completed"]);
+        SparePartOrder::find($id)->update(['status' => "completed"]);
         return redirect()->back();
     })->name('accept_project_spare_part');
 });
@@ -473,9 +468,56 @@ Route::group(['prefix' => "air_con"], function(){
     Route::get('/order' , [OrderAirconController::class , 'show_orders'])->name('show_orders_air_con');
     Route::get('/order/{id}' , [OrderAirconController::class , 'show'])->name('show_order_air_con');
     Route::get('/accept_project_air_con/{id}' , function($id) {
-        AirCondition::find($id)->update(['status' => "completed"]);
+        AirConditionOrder::find($id)->update(['status' => "completed"]);
         return redirect()->back();
     })->name('accept_project_air_con');
+});
+// Vans
+Route::group(['prefix' => "van_truck"], function(){
+    Route::get('/show' , [VanTruckController::class , 'show'])->name('van_truck_show');
+    Route::get('/van_truck_sub_show/{id}' , [VanTruckController::class , 'van_truck_sub_show'])->name('van_truck_sub_show');
+    Route::post('/add_service' , [VanTruckController::class , 'store_service'])->name('van_truck_store_service');
+    Route::get('/',[VanTruckController::class , 'index'])->name('main_van_truck');
+    Route::get('/service/{id}',[VanTruckController::class , 'show_my_service'])->name('main_van_truck_show_my_service');
+    Route::get('/edit/{id}',[VanTruckController::class , 'edit'])->name('main_van_truck.edit');
+    Route::patch('/update/{id}',[VanTruckController::class , 'update'])->name('main_van_truck.update');
+    Route::post('/accept_offer' , [VanTruckOrderController::class , 'store'])->name('accept_offer_van_truck');
+    Route::get('/order' , [VanTruckOrderController::class , 'show_orders'])->name('show_orders_van_truck');
+    Route::get('/order/{id}' , [VanTruckOrderController::class , 'show'])->name('show_order_van_truck');
+    Route::get('/accept_project_van_truck/{id}' , function($id) {
+        VanTruckOrder::find($id)->update(['status' => "completed"]);
+        return redirect()->back();
+    })->name('accept_project_van_truck');
+});
+// heavy equip
+Route::group(['prefix' => "heavy_equip"], function(){
+    Route::get('/show' , [HeavyEquipmentController::class , 'show'])->name('heavy_equip_show');
+    Route::get('/heavy_equip_sub_show/{id}' , [HeavyEquipmentController::class , 'heavy_equip_sub_show'])->name('heavy_equip_sub_show');
+    Route::post('/add_service' , [HeavyEquipmentController::class , 'store_service'])->name('heavy_equip_store_service');
+    Route::get('/',[HeavyEquipmentController::class , 'index'])->name('main_heavy_equip');
+    Route::get('/service/{id}',[HeavyEquipmentController::class , 'show_my_service'])->name('main_heavy_equip_show_my_service');
+    Route::get('/edit/{id}',[HeavyEquipmentController::class , 'edit'])->name('main_heavy_equip.edit');
+    Route::patch('/update/{id}',[HeavyEquipmentController::class , 'update'])->name('main_heavy_equip.update');
+    Route::post('/accept_offer' , [OrderHeavyEquipController::class , 'store'])->name('accept_offer_heavy_equip');
+    Route::get('/order' , [OrderHeavyEquipController::class , 'show_orders'])->name('show_orders_heavy_equip');
+    Route::get('/order/{id}' , [OrderHeavyEquipController::class , 'show'])->name('show_order_heavy_equip');
+    Route::get('/accept_project_heavy_equip/{id}' , function($id) {
+        HeavyEquipmentOrder::find($id)->update(['status' => "completed"]);
+        return redirect()->back();
+    })->name('accept_project_heavy_equip');
+});
+//industry
+Route::group(['prefix' => "plastic"], function(){
+    Route::get('/products', [indsProductController::class, 'index'])->name('indsproducts.index');
+    Route::get('/products/{id}', [indsProductController::class, 'show'])->name('indsproducts.show');
+
+    Route::post('/accept_offer' , [VanTruckOrderController::class , 'store'])->name('accept_offer_plastic');
+    Route::get('/order' , [VanTruckOrderController::class , 'show_orders'])->name('show_orders_plastic');
+    Route::get('/order/{id}' , [VanTruckOrderController::class , 'show'])->name('show_order_plastic');
+    Route::get('/accept_project_plastic/{id}' , function($id) {
+        VanTruckOrder::find($id)->update(['status' => "completed"]);
+        return redirect()->back();
+    })->name('accept_project_plastic');
 });
 
 

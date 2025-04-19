@@ -183,6 +183,9 @@
     $air_con = $userDepartments->first(function ($department) {
         return $department->commentable_type === \App\Models\AirCondition::class;
     });
+    $van_truck = $userDepartments->first(function ($department) {
+        return $department->commentable_type === \App\Models\VanTruck::class;
+    });
 }else{
     $Follow_cameras =  \App\Models\FollowCamera::first();
     $furniture_transportations =  \App\Models\FurnitureTransportation::first();
@@ -203,6 +206,7 @@
     $heavy_equip = \App\Models\HeavyEquipment::first();
     $spare_part = \App\Models\SpareParts::first();
     $air_con = \App\Models\AirCondition::first();
+    $van_truck = \App\Models\VanTruck::first();
 
 }
 
@@ -524,6 +528,23 @@
                                 <a href="{{ route('air_con_show') }}">
                                     <p class="card-text">
                                         {{ $lang == 'ar' ? $air_con->name_ar : $air_con->name_en }}
+                                    </p>
+                                </a>
+                            </div>
+                        </div>
+                    @endif
+                    @if ($van_truck)
+                        <div class="card card-custom">
+                            @if ($van_truck->image)
+                                <a href="{{ route('van_truck_show') }}">
+                                    <img src="{{ $van_truck->image_url }}" class="card-img-top mt-2"
+                                        alt="{{ $van_truck->name_ar }}">
+                                </a>
+                            @endif
+                            <div class="card-body">
+                                <a href="{{ route('van_truck_show') }}">
+                                    <p class="card-text">
+                                        {{ $lang == 'ar' ? $van_truck->name_ar : $van_truck->name_en }}
                                     </p>
                                 </a>
                             </div>

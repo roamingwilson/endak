@@ -146,6 +146,56 @@ $lang = config('app.locale');
                 @endcan
                 @can('Admin_Departments')
                     <li class="nav-item has-treeview">
+                        <a href="" class="nav-link {{ request()->is('admin/industry*') ? 'active' : '' }}">
+                            {{-- <i class="nav-icon fas fa-cog"></i> --}}
+                            <i class="fas fa-car nav-icon"></i>
+
+                            <p>
+                                {{ ($lang == 'ar')? 'صناغة البلاستيك' : 'Industry' }}
+                                <i class="right fas fa-angle-left"></i>
+                            </p>
+                        </a>
+                        {{-- @can('Edit_Admin_Settings') --}}
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="{{ route('indscategories.index') }}" class="nav-link {{ request()->is('indscategories.index') ? 'active' : '' }}">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        {{ ($lang == 'ar')? 'الاصناف ' : 'Industry' }}
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('indsubcategories.index') }}" class="nav-link {{ request()->is('indsubcategories.index') ? 'active' : '' }}">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        {{ ($lang == 'ar')? '  الاصناف الفرعية  ' : 'Industry' }}
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('indproducts.create') }}" class="nav-link {{ request()->is('indsproducts.index') ? 'active' : '' }}">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        {{ ($lang == 'ar')? 'اضافة منتجات قسم البلاستيك' : 'Product Industry' }}
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('indsproducts.index') }}" class="nav-link {{ request()->is('indsproducts.index') ? 'active' : '' }}">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        {{ ($lang == 'ar')? 'منتجات قسم البلاستيك' : 'Product Industry' }}
+                                    </a>
+                                </li>
+
+                                {{-- <li class="nav-item">
+                                    <a href="" class="nav-link {{ request()->is('admin/departments/edit') ? 'active' : '' }}">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p> {{ __('department.edit_department') }} </p>
+                                    </a>
+                                </li> --}}
+
+                            </ul>
+                        {{-- @endcan --}}
+
+                    </li>
+                @endcan
+                @can('Admin_Departments')
+                    <li class="nav-item has-treeview">
                         <a href="" class="nav-link {{ request()->is('admin/surveillance_cameras*') ? 'active' : '' }}">
                             {{-- <i class="nav-icon fas fa-cog"></i> --}}
                             <i class="fas fa-car nav-icon"></i>
@@ -192,6 +242,28 @@ $lang = config('app.locale');
                                     <a href="{{ route('admin.contracting') }}" class="nav-link {{ request()->is('admin/contracting') ? 'active' : '' }}">
                                         <i class="far fa-circle nav-icon"></i>
                                         {{ ($lang == 'ar')? 'المقاولات' : 'Contracting' }}
+                                    </a>
+                                </li>
+
+                            </ul>
+
+                    </li>
+                @endcan
+                @can('Admin_Departments')
+                    <li class="nav-item has-treeview">
+                        <a href="" class="nav-link {{ request()->is('admin/van_truck*') ? 'active' : '' }}">
+                            <i class="fas fa-truck-moving nav-icon"></i>
+
+                            <p>
+                                {{ ($lang == 'ar')? 'شاحنات' : 'van_truck' }}
+                                <i class="right fas fa-angle-left"></i>
+                            </p>
+                        </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="{{ route('admin.van_truck') }}" class="nav-link {{ request()->is('admin/van_truck') ? 'active' : '' }}">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        {{ ($lang == 'ar')? 'شاحنات' : 'van_truck' }}
                                     </a>
                                 </li>
 

@@ -27,6 +27,7 @@ use App\Models\HeavyEquipment;
 use App\Models\HeavyEquipmentOrder;
 use App\Models\SparePartOrder;
 use App\Models\SpareParts;
+use App\Models\VanTruck;
 
 class RatingUserController extends Controller
 {
@@ -52,6 +53,7 @@ class RatingUserController extends Controller
         $value17 = ['heavy_equip'];
         $value18 = ['spare_part'];
         $value19 = ['air_con'];
+        $value20 = ['van_truck'];
         if (array_intersect($url, $value1)) {
             $order = FurnitureTransportationOrder::find($id);
             $department_name = 'furniture_transportations';
@@ -125,6 +127,10 @@ class RatingUserController extends Controller
         elseif(array_intersect($url, $value19)){
             $order = AirConditionOrder::find($id);
             $department_name = 'air_con';
+        }
+        elseif(array_intersect($url, $value19)){
+            $order = VanTruck::find($id);
+            $department_name = 'van_truck';
         }
         else{
             $order = Order::findOrFail($id);
