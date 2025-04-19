@@ -3,6 +3,13 @@
 namespace App\Http\Controllers\Api\furniture;
 
 use App\Http\Controllers\Controller;
+use App\Models\GeneralComments;
+use App\Models\GeneralImage;
+use App\Models\HeavyEquipmentOrder;
+use App\Models\HeavyEquipmentservice;
+use App\Models\Rating;
+use App\Models\User;
+use App\Notifications\CommentNotification;
 use Illuminate\Http\Request;
 
 class ApiHeavyEquipController extends Controller
@@ -11,14 +18,11 @@ class ApiHeavyEquipController extends Controller
     {
         $inputs_name = [
        'user_id' => "auth user id ",
-
             'location' => "location",
             'notes' => 'notes',
-
-            'city' => 'city',
-            'neighborhood' => 'neighborhood',
+            'equip_type' => 'equip_type',
             'time' => 'time',
-            'date' => 'date',
+
         ];
         $data = ['inputs_name' => $inputs_name];
         return response()->apiSuccess($data, 'success', 200);
@@ -27,7 +31,7 @@ class ApiHeavyEquipController extends Controller
     public function storeService(Request $request)
     {
 
-        $is_created = AirConditionService::create([
+        $is_created = HeavyEquipmentservice::create([
             'user_id' => $request->user_id ?? auth('sanctum')->id(),
             'split' => $request->split,
             'window' => $request->window,
@@ -67,13 +71,13 @@ class ApiHeavyEquipController extends Controller
     }
     public function accept_offer(Request $request){
 
-        $is_create = AirConditionOrder::create([
+        $is_create = HeavyEquipmentOrder::create([
             'service_id'    => $request->service_id,
             'customer_id'    => $request->customer_id,
             'service_provider_id'    => $request->service_provider_id,
         ]);
         if($is_create){
-            $service = AirConditionService::find($request->service_id);
+            $service = HeavyEquipmentservice::find($request->service_id);
             $service->update(['status' => "pending"]);
         }
 
@@ -94,7 +98,7 @@ class ApiHeavyEquipController extends Controller
         ]);
 
         $department_name = 'air_con';
-        $order = AirConditionOrder::where('id' , $request->order_id)->first();
+        $order = HeavyEquipmentOrder::where('id' , $request->order_id)->first();
         $order->update([
             'status'    => 'completed',
         ]);
@@ -131,13 +135,13 @@ class ApiHeavyEquipController extends Controller
     // service_provider
 
     public function service_provider_index(){
-        $services = AirConditionService::get();
+        $services = HeavyEquipmentservice::get();
         return response()->apiSuccess($services);
     }
 
 
     public function service_provider_add_offer(Request $request){
-        $service = AirConditionService::where('id' , $request->service_id)->first();
+        $service = HeavyEquipmentservice::where('id' , $request->service_id)->first();
         $customer = User::where('id' ,$service->user_id )->first();
         $user = auth('sanctum')->user();
         $data = $request->except('image');
@@ -169,7 +173,7 @@ class ApiHeavyEquipController extends Controller
     public function showService($id)
     {
 
-        $is_created = AirConditionService::find($id);
+        $is_created = HeavyEquipmentservice::find($id);
         $offers = GeneralComments::where('commentable_id',$id)->where('commentable_type' ,'App\Models\CarWaterService')->get();
         $data = ['service' => $is_created , 'offers' => $offers];
         return response()->apiSuccess($data, 'success', 200);
