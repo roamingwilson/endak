@@ -113,7 +113,9 @@
                                 {{ $lang == 'ar' ? 'العروض' : 'Offers' }}</h5>
                             <div class="d-block mb-4 overflow-visible d-block d-sm-flex">
                                 <div class="container">
+
                                     @forelse ($service->comments as $comment)
+
                                         <div class="col-12 border mb-4 p-4 br-5">
                                             <div class="d-flex align-items-center">
                                                 <h5 class="mt-0 mr-3">
@@ -124,7 +126,7 @@
                                                         href="{{ route('web.send_message', $comment->user->id) }}">
                                                         <i class="fe fe-mail mx-1"></i> {{ __('messages.send_message') }}
                                                     </a>
-                                                    <form action="{{ route('accept_offer_contracting') }}" method="post">
+                                                    <form action="{{ route('accept_offer_heavy_equip') }}" method="post">
                                                         @csrf
                                                         <input type="hidden" name="service_id"
                                                             value="{{ $service->id }}">

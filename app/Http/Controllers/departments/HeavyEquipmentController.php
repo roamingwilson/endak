@@ -135,9 +135,15 @@ public function store_service(Request $request )
     return redirect()->route('home')->with('success', 'تم اضافة الطلب بنجاح');
 }
 public function show_my_service($id){
-    $service = HeavyEquipmentService::find($id);
-    $main = HeavyEquipment::where('id',$service->heavy_equip_id)->first();
+    $user = auth()->user();
+$service = HeavyEquipmentService::find($id);
+
+if (!$service) {
+    return redirect()->back()->with('error', 'الخدمة غير موجودة');
+}
+
+$main = HeavyEquipment::find($service->heavy_equip_id);
     // dd($main);
-    return view('admin.main_department.heavy_equip.show_myservice' , compact( 'main' , 'service'));
+    return view('admin.main_department.heavy_equip.show_myservice' , compact( 'main' , 'user','service'));
 }
 }

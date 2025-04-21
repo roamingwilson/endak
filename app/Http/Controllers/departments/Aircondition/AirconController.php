@@ -102,7 +102,12 @@ class AirconController extends Controller
 
         }
         public function show_my_service($id){
+            $user = auth()->user();
             $service = AirConditionService::find($id);
+
+            if (!$service) {
+                return redirect()->back()->with('error', 'الخدمة غير موجودة');
+            }
             $main = AirCondition::first();
             return view('admin.main_department.air_con.show_myservice' , compact( 'main' , 'service'));
         }

@@ -36,7 +36,7 @@ $lang = config('app.locale');
                                 <div class="col-md-4">
                                     <div class="card">
                                         <div class="position-relative">
-                                            <a href="{{ route('main_spare_part_show_my_service', $service->id) }}">
+                                            <a href="{{ route('main_air_con_show_my_service', $service->id) }}">
                                                 @if ($service->image)
                                                     <img class="card-img-top" src="{{ $service->image_url }}" alt="img"
                                                         width="300" height="300">

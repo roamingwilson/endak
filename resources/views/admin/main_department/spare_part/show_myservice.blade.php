@@ -154,7 +154,7 @@
                                                         href="{{ route('web.send_message', $comment->user->id) }}">
                                                         <i class="fe fe-mail mx-1"></i> {{ __('messages.send_message') }}
                                                     </a>
-                                                    <form action="{{ route('accept_offer_contracting') }}" method="post">
+                                                    <form action="{{ route('accept_offer_spare_part') }}" method="post">
                                                         @csrf
                                                         <input type="hidden" name="service_id"
                                                             value="{{ $service->id }}">

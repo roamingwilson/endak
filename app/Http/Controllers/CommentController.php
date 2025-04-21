@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\GeneralComments;
 use Illuminate\Http\Request;
 use App\Models\CommentsFiles;
 use App\Models\Comment;
@@ -23,23 +24,23 @@ class CommentController extends Controller
         //     "department_id" => "required",
         // ]);
         $request->validate([
-            'image.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048', 
+            'image.*' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
         $post = Post::where('id' , $request->post_id)->first();
         $customer = User::where('id' ,$post->user_id )->first();
         $user = auth()->user();
         $data = $request->except('image');
         $data['user_id'] = $user->id;
-        
+
         $comment = $this->comment_service->store($data);
         if ($request->hasFile('image')) {
-            $paths = [];  
-    
+            $paths = [];
+
             foreach ($request->file('image') as $image) {
                 $path = $image->store('public/comments');
                 CommentsFiles::create([
                     'comment_id' => $comment->id,
-                    'file'       => $path, 
+                    'file'       => $path,
                 ]);
             }
         }
@@ -54,8 +55,8 @@ class CommentController extends Controller
         return redirect()->back()->with('success','Add Seccessfully');
     }
         public function comments($id){
-            
-        $comments = Comment::where('user_id' , $id)->paginate(10);
+
+        $comments = GeneralComments::where('service_provider' , $id)->paginate(10);
         return view('front_office.comments.my_comments' , compact('comments'));
     }
 }

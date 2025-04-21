@@ -165,7 +165,7 @@
                                                         <a class="dropdown-item mb-2" href="{{ route('web.send_message', $comment->user->id) }}">
                                                             <i class="fe fe-mail mx-1"></i> {{ __('messages.send_message') }}
                                                         </a>
-                                                        <form action="{{ route('accept_offer_big_car') }}" method="post">
+                                                        <form action="{{ route('accept_offer_air_con') }}" method="post">
                                                             @csrf
                                                             <input type="hidden" name="service_id" value="{{ $service->id }}">
                                                             <input type="hidden" name="service_provider_id" value="{{ $comment->user->id }}">
@@ -264,6 +264,24 @@
         </div>
     </section>
 @endsection
+@if (Session::has('success'))
+        <script>
+            swal("Message", "{{ Session::get('success') }}", 'success', {
+                button: true,
+                button: "Ok",
+                timer: 3000,
+            })
+        </script>
+    @endif
+    @if (Session::has('info'))
+        <script>
+            swal("Message", "{{ Session::get('info') }}", 'info', {
+                button: true,
+                button: "Ok",
+                timer: 3000,
+            })
+        </script>
+    @endif
 {{-- @section('script')
     <script src="https://cdn.jsdelivr.net/npm/resumablejs@1.1.0/resumable.min.js"></script>
     <script>

@@ -17,4 +17,6 @@ class HeavyEquipment extends Model
     {
         return $this->morphMany(UserDepartment::class, 'commentable');
     }
+
+
 }

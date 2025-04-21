@@ -146,7 +146,12 @@ class SparePartController extends Controller
 
 
     public function show_my_service($id){
+        $user = auth()->user();
         $service = SparePartServices::find($id);
+
+        if (!$service) {
+            return redirect()->back()->with('error', 'الخدمة غير موجودة');
+        }
         $main = SpareParts::where('id',$service->spare_part_id)->first();
         // dd($main);
         return view('admin.main_department.spare_part.show_myservice' , compact( 'main' , 'service'));

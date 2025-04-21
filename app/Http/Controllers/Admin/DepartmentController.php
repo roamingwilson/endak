@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Models\Department;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\UserDepartment;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
@@ -61,6 +62,19 @@ class DepartmentController extends Controller
         }
 
         $is_create = Department::create($data);
+        $modelName = $request->model_name; // لازم تجيب اسم الموديل من الفورم مثلاً
+if ($modelName) {
+    $modelClass = "App\\Models\\" . $modelName;
+    if (class_exists($modelClass)) {
+        $modelInstance = $modelClass::latest()->first(); // أو أي طريقة تحدد بيها الـinstance
+        if ($modelInstance) {
+            $modelInstance->departments()->save(new UserDepartment([
+                'user_id' => Auth::id(),
+                'commentable_id' => $is_create->id,
+            ]));
+        }
+    }
+}
         // if ($request->has('topics')) {
         //     $is_create->topics()->sync($request->topics);
         // }
@@ -91,7 +105,7 @@ class DepartmentController extends Controller
     }
     public function show($slug){
         $this->authorize('Show_Department');
-        
+
         $department = Department::whereSlug($slug)->first();
 
         // $data['department'] = $department;

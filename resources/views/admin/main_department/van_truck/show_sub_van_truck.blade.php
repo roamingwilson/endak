@@ -34,7 +34,7 @@ $lang = config('app.locale');
                             <div class="col-md-4">
                                 <div class="card">
                                     <div class="position-relative">
-                                        <a href="{{ route('main_contracting_show_my_service', $service->id) }}">
+                                        <a href="{{ route('main_van_truck_show_my_service', $service->id) }}">
                                             @if ($service->image)
                                                 <img class="card-img-top" src="{{ $service->image_url }}" alt="img"
                                                     width="300" height="300">
@@ -45,7 +45,7 @@ $lang = config('app.locale');
                                         </a>
                                     </div>
                                     <div class="card-body d-flex flex-column">
-                                        <h5><a href="{{ route('main_contracting_show_my_service', $service->id) }}">
+                                        <h5><a href="{{ route('main_van_truck_show_my_service', $service->id) }}">
                                                 {{ $lang == 'ar' ? $service->name_ar : $service->name_en }}</a></h5>
                                         <div class="tx-muted">
                                             {{ $service->user->full_name }}

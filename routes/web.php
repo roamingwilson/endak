@@ -71,6 +71,7 @@ use App\Http\Controllers\departments\VanTruck\VanTruckOrderController;
 use App\Http\Controllers\Furniture\FurnitureTransportationsController;
 use App\Http\Controllers\Surveillance\OrderSurveillanceCamerasController;
 use App\Http\Controllers\Furniture\OrderFurnitureTransportationsController;
+use App\Http\Controllers\notificationController;
 use App\Models\AirCondition;
 use App\Models\HeavyEquipment;
 use App\Models\HeavyEquipmentOrder;
@@ -78,6 +79,7 @@ use App\Models\indsProduct;
 use App\Models\SparePartOrder;
 use App\Models\SpareParts;
 use App\Models\VanTruckOrder;
+use Illuminate\Support\Facades\Auth;
 
 /*
 |--------------------------------------------------------------------------
@@ -90,9 +92,22 @@ use App\Models\VanTruckOrder;
 |
 */
 
+// Route::get('/', function () {
+//     return view('front_office.home');
+// })->name('home');
 Route::get('/', function () {
-    return view('front_office.home');
-})->name('home');
+
+
+    if (auth()->check() && auth()->user()->role_id == 3) {
+        return view('front_office.services');}
+        else {
+            return view('front_office.home');
+        }
+    }
+
+)->name('home');
+Route::get('/notifications', [notificationController::class, 'index'])->name('notifications.index');
+
 Route::get('/page/{slug}', [PageController::class , 'pageSingle'])->name('page');
 Route::get('/search', [SearchController::class, 'index'])->name('search');
 

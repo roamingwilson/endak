@@ -5,7 +5,7 @@
         $user = auth()->user();
     }
     ?>
-    <header class="main-header" id="stickyHeader"  >
+    <header class="main-header" id="stickyHeader" style="background-color: #007bff" >
 
         <!-- Start::main-brand-header -->
         <div class="main-brand-header">
@@ -259,7 +259,7 @@
                                 {{-- <?php $sender_message = App\Models\User::where('id', $message->sender_id)->first(); ?> --}}
 
                                     <li>
-                                        <a href="{{route('notifications.index')}}" class="dropdown-item">
+                                        <a href="{{ $notification->data['url'] }}" class="dropdown-item">
                                         {{-- <a href="{{ route('web.send_message', $sender_message->id) }}" class="dropdown-item"> --}}
                                             <!-- Message Start -->
                                             <div class="media">
@@ -293,9 +293,9 @@
         <!-- End::main-brand-header -->
 
     </header>
-    <div class="sticky">
+    <div class="sticky" >
         <!-- Start::app-sidebar -->
-        <aside class="app-sidebar" id="sidebar">
+        <aside class="app-sidebar" id="sidebar" style="background-color: #007bff">
 
             <div class="app-toggle-header">
                 <div class="header-element">
@@ -315,10 +315,10 @@
             </div>
 
             <!-- Start::main-sidebar -->
-            <div class="main-sidebar container" id="sidebar-scroll">
+            <div class="main-sidebar container" id="sidebar-scroll" style="background-color: #007bff">
 
                 <!-- Start::nav -->
-                <nav class="main-menu-container nav nav-pills sub-open">
+                <nav class="main-menu-container nav nav-pills sub-open" style="background-color: #007bff">
                     <ul class="main-menu">
 
                         <!-- Start::slide -->

@@ -24,7 +24,10 @@ $lang = config('app.locale');
             </div>
         </section>
     </div>
+
+    {{-- if (!Auth::check()) --}}
     @if (auth()->check() && auth()->user()->role_id == 3)
+
         <section class="section">
             <div class="container">
                 <div class="row">

@@ -144,7 +144,7 @@
                                                         href="{{ route('web.send_message', $comment->user->id) }}">
                                                         <i class="fe fe-mail mx-1"></i> {{ __('messages.send_message') }}
                                                     </a>
-                                                    <form action="{{ route('accept_offer_contracting') }}" method="post">
+                                                    <form action="{{ route('accept_offer_van_truck') }}" method="post">
                                                         @csrf
                                                         <input type="hidden" name="service_id"
                                                             value="{{ $service->id }}">
@@ -227,6 +227,7 @@
                                     method="POST" enctype="multipart/form-data">
                                     @csrf
                                     <input type="hidden" value="{{ $service->id }}" name="service_id">
+                                    {{-- <input type="hidden" value="{{ $user->id }}" name="service_provider"> --}}
 
                                     <div>
                                         <label class="mb-2" for="">{{ __('general.price') }}</label>

@@ -131,10 +131,16 @@ class VanTruckController extends Controller
     }
 
     public function show_my_service($id){
-        $service = VanTruckService::find($id);
-        $main = VanTruck::where('id',$service->vantruck_id)->first();
+        $user = auth()->user();
+    $service = VanTruckService::find($id);
+
+    if (!$service) {
+        return redirect()->back()->with('error', 'الخدمة غير موجودة');
+    }
+
+    $main = VanTruck::find($service->vantruck_id);
         // dd($main);
-        return view('admin.main_department.van_truck.show_myservice' , compact( 'main' , 'service'));
+        return view('admin.main_department.van_truck.show_myservice' , compact( 'main' , 'user','service'));
     }
 
 

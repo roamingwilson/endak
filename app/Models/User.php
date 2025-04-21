@@ -182,5 +182,8 @@ class User extends Authenticatable
     {
         return $this->hasMany(UserDepartment::class, 'user_id');
     }
-
+    public function comments()
+{
+    return $this->hasMany(GeneralComments::class, 'service_provider');
+}
 }

@@ -1,4 +1,4 @@
-@extends('layouts.home')
+@extends('layouts.services')
 @section('title')
     {{ __('general.home') }}
     <?php $lang = config('app.locale'); ?>
@@ -105,90 +105,90 @@
     // $contracting = $userDepartments->first(function ($department) {
     //     return $department->commentable_type === \App\Models\Contracting::class;
     // });
-//     if(isset($user->departments)){
+    // if(isset($user->departments)){
 
-//         $userDepartments = $user->departments()->with('commentable')->get();
-//         // $contracting = $userDepartments->first(function ($department) {
-//         //     if($department->commentable_type === \App\Models\Contracting::class){
-//         //         return  \App\Models\Contracting::where('id' , $department->commentable_id)->first();
-//         //     }
-//         //     return false;
-//         // });
+    //     $userDepartments = $user->departments()->with('commentable')->get();
+    //     // $contracting = $userDepartments->first(function ($department) {
+    //     //     if($department->commentable_type === \App\Models\Contracting::class){
+    //     //         return  \App\Models\Contracting::where('id' , $department->commentable_id)->first();
+    //     //     }
+    //     //     return false;
+    //     // });
 
-//     $main_contracting = $userDepartments->first(function ($department) {
-//         return $department->commentable_type === \App\Models\Contracting::class;
-//     });
-//     $contracting = null;
-//     if($main_contracting){
+    // $main_contracting = $userDepartments->first(function ($department) {
+    //     return $department->commentable_type === \App\Models\Contracting::class;
+    // });
+    // $contracting = null;
+    // if($main_contracting){
 
-//         $contracting =  \App\Models\Contracting::where('id' , $main_contracting->commentable_id)->first();
-//     }
+    //     $contracting =  \App\Models\Contracting::where('id' , $main_contracting->commentable_id)->first();
+    // }
 
-//     $main_maintenance = $userDepartments->first(function ($department) {
-//         return $department->commentable_type === \App\Models\Maintenance::class;
-//     });
-//     $maintenance = null;
-//     if($main_maintenance ){
+    // $main_maintenance = $userDepartments->first(function ($department) {
+    //     return $department->commentable_type === \App\Models\Maintenance::class;
+    // });
+    // $maintenance = null;
+    // if($main_maintenance ){
 
-//         $maintenance =  \App\Models\Maintenance::where('id' , $main_maintenance->commentable_id)->first();
-//     }
-//     $Follow_cameras = $userDepartments->first(function ($department) {
-//         return $department->commentable_type === \App\Models\FollowCamera::class;
-//     });
-//     $furniture_transportations = $userDepartments->first(function ($department) {
-//         return $department->commentable_type === \App\Models\FurnitureTransportation::class;
-//     });
-//     $PartyPreparation = $userDepartments->first(function ($department) {
-//         return $department->commentable_type === \App\Models\PartyPreparation::class;
-//     });
-//     $counter_insects = $userDepartments->first(function ($department) {
-//         return $department->commentable_type === \App\Models\CounterInsects::class;
-//     });
-//     $cleaning = $userDepartments->first(function ($department) {
-//         return $department->commentable_type === \App\Models\Cleaning::class;
-//     });
-//     $teacher = $userDepartments->first(function ($department) {
-//         return $department->commentable_type === \App\Models\Teacher::class;
-//     });
-//     $family = $userDepartments->first(function ($department) {
-//         return $department->commentable_type === \App\Models\Family::class;
-//     });
-//     $worker = $userDepartments->first(function ($department) {
-//         return $department->commentable_type === \App\Models\Worker::class;
-//     });
-//     $general_service = $userDepartments->first(function ($department) {
-//         return $department->commentable_type === \App\Models\PublicGe::class;
-//     });
-//     $ads = $userDepartments->first(function ($department) {
-//         return $department->commentable_type === \App\Models\Ads::class;
-//     });
-//     $water = $userDepartments->first(function ($department) {
-//         return $department->commentable_type === \App\Models\Water::class;
-//     });
-//     $car_water = $userDepartments->first(function ($department) {
-//         return $department->commentable_type === \App\Models\CarWater::class;
-//     });
-//     $big_car = $userDepartments->first(function ($department) {
-//         return $department->commentable_type === \App\Models\BigCar::class;
-//     });
-//     $garden = $userDepartments->first(function ($department) {
-//         return $department->commentable_type === \App\Models\Garden::class;
-//     });
-//     $heavy_equip = $userDepartments->first(function ($department) {
-//         return $department->commentable_type === \App\Models\HeavyEquipment::class;
-//     });
-//     $spare_part = $userDepartments->first(function ($department) {
-//         return $department->commentable_type === \App\Models\SpareParts::class;
-//     });
-//     $air_con = $userDepartments->first(function ($department) {
-//         return $department->commentable_type === \App\Models\AirCondition::class;
-//     });
-//     $van_truck = $userDepartments->first(function ($department) {
-//         return $department->commentable_type === \App\Models\VanTruck::class;
-//     });
-//     $industry = $userDepartments->first(function ($department) {
-//         return $department->commentable_type === \App\Models\industries::class;
-//     });
+    //     $maintenance =  \App\Models\Maintenance::where('id' , $main_maintenance->commentable_id)->first();
+    // }
+    // $Follow_cameras = $userDepartments->first(function ($department) {
+    //     return $department->commentable_type === \App\Models\FollowCamera::class;
+    // });
+    // $furniture_transportations = $userDepartments->first(function ($department) {
+    //     return $department->commentable_type === \App\Models\FurnitureTransportation::class;
+    // });
+    // $PartyPreparation = $userDepartments->first(function ($department) {
+    //     return $department->commentable_type === \App\Models\PartyPreparation::class;
+    // });
+    // $counter_insects = $userDepartments->first(function ($department) {
+    //     return $department->commentable_type === \App\Models\CounterInsects::class;
+    // });
+    // $cleaning = $userDepartments->first(function ($department) {
+    //     return $department->commentable_type === \App\Models\Cleaning::class;
+    // });
+    // $teacher = $userDepartments->first(function ($department) {
+    //     return $department->commentable_type === \App\Models\Teacher::class;
+    // });
+    // $family = $userDepartments->first(function ($department) {
+    //     return $department->commentable_type === \App\Models\Family::class;
+    // });
+    // $worker = $userDepartments->first(function ($department) {
+    //     return $department->commentable_type === \App\Models\Worker::class;
+    // });
+    // $general_service = $userDepartments->first(function ($department) {
+    //     return $department->commentable_type === \App\Models\PublicGe::class;
+    // });
+    // $ads = $userDepartments->first(function ($department) {
+    //     return $department->commentable_type === \App\Models\Ads::class;
+    // });
+    // $water = $userDepartments->first(function ($department) {
+    //     return $department->commentable_type === \App\Models\Water::class;
+    // });
+    // $car_water = $userDepartments->first(function ($department) {
+    //     return $department->commentable_type === \App\Models\CarWater::class;
+    // });
+    // $big_car = $userDepartments->first(function ($department) {
+    //     return $department->commentable_type === \App\Models\BigCar::class;
+    // });
+    // $garden = $userDepartments->first(function ($department) {
+    //     return $department->commentable_type === \App\Models\Garden::class;
+    // });
+    // $heavy_equip = $userDepartments->first(function ($department) {
+    //     return $department->commentable_type === \App\Models\HeavyEquipment::class;
+    // });
+    // $spare_part = $userDepartments->first(function ($department) {
+    //     return $department->commentable_type === \App\Models\SpareParts::class;
+    // });
+    // $air_con = $userDepartments->first(function ($department) {
+    //     return $department->commentable_type === \App\Models\AirCondition::class;
+    // });
+    // $van_truck = $userDepartments->first(function ($department) {
+    //     return $department->commentable_type === \App\Models\VanTruck::class;
+    // });
+    // $industry = $userDepartments->first(function ($department) {
+    //     return $department->commentable_type === \App\Models\industries::class;
+    // });
 // }else{
     $Follow_cameras =  \App\Models\FollowCamera::first();
     $furniture_transportations =  \App\Models\FurnitureTransportation::first();
@@ -238,13 +238,13 @@
                     @if ($furniture_transportations)
                         <div class="card card-custom">
                             @if ($furniture_transportations->image)
-                                <a href="{{ route('furniture_transportations_show') }}">
+                                <a href="{{ route('furniture_transportations_service') }}">
                                     <img src="{{ $furniture_transportations->image_url }}" class="card-img-top"
                                         alt="{{ $furniture_transportations->name_ar }}">
                                 </a>
                             @endif
                             <div class="card-body">
-                                <a href="{{ route('furniture_transportations_show') }}">
+                                <a href="{{ route('furniture_transportations_service') }}">
                                     <p class="card-text">
                                         {{ $lang == 'ar' ? $furniture_transportations->name_ar : $furniture_transportations->name_en }}
                                     </p>
@@ -605,8 +605,8 @@
     </section>
 
 
-    <section class="section bg-pattern-2 bg-image2">
-        <div class="container">
+    <section class="section bg-pattern-2 bg-image2" style="background-color: #007bff">
+        <div class="container"  style="background-color: #007bff">
             <div class="heading-section">
                 <div class="heading-title " style="color: black;">{{ __('general.why') }}</div>
                 <div class="heading-description text-white op-8">
