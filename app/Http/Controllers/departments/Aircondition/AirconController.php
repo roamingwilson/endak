@@ -55,9 +55,25 @@ class AirconController extends Controller
 
         public function store_service(Request $request)
         {
-            $data = $request->except('_token', 'images');
+            // $data = $request->except('_token', 'images');
 
-            //  dd($data);
+        $data = $request->validate([
+            'user_id'       => 'required|exists:users,id',
+            'split'         => 'nullable|boolean',
+            'window'        => 'nullable|boolean',
+            'clean'         => 'nullable|boolean',
+            'feryoun'       => 'nullable|boolean',
+            'maintance'     => 'nullable|boolean',
+            'model'         => 'required|string|max:255',
+            'quantity'      => 'required|integer|min:1',
+            'city'          => 'required|string|max:255',
+            'neighborhood'  => 'required|string|max:255',
+            'time'          => 'nullable|date_format:H:i',
+            'date'          => 'nullable|date',
+            'notes'         => 'nullable|string',
+
+        ]);
+        // dd($data);
             $is_created = AirConditionService::create($data);
 
 

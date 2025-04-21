@@ -66,14 +66,23 @@ $lang = config('app.locale');
         </section>
     @elseif(auth()->check() && auth()->user()->role_id == 1)
         <section class="profile-cover-container mb-2">
-
+            @if($errors->any())
+            <div class="alert alert-danger">
+                <ul class="mb-0">
+                    @foreach($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+                @endif
             <div class="profile-content pt-40">
                 <div class="container position-relative d-flex justify-content-center ">
                     <?php $user = auth()->user(); ?>
-                    <form action="{{ route('heavy_equip_service') }}" method="POST" enctype="multipart/form-data"
+                    <form action="{{ route('heavy_equip_store_service') }}" method="POST" enctype="multipart/form-data"
                         style="width:600px;margin-top:10px" class="profile-card rounded-lg shadow-xs bg-white p-15 p-md-30">
                         @csrf
                         <input type="hidden" name="user_id" value="{{ $user->id }}">
+                        <input type="hidden" name="heavy_equip_id" value="{{ $main->id }}">
 
                         <div class="form-group mt-2">
                             <label for=""
@@ -100,7 +109,7 @@ $lang = config('app.locale');
                         </div>
                         <hr>
                         <div class="form-group mt-2" style="text-align: right;margin-right:10px">
-                            <button class="btn mt-2 form-control"
+                            <button class="btn mt-2 form-control" type="submit"
                                 style="background-color: #fdca3d">{{ $lang == 'ar' ? 'ارسال' : 'Send' }}</button>
                         </div>
                     </form>

@@ -216,7 +216,7 @@
 
 
     $users_count = App\Models\User::count();
-    $providers_count = App\Models\User::where('role_id', 3)->count();
+    $providers_count = App\Models\User::where('role_id', operator: 3)->count();
     $users = App\Models\User::where('role_id', 3)->limit(6)->get();
 
     ?>

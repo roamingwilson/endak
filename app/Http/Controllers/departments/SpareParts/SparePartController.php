@@ -93,36 +93,58 @@ class SparePartController extends Controller
         return view('admin.main_department.spare_part.show_sub_sparepart' , compact( 'main','services'  ));
     }
 
-    public function store_service(Request $request )
+    public function store_service(Request $request)
     {
-        $data = $request->except('_token', 'images');
+        // Validate the data
+        $data = $request->validate([
+            'spare_part_id'      => 'required|integer|exists:spare_parts,id',
+            'brand'              => 'required|string|max:255',
+            'year_made'          => 'required|string|max:10',
+            'part_number'        => 'required|string|max:255',
+            'name'               => 'required|string|max:255',
+            'from_city'          => 'required|string|max:255',
+            'from_neighborhood'  => 'required|string|max:255',
+            'to_city'            => 'required|string|max:255',
+            'to_neighborhood'    => 'required|string|max:255',
+            'notes'              => 'nullable|string',
+            'user_id'            => 'required|exists:users,id',
+        ]);
         // dd($data);
-        $is_created = SparePartServices::create($data);
+        // Create the service
+        try {
+            $is_created = SparePartServices::create($data);
 
-        if ($is_created) {
-            if ($request->hasFile('images')) {
+            // Handle image uploads
+            if ($is_created && $request->hasFile('images')) {
                 $files = $request->file('images');
 
+                // Ensure files is always an array
                 if (!is_array($files)) {
                     $files = [$files];
                 }
 
                 foreach ($files as $file) {
-                    $path = $file->store('spare_part', [
+                    // Store image in a subdirectory with service ID for better organization
+                    $path = $file->store('spare_parts/' . $is_created->id, [
                         'disk' => 'public',
                     ]);
-                        $image = new GeneralImage([
+
+                    // Create and save image to the service
+                    $image = new GeneralImage([
                         'path' => $path,
                     ]);
+
                     $is_created->images()->save($image);
                 }
             }
+
+            return redirect()->route('home')->with('success', 'تم اضافة الطلب بنجاح');
+        } catch (\Exception $e) {
+            return back()->with('error', 'حدث خطأ أثناء إضافة الطلب: ' . $e->getMessage());
         }
-
-
-        return redirect()->route('home')->with('success' , 'تم اضافة الطلب بنجاح');
-
     }
+
+
     public function show_my_service($id){
         $service = SparePartServices::find($id);
         $main = SpareParts::where('id',$service->spare_part_id)->first();

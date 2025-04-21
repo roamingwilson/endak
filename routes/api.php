@@ -307,3 +307,28 @@ Route::group(['prefix' => 'air_con/service_provider' ] , function(){
     Route::get('/' , [ApiAirconController::class , 'service_provider_index']);
     Route::post('/add_offer' , [ApiAirconController::class , 'service_provider_add_offer']);
 });
+//heavy equip
+Route::group(['prefix' => 'heavy_equip' ] , function(){
+    Route::get('/' , [ApiAirconController::class , 'index']);
+    Route::post('/store_service' , [ApiAirconController::class , 'storeService']);
+    Route::post('/accept_offer' , [ApiAirconController::class , 'accept_offer']);
+    Route::post('/add_rate' , [ApiAirconController::class , 'storeRate']);
+    Route::get('/show_service/{id}' , [ApiAirconController::class , 'showService']);
+
+});
+Route::group(['prefix' => 'air_con/service_provider' ] , function(){
+    Route::get('/' , [ApiAirconController::class , 'service_provider_index']);
+    Route::post('/add_offer' , [ApiAirconController::class , 'service_provider_add_offer']);
+});
+Route::group(['prefix' => 'air_con' ] , function(){
+    Route::get('/' , [ApiAirconController::class , 'index']);
+    Route::post('/store_service' , [ApiAirconController::class , 'storeService']);
+    Route::post('/accept_offer' , [ApiAirconController::class , 'accept_offer']);
+    Route::post('/add_rate' , [ApiAirconController::class , 'storeRate']);
+    Route::get('/show_service/{id}' , [ApiAirconController::class , 'showService']);
+
+});
+Route::group(['prefix' => 'air_con/service_provider' ] , function(){
+    Route::get('/' , [ApiAirconController::class , 'service_provider_index']);
+    Route::post('/add_offer' , [ApiAirconController::class , 'service_provider_add_offer']);
+});

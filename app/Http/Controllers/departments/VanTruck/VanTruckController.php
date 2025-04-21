@@ -91,36 +91,45 @@ class VanTruckController extends Controller
         return view('admin.main_department.van_truck.show_sub_van_truck' , compact( 'main','services'  ));
     }
 
-    public function store_service(Request $request )
+    public function store_service(Request $request)
     {
-        $data = $request->except('_token', 'images');
-        $is_created = VanTruckService::create($data);
+        // Validate incoming data
+        $data = $request->validate([
+            'user_id'            => 'required|exists:users,id',
+            'vantruck_id'        => 'required|exists:van_trucks,id',
+            'from_city'          => 'required|string|max:255',
+            'from_neighborhood'  => 'required|string|max:255',
+            'to_city'            => 'required|string|max:255',
+            'to_neighborhood'    => 'required|string|max:255',
+            'notes'              => 'nullable|string|max:500',
+            'location'           => 'nullable|string|max:255',
+            'time'               => 'required|date_format:H:i',
+        ]);
 
         // dd($data);
-        if ($is_created) {
+        try {
+            $service = VanTruckService::create($data);
+
+            // Handle images
             if ($request->hasFile('images')) {
-                $files = $request->file('images');
+                foreach ((array) $request->file('images') as $file) {
+                    $path = $file->store('van_truck/' . $service->id, 'public');
 
-                if (!is_array($files)) {
-                    $files = [$files];
-                }
-
-                foreach ($files as $file) {
-                    $path = $file->store('van_truck', [
-                        'disk' => 'public',
-                    ]);
-                        $image = new GeneralImage([
+                    $image = new GeneralImage([
                         'path' => $path,
                     ]);
-                    $is_created->images()->save($image);
+
+                    $service->images()->save($image);
                 }
             }
+
+            return redirect()->route('home')->with('success', 'تم اضافة الطلب بنجاح');
+
+        } catch (\Exception $e) {
+            return back()->with('error', 'حدث خطأ أثناء الإضافة: ' . $e->getMessage());
         }
-
-
-        return redirect()->route('home')->with('success' , 'تم اضافة الطلب بنجاح');
-
     }
+
     public function show_my_service($id){
         $service = VanTruckService::find($id);
         $main = VanTruck::where('id',$service->vantruck_id)->first();

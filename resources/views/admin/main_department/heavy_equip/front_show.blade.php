@@ -179,7 +179,7 @@
                     </div>
 
                     <div class="cards-container">
-                        @foreach ($contractingss as $item)
+                        @foreach ($heavy_equips as $item)
                             <div class="card card-custom ">
                                 @if ($item->image)
                                     <a href="{{ route('heavy_equip_sub_show' , $item->id) }}" class="d-flex justify-content-center align-items-center">

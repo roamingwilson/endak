@@ -5,9 +5,9 @@ $lang = config('app.locale');
 ?>
 {{ ($lang == 'ar')? 'فلاتر مياة شرب' : "Drinking water filters" }}
 @endsection
- 
+
 @section('content')
- 
+
     <div class="main-content app-content">
         <section>
             <div class="section banner-4 banner-section">
@@ -66,14 +66,25 @@ $lang = config('app.locale');
         </section>
     @elseif(auth()->check() && auth()->user()->role_id == 1)
         <section class="profile-cover-container mb-2">
+            @if($errors->any())
+            <div class="alert alert-danger">
+                <ul class="mb-0">
+                    @foreach($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+                @endif
 
             <div class="profile-content pt-40">
+
                 <div class="container position-relative d-flex justify-content-center ">
                     <?php $user = auth()->user(); ?>
-                    <form action="{{ route('water_store_service') }}" method="POST" enctype="multipart/form-data"
+                    <form action="{{ route('van_truck_store_service') }}" method="POST" enctype="multipart/form-data"
                         style="width:600px;margin-top:10px" class="profile-card rounded-lg shadow-xs bg-white p-15 p-md-30">
                         @csrf
                         <input type="hidden" name="user_id" value="{{ $user->id }}">
+                        <input type="hidden" name="vanTruck_id" value="{{ $main->id }}">
 
                         <div class="form-group mt-2">
                             <label for=""
@@ -89,10 +100,21 @@ $lang = config('app.locale');
                         </div>
                         <div class="form-group mt-2">
                             <label for="name" class="mb-1">{{ $lang == 'ar' ? 'المدينة' : 'City' }} : </label>
-                            <input type="text" class="form-control" name="city">
+                            <input type="text" class="form-control" name="to_city">
                             <label for="name" class="mb-1">{{ $lang == 'ar' ? 'الحي' : 'Neighborhood' }} : </label>
-                            <input type="text" class="form-control" name="neighborhood">
+                            <input type="text" class="form-control" name="to_neighborhood">
 
+                        </div>
+                        <div class="form-group mt-2">
+                            <label for="name" class="mb-1">{{ $lang == 'ar' ? 'المدينة' : 'City' }} : </label>
+                            <input type="text" class="form-control" name="from_city">
+                            <label for="name" class="mb-1">{{ $lang == 'ar' ? 'الحي' : 'Neighborhood' }} : </label>
+                            <input type="text" class="form-control" name="from_neighborhood">
+
+                        </div>
+                        <div class="form-group mt-2">
+                            <label for="name" class="mb-1">{{ $lang == 'ar' ? 'ألموفع' : 'location' }} : </label>
+                            <input type="text" class="form-control" name="location">
                         </div>
                         <hr>
                         <div class="form-group mt-2" style="text-align: right;margin-right:10px">

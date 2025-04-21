@@ -6,13 +6,13 @@ use App\Http\Controllers\Controller;
 use App\Models\GeneralComments;
 use App\Models\GeneralImage;
 use App\Models\Rating;
-use App\Models\SparePartOrder;
-use App\Models\SparePartServices;
 use App\Models\User;
+use App\Models\VanTruckOrder;
+use App\Models\VanTruckService;
 use App\Notifications\CommentNotification;
 use Illuminate\Http\Request;
 
-class ApiSparePartController extends Controller
+class ApiVanTruckController extends Controller
 {
     public function index()
     {
@@ -32,7 +32,7 @@ class ApiSparePartController extends Controller
     public function storeService(Request $request)
     {
 
-        $is_created = SparePartServices::create([
+        $is_created = VanTruckService::create([
             'user_id' => $request->user_id ?? auth('sanctum')->id(),
             'drink_width' => $request->drink_width,
             'wall_width' => $request->wall_width,
@@ -63,13 +63,13 @@ class ApiSparePartController extends Controller
     }
     public function accept_offer(Request $request){
 
-        $is_create = SparePartOrder::create([
+        $is_create = VanTruckOrder::create([
             'service_id'    => $request->service_id,
             'customer_id'    => $request->customer_id,
             'service_provider_id'    => $request->service_provider_id,
         ]);
         if($is_create){
-            $service = SparePartServices::find($request->service_id);
+            $service = VanTruckService::find($request->service_id);
             $service->update(['status' => "pending"]);
         }
 
@@ -90,7 +90,7 @@ class ApiSparePartController extends Controller
         ]);
 
         $department_name = 'big_car';
-        $order = SparePartOrder::where('id' , $request->order_id)->first();
+        $order = VanTruckOrder::where('id' , $request->order_id)->first();
         $order->update([
             'status'    => 'completed',
         ]);
@@ -127,13 +127,13 @@ class ApiSparePartController extends Controller
     // service_provider
 
     public function service_provider_index(){
-        $services = SparePartServices::get();
+        $services = VanTruckService::get();
         return response()->apiSuccess($services);
     }
 
 
     public function service_provider_add_offer(Request $request){
-        $service = SparePartServices::where('id' , $request->service_id)->first();
+        $service = VanTruckService::where('id' , $request->service_id)->first();
         $customer = User::where('id' ,$service->user_id )->first();
         $user = auth('sanctum')->user();
         $data = $request->except('image');
@@ -165,7 +165,7 @@ class ApiSparePartController extends Controller
     public function showService($id)
     {
 
-        $is_created = SparePartServices::find($id);
+        $is_created = VanTruckService::find($id);
         $offers = GeneralComments::where('commentable_id',$id)->where('commentable_type' ,'App\Models\BigCarService')->get();
         $data = ['service' => $is_created , 'offers' => $offers];
         return response()->apiSuccess($data, 'success', 200);

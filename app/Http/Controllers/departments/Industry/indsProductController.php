@@ -43,7 +43,7 @@ class indsProductController extends Controller
         $categories = indsCategory::all();
         $subcategories = IndSubCategory::all();
 
-        return view('admin.main_department.industry.product.index', compact('products', 'categories', 'subcategories'));
+        return view('admin.main_department.industry.product.viewProduct', compact('products', 'categories', 'subcategories'));
     }
     public function create(){
         $products = indsProduct::all();

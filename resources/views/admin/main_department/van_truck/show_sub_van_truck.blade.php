@@ -65,7 +65,15 @@ $lang = config('app.locale');
         </section>
     @elseif(auth()->check() && auth()->user()->role_id == 1)
         <section class="profile-cover-container mb-2" >
-
+             @if($errors->any())
+            <div class="alert alert-danger">
+                <ul class="mb-0">
+                    @foreach($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+                @endif
             <div class="profile-content pt-40">
                 <div class="container position-relative d-flex justify-content-center ">
                     <?php $user = auth()->user(); ?>

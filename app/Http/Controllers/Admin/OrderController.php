@@ -10,12 +10,12 @@ use App\Models\Order;
 class OrderController extends Controller
 {
     public function index(Request  $request){
-        
+
 
         $ids = $request->bulk_ids;
         $now = Carbon::now()->toDateTimeString();
         if ($request->bulk_action_btn === 'delete' &&  is_array($ids) && count($ids)) {
-            Product::whereIn('id', $ids)->delete();
+            Order::whereIn('id', $ids)->delete();
             return back()->with('success', __('general.deleted_successfully'));
         }
         $orders = Order::orderBy("created_at","desc")->paginate(10);

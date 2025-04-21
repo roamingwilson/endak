@@ -1,7 +1,7 @@
 @extends('layouts.home')
 @section('title')
     <?php $lang = config('app.locale'); ?>
-        {{ ($lang == 'ar')?  'قطع غيار' : "spare part" }}
+         {{ ($lang == 'ar')?  'تصليح تكييفات' : "air condition" }}
 
 
 @endsection
@@ -18,7 +18,7 @@
                         <div class="col-md-12 text-center">
                             <div class="">
                                 <p class="mb-3 content-1 h5 text-white">
-                                        {{ ($lang == 'ar')?  'قطع غيار' : "spare part" }}
+                                         {{ ($lang == 'ar')?  'تصليح تكييفات' : "air condition" }}
 
                                 </p>
                             </div>
@@ -47,26 +47,77 @@
                     </div>
                     <hr>
                     <div class="form-group">
-                        <label for="" class="mb-1">{{ $lang == 'ar' ? 'الموقع' : 'Location' }}
+                        <label for="" class="mb-1">{{ $lang == 'ar' ? 'نوع التكييف' : 'ac-type' }}
                             :</label>
-                        @if (isset($service->location))
-                            <p>{{ $service->location }}</p>
+                        @if (($service->split == '1'))
+                            <p>{{ $lang == 'ar' ? '  سبليت' : 'split' }}</p>
+                        @elseif (($service->window == '1'))
+                        <p>{{ $lang == 'ar' ? '  شباك' : 'window' }}</p>
                         @endif
                     </div>
                     <div class="form-group">
-                        <label for="" class="mb-1">{{ $lang == 'ar' ? 'الوجهة' : 'Destination' }}
+                        <label for="" class="mb-1">{{ $lang == 'ar' ? 'نوع الخدمة' : 'services' }}
                             :</label>
-                        @if (isset($service->destination))
-                            <p>{{ $service->destination }}</p>
+                        @if (($service->clean == 1))
+                            <p> * {{ $lang == 'ar' ? '  تنظيف' : 'clean' }}</p>
+                        @endif
+                        @if (($service->feryoun == 1))
+                            <p> * {{ $lang == 'ar' ? '  فريون' : 'feryoun' }}</p>
+                        @endif
+                        @if (($service->maintance == 1))
+                            <p> * {{ $lang == 'ar' ? '  اصلاح عطل' : 'maintance' }}</p>
                         @endif
                     </div>
                     <div class="form-group">
-                        <label for="" class="mb-1">{{ $lang == 'ar' ? 'نوع السيارة' : 'Car Type' }}
+                        <label for="" class="mb-1">{{ $lang == 'ar' ? 'الماركة' : 'model' }}
                             :</label>
-                        @if (isset($service->car_type))
-                            <p>{{ $service->car_type }}</p>
+                        @if (isset($service->model))
+                            <p>{{ $service->model }}</p>
                         @endif
+
                     </div>
+
+                    <div class="form-group">
+                        <label for="" class="mb-1">{{ $lang == 'ar' ? 'العدد' : 'quantity' }}
+                            :</label>
+                        @if (isset($service->quantity))
+                            <p>{{ $service->quantity }}</p>
+                        @endif
+
+                    </div>
+                    <div class="form-group">
+                        <label for="" class="mb-1">{{ $lang == 'ar' ? 'المدينة' : 'City' }}
+                            :</label>
+                        @if (isset($service->city))
+                            <p>{{ $service->city }}</p>
+                        @endif
+
+                    </div>
+                    <div class="form-group">
+                        <label for="" class="mb-1">{{ $lang == 'ar' ? 'الحي' : 'Neighborhood' }}
+                            :</label>
+                        @if (isset($service->neighborhood))
+                            <p>{{ $service->neighborhood }}</p>
+                        @endif
+
+                    </div>
+                    <div class="form-group">
+                        <label for="" class="mb-1">{{ $lang == 'ar' ? 'الوقت' : 'Time' }}
+                            :</label>
+                        @if (isset($service->time))
+                            <p>{{ $service->time }}</p>
+                        @endif
+
+                    </div>
+                    <div class="form-group">
+                        <label for="" class="mb-1">{{ $lang == 'ar' ? 'التاريخ' : 'date' }}
+                            :</label>
+                        @if (isset($service->date))
+                            <p>{{ $service->date }}</p>
+                        @endif
+
+                    </div>
+
                     <hr>
 
                     <div class="form-group">

@@ -65,7 +65,15 @@ $lang = config('app.locale');
         </section>
     @elseif(auth()->check() && auth()->user()->role_id == 1)
         <section class="profile-cover-container mb-2" >
-
+            @if($errors->any())
+            <div class="alert alert-danger">
+                <ul class="mb-0">
+                    @foreach($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+                @endif
             <div class="profile-content pt-40">
                 <div class="container position-relative d-flex justify-content-center ">
                     <?php $user = auth()->user(); ?>
@@ -121,14 +129,12 @@ $lang = config('app.locale');
                             <textarea class="form-control" name="notes" cols="30" rows="5"></textarea>
                         </div>
                         <hr>
-
-
+                        <div class="form-group mt-2" style="text-align: right;margin-right:10px">
+                            <button class="btn mt-2 form-control"
+                                style="background-color: #fdca3d">{{ $lang == 'ar' ? 'ارسال' : 'Send' }}</button>
                         </div>
                         <hr>
-                        <div class="form-group mt-2" style="text-align: right;margin-right:10px">
-                            <button class="btn mt-2 form-control"  style="background-color: #fdca3d">{{ $lang == 'ar' ? 'ارسال' : 'Send' }}</button>
-                        </div>
-                    </form>
+                                        </form>
 
 
                 </div>

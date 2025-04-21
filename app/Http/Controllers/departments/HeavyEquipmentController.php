@@ -95,32 +95,44 @@ public function heavy_equip_sub_show($id){
 
 public function store_service(Request $request )
 {
-    $data = $request->except('_token', 'images');
+
+    $data = $request->validate([
+        'heavy_equip_id' => 'required|exists:heavy_equipment,id',
+        'location'       => 'required|string|max:255',
+        'equip_type'     => 'nullable|string|max:255',
+        'time'           => 'nullable|date_format:H:i',
+        'user_id'        => 'required|exists:users,id',
+        'notes'          => 'required|string',
+    ]);
+        // dd($data);
+
+    // إنشاء الخدمة
     $is_created = HeavyEquipmentService::create($data);
 
-    if ($is_created) {
-        if ($request->hasFile('images')) {
-            $files = $request->file('images');
+    // رفع الصور وربطها بالخدمة إذا تم إنشاؤها
+    if ($is_created && $request->hasFile('images')) {
+        $files = $request->file('images');
 
-            if (!is_array($files)) {
-                $files = [$files];
-            }
+        // التأكد من أن الصور في مصفوفة
+        if (!is_array($files)) {
+            $files = [$files];
+        }
 
-            foreach ($files as $file) {
-                $path = $file->store('heavy_equip', [
-                    'disk' => 'public',
-                ]);
-                    $image = new GeneralImage([
-                    'path' => $path,
-                ]);
-                $is_created->images()->save($image);
-            }
+        foreach ($files as $file) {
+            $path = $file->store('heavy_equip', [
+                'disk' => 'public',
+            ]);
+
+            $image = new GeneralImage([
+                'path' => $path,
+            ]);
+
+            // ربط الصورة بالخدمة
+            $is_created->images()->save($image);
         }
     }
 
-
-    return redirect()->route('home')->with('success' , 'تم اضافة الطلب بنجاح');
-
+    return redirect()->route('home')->with('success', 'تم اضافة الطلب بنجاح');
 }
 public function show_my_service($id){
     $service = HeavyEquipmentService::find($id);
