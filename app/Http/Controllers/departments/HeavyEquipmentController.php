@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\GeneralImage;
 use App\Models\HeavyEquipment;
 use App\Models\HeavyEquipmentService;
+use App\Notifications\CommentNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
@@ -136,14 +137,96 @@ public function store_service(Request $request )
 }
 public function show_my_service($id){
     $user = auth()->user();
-$service = HeavyEquipmentService::find($id);
-
-if (!$service) {
-    return redirect()->back()->with('error', 'الخدمة غير موجودة');
-}
-
-$main = HeavyEquipment::find($service->heavy_equip_id);
+        $service = HeavyEquipmentService::find($id);
+         $main = HeavyEquipment::find($service->heavy_equip_id);
     // dd($main);
     return view('admin.main_department.heavy_equip.show_myservice' , compact( 'main' , 'user','service'));
 }
+public function edit_service($id){
+
+    $service=HeavyEquipmentService::findOrFail($id);
+    $mains = HeavyEquipment::where('heavy_equip_id',!0)->get();
+    if (auth()->id() !== $service->user_id) {
+        abort(403, 'Unauthorized action.');
+    }
+    $user = auth()->user();
+
+
+    return view('admin.main_department.heavy_equip.edit_service',compact('service','user','mains'));
+}
+public function update_service(Request $request,$id){
+    $data = $request->validate([
+
+        'heavy_equip_id' => 'required|exists:heavy_equipment,id',
+        'location'       => 'required|string|max:255',
+        'equip_type'     => 'nullable|string|max:255',
+        'time'           => 'nullable|date_format:H:i',
+        'user_id'        => 'required|exists:users,id',
+        'notes'          => 'required|string',
+    ]);
+
+    try {
+        $service = HeavyEquipmentService::findOrFail($id);
+        // dd($service);
+
+        $service->update($data);
+        if($service->comments == true)
+        {
+        $comments = $service->comments;
+
+        foreach ($comments as $comment) {
+            $provider = $comment->user;
+            $customer = $comment->customer;
+
+            $provider->notify(new CommentNotification([
+                'id' => $comment->id,
+                'title' => "قام $customer->fullname بتعديل أو حذف الخدمة",
+                'body' => "قدم عرض جديد",
+                'url' => route('notifications.index'),
+            ]));
+
+            $comment->delete(); // حذف التعليق هنا أيضاً
+        }
+    }
+
+        // تحديث الصور (اختياري)
+        if ($request->hasFile('images')) {
+            // احذف الصور القديمة لو تحب
+            $service->images()->delete();
+
+            foreach ((array) $request->file('images') as $file) {
+                $path = $file->store('heavy_equip/' . $service->id, 'public');
+
+                $image = new GeneralImage([
+                    'path' => $path,
+                ]);
+
+                $service->images()->save($image);
+            }
+        }
+
+        return redirect()->route('home')->with('success', 'تم تحديث الطلب بنجاح');
+
+    } catch (\Exception $e) {
+        return back()->with('error', 'حدث خطأ أثناء التحديث: ' . $e->getMessage());
+    }
+}
+public function destroy_service($id)
+{
+
+try {
+    $service = HeavyEquipmentService::findOrFail($id);
+
+    if (auth()->id() !== $service->user_id) {
+        abort(403, 'Unauthorized action.');
+    }
+
+    $service->delete();
+
+    return redirect()->route('home')->with('success', 'تم حذف الطلب بنجاح');
+} catch (\Exception $e) {
+    return redirect()->route('home')->with('error', 'حدث خطأ أثناء الحذف: ' . $e->getMessage());
+}
+}
+
 }

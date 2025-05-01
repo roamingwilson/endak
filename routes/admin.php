@@ -35,6 +35,7 @@ use App\Http\Controllers\departments\VanTruck\VanTruckController;
 use App\Http\Controllers\Surveillance\SurveillanceCamerasController;
 use App\Http\Controllers\Furniture\FurnitureTransportationsController;
 use App\Http\Controllers\Furniture\ProductFurnitureTransportationsController;
+use App\Http\Controllers\ProductOrderController;
 use App\Models\HeavyEquipment;
 use App\Models\indsProduct;
 
@@ -357,4 +358,6 @@ Route::group(['prefix' => "plastic"], function(){
 
 });
 
-
+Route::get('/admin/orders', [ProductOrderController::class, 'manage'])->name('admin.pro_orders.manage');
+Route::post('/admin/orders/{id}/update-status', [ProductOrderController::class, 'updateStatus'])->name('admin.pro_orders.updateStatus');
+Route::delete('/admin/orders/{id}', [ProductOrderController::class, 'destroy'])->name('admin.pro_orders.destroy');

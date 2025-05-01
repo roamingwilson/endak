@@ -111,7 +111,7 @@
                                 @foreach ($maintenancess as $item)
                                     <div class="card card-custom ">
                                         @if ($item->image)
-                                            <a href="{{ route('maintenance_sub_show' , $item->id) }}" class="d-flex justify-content-center align-items-center"> 
+                                            <a href="{{ route('maintenance_sub_show' , $item->id) }}" class="d-flex justify-content-center align-items-center">
                                                 <img src="{{ $item->image_url }}" class="card-img-top mt-2 "
                                                     alt="{{ $item->name_ar }}">
                                             </a>
@@ -123,9 +123,9 @@
                                         </div>
                                     </div>
                                 @endforeach
-        
-        
-        
+
+
+
                             </div>
 
                         </div>
@@ -143,7 +143,7 @@
                         @foreach ($maintenancess as $item)
                             <div class="card card-custom ">
                                 @if ($item->image)
-                                    <a href="{{ route('maintenance_sub_show' , $item->id) }}" class="d-flex justify-content-center align-items-center"> 
+                                    <a href="{{ route('maintenance_sub_show' , $item->id) }}" class="d-flex justify-content-center align-items-center">
                                         <img src="{{ $item->image_url }}" class="card-img-top mt-2 "
                                             alt="{{ $item->name_ar }}">
                                     </a>
@@ -182,7 +182,7 @@
                         @foreach ($maintenancess as $item)
                             <div class="card card-custom ">
                                 @if ($item->image)
-                                    <a href="{{ route('maintenance_sub_show' , $item->id) }}" class="d-flex justify-content-center align-items-center"> 
+                                    <a href="{{ route('maintenance_sub_show' , $item->id) }}" class="d-flex justify-content-center align-items-center">
                                         <img src="{{ $item->image_url }}" class="card-img-top mt-2 "
                                             alt="{{ $item->name_ar }}">
                                     </a>

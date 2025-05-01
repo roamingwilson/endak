@@ -129,6 +129,9 @@ $minutes = 60;
     $car_water = App\Models\CarWater::first();
     $big_car = App\Models\BigCar::first();
     $contracting = App\Models\Contracting::where('contracting_id', 0)->first();
+    $heavy_equip = App\Models\HeavyEquipment::where('heavy_equip_id', 0)->first();
+    $air_condition = App\Models\AirCondition::first();
+    $spare_part = App\Models\SpareParts::where('spare_part_id', 0)->first();
 ?>
 
 <section class="section overflow-hidden">
@@ -334,6 +337,48 @@ $minutes = 60;
                     <div class="card-body">
                         <a href="{{ route('contracting_show') }}">
                             <p class="card-text">{{ $lang == 'ar' ? $contracting->name_ar : $contracting->name_en }}
+                            </p>
+                        </a>
+                    </div>
+                </div>
+                <div class="card card-custom">
+                    @if ($heavy_equip->image)
+                        <a href="{{ route('show_orders_heavy_equip',auth()->id()) }}">
+                            <img src="{{ $heavy_equip->image_url }}" class="card-img-top mt-2"
+                                alt="{{ $heavy_equip->name_ar }}">
+                        </a>
+                    @endif
+                    <div class="card-body">
+                        <a href="{{ route('show_orders_heavy_equip',auth()->id()) }}">
+                            <p class="card-text">{{ $lang == 'ar' ? $heavy_equip->name_ar : $heavy_equip->name_en }}
+                            </p>
+                        </a>
+                    </div>
+                </div>
+                <div class="card card-custom">
+                    @if ($air_condition->image)
+                        <a href="{{ route('show_orders_air_con') }}">
+                            <img src="{{ $air_condition->image_url }}" class="card-img-top mt-2"
+                                alt="{{ $air_condition->name_ar }}">
+                        </a>
+                    @endif
+                    <div class="card-body">
+                        <a href="{{ route('show_orders_air_con') }}">
+                            <p class="card-text">{{ $lang == 'ar' ? $air_condition->name_ar : $air_condition->name_en }}
+                            </p>
+                        </a>
+                    </div>
+                </div>
+                <div class="card card-custom">
+                    @if ($spare_part->image)
+                        <a href="{{ route('show_orders_spare_part') }}">
+                            <img src="{{ $spare_part->image_url }}" class="card-img-top mt-2"
+                                alt="{{ $spare_part->name_ar }}">
+                        </a>
+                    @endif
+                    <div class="card-body">
+                        <a href="{{ route('show_orders_spare_part') }}">
+                            <p class="card-text">{{ $lang == 'ar' ? $spare_part->name_ar : $spare_part->name_en }}
                             </p>
                         </a>
                     </div>

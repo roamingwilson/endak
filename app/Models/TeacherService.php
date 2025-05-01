@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class TeacherService extends Model
 {
-    use HasFactory;   
+    use HasFactory;
     protected $guarded = [];
     protected static function booted(){
         static::addGlobalScope('status' , function(Builder $builder){
@@ -22,5 +22,9 @@ class TeacherService extends Model
     public function comments()
     {
         return $this->morphMany(GeneralComments::class, 'commentable');
+    }
+    public function orders()
+    {
+        return $this->morphMany(GeneralOrder::class, 'orderable');
     }
 }

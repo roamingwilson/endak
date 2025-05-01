@@ -24,9 +24,11 @@ use App\Models\PartyPreparation;
 use App\Services\Auth\UserServices;
 use App\Http\Controllers\Controller;
 use App\Models\AirCondition;
+use App\Models\Country;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Models\FurnitureTransportation;
+use App\Models\Governements;
 use App\Models\HeavyEquipment;
 use App\Models\SpareParts;
 use App\Models\VanTruck;
@@ -114,10 +116,12 @@ class AuthController extends Controller
                 $merged_departments = $merged_departments->concat(collect([$item]));
             }
         }
-        // dd($merged_departments);
+
+        $countries = Country::all();
+        $govers = Governements::all();
 
 
-        return view('front_office.auth.register', compact('message' , 'merged_departments'));
+        return view('front_office.auth.register', compact('message' , 'merged_departments','countries','govers'));
     }
 
 
@@ -148,6 +152,8 @@ class AuthController extends Controller
         $request->validate([
             'first_name' => "required",
             'last_name' => "required",
+            'country' => "required",
+            'governement' => "required",
             // 'email' => "email",
             'password' => "required|min:6",
             'phone' => "required|unique:users",
@@ -171,6 +177,8 @@ class AuthController extends Controller
             'last_name' => $request->last_name,
             'email' => $request->email ?? null,
             'phone' => $request->phone,
+            'country' => $request->country,
+            'governement' => $request->governement,
             'role_name' => $role->name ?? 'user',
             'role_id' => $role->id ?? 1,
             'image' => $new_image ?? null,

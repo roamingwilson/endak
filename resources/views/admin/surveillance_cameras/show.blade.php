@@ -7,10 +7,20 @@ $lang = config('app.locale');
 @endsection
 
 @section('style')
- 
+
 @endsection
 @section('content')
- 
+@php
+
+
+
+
+use App\Models\Services;
+
+$services = Services::where('department_id', $departments->id)->latest()->paginate(5);
+
+@endphp
+
     <div class="main-content app-content">
         <section>
             <div class="section banner-4 banner-section">
@@ -34,31 +44,40 @@ $lang = config('app.locale');
                     <div class="col-xl-12">
                         <div class="row">
                             @forelse ($services as $service)
-                            <div class="col-md-6">
-                                <div class="card">
-                                    <div class="position-relative">
-                                        <a href="{{ route('main_surveillance_cameras_show_my_service', $service->id) }}">
-                                            @if ($service->image)
-                                                <img class="card-img-top" src="{{ $service->image_url }}" alt="img"
-                                                    width="300" height="300">
-                                            @else
-                                                <img class="card-img-top" src="{{ asset('images/logo.jpg') }}"
-                                                    alt="nn" width="300" height="300">
-                                            @endif
-                                        </a>
-                                    </div>
-                                    <div class="card-body d-flex flex-column">
-                                        <h5><a href="{{ route('main_surveillance_cameras_show_my_service', $service->id) }}">
-                                                {{ $lang == 'ar' ? $service->name_ar : $service->name_en }}</a></h5>
-                                        <div class="tx-muted">
-                                            {{ $service->user->first_name .' '. $service->user->first_name }}
-                                        </div>
 
+                            @if (auth()->user()->governement== $service->user->governement)
+                                <div class="col-md-4">
+                                    <div class="card">
+                                        <div class="position-relative">
+                                            <a href="{{ route('show_myservice', $service->id) }}">
+                                                @php
+                                                $firstImage = $service->images->first();
+                                            @endphp
+
+                                            @if ($firstImage)
+                                                <img class="card-img-top" src="{{ asset('storage/' . $firstImage->path) }}" alt="img" width="300" height="300">
+                                            @else
+                                                <img class="card-img-top" src="{{ asset('images/placeholder.png') }}" alt="no image" width="300" height="300">
+                                            @endif
+
+                                            </a>
+                                        </div>
+                                        <div class="card-body d-flex flex-column">
+                                            <h5><a href="{{ route('show_myservice', $service->id) }}">
+                                                    {{ $lang == 'ar' ? $service->name_ar : $service->name_en }}</a></h5>
+                                            <div class="tx-muted">
+                                                {{ $service->user->full_name }}
+                                            </div>
+                                            <div class="tx-muted">
+                                                {{ $service->created_at->diffForHumans() }}
+                                            </div>
+
+
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-
-                        @empty
+                                @endif
+                            @empty
                                 {!! no_data() !!}
                             @endforelse
                         </div>
@@ -72,19 +91,21 @@ $lang = config('app.locale');
             <div class="profile-content pt-40">
                 <div class="container position-relative d-flex justify-content-center ">
                     <?php $user = auth()->user(); ?>
-                    <form action="{{ route('surveillance_cameras_store_service') }}" method="POST" enctype="multipart/form-data"
+                    <form action="{{ route('services.store') }}" method="POST" enctype="multipart/form-data"
                         style="width:700px;margin-top:10px" class="profile-card rounded-lg shadow-xs bg-white p-15 p-md-30">
                         @csrf
                         <input type="hidden" name="user_id" value="{{ $user->id }}">
+                        <input type="hidden" name="department_id" value="{{ $departments->id }}">
+                        <input type="hidden" name="type" value="{{ $departments->name_en }}">
                         <label for="">
 
-                            <input type="checkbox" name="finger" 
+                            <input type="checkbox" name="finger"
                                 value="1"
                                 class="m-2">{{ $lang == 'ar' ? 'بصمة' : 'Finger' }}
                         </label>
                         <label for="">
 
-                            <input type="checkbox" name="camera" 
+                            <input type="checkbox" name="camera"
                                 value="1"
                                 class="m-2">{{ $lang == 'ar' ? 'كاميرات مراقبة' : 'Surveillance Cameras' }}
                         </label>
@@ -98,7 +119,12 @@ $lang = config('app.locale');
 
                             <input type="checkbox" name="fire_system"
                                 value="1"
-                                class="m-2">{{ $lang == 'ar' ? 'انظمة اطفاء حرائق' : 'Fire System' }} 
+                                class="m-2">{{ $lang == 'ar' ? 'انظمة اطفاء حرائق' : 'Fire System' }}
+                        <label for="">
+
+                            <input type="checkbox" name="network"
+                                value="1"
+                                class="m-2">{{ $lang == 'ar' ? 'الشبكات' : 'Fire System' }}
                         </label>
                         <label for="">
 

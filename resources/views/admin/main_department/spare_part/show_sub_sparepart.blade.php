@@ -5,7 +5,15 @@ $lang = config('app.locale');
 ?>
 {{ ($lang == 'ar')? $main->name_ar : $main->name_en }}
 @endsection
+@php
 
+
+use App\Models\Department;
+    $departments = Department::where('name_en', 'spare parts')->first();
+    use App\Models\Services;
+
+$services = Services::where('department_id', $departments->id)->latest()->paginate(5);
+@endphp
 @section('content')
 
     <div class="main-content app-content">
@@ -34,7 +42,7 @@ $lang = config('app.locale');
                             <div class="col-md-4">
                                 <div class="card">
                                     <div class="position-relative">
-                                        <a href="{{ route('main_spare_part_show_my_service', $service->id) }}">
+                                        <a href="{{ route('show_myservice', $service->id) }}">
                                             @if ($service->image)
                                                 <img class="card-img-top" src="{{ $service->image_url }}" alt="img"
                                                     width="300" height="300">
@@ -45,7 +53,7 @@ $lang = config('app.locale');
                                         </a>
                                     </div>
                                     <div class="card-body d-flex flex-column">
-                                        <h5><a href="{{ route('main_spare_part_show_my_service', $service->id) }}">
+                                        <h5><a href="{{ route('show_myservice', $service->id) }}">
                                                 {{ $lang == 'ar' ? $service->name_ar : $service->name_en }}</a></h5>
                                         <div class="tx-muted">
                                             {{ $service->user->full_name }}
@@ -77,11 +85,14 @@ $lang = config('app.locale');
             <div class="profile-content pt-40">
                 <div class="container position-relative d-flex justify-content-center ">
                     <?php $user = auth()->user(); ?>
-                    <form action="{{ route('spare_part_store_service' ) }}" method="POST" enctype="multipart/form-data"
+                    <form action="{{ route('services.store' ) }}" method="POST" enctype="multipart/form-data"
                         style="width:600px;margin-top:10px" class="profile-card rounded-lg shadow-xs bg-white p-15 p-md-30">
                         @csrf
                         <input type="hidden" name="user_id" value="{{ $user->id }}">
-                        <input type="hidden" name="spare_part_id" value="{{ $main->id }}">
+
+                        <input type="hidden" name="department_id" value="{{ $departments->id }}">
+                        <input type="hidden" name="type" value="{{ $departments->name_en }}">
+                        <input type="hidden" name="equip_type" value="{{$main->name_en}}">
 
                         <div class="form-group mt-2">
                             <label for="name" class="mb-1">{{ $lang == 'ar' ? 'الفئة' : 'brand' }} : </label>

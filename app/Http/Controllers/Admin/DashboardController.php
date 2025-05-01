@@ -10,7 +10,7 @@ use App\Http\Controllers\Controller;
 class DashboardController extends Controller
 {
     public function index(){
-        $this->authorize('admin_general_dashboard');
+        // $this->authorize('admin_general_dashboard');
         return view("admin.dashboard");
     }
     public function adminOffers(Request $request)
@@ -18,7 +18,7 @@ class DashboardController extends Controller
         $ids = $request->bulk_ids;
         $now = Carbon::now()->toDateTimeString();
 
-  
+
 
         //Update
         if ($request->bulk_action_btn === 'update_status' && $request->status && is_array($ids) && count($ids)) {

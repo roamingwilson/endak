@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\APi\ApiGeneralOrderController;
+use App\Http\Controllers\APi\ApiServiceController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
@@ -26,6 +28,7 @@ use App\Http\Controllers\Api\Furniture\ApiCounterInsectsController;
 use App\Http\Controllers\Api\Furniture\ApiPartyPreparationController;
 use App\Http\Controllers\Api\Furniture\ApiServeillanceCamerasController;
 use App\Http\Controllers\Api\Furniture\ApiFurnitureTransportationsController;
+use App\Models\GeneralOrder;
 
 /*
 |--------------------------------------------------------------------------
@@ -332,3 +335,37 @@ Route::group(['prefix' => 'air_con/service_provider' ] , function(){
     Route::get('/' , [ApiAirconController::class , 'service_provider_index']);
     Route::post('/add_offer' , [ApiAirconController::class , 'service_provider_add_offer']);
 });
+Route::prefix('services')->group(function () {
+
+    Route::get('/', [ApiServiceController::class, 'index']);
+
+    // إضافة خدمة جديدة
+    Route::post('/', [ApiServiceController::class, 'store']);
+
+    // عرض تفاصيل قسم معيّن حسب الـ id
+    Route::get('/department/{id}', [ApiServiceController::class, 'show']);
+
+    // عرض تفاصيل خدمة معيّنة (للتعديل مثلاً)
+    Route::get('/{id}/edit', [ApiServiceController::class, 'edit']);
+
+    // عرض تفاصيل خدمة معيّنة
+    Route::get('/{id}', [ApiServiceController::class, 'show_services']);
+
+    // تحديث خدمة
+    Route::put('/{id}', [ApiServiceController::class, 'update']);
+
+
+});
+
+
+//general comment
+Route::post('orders', [ApiGeneralOrderController::class, 'store'])->name('general_orders.store');
+
+Route::get('orders/{order}', [ApiGeneralOrderController::class, 'show'])->name('general_orders.show');
+Route::delete('/orders/{id}', [ApiGeneralOrderController::class, 'destroy'])->name('general_orders.destroy');
+
+Route::get('orders', [ApiGeneralOrderController::class, 'index'])->name('general_orders.customer.index');
+Route::get('/accept_project/{id}' , function($id) {
+    GeneralOrder::find($id)->update(['status' => "completed"]);
+    return redirect()->back();
+})->name('accept_project');

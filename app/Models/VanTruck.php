@@ -17,4 +17,5 @@ class VanTruck extends Model
     {
         return $this->morphMany(UserDepartment::class, 'commentable');
     }
+
 }

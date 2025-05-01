@@ -144,15 +144,15 @@
         <div class="profile-content pt-40">
             <div
                 class="container position-relative d-flex  justify-content-center profile-card rounded-lg shadow-xs bg-white p-15 p-md-30  ">
-              
-                <form action="/web-rate/store" class="mt-20" method="post">
+
+                <form action="{{route('web.add_rate.store',$order->id)}}" class="mt-20" method="post">
                     {{ csrf_field() }}
                     <h2 class="section-title after-line">{{ trans('rate.add_rate') }}
                         {{-- ({{ $course->reviews->pluck('creator_id')->count() }}) --}}
                        </h2>
-   
+
                     <input type="hidden" name="order_id" value="{{ $order->id }}" />
-                    <input type="hidden" name="department_name" value="{{ $department_name }}" />
+                    {{-- <input type="hidden" name="department_name" value="{{ $department_name }}" /> --}}
                     {{-- <input type="hidden" name="user_id" value="{{ $order->id }}" /> --}}
 
                     <div class="form-group mt-5 mb-5">

@@ -75,5 +75,8 @@ class Department extends Model
     public function products(){
         return $this->belongsToMany(Product::class , 'products_departments' );
     }
+    public function serv_depart(){
+        return $this->belongsTo(Services::class, 'department_id');
+    }
 
 }

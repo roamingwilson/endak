@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\GeneralImage;
 use App\Models\VanTruck;
 use App\Models\VanTruckService;
+use App\Notifications\CommentNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
@@ -109,6 +110,24 @@ class VanTruckController extends Controller
         // dd($data);
         try {
             $service = VanTruckService::create($data);
+            if($service->comments == true)
+            {
+            $comments = $service->comments;
+
+            foreach ($comments as $comment) {
+                $provider = $comment->user;
+                $customer = $comment->customer;
+
+                $provider->notify(new CommentNotification([
+                    'id' => $comment->id,
+                    'title' => "قام $customer->fullname بتعديل أو حذف الخدمة",
+                    'body' => "قدم عرض جديد",
+                    'url' => route('notifications.index'),
+                ]));
+
+                $comment->delete(); // حذف التعليق هنا أيضاً
+            }
+        }
 
             // Handle images
             if ($request->hasFile('images')) {
@@ -142,6 +161,79 @@ class VanTruckController extends Controller
         // dd($main);
         return view('admin.main_department.van_truck.show_myservice' , compact( 'main' , 'user','service'));
     }
+
+    public function edit_service($id){
+
+        $service=VanTruckService::findOrFail($id);
+        $cars = VanTruck::where('vantruck_id',!0)->get();
+        if (auth()->id() !== $service->user_id) {
+            abort(403, 'Unauthorized action.');
+        }
+        $user = auth()->user();
+
+
+        return view('admin.main_department.van_truck.edit_service',compact('service','user','cars'));
+    }
+    public function update_service(Request $request,$id){
+        $data = $request->validate([
+
+            'user_id'            => 'required|exists:users,id',
+            'vantruck_id'        => 'required|exists:van_trucks,id',
+
+            'from_city'          => 'required|string|max:255',
+            'from_neighborhood'  => 'required|string|max:255',
+            'to_city'            => 'required|string|max:255',
+            'to_neighborhood'    => 'required|string|max:255',
+            'notes'              => 'nullable|string|max:500',
+            'location'           => 'nullable|string|max:255',
+            'time'               => 'required|date_format:H:i',
+        ]);
+
+        try {
+            $service = VanTruckService::findOrFail($id);
+            // dd($service);
+
+            $service->update($data);
+
+            // تحديث الصور (اختياري)
+            if ($request->hasFile('images')) {
+                // احذف الصور القديمة لو تحب
+                $service->images()->delete();
+
+                foreach ((array) $request->file('images') as $file) {
+                    $path = $file->store('van_truck/' . $service->id, 'public');
+
+                    $image = new GeneralImage([
+                        'path' => $path,
+                    ]);
+
+                    $service->images()->save($image);
+                }
+            }
+
+            return redirect()->route('home')->with('success', 'تم تحديث الطلب بنجاح');
+
+        } catch (\Exception $e) {
+            return back()->with('error', 'حدث خطأ أثناء التحديث: ' . $e->getMessage());
+        }
+    }
+    public function destroy_service($id)
+{
+
+    try {
+        $service = VanTruckService::findOrFail($id);
+
+        if (auth()->id() !== $service->user_id) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $service->delete();
+
+        return redirect()->route('home')->with('success', 'تم حذف الطلب بنجاح');
+    } catch (\Exception $e) {
+        return redirect()->route('home')->with('error', 'حدث خطأ أثناء الحذف: ' . $e->getMessage());
+    }
+}
 
 
 }

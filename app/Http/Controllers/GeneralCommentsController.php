@@ -23,8 +23,12 @@ use App\Models\CounterInsectsService;
 use App\Models\PartyPreparationService;
 use App\Notifications\CommentNotification;
 use App\Models\FurnitureTransportationService;
+use App\Models\GeneralOrder;
 use App\Models\HeavyEquipment;
 use App\Models\HeavyEquipmentService;
+use App\Models\Maintenance;
+use App\Models\MaintenanceService;
+use App\Models\Services;
 use App\Models\SpareParts;
 use App\Models\SparePartServices;
 use App\Models\VanTruckService;
@@ -32,89 +36,17 @@ use App\Models\VanTruckService;
 class GeneralCommentsController extends Controller
 {
     public function store(Request $request){
-        $current_url = url()->previous();
-        $url = explode('/', $current_url);
-        $value1 = ['furniture_transportations'];
-        $value2 = ['surveillance_cameras'];
-        $value3 = ['party_preparation'];
-        $value4 = ['garden'];
-        $value5 = ['counter_insects'];
-        $value6 = ['cleaning'];
-        $value7 = ['teacher'];
-        $value8 = ['family'];
-        $value9 = ['worker'];
-        $value10 = ['public_ge'];
-        $value11 = ['ads'];
-        $value12 = ['water'];
-        $value13 = ['car_water'];
-        $value14 = ['big_car'];
-        $value15 = ['contracting'];
-        $value16 = ['heavy_equip'];
-        $value17 = ['spare_part'];
-        $value18 = ['air_con'];
-        $value19 = ['van_truck'];
-        if (array_intersect($url, $value1)) {
-            $service = FurnitureTransportationService::where('id' , $request->service_id)->first();
-        }
-        elseif(array_intersect($url, $value2)){
-            $service = FollowCameraService::where('id' , $request->service_id)->first();
-        }
-        elseif(array_intersect($url, $value3)){
-            $service = PartyPreparationService::where('id' , $request->service_id)->first();
-        }
-        elseif(array_intersect($url, $value4)){
-            $service = GardenService::where('id' , $request->service_id)->first();
-        }
-        elseif(array_intersect($url, $value5)){
-            $service = CounterInsectsService::where('id' , $request->service_id)->first();
-        }
-        elseif(array_intersect($url, $value6)){
-            $service = CleaningService::where('id' , $request->service_id)->first();
-        }
-        elseif(array_intersect($url, $value7)){
-            $service = TeacherService::where('id' , $request->service_id)->first();
-        }
-        elseif(array_intersect($url, $value8)){
-            $service = FamilyService::where('id' , $request->service_id)->first();
-        }
-        elseif(array_intersect($url, $value9)){
-            $service = WorkerService::where('id' , $request->service_id)->first();
-        }
-        elseif(array_intersect($url, $value10)){
-            $service = PublicGeService::where('id' , $request->service_id)->first();
-        }
-        elseif(array_intersect($url, $value11)){
-            $service = AdsService::where('id' , $request->service_id)->first();
-        }
-        elseif(array_intersect($url, $value12)){
-            $service = WaterService::where('id' , $request->service_id)->first();
-        }
-        elseif(array_intersect($url, $value13)){
-            $service = CarWaterService::where('id' , $request->service_id)->first();
-        }
-        elseif(array_intersect($url, $value14)){
-            $service = BigCarService::where('id' , $request->service_id)->first();
-        }
-        elseif(array_intersect($url, $value15)){
-            $service = ContractingService::where('id' , $request->service_id)->first();
-        }
-        elseif(array_intersect($url, $value16)){
-            $service = HeavyEquipmentService::where('id' , $request->service_id)->first();
-        }
-        elseif(array_intersect($url, $value17)){
-            $service = SparePartServices::where('id' , $request->service_id)->first();
-        }
-        elseif(array_intersect($url, $value18)){
-            $service = AirConditionService::where('id' , $request->service_id)->first();
-        }
-        elseif(array_intersect($url, $value19)){
-            $service = VanTruckService::where('id' , $request->service_id)->first();
-        }
-        $customer = User::where('id' ,$service->user_id )->first();
+
+        $service = Services::findOrFail($request->service_id);
+
+    // العميل اللي طالب الخدمة
+        $customer = User::findOrFail($service->user_id);
+
         $user = auth()->user();
-        $data = $request->except('image');
+
         $comment = new GeneralComments([
             'service_provider'                      => $user->id,
+            'customer_id'                           => $customer->id,
             'body'                                  => $request->body  ?? null,
             'price'                                 => $request->price  ?? null,
             'date'                                  => $request->date  ?? null,
@@ -124,6 +56,7 @@ class GeneralCommentsController extends Controller
             'location'                              => $request->location  ?? null,
             'day'                                   => $request->day  ?? null,
             'number_of_days_of_warranty'            => $request->number_of_days_of_warranty  ?? null,
+
         ]);
         $service->comments()->save($comment);
 
@@ -133,9 +66,60 @@ class GeneralCommentsController extends Controller
                 'id' => $comment->id,
                 'title' => "قدم $user->first_name  لك عرضا",
                 'body' => "$comment->notes",
-                'url' => '/'
+                'url' => route('notifications.index'),
             ]));
         }
-        return redirect()->back()->with('success','تم تقديم العرض بنجاح');
+        return redirect()->route('home')->with('success','تم تقديم العرض بنجاح');
     }
+    public function index($id){
+        $comments = GeneralComments::where('customer_id', $id)
+            ->with('commentable')->latest()->paginate(10);
+        // ->paginate(5);
+
+
+        $service = $comments->map(function ($comment) {
+            return $comment->commentable;
+
+        });
+
+return view('front_office.comments.my_offers', compact('comments' ,'service'));
+    }
+    public function edit($id)
+{
+    $comment = GeneralComments::findOrFail($id);
+
+    // تحقق من أن المستخدم الحالي هو صاحب التعليق
+    if (auth()->id() !== $comment->service_provider) {
+        abort(403, 'Unauthorized action.');
+    }
+
+    return view('front_office.general_comments.edit', compact('comment'));
+}
+public function update(Request $request, $id)
+{
+    $comment = GeneralComments::findOrFail($id);
+    $comment->update([
+        'price' => $request->price,
+        'notes' => $request->notes,
+    ]);
+    return redirect()->route('home')->with('success', 'تم التحديث بنجاح');
+}
+public function destroy($id)
+{
+    $comment = GeneralComments::findOrFail($id);
+
+    // تحقق من أن المستخدم هو نفس الشخص الذي قام بإنشاء التعليق
+    if (auth()->id() !== $comment->service_provider) {
+        abort(403, 'Unauthorized action.');
+    }
+
+    // حذف التعليق
+    $comment->delete();
+
+    // إرجاع المستخدم إلى الصفحة السابقة مع رسالة نجاح
+    return redirect()->route('home')->with('success', 'Comment deleted successfully.');
+}
+
+
+
 }

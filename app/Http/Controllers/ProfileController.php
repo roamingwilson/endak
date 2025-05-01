@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Ads;
+use App\Models\GeneralOrder;
 use App\Models\User;
 use App\Models\Water;
 use App\Models\BigCar;
@@ -35,8 +36,9 @@ class ProfileController extends Controller
     {
 
         $user = User::findOrFail($id);
+        $order = GeneralOrder::where('service_provider_id', $id);
 
-        return view('front_office.profile.show', compact('user'));
+        return view('front_office.profile.show', compact('user','order'));
     }
     public function edit($id)
     {
@@ -104,45 +106,42 @@ class ProfileController extends Controller
 
         return view('front_office.user.all_user', compact('users'));
     }
-    public function update(Request $request)
-    {
+    public function updateProfile(Request $request)
+                {    $user = auth()->user();
+                $data = $request->except('image');
 
-        $user = auth()->user();
-        $data = $request->except('image');
-        $new_image = uploadImage($request, "users", "image");
-        $old_image = $user->image;
-        if ($new_image) {
-            $data['image'] = $new_image;
-        }
-        $user_update = User::where('id', $user->id)->first();
-
-        if ($request->departments) {
-            UserDepartment::where('user_id', $user->id)->delete();
-            foreach ($request->departments as $item) {
-                [$name, $id] = explode('-', $item);
-                $modelParts = explode(' ', $name);
-                $modelName = implode('', array_map('ucfirst', $modelParts));
-
-                $modelClass = "App\\Models\\$modelName";
-
-                $main_department = new UserDepartment([
-                    'user_id'         => $user->id,
-                    'commentable_id'  => $id,
-                ]);
-
-                if (class_exists($modelClass)) {
-                    $modelInstance = $modelClass::find($id);
-                    if ($modelInstance && method_exists($modelInstance, 'departments')) {
-                        $modelInstance->departments()->save($main_department);
-                    }
-                } else {
-                    $department = Department::find($id);
-                    if ($department && method_exists($department, 'departments')) {
-                        $department->departments()->save($main_department);
+                if ($request->hasFile('image')) {
+                    $new_image = uploadImage($request, "users", "image");
+                    if ($new_image) {
+                        $data['image'] = $new_image;
                     }
                 }
+
+              $user_update =  User::where('id', $user->id)->first();
+        $user_update->update($data);
+
+    if ($request->departments) {
+        UserDepartment::where('user_id', $user->id)->delete();
+        foreach ($request->departments as $item) {
+            [$name, $id] = explode('-', $item);
+            $modelParts = explode(' ', $name);
+            $modelName = implode('', array_map('ucfirst', $modelParts));
+            $modelClass = "App\\Models\\$modelName";
+
+            $main_department = new UserDepartment([
+                'user_id'         => $user->id,
+                'commentable_id'  => $id,
+            ]);
+
+            if (class_exists($modelClass) && method_exists($modelClass, 'departments')) {
+                $modelClass::find($id)?->departments()->save($main_department);
+            } else {
+                Department::find($id)?->departments()->save($main_department);
             }
         }
-        return redirect()->back()->with('success', 'تم التحديث بنجاح');
     }
+
+    return redirect()->route('web.profile', auth()->id())->with('success', 'تم التحديث بنجاح');
+}
+
 }

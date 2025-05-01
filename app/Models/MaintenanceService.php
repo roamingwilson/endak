@@ -30,4 +30,8 @@ class MaintenanceService extends Model
     {
         return $this->morphMany(GeneralImage::class, 'commentable');
     }
+    public function orders()
+    {
+        return $this->morphMany(GeneralOrder::class, 'orderable');
+    }
 }

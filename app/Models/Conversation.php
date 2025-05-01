@@ -9,13 +9,29 @@ class Conversation extends Model
 {
     use HasFactory;
     protected $guarded = [];
-    public function messages(){
-        return $this->hasMany(Message::class,'conversation_id');
+    // public function messages(){
+    //     return $this->hasMany(Message::class,'conversation_id');
+    // }
+    // public function sender(){
+    //     return $this->belongsTo(User::class,'sender_id');
+    // }
+    // public function recipient(){
+    //     return $this->belongsTo(User::class,'recipient_id');
+    // }
+    protected $fillable = ['sender_id', 'recipient_id'];
+
+    public function messages()
+    {
+        return $this->hasMany(Message::class);
     }
-    public function sender(){
-        return $this->belongsTo(User::class,'sender_id');
+
+    public function sender()
+    {
+        return $this->belongsTo(User::class, 'sender_id');
     }
-    public function recipient(){
-        return $this->belongsTo(User::class,'recipient_id');
+
+    public function recipient()
+    {
+        return $this->belongsTo(User::class, 'recipient_id');
     }
 }

@@ -1,7 +1,7 @@
 @extends('layouts.home')
 @section('title')
     <?php $lang = config('app.locale'); ?>
-    {{ ($lang == 'ar')? 'خدمات عامة' : "General Service" }}
+    {{ ($lang == 'ar')? 'عمال وحرفيين باليومية' : "Worker By Days" }}
 
 @endsection
 
@@ -17,7 +17,7 @@
                         <div class="col-md-12 text-center">
                             <div class="">
                                 <p class="mb-3 content-1 h5 text-white">
-                                    {{ ($lang == 'ar')? 'خدمات عامة' : "General Service" }}
+                                    {{ ($lang == 'ar')? 'عمال وحرفيين باليومية' : "Worker By Days" }}
                                 </p>
                             </div>
                         </div>
@@ -36,8 +36,8 @@
                 <div style="width:600px" class="profile-card rounded-lg shadow-xs bg-white p-15 p-md-30">
                     <div class="form-group mt-2">
                         @if (isset($service->images))
-                            
-                        
+
+
                         @foreach ($service->images as $item)
                             <img width="80px" height="80px" src="{{ asset('storage/' . $item->path) }}" alt="">
                         @endforeach
@@ -57,7 +57,7 @@
                             class="mb-1">{{ $lang == 'ar' ? 'الحي' : 'Neighborhood' }}
                             :</label>
                         @if (isset($service->neighborhood))
-                            <p>{{ $service->neighborhood }}</p> 
+                            <p>{{ $service->neighborhood }}</p>
                         @endif
                     </div>
                     <div class="form-group">
@@ -78,6 +78,20 @@
                             <img width="250px" height="250px" src="{{ asset($service->user->image_url) }}" alt="user">
                         @endif
                     </div>
+                    <div class="mt-4 flex justify-content-center" >
+                        @if (auth()->id() === $service->user_id)
+                        <a class="btn btn-success btn-sm" href="{{route('services.edit',$service->id)}}">
+                            <i class="fe fe-check-circle"></i> {{ __('Edit') }}
+                        </a>
+                        <form action="{{ route('services.destroy', $service->id) }}" method="POST" style="display:inline-block;">
+                            @csrf
+                            @method('DELETE')
+                            <button class="btn btn-danger btn-sm" type="submit" onclick="return confirm('{{ $lang == 'ar' ? 'هل أنت متأكد من الحذف؟' : 'Are you sure you want to delete?' }}')">
+                                <i class="fe fe-trash-2"></i> {{ $lang == 'ar' ? 'حذف' : 'Delete' }}
+                            </button>
+                        </form>
+                            @endif
+                        </div>
                 </div>
             </div>
 
@@ -94,7 +108,7 @@
                             <h5 class="mb-4 d-flex align-items-center justify-content-center">
                                 {{ $lang == 'ar' ? 'العروض' : 'Offers' }}</h5>
                             <div class="d-block mb-4 overflow-visible d-block d-sm-flex">
-                                    <div class="container"> 
+                                    <div class="container">
                                         @forelse ($service->comments as $comment)
                                             <div class="col-12 border mb-4 p-4 br-5">
                                                 <div class="d-flex align-items-center">
@@ -105,7 +119,7 @@
                                                         <a class="dropdown-item mb-2" href="{{ route('web.send_message', $comment->user->id) }}">
                                                             <i class="fe fe-mail mx-1"></i> {{ __('messages.send_message') }}
                                                         </a>
-                                                        <form action="{{ route('accept_offer_worker') }}" method="post">
+                                                        <form action="{{ route('general_orders.store') }}" method="post">
                                                             @csrf
                                                             <input type="hidden" name="service_id" value="{{ $service->id }}">
                                                             <input type="hidden" name="service_provider_id" value="{{ $comment->user->id }}">
@@ -116,7 +130,7 @@
                                                         </form>
                                                     @endif
                                                 </div>
-                                
+
                                                 @if (isset($comment->price))
                                                     <p>{{ __('general.price') . ' : ' . $comment->price }}</p>
                                                 @endif
@@ -152,14 +166,14 @@
                                             {!! no_data() !!}
                                         @endforelse
                                      </div>
-                              
+
                             </div>
 
-                            
+
 
 
                         </div>
- 
+
                         <?php
                         $user = auth()->user();
                         if($user){
@@ -168,7 +182,7 @@
                             ->where('service_provider', $user->id)
                             ->first();
                         }
-                        
+
                         ?>
 
                     </div>
@@ -185,7 +199,7 @@
                                         <label class="mb-2" for="">{{ __('general.price') }}</label>
                                         <input class="form-control mb-2" type="text" name="price">
                                     </div>
-                                   
+
                                     <div>
                                         <label class="mb-2"
                                             for="">{{ ($lang == 'ar' ? 'ملاحظات عن العمل المطلوب' : 'Notes') . ' : ' }}</label>
@@ -207,7 +221,6 @@
 @endsection
 
 <div class="me-3 mb-3">
-   
+
 </div>
 <div class="overflow-visible">
-   

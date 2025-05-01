@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class PublicGeService extends Model
 {
-    use HasFactory;   
+    use HasFactory;
     protected $guarded = [];
     protected static function booted(){
         static::addGlobalScope('status' , function(Builder $builder){
@@ -23,9 +23,13 @@ class PublicGeService extends Model
     {
         return $this->morphMany(GeneralComments::class, 'commentable');
     }
-    
+
     public function images()
     {
         return $this->morphMany(GeneralImage::class, 'commentable');
+    }
+    public function orders()
+    {
+        return $this->morphMany(GeneralOrder::class, 'orderable');
     }
 }

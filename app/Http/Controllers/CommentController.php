@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\GeneralComments;
+use App\Models\GeneralOrder;
 use Illuminate\Http\Request;
 use App\Models\CommentsFiles;
 use App\Models\Comment;
@@ -56,7 +57,12 @@ class CommentController extends Controller
     }
         public function comments($id){
 
-        $comments = GeneralComments::where('service_provider' , $id)->paginate(10);
+          // جلب جميع التعليقات التي تخص مزود الخدمة
+         $comments = GeneralComments::where('service_provider', $id)->latest()->paginate(5);
+
+
+
+
         return view('front_office.comments.my_comments' , compact('comments'));
     }
 }

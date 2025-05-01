@@ -1,53 +1,163 @@
 @extends('layouts.home')
+
 @section('title')
-<?php
-$lang = config('app.locale');
-?>
-{{ ($lang == 'ar')? ' اشعارات' : "notification" }}
+    <?php
+    $lang = config('app.locale');
+    ?>
+    {{ ($lang == 'ar') ? 'اشعارات' : "Notifications" }}
 @endsection
 
 @section('content')
 
     <div class="main-content app-content">
         <section>
-            <div class="section banner-4 banner-section">
-                <div class="container">
-                    <div class="row align-items-center">
-                        <div class="col-md-12 text-center">
-                            <div class="">
-                                <p class="mb-3 content-1 h5 fs-1">    {{ ($lang == 'ar')? ' اشعارات' : "notification" }}
+    {{ ($lang == 'ar') ? 'اشعارات' : "Notifications" }}
+        </section>
 
-                                </p>
-                            </div>
+        <div class="notifications-wrapper">
+            @if($notifications->count())
+                @foreach($notifications as $notification)
+                    <div class="notification-card" data-id="{{ $notification->id }}">
+                        <div class="notification-header">
+                            <h5 class="notification-title">{{ $notification->data['title'] }}</h5>
+                            <span class="notification-time">{{ $notification->created_at->diffForHumans() }}</span>
+                        </div>
+                        <div class="notification-body">
+                            <p>{{ $notification->data['body'] }}</p>
+                        </div>
+                        <div class="notification-footer">
+                            <a href="{{route('general_comments.show',auth()->id())}}" class="btn btn-details">
+                                {{ ($lang == 'ar') ? 'مزيد من التفاصيل' : 'View Details' }}
+                            </a>
+                            <a href="javascript:void(0)" class="btn btn-mark-read mark-read">
+                                {{ ($lang == 'ar') ? 'تم قراءة الإشعار' : 'Mark as Read' }}
+                            </a>
                         </div>
                     </div>
-                </div>
-            </div>
-        </section>
+                @endforeach
+            @else
+                <p>{{ ($lang == 'ar') ? 'لا توجد إشعارات' : 'No Notifications' }}</p>
+            @endif
+        </div>
+
     </div>
-    <ul>
-        @foreach($notifications as $notification)
-            <li>
-                <strong>{{ $notification->data['title'] }}</strong>
-                <p>{{ $notification->data['body'] }}</p>
-                <a href="{{ $notification->data['url'] }}">مزيد من التفاصيل</a>
-            </li>
-        @endforeach
-    </ul>
-    @endsection
+
+@endsection
+
 @section('script')
-    <script src="https://cdn.jsdelivr.net/npm/resumablejs@1.1.0/resumable.min.js"></script>
     <script>
-        document.querySelectorAll('input[type=checkbox][name="selected_products[]"]').forEach((checkbox) => {
-            checkbox.addEventListener('change', function() {
-                const quantityInput = document.getElementById(`quantity-${this.value}`);
-                if (this.checked) {
-                    quantityInput.style.display = 'block';
-                } else {
-                    quantityInput.style.display = 'none';
-                    quantityInput.value = '';
-                }
+        // تنفيذ AJAX لتحديث حالة النوتيفيكاشن
+        document.querySelectorAll('.mark-read').forEach((btn) => {
+            btn.addEventListener('click', function() {
+                const notificationCard = this.closest('.notification-card');
+                const notificationId = notificationCard.getAttribute('data-id');
+
+                // إرسال طلب AJAX لتحديث الحالة
+                fetch(`/notifications/${notificationId}/mark-as-read`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        notificationCard.classList.add('read'); // إضافة Class للإشارة إلى أن النوتيفيكاشن مقروء
+                    }
+                })
+                .catch(error => console.error('Error:', error));
             });
         });
     </script>
+@endsection
+
+@section('style')
+    <style>
+        .notifications-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .notification-card {
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .notification-card.read {
+            background-color: #e6f7ff; /* تغيير اللون عند القراءة */
+        }
+
+        .notification-card:hover {
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+            transform: translateY(-5px);
+        }
+
+        .notification-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+        .notification-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .notification-time {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .notification-body {
+            font-size: 14px;
+            margin-bottom: 20px;
+            color: #555;
+        }
+
+        .notification-footer {
+            display: flex;
+            gap: 15px;
+            justify-content: flex-end;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            font-size: 14px;
+            text-transform: uppercase;
+            border-radius: 25px;
+            text-align: center;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .btn-details {
+            background-color: #007bff;
+            color: white;
+        }
+
+        .btn-details:hover {
+            background-color: #0056b3;
+        }
+
+        .btn-mark-read {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .btn-mark-read:hover {
+            background-color: #218838;
+        }
+
+    </style>
 @endsection

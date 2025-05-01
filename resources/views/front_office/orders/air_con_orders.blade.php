@@ -41,17 +41,17 @@
                                     <div class="col-12 col-xl-8 col-lg-9 col-md-8 col-sm-8 mb-2">
                                          @if ($user->role_id == 1)
                                             <h6 class="mb-0">
-                                                    {{ $order->service_provider_spare_part->first_name . ' ' . $order->service_provider_spare_part->last_name }}
+                                                    {{ $order->service_provider_air_con->first_name . ' ' . $order->service_provider_air_con->last_name }}
                                             </h6>
                                         @elseif ($user->role_id == 3)
-                                            <h6 class="mb-0">{{ $order->customer_spare_part->first_name . ' ' . $order->customer_spare_part->last_name }}
+                                            <h6 class="mb-0">{{ $order->customer_air_con->first_name . ' ' . $order->customer_air_con->last_name }}
                                             </h6>
                                         @endif
                                         <hr>
 
                                         <div class="col-12 col-xl-8 col-lg-9 col-md-8 col-sm-8 mb-2">
 
-                                            <a href="{{ route('show_order_spare_part', $order->id) }}"
+                                            <a href="{{ route('show_order_air_con', $order->id) }}"
                                                 class="btn btn-primary">{{ __('general.show') }}</a>
                                         </div>
                                     </div>

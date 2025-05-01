@@ -1,4 +1,5 @@
 @extends('layouts.home')
+<?php $lang = config('app.locale'); ?>
 
 @section('title')
     {{ __('login') }}
@@ -42,6 +43,34 @@
                             {{-- <input class="form-control" name="department_type[]" type="hidden"  value="{{ old('email') }}"> --}}
                                 <option value="{{ $merged_department_item->name_en. '-'  . $merged_department_item ->id }}" >
                                     {{ ($lang == 'ar') ? $merged_department_item->name_ar : $merged_department_item->name_en }}
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('departments') <span class="error text-danger">{{ $message }}</span> @enderror
+
+                    </div>
+                    <div class="form-group">
+                        <label for="departments" class="m-2">{{ __('department.departments') }}</label>
+                        <select name="country" id="tags">
+
+
+                            @foreach ($countries as $country )
+                                <option value="{{ $country ->id }}" >
+                                    {{ ($lang == 'ar') ? $country->name_ar : $country->name_en }}
+                                </option>
+                                @endforeach
+                            </select>
+                        @error('departments') <span class="error text-danger">{{ $message }}</span> @enderror
+
+                    </div>
+                    <div class="form-group">
+                        <label for="departments" class="m-2">{{ __('department.departments') }}</label>
+                        <select name="governement" id="tags" >
+                            {{-- <option value="">{{ __('department.select_product') }}</option> --}}
+                            @foreach ($govers as $gover )
+                            {{-- <input class="form-control" name="department_type[]" type="hidden"  value="{{ old('email') }}"> --}}
+                                <option value="{{ $gover ->id }}" >
+                                    {{ ($lang == 'ar') ? $gover->name_ar : $gover->name_en }}
                                 </option>
                             @endforeach
                         </select>

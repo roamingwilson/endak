@@ -14,7 +14,14 @@ class GeneralComments extends Model
     {
         return $this->morphTo();
     }
-    public function user(){
-        return $this->belongsTo(User::class , 'service_provider');
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'service_provider');
+    }
+
+    // العميل
+    public function customer()
+    {
+        return $this->belongsTo(User::class, 'customer_id');
     }
 }

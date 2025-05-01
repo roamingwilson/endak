@@ -14,18 +14,19 @@ return new class extends Migration
         Schema::create('general_comments', function (Blueprint $table) {
             $table->id();
             $table->foreignId('service_provider')->constrained('users')->cascadeOnDelete();
+            $table->foreignId('customer_id')->nullable()->constrained('users')->nullOnDelete();
             $table->text('body')->nullable();
             $table->float('price')->nullable();
             $table->date('date')->nullable();
             $table->time('time')->nullable();
             $table->longText('notes')->nullable();
-            $table->string('city')->nullable(); 
-            $table->string('neighborhood')->nullable(); 
-            $table->string('location')->nullable(); 
-            $table->string('day')->nullable(); 
-            $table->string('number_of_days_of_warranty')->nullable(); 
+            $table->string('city')->nullable();
+            $table->string('neighborhood')->nullable();
+            $table->string('location')->nullable();
+            $table->string('day')->nullable();
+            $table->string('number_of_days_of_warranty')->nullable();
             $table->unsignedBigInteger('commentable_id');
-            $table->string('commentable_type'); 
+            $table->string('commentable_type');
             $table->timestamps();
         });
     }

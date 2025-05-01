@@ -10,5 +10,12 @@ return [
     'complete'  => "تم الاستلام",
     'pending'   => "قيد التنفيذ",
     'accept_offer'   => "قبول العرض",
+    'orders_for_customer' => 'الطلبات للعميل',
+    'no_orders_found' => 'لم يتم العثور على طلبات',
+    'status' => 'الحالة',
 
+    'provider' => 'المزود',
+    'view' => 'عرض',
+    'delete' => 'حذف',
+    'delete_confirmation' => 'هل أنت متأكد من حذف هذا الطلب؟',
 ];

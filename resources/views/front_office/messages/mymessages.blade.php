@@ -1,247 +1,223 @@
 @extends('layouts.home')
+
 @section('style')
-
-@section('content')
-<div class="chat-container">
-    <!-- الشريط الجانبي للمحادثات -->
-    <div class="sidebar">
-        <div class="conversations">
-            <ul class="conversations-list chat-list">
-                @forelse ($conversations as $conversation)
-                    @php
-                        $id = (auth()->id() == $conversation->sender_id) 
-                            ? $conversation->recipient->id 
-                            : $conversation->sender->id;
-                        $userImage = (auth()->id() == $conversation->sender_id) 
-                            ? $conversation->recipient->image_url 
-                            : $conversation->sender->image_url;
-                        $userName = (auth()->id() == $conversation->sender_id) 
-                            ? $conversation->recipient->first_name . ' ' . $conversation->recipient->last_name
-                            : $conversation->sender->first_name . ' ' . $conversation->sender->last_name;
-                    @endphp
-                    <li class="conversation-item">
-                        <a href="{{ route('web.send_message', $id) }}" class="conversation-link">
-                            <img src="{{ $userImage }}" alt="user" class="user-avatar">
-                            <span class="user-name">{{ $userName }}</span>
-                        </a>
-                    </li>
-                @empty
-                    <li class="no-conversations">{{ __('messages.there_no_conversations') }}</li>
-                @endforelse
-            </ul>
-        </div>
-    </div>
-
-    <!-- منطقة الشات الرئيسية -->
-    <div class="chat-area">
-        <div class="chat-header">
-            <h4>{{ __('messages.chat_messages') }}</h4>
-        </div>
-        <div class="chat-content">
-            <ul class="messages-list">
-                @forelse ($mymessages as $item)
-                    @php
-                        $isCurrentUser = $item->sender_id == auth()->id();
-                        $sender = !$isCurrentUser ? App\Models\User::find($item->sender_id) : null;
-                    @endphp
-                    <li class="message-item {{ $isCurrentUser ? 'sent' : 'received' }}">
-                        @if (!$isCurrentUser && $sender)
-                            <img src="{{ $sender->image_url }}" alt="user" class="message-avatar">
-                        @endif
-                        <div class="message-content">
-                            <span class="message-text">{{ $item->message }}</span>
- 							@if(isset($item->image))
-                                                        	<img width="250px" height="250px" src="{{ asset('messages/' . $item->image ) }}" alt="user">
-                                                    	@endif
-                            <span class="message-time">{{ $item->created_at->shortAbsoluteDiffForHumans() }}</span>
-                        </div>
-                    </li>
-                @empty
-                    <li class="no-messages">{{ __('messages.no_messages') }}</li>
-                @endforelse
-            </ul>
-        </div>
-         <?php
-                        $current_url = url()->current();
-                        $url = explode('/', $current_url);
-                        $reci = (int) end($url);
-                        ?>
-                        <form action="{{ route('messages.store') }}" method="post" class="chat-form"  enctype="multipart/form-data">
-                            @csrf
-                            <input type="hidden" name="recipient_id" value="{{ $reci }}"  >
-                            <div class="form-group">
-                                <textarea name="message" id="" cols="100" rows="5" class="message-input" ></textarea>
-                                <input  placeholder="Type and enter" class="form-control border-0" type="file" name="image" placeholder="Image">
-                                {{-- <input type="text" name="message" placeholder="{{ __('messages.type_and_enter') }}" class="message-input"> --}}
-                                <button type="submit" class="send-button">{{ __('messages.send') }}</button>
-                            </div>
-                        </form>
-                        
-                        <!--<form action="{{ route('messages.store') }}" method="post"  enctype="multipart/form-data" >-->
-                        <!--    @csrf-->
-                        <!--    <input type="hidden" name="recipient_id" value="{{ $reci }}">-->
-                        <!--    <div class="card-body border-top">-->
-                        <!--        <div class="row">-->
-                        <!--            <div class="col-9">-->
-                        <!--                <div class="input-field m-t-0 m-b-0">-->
-                        <!--                    <input id="textarea1" placeholder="Type and enter"-->
-                        <!--                        class="form-control border-0" type="text" name="message">-->
-                        <!--                    <input  placeholder="Type and enter"-->
-                        <!--                        class="form-control border-0" type="file" name="image" placeholder="Image">-->
-                        <!--                </div>-->
-                        <!--            </div>-->
-                        <!--            <div class="col-3">-->
-                        <!--                <button class=" btn-lg btn-cyan float-right text-white" type="submit">-->
-                        <!--                    {{ __('messages.send') }}-->
-                        <!--                </button>-->
-                        <!--            </div>-->
-                        <!--        </div>-->
-                        <!--    </div>-->
-                        <!--</form>-->
-    </div>
-</div>
-
 <style>
     .chat-container {
-        display: flex;
         height: 100vh;
         overflow: hidden;
-        max-width: 100vw;
-    }
-    .sidebar {
-        flex: 1;
-        max-width: 20%;
-        border-right: 1px solid #ccc;
-        overflow-y: auto;
-        padding: 10px;
-        background: #fdca3d;
-    }
-    .conversations-list {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-    }
-    .conversation-item {
-        margin-bottom: 10px;
-    }
-    .conversation-link {
-        display: flex;
-        align-items: center;
-        text-decoration: none;
-        padding: 10px;
-        border-radius: 4px;
-        transition: background-color 0.3s;
-    }
-    .conversation-link:hover {
-        background-color: #e9e9e9;
-     }
-    .user-avatar {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        margin-right: 10px;
-    }
-    .user-name {
-        font-size: 16px;
-        color: #ffffff;
-    }
-    .user-name:hover {
-        color: black;
-    }
-    .chat-area {
-        flex: 3;
+        background: #f4f7f9;
         display: flex;
         flex-direction: column;
-        padding: 10px;
-        overflow: hidden;
     }
+
+    .chat-area {
+        flex: 1;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        background: #fff;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        height: 100%;
+    }
+
     .chat-header {
-        border-bottom: 1px solid #ccc;
+        border-bottom: 2px solid #eee;
+        margin-bottom: 20px;
+        margin-top: 20px;
         padding-bottom: 10px;
-        margin-bottom: 10px;
+        text-align: center;
     }
+
     .chat-content {
         flex: 1;
         overflow-y: auto;
+        padding-right: 10px;
+        height: 100%;
+        display: flex;
+        flex-direction: column-reverse;
+        gap: 20px;
     }
+
     .messages-list {
         list-style: none;
         padding: 0;
         margin: 0;
     }
+
     .message-item {
+        margin-bottom: 15px;
         display: flex;
-        margin-bottom: 10px;
+        gap: 12px;
+        padding: 10px;
     }
+
     .message-item.sent {
         justify-content: flex-end;
     }
+
     .message-item.received {
         justify-content: flex-start;
     }
-    .message-avatar {
-        width: 30px;
-        height: 30px;
-        border-radius: 50%;
-        margin-right: 10px;
-    }
+
     .message-content {
-        max-width: 70%;
-        background: #f1f1f1;
-        padding: 10px;
-        border-radius: 4px;
+        max-width: 75%;
+        background-color: #f1f1f1;
+        padding: 12px 18px;
+        border-radius: 20px;
+        box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
+        font-size: 14px;
+        line-height: 1.5;
+        word-wrap: break-word;
+        position: relative;
     }
-    .message-text {
-        display: block;
+
+    .message-item.sent .message-content {
+        background-color: #007bff;
+        color: #fff;
+        box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.2);
     }
+
+    .message-item.received .message-content {
+        background-color: #e1e1e1;
+        color: #333;
+    }
+
+    .message-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+    }
+
     .message-time {
         font-size: 12px;
-        color: #999;
-        margin-top: 5px;
+        color: #888;
+        position: absolute;
+        bottom: -18px;
+        right: 10px;
     }
+
+    .message-item .message-text {
+        word-wrap: break-word;
+    }
+
     .chat-form {
         display: flex;
-        border-top: 1px solid #ccc;
-        padding: 10px;
+        flex-direction: row;
+        gap: 15px;
+        padding: 15px;
+        border-top: 2px solid #ddd;
     }
+
     .message-input {
         flex: 1;
-        padding: 10px;
-        /* width: 500px; */
-        border: 1px solid #ccc;
-        border-radius: 4px;
-        margin-right: 10px;
+        padding: 12px;
+        border: 2px solid #ddd;
+        border-radius: 25px;
+        background-color: #f9f9f9;
+        resize: none;
+        min-height: 60px;
     }
+
     .send-button {
-        padding: 10px 15px;
         background-color: #007bff;
         color: white;
         border: none;
-        border-radius: 4px;
+        height: 50px;
+        padding: 12px 18px;
+        border-radius: 25px;
         cursor: pointer;
+        transition: background-color 0.3s;
     }
+
     .send-button:hover {
         background-color: #0056b3;
     }
 
-    @media (max-width: 768px) {
-        .sidebar {
-            max-width: 100%;
-            flex: none;
-            height: auto;
-            border-right: none;
-            border-bottom: 1px solid #ccc;
-        }
-        .chat-area {
-            max-width: 100%;
-            flex: none;
-        }
+    /* تحسين التفاعل مع الصور داخل الرسائل */
+    .message-content img {
+        max-width: 100%;
+        border-radius: 10px;
+        margin-top: 10px;
     }
+
+    /* تنسيق الرسائل عند التمرير */
+    .message-item.sent:hover .message-content,
+    .message-item.received:hover .message-content {
+        box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.2);
+        transition: all 0.3s;
+    }
+
 </style>
-
 @endsection
-@section('script')
-    <script src="{{ asset('css/chat/perfect-scrollbar.jquery.min.js') }}"></script>
 
+@section('content')
+<div class="chat-container">
 
+    <!-- منطقة الشات الرئيسية -->
+    <div class="chat-area">
+        @php
+            $current_url = url()->current();
+            $urlParts = explode('/', $current_url);
+            $recipientId = (int) end($urlParts);
+            $recipient = App\Models\User::find($recipientId);
+        @endphp
+
+        <div class="chat-header">
+            @if($recipient)
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <img src="{{ asset('storage/' . ($recipient->image ?? 'user.png')) }}"
+                         alt="user"
+                         class="message-avatar"
+                         onerror="this.onerror=null;this.src='{{ asset('storage/users/user.png') }}';">
+                    <h4>{{ $recipient->first_name }} {{ $recipient->last_name }}</h4>
+                </div>
+            @else
+                <h4>{{ __('messages.chat_messages') }}</h4>
+            @endif
+        </div>
+
+        <div class="chat-content">
+            <ul class="messages-list">
+                @foreach ($messages as $message)
+                    @php
+                        $isCurrentUser = $message->sender_id == auth()->id();
+                        $sender = $message->sender; // Assuming sender relationship exists in your model
+                    @endphp
+                    <li class="message-item {{ $isCurrentUser ? 'sent' : 'received' }}">
+                        <div style="display: flex; gap: 12px; align-items: flex-start;">
+                            <!-- صورة المرسل أو المستقبل -->
+                            <img src="{{ asset('storage/' . ($isCurrentUser ? auth()->user()->image : $recipient->image) ?? 'user.png') }}"
+                                 alt="user"
+                                 class="message-avatar"
+                                 onerror="this.onerror=null;this.src='{{ asset('storage/users/user.png') }}';">
+                            <div class="message-content">
+                                <span class="message-text">{{ $message->message }}</span>
+
+                                @if(isset($message->image))
+                                    <div style="margin-top: 10px;">
+                                        <img width="250px" height="250px" src="{{ asset('messages/' . $message->image) }}" alt="message image">
+                                    </div>
+                                @endif
+
+                                <span class="message-time">{{ $message->created_at->shortAbsoluteDiffForHumans() }}</span>
+                            </div>
+                        </div>
+                    </li>
+                @endforeach
+            </ul>
+        </div>
+
+        <form action="{{ route('messages.store') }}" method="post" class="chat-form" enctype="multipart/form-data">
+            @csrf
+            <input type="hidden" name="recipient_id" value="{{ $recipientId }}">
+            <div class="form-group" style="flex: 1; display: flex;">
+                <textarea name="message" rows="3" class="message-input" placeholder="{{ __('messages.type_and_enter') }}"></textarea>
+                <input type="file" name="image" style="display: none;" id="file-upload">
+                <label for="file-upload" class="send-button" style="background-color: #28a745;">📎</label>
+                <button type="submit" class="send-button">{{ __('messages.send') }}</button>
+            </div>
+        </form>
+    </div>
+</div>
 @endsection

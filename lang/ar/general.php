@@ -64,4 +64,33 @@ return [
     'date'               => 'التاريخ',
     'time'               => "الوقت",
 
+        'order_info' => 'معلومات الطلب',
+        'order_id' => 'رقم الطلب',
+
+        'customer' => 'العميل',
+        'service_provider' => 'مقدم الخدمة',
+        'service_info' => 'معلومات الخدمة',
+        'service_type' => 'نوع الخدمة',
+        'service_id' => 'رقم الخدمة',
+
+        'accept_project' => 'أستلام المشروع',
+        'rate_work' => 'تقييم العمل',
+        'city' => 'المدينة',
+        'neighborhood' => 'الحي',
+        'location' => 'الموقع',
+
+        'number_of_days_of_warranty' => 'عدد أيام الضمان',
+        'notes' => 'ملاحظات',
+        'orders_for_customer' => 'طلبات العميل',
+        'no_orders_found' => 'لا توجد طلبات.',
+
+        'provider' => 'مقدم الخدمة',
+        'service' => 'الخدمة',
+
+        'view' => 'عرض',
+
+        'delete_confirmation' => 'هل أنت متأكد من حذف هذا الطلب؟',
+        'complete' => 'مكتمل',
+        'pending' => 'قيد الإنتظار',
+
 ];

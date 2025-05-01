@@ -61,6 +61,21 @@
                             <img width="250px" height="250px" src="{{ asset($service->user->image_url) }}" alt="user">
                         @endif
                     </div>
+                    <div class="mt-4">
+                        @if (auth()->id() === $service->user_id)
+                        <a class="btn btn-success btn-sm" href="{{route('services.edit',$service->id)}}">
+                            <i class="fe fe-check-circle"></i> {{ __('Edit') }}
+                        </a>
+                        <form action="{{ route('services.destroy', $service->id) }}" method="POST" style="display:inline-block;">
+                            @csrf
+                            @method('DELETE')
+                            <button class="btn btn-danger btn-sm" type="submit" onclick="return confirm('{{ $lang == 'ar' ? 'هل أنت متأكد من الحذف؟' : 'Are you sure you want to delete?' }}')">
+                                <i class="fe fe-trash-2"></i> {{ $lang == 'ar' ? 'حذف' : 'Delete' }}
+                            </button>
+                        </form>
+                        @endif
+
+                    </div>
                 </div>
             </div>
 
@@ -77,7 +92,7 @@
                             <h5 class="mb-4 d-flex align-items-center justify-content-center">
                                 {{ $lang == 'ar' ? 'العروض' : 'Offers' }}</h5>
                             <div class="d-block mb-4 overflow-visible d-block d-sm-flex">
-                                <div class="container"> 
+                                <div class="container">
                                     @forelse ($service->comments as $comment)
                                         <div class="col-12 border mb-4 p-4 br-5">
                                             <div class="d-flex align-items-center">
@@ -88,7 +103,7 @@
                                                     <a class="dropdown-item mb-2" href="{{ route('web.send_message', $comment->user->id) }}">
                                                         <i class="fe fe-mail mx-1"></i> {{ __('messages.send_message') }}
                                                     </a>
-                                                    <form action="{{ route('accept_offer_garden') }}" method="post">
+                                                    <form action="{{ route('general_orders.store') }}" method="post">
                                                         @csrf
                                                         <input type="hidden" name="service_id" value="{{ $service->id }}">
                                                         <input type="hidden" name="service_provider_id" value="{{ $comment->user->id }}">
@@ -99,7 +114,7 @@
                                                     </form>
                                                 @endif
                                             </div>
-                            
+
                                             @if (isset($comment->price))
                                                 <p>{{ __('general.price') . ' : ' . $comment->price }}</p>
                                             @endif
@@ -225,7 +240,7 @@
                                 ->where('service_provider', $user->id)
                                 ->first();
                         }
-                        
+
                         ?>
 
                     </div>
@@ -278,7 +293,7 @@
         });
     </script>
 
-    
+
 @endsection --}}
 <div class="me-3 mb-3">
     {{-- <a href="javascript:void(0);"> <img class="avatar avatar-lg rounded-circle thumb-sm"
@@ -294,7 +309,7 @@ alt="64x64" src="../assets/images/profile/2.jpg"> </a> --}}
 <p class="tx-muted"> {{ $comment->description }}</p>
 @if (isset($comment->files))
 @foreach ($comment->files as $item)
- 
+
 <img width="100px" height="100px" src="{{ Storage::url( $item->file) }}" alt="">
 <a href="{{ Storage::url($item->file) }}" target="_blank">Download</a>
 @endforeach

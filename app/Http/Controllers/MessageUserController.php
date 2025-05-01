@@ -20,7 +20,7 @@ class MessageUserController extends Controller
 
         $recipient = User::findOrFail($id);
         $sender = auth()->user();
-        
+
         $messages = Message::where('sender_id' , $sender->id)->orWhere('recipient_id' , $sender->id)->get();
         $mymessages = Message::where(function($query) use ($sender, $id) {
             $query->where('sender_id', $sender->id)
@@ -31,14 +31,14 @@ class MessageUserController extends Controller
                   ->where('recipient_id', $sender->id);
         })
         ->orderBy('created_at', 'asc')->get();
-        
-        
+
+
         $conversations = Conversation::where(function($query) use ($sender){
             $query->where('sender_id' , $sender->id);
         })->orWhere(function($query) use ($sender){
             $query->where('recipient_id' , $sender->id);
         })->orderBy('created_at', 'asc')->get();
-        
+
         return view('front_office.messages.mymessages' ,compact('messages' , 'sender' , 'recipient' , 'mymessages' , 'conversations'));
     }
 
@@ -79,7 +79,7 @@ public function store(Request $request)
         $image->move(public_path('messages'), $imageName);
 
     }
-    
+
     $is_create = Message::create([
         'conversation_id' => $conversation->id, // استخدم $conversation->id
         'message' => $request->message,

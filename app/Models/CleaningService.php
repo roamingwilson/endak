@@ -23,4 +23,8 @@ class CleaningService extends Model
     {
         return $this->morphMany(GeneralComments::class, 'commentable');
     }
+    public function orders()
+    {
+        return $this->morphMany(GeneralOrder::class, 'orderable');
+    }
 }

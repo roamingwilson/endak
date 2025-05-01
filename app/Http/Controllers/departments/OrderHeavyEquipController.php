@@ -24,10 +24,10 @@ class OrderHeavyEquipController extends Controller
         $order = HeavyEquipmentOrder::findOrFail($id);
         $service = HeavyEquipmentservice::withoutGlobalScope('status')->where('id',$order->service_id)->first();
 
-        return view('front-office.orders.heavy_equipment' ,compact('order' , 'service'));
+        return view('front_office.orders.heavy_equipment' ,compact('order' , 'service'));
     }
     public function show_orders(){
         $orders = HeavyEquipmentOrder::get();
-        return view('front_office.orders.heavy_equipment_orders' ,compact('orders'));
+        return view('front_office.orders.heavy_equip_orders' ,compact('orders'));
     }
 }

@@ -23,7 +23,12 @@ class AirConditionService extends Model
     public function comments()
     {
         return $this->morphMany(GeneralComments::class, 'commentable');
-    } public function images()
+    }
+    public function orders()
+    {
+        return $this->morphMany(GeneralOrder::class, 'orderable');
+    }
+    public function images()
     {
         return $this->morphMany(GeneralImage::class, 'commentable');
     }

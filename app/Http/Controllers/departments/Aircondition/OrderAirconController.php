@@ -28,7 +28,7 @@ class OrderAirconController extends Controller
         return view('front_office.orders.air_con' ,compact('order' , 'service'));
     }
     public function show_orders(){
-        $orders = AirCondition::get();
+        $orders = AirConditionOrder::get();
         return view('front_office.orders.air_con_orders' ,compact('orders'));
     }
 }

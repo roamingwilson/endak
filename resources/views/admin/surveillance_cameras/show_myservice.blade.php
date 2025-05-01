@@ -64,7 +64,7 @@
 
                     </div>
                     <hr>
-                    
+
                     <div class="form-group">
                         <label for=""
                             class="mb-1">{{ $lang == 'ar' ? 'ملاحظة عن العمل المطلوب' : 'Note About Work' }}
@@ -85,10 +85,28 @@
                                 alt="user">
                         @endif
                     </div>
-                </div>
-            </div>
+                    @if (auth()->id() === $service->user_id)
 
-        </div>
+
+                    <div class="mt-4 flex justify-content-center" >
+
+                        <a class="btn btn-success btn-sm" href="{{route('services.edit',$service->id)}}">
+                            <i class="fe fe-check-circle"></i> {{ __('Edit') }}
+                        </a>
+                        <form action="{{ route('services.destroy', $service->id) }}" method="POST" style="display:inline-block;">
+                            @csrf
+                            @method('DELETE')
+                            <button class="btn btn-danger btn-sm" type="submit" onclick="return confirm('{{ $lang == 'ar' ? 'هل أنت متأكد من الحذف؟' : 'Are you sure you want to delete?' }}')">
+                                <i class="fe fe-trash-2"></i> {{ $lang == 'ar' ? 'حذف' : 'Delete' }}
+                            </button>
+                        </div>
+                        @endif
+                        </form>
+                </div>
+
+
+                </div>
+                </div>
         </div>
 
 
@@ -194,7 +212,7 @@
                                 ->where('service_provider', $user->id)
                                 ->first();
                         }
-                        
+
                         ?>
 
                     </div>
@@ -215,7 +233,7 @@
                                         <label class="mb-2" for="">{{ ($lang == 'ar' ? 'ملاحظات عن العمل المطلوب' : 'Notes') . ' : ' }}</label>
                                         <textarea class="form-control mb-2" cols="5" rows="5" name="notes"></textarea>
                                     </div>
-                                    
+
                                     <div class="">
                                         <button type="submit" class="btn btn-primary">{{ __('general.save') }}</button>
                                     </div>
@@ -246,7 +264,7 @@
         });
     </script>
 
-    
+
 @endsection --}}
 <div class="me-3 mb-3">
     {{-- <a href="javascript:void(0);"> <img class="avatar avatar-lg rounded-circle thumb-sm"
@@ -262,7 +280,7 @@ alt="64x64" src="../assets/images/profile/2.jpg"> </a> --}}
 <p class="tx-muted"> {{ $comment->description }}</p>
 @if (isset($comment->files))
 @foreach ($comment->files as $item)
- 
+
 <img width="100px" height="100px" src="{{ Storage::url( $item->file) }}" alt="">
 <a href="{{ Storage::url($item->file) }}" target="_blank">Download</a>
 @endforeach

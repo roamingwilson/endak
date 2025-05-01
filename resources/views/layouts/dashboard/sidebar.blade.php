@@ -146,7 +146,80 @@ $lang = config('app.locale');
                 @endcan
                 @can('Admin_Departments')
                     <li class="nav-item has-treeview">
-                        <a href="" class="nav-link {{ request()->is('admin/industry*') ? 'active' : '' }}">
+                        <a href="" class="nav-link {{ request()->is('admin.pro_orders.manage*') ? 'active' : '' }}">
+                            {{-- <i class="nav-icon fas fa-cog"></i> --}}
+                            <i class="fas fa-couch nav-icon"></i>
+
+                            <p>
+                                {{ ($lang == 'ar')? ' ادارة الطلبات' : 'Furniture Transportations' }}
+                                <i class="right fas fa-angle-left"></i>
+                            </p>
+                        </a>
+                        {{-- @can('Edit_Admin_Settings') --}}
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="{{ route('admin.pro_orders.manage') }}" class="nav-link {{ request()->is('admin/furniture_transportations') ? 'active' : '' }}">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        {{ ($lang == 'ar')? ' ادارة الطلبات' : 'Furniture Transportations' }}
+                                    </a>
+                                </li>
+
+
+                                {{-- <li class="nav-item">
+                                    <a href="" class="nav-link {{ request()->is('admin/departments/edit') ? 'active' : '' }}">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p> {{ __('department.edit_department') }} </p>
+                                    </a>
+                                </li> --}}
+
+                            </ul>
+                        {{-- @endcan --}}
+
+                    </li>
+                @endcan
+
+                @can('Admin_Departments')
+                    <li class="nav-item has-treeview">
+                        <a href="" class="nav-link {{ request()->is('add_conutry') ? 'active' : '' }}">
+                            {{-- <i class="nav-icon fas fa-cog"></i> --}}
+                            <i class="fas fa-couch nav-icon"></i>
+
+                            <p>
+                                {{ ($lang == 'ar')? 'إضافة دولة ومحافظاتها ': "add country" }}
+                                <i class="right fas fa-angle-left"></i>
+                            </p>
+                        </a>
+                        {{-- @can('Edit_Admin_Settings') --}}
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="{{ route('add_country') }}" class="nav-link {{ request()->is('add_country') ? 'active' : '' }}">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        {{ ($lang == 'ar')? 'إضافة دولة ومحافظاتها ': "add country" }}
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('add_gover') }}" class="nav-link {{ request()->is('add_gover') ? 'active' : '' }}">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        {{ ($lang == 'ar')? 'إضافة  محافظات ': "add gover" }}
+                                    </a>
+                                </li>
+
+
+                                {{-- <li class="nav-item">
+                                    <a href="" class="nav-link {{ request()->is('admin/departments/edit') ? 'active' : '' }}">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p> {{ __('department.edit_department') }} </p>
+                                    </a>
+                                </li> --}}
+
+                            </ul>
+                        {{-- @endcan --}}
+
+                    </li>
+                @endcan
+                @can('Admin_Departments')
+                    <li class="nav-item has-treeview">
+                        <a href="" class="nav-link {{ request()->is('indscategories.index*') ? 'active' : '' }}">
                             {{-- <i class="nav-icon fas fa-cog"></i> --}}
                             <i class="fas fa-car nav-icon"></i>
 

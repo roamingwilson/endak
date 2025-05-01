@@ -52,6 +52,16 @@ class SurveillanceCamerasController extends Controller
     }
     public function store_service(Request $request){
         $data = $request->except('_token');
+        $data= $request->validate([
+            'finger'          => 'nullable|boolean',
+            'camera'          => 'nullable|boolean',
+            'smart'           => 'nullable|boolean',
+            'fire_system'     => 'nullable|boolean',
+            'security_system' => 'nullable|boolean',
+            'network'        => 'nullable|boolean',
+            'notes'           => 'nullable|string',
+            'user_id'         => 'required|exists:users,id', // Ensure user exists
+        ]);
 
         $is_created = FollowCameraService::create($data);
 
@@ -63,5 +73,71 @@ class SurveillanceCamerasController extends Controller
         $service = FollowCameraService::find($id);
         $main = FollowCamera::first();
         return view('admin.surveillance_cameras.show_myservice' , compact( 'main' , 'service'));
+    }
+    public function edit_service($id){
+
+        $service=FollowCameraService::findOrFail($id);
+        $cars= FollowCamera::where('id',!0)->get();
+        if (auth()->id() !== $service->user_id) {
+            abort(403, 'Unauthorized action.');
+        }
+        $user = auth()->user();
+
+
+        return view('admin.surveillance_cameras.edit_service',compact('service','user','cars'));
+    }
+    public function update_service(Request $request,$id){
+        $data = $request->validate([
+
+
+                'finger'          => 'nullable|boolean',
+                'camera'          => 'nullable|boolean',
+                'smart'           => 'nullable|boolean',
+                'fire_system'     => 'nullable|boolean',
+                'security_system' => 'nullable|boolean',
+                'network'        => 'nullable|boolean',
+                'notes'           => 'nullable|string',
+                'user_id'         => 'required|exists:users,id', // Ensure user exists
+            ]);
+
+
+        try {
+            $service = FollowCameraService::findOrFail($id);
+            // dd($service);
+            $service->update([
+                'finger'          => $request->has('finger') ? 1 : 0,
+                'camera'          => $request->has('camera') ? 1 : 0,
+                'smart'           => $request->has('smart') ? 1 : 0,
+                'fire_system'     => $request->has('fire_system') ? 1 : 0,
+                'security_system' => $request->has('security_system') ? 1 : 0,
+                'network'        => $request->has('network') ? 1 : 0,
+                'notes'           => $request->notes, // No need to sanitize, Laravel does it by default
+                'user_id'         => $request->user_id,
+            ]);
+
+
+
+            return redirect()->route('home')->with('success', 'تم تحديث الطلب بنجاح');
+
+        } catch (\Exception $e) {
+            return back()->with('error', 'حدث خطأ أثناء التحديث: ' . $e->getMessage());
+        }
+    }
+    public function destroy_service($id)
+    {
+
+    try {
+        $service = FollowCameraService::findOrFail($id);
+
+        if (auth()->id() !== $service->user_id) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        $service->delete();
+
+        return redirect()->route('home')->with('success', 'تم حذف الطلب بنجاح');
+    } catch (\Exception $e) {
+        return redirect()->route('home')->with('error', 'حدث خطأ أثناء الحذف: ' . $e->getMessage());
+    }
     }
 }

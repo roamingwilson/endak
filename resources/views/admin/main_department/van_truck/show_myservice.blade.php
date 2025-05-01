@@ -16,7 +16,7 @@
                         <div class="col-md-12 text-center">
                             <div class="">
                                 <p class="mb-3 content-1 h5 text-black">
-                                    {{ $lang == 'ar' ? $main->name_ar : 'Cleaning Services' }}
+                                    {{ $lang == 'ar' ? $service->type : 'Cleaning Services' }}
 
 
                                 </p>
@@ -60,8 +60,8 @@
                                 <div class="form-group">
                                     <label for="" class="mb-1">{{ $lang == 'ar' ? ' نوع الشاحنة ' : 'truck type' }}
                                         :</label>
-                                        @if (isset($service->vanTruck))
-                                        <p>{{ $lang == 'ar' ? $service->vanTruck->name_ar : $service->vanTruck->name_en }}</p>
+                                        @if (isset($service->equip_type ))
+                                        <p>{{ $lang == 'ar' ? $service->equip_type  : $service->equip_type  }}</p>
                                     @endif
 
                                 </div>
@@ -111,6 +111,22 @@
                                         <img width="250px" height="250px" src="{{ asset($service->user->image_url) }}"
                                             alt="user">
                                     @endif
+
+                                    <div class="mt-4">
+                                        @if (auth()->id() === $service->user_id)
+                                        <a class="btn btn-success btn-sm" href="{{route('services.edit',$service->id)}}">
+                                            <i class="fe fe-check-circle"></i> {{ __('Edit') }}
+                                        </a>
+                                        <form action="{{ route('services.destroy', $service->id) }}" method="POST" style="display:inline-block;">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button class="btn btn-danger btn-sm" type="submit" onclick="return confirm('{{ $lang == 'ar' ? 'هل أنت متأكد من الحذف؟' : 'Are you sure you want to delete?' }}')">
+                                                <i class="fe fe-trash-2"></i> {{ $lang == 'ar' ? 'حذف' : 'Delete' }}
+                                            </button>
+                                        </form>
+                                        @endif
+
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -133,7 +149,9 @@
                                 {{ $lang == 'ar' ? 'العروض' : 'Offers' }}</h5>
                             <div class="d-block mb-4 overflow-visible d-block d-sm-flex">
                                 <div class="container">
+
                                     @forelse ($service->comments as $comment)
+                                    {{-- @dd($comment) --}}
                                         <div class="col-12 border mb-4 p-4 br-5">
                                             <div class="d-flex align-items-center">
                                                 <h5 class="mt-0 mr-3">
@@ -144,15 +162,20 @@
                                                         href="{{ route('web.send_message', $comment->user->id) }}">
                                                         <i class="fe fe-mail mx-1"></i> {{ __('messages.send_message') }}
                                                     </a>
-                                                    <form action="{{ route('accept_offer_van_truck') }}" method="post">
+                                                    <form action="{{ route('general_orders.store') }}" method="post">
                                                         @csrf
+
                                                         <input type="hidden" name="service_id"
                                                             value="{{ $service->id }}">
                                                         <input type="hidden" name="service_provider_id"
                                                             value="{{ $comment->user->id }}">
                                                         <input type="hidden" name="customer_id"
-                                                            value="{{ $service->user_id }}">
+                                                            value="{{  $comment->customer->id  }}">
+                                                            <input type="hidden" name="status" value="pending">
+                                                            <input type="hidden" name="orderable_id" value="{{ $service->id }}">
+                                                            <input type="hidden" name="orderable_type" value="{{ get_class($service) }}">
                                                         <button class="btn btn-primary" type="submit">
+
                                                             {{ $lang == 'ar' ? 'قبول العرض' : 'Accept Offer' }}
                                                         </button>
                                                     </form>
@@ -163,7 +186,7 @@
                                                 <p>{{ __('general.price') . ' : ' . $comment->price }}</p>
                                             @endif
                                             @if (isset($comment->body))
-                                                <p>{{ 'Body : ' . $comment->body }}</p>
+                                                <p>{{ 'نوع الخدمة : ' . $comment->body }}</p>
                                             @endif
                                             @if (isset($comment->date))
                                                 <p>{{ __('general.date') . ' : ' . $comment->date }}</p>
@@ -227,6 +250,7 @@
                                     method="POST" enctype="multipart/form-data">
                                     @csrf
                                     <input type="hidden" value="{{ $service->id }}" name="service_id">
+                                    <input type="hidden" value="{{$service->equip_type }}" name="body">
                                     {{-- <input type="hidden" value="{{ $user->id }}" name="service_provider"> --}}
 
                                     <div>

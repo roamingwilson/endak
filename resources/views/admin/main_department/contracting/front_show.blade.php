@@ -85,6 +85,16 @@
     }
 </style>
 @section('content')
+@php
+
+
+
+
+use App\Models\Services;
+
+$services = Services::where('department_id', $departments->id)->latest()->paginate(5);
+
+@endphp
 
     <div class="main-content app-content">
         <section>
@@ -111,7 +121,7 @@
                                 @foreach ($contractingss as $item)
                                     <div class="card card-custom ">
                                         @if ($item->image)
-                                            <a href="{{ route('contracting_sub_show' , $item->id) }}" class="d-flex justify-content-center align-items-center"> 
+                                            <a href="{{ route('contracting_sub_show' , $item->id) }}" class="d-flex justify-content-center align-items-center">
                                                 <img src="{{ $item->image_url }}" class="card-img-top mt-2 "
                                                     alt="{{ $item->name_ar }}">
                                             </a>
@@ -123,9 +133,9 @@
                                         </div>
                                     </div>
                                 @endforeach
-        
-        
-        
+
+
+
                             </div>
 
                         </div>
@@ -143,7 +153,7 @@
                         @foreach ($contractingss as $item)
                             <div class="card card-custom ">
                                 @if ($item->image)
-                                    <a href="{{ route('contracting_sub_show' , $item->id) }}" class="d-flex justify-content-center align-items-center"> 
+                                    <a href="{{ route('contracting_sub_show' , $item->id) }}" class="d-flex justify-content-center align-items-center">
                                         <img src="{{ $item->image_url }}" class="card-img-top mt-2 "
                                             alt="{{ $item->name_ar }}">
                                     </a>
@@ -182,7 +192,7 @@
                         @foreach ($contractingss as $item)
                             <div class="card card-custom ">
                                 @if ($item->image)
-                                    <a href="{{ route('contracting_sub_show' , $item->id) }}" class="d-flex justify-content-center align-items-center"> 
+                                    <a href="{{ route('contracting_sub_show' , $item->id) }}" class="d-flex justify-content-center align-items-center">
                                         <img src="{{ $item->image_url }}" class="card-img-top mt-2 "
                                             alt="{{ $item->name_ar }}">
                                     </a>

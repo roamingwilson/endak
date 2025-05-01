@@ -85,6 +85,16 @@
     }
 </style>
 @section('content')
+@php
+
+
+$lang = config('app.locale');
+
+use App\Models\Services;
+
+$services = Services::where('department_id', $departments->id)->latest()->paginate(5);
+
+@endphp
 
     <div class="main-content app-content">
         <section>

@@ -24,7 +24,7 @@ class OrderSparePartController extends Controller
         $order = SparePartOrder::findOrFail($id);
         $service = SparePartServices::withoutGlobalScope('status')->where('id',$order->service_id)->first();
 
-        return view('front-office.orders.spare_parts' ,compact('order' , 'service'));
+        return view('front_office.orders.spare_parts' ,compact('order' , 'service'));
     }
     public function show_orders(){
         $orders = SparePartOrder::get();

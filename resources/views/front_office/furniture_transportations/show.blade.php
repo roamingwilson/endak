@@ -4,11 +4,16 @@
 @endsection
 
 @section('style')
- 
+
 @endsection
 @section('content')
     <?php
     $lang = config('app.locale');
+
+    use App\Models\Services;
+
+    $services = Services::where('department_id', $departments->id)->latest()->paginate(5);
+
     ?>
     <div class="main-content app-content">
         <section>
@@ -32,31 +37,40 @@
                     <div class="col-xl-12">
                         <div class="row">
                             @forelse ($services as $service)
-                            <div class="col-md-6">
-                                <div class="card">
-                                    <div class="position-relative">
-                                        <a href="{{ route('main_furniture_transportations_show_my_service', $service->id) }}">
-                                            @if ($service->image)
-                                                <img class="card-img-top" src="{{ $service->image_url }}" alt="img"
-                                                    width="300" height="300">
-                                            @else
-                                                <img class="card-img-top" src="{{ asset('images/logo2.jpg') }}"
-                                                    alt="nn" width="300" height="300">
-                                            @endif
-                                        </a>
-                                    </div>
-                                    <div class="card-body d-flex flex-column">
-                                        <h5><a href="{{ route('main_furniture_transportations_show_my_service', $service->id) }}">
-                                                {{ $lang == 'ar' ? $service->name_ar : $service->name_en }}</a></h5>
-                                        <div class="tx-muted">
-                                            {{ $service->user->first_name .' '. $service->user->first_name }}
-                                        </div>
+                            {{-- @dd(auth()->user()->governement) --}}
+                            @if (auth()->user()->governement== $service->user->governement)
+                                <div class="col-md-4">
+                                    <div class="card">
+                                        <div class="position-relative">
+                                            <a href="{{ route('show_myservice', $service->id) }}">
+                                                @php
+                                                $firstImage = $service->images->first();
+                                            @endphp
 
+                                            @if ($firstImage)
+                                                <img class="card-img-top" src="{{ asset('storage/' . $firstImage->path) }}" alt="img" width="300" height="300">
+                                            @else
+                                                <img class="card-img-top" src="{{ asset('images/placeholder.png') }}" alt="no image" width="300" height="300">
+                                            @endif
+
+                                            </a>
+                                        </div>
+                                        <div class="card-body d-flex flex-column">
+                                            <h5><a href="{{ route('show_myservice', $service->id) }}">
+                                                    {{ $lang == 'ar' ? $service->name_ar : $service->name_en }}</a></h5>
+                                            <div class="tx-muted">
+                                                {{ $service->user->full_name }}
+                                            </div>
+                                            <div class="tx-muted">
+                                                {{ $service->created_at->diffForHumans() }}
+                                            </div>
+
+
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-
-                        @empty
+                                @endif
+                            @empty
                                 {!! no_data() !!}
                             @endforelse
                         </div>
@@ -70,9 +84,12 @@
             <div class="profile-content pt-40">
                 <div class="container position-relative d-flex justify-content-center ">
                     <?php $user = auth()->user(); ?>
-                    <form action="{{ route('furniture_transportations_store_service') }}" method="POST" enctype="multipart/form-data"
+                    <form action="{{ route('services.store') }}" method="POST" enctype="multipart/form-data"
                         style="width:700px" class="profile-card rounded-lg shadow-xs bg-white p-15 p-md-30">
                         @csrf
+                        <input type="hidden" name="user_id" value="{{ $user->id }}">
+                        <input type="hidden" name="department_id" value="{{ $departments->id }}">
+                        <input type="hidden" name="type" value="{{ $departments->name_en }}">
                         @foreach ($products as $product)
                             <div class="form-group mt-2 d-flex align-items-center">
                                 <input type="checkbox" name="selected_products[]" id="product-{{ $product->id }}"
@@ -96,13 +113,16 @@
                                     </label>
                                     <label for="">
 
-                                        <input type="checkbox" name="installation[{{ $product->id }}]" id="work_type-{{ $product->id }}"
+                                        <input type="checkbox" name="installation[{{ $product->id }}]" id="work_type-installation{{ $product->id }}"
                                             value="1"
                                             class="m-2">{{ $lang == 'ar' ? 'تركيب' : 'Installation' }}
                                     </label>
                                 </div>
                             </div>
                         @endforeach
+                        <input type="hidden" name="department_id" value="{{ $departments->id }}">
+                        <input type="hidden" name="user_id" value="{{ auth()->id() }}">
+                        <input type="hidden" name="type" value="{{ $departments->name_en }}">
 
                         <label for="name" class="mb-1">{{ $lang == 'ar' ? 'من' : 'From' }} : </label>
                         <div class="form-group mt-2">
@@ -110,8 +130,7 @@
                             <input type="text" class="form-control" name="from_city">
                             <label for="name" class="mb-1">{{ $lang == 'ar' ? 'الحي' : 'Neighborhood' }} : </label>
                             <input type="text" class="form-control" name="from_neighborhood">
-                            <label for="name" class="mb-1">{{ $lang == 'ar' ? 'الدور' : 'Home' }} : </label>
-                            <input type="text" class="form-control" name="from_home">
+
                         </div>
                         <hr>
                         <label for="name" class="mb-1">{{ $lang == 'ar' ? 'الي' : 'To' }} : </label>
@@ -121,8 +140,8 @@
                             <label for="name" class="mb-1">{{ $lang == 'ar' ? 'الحي' : 'Neighborhood' }} :
                             </label>
                             <input type="text" class="form-control" name="to_neighborhood">
-                            <label for="name" class="mb-1">{{ $lang == 'ar' ? 'الدور' : 'Home' }} : </label>
-                            <input type="text" class="form-control" name="to_home">
+
+
                         </div>
                         <div class="form-group">
                             <label for="" class="mb-1">{{ $lang == 'ar' ? 'ملاحظة عن العمل المطلوب' : 'Note About Work' }} :</label>
@@ -146,7 +165,7 @@
 
         <div class="profile-content pt-40">
             <div class="container position-relative d-flex justify-content-center ">
-                 
+
                 <form action="{{ route('register-page') }}" method="get" enctype="multipart/form-data"
                     style="width:600px" class="profile-card rounded-lg shadow-xs bg-white p-15 p-md-30">
                     @csrf

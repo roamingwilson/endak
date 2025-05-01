@@ -89,9 +89,27 @@
                             {{ $lang == 'ar' ? 'لا يوجد ملاحظات' : 'No Notes' }}
                         @endif
                     </div>
+                    @if (auth()->id() === $service->user_id)
 
+
+                    <div class="form-group">
+
+                        <a class="btn btn-success btn-sm" href="{{route('services.edit',$service->id)}}">
+                            <i class="fe fe-check-circle"></i> {{ __('Edit') }}
+                        </a>
+                        <form action="{{ route('services.destroy', $service->id) }}" method="POST" style="display:inline-block;">
+                            @csrf
+                            @method('DELETE')
+                            <button class="btn btn-danger btn-sm" type="submit" onclick="return confirm('{{ $lang == 'ar' ? 'هل أنت متأكد من الحذف؟' : 'Are you sure you want to delete?' }}')">
+                                <i class="fe fe-trash-2"></i> {{ $lang == 'ar' ? 'حذف' : 'Delete' }}
+                            </button>
+                        </form>
+
+                        @endif
+                    </div>
                 </div>
-            </div>
+                </div>
+
 
         </div>
         </div>
@@ -119,7 +137,7 @@
                                                         <a class="dropdown-item mb-2" href="{{ route('web.send_message', $comment->user->id) }}">
                                                             <i class="fe fe-mail mx-1"></i> {{ __('messages.send_message') }}
                                                         </a>
-                                                        <form action="{{ route('accept_offer_furniture') }}" method="post">
+                                                        <form action="{{ route('general_orders.store') }}" method="post">
                                                             @csrf
                                                             <input type="hidden" name="service_id" value="{{ $service->id }}">
                                                             <input type="hidden" name="service_provider_id" value="{{ $comment->user->id }}">

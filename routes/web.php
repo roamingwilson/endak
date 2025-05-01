@@ -1,83 +1,46 @@
 <?php
 
-use App\Http\Controllers\departments\OrderHeavyEquipController;
-use App\Models\AdsOrder;
-use App\Models\AirConditionOrder;
-use App\Models\Department;
-use App\Models\WaterOrder;
-use App\Models\BigCarOrder;
-use App\Models\FamilyOrder;
-use App\Models\GardenOrder;
-use App\Models\WorkerOrder;
-use App\Models\TeacherOrder;
-use App\Models\CarWaterOrder;
-use App\Models\CleaningOrder;
-use App\Models\PublicGeOrder;
-use App\Models\ContractingOrder;
-use App\Models\MaintenanceOrder;
-use App\Models\FollowCameraOrder;
-use App\Models\CounterInsectsOrder;
-use App\Models\PartyPreparationOrder;
+
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\CountryController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\CleaningController;
+
 use App\Models\FurnitureTransportationOrder;
 use App\Http\Controllers\OrderUserController;
 use App\Http\Controllers\RatingUserController;
 use App\Http\Controllers\DepartmentsController;
 use App\Http\Controllers\MessageUserController;
-use App\Http\Controllers\OrderCleaningController;
-use App\Http\Controllers\departments\AdsController;
-use App\Http\Controllers\departments\Aircondition\AirconController;
-use App\Http\Controllers\departments\Aircondition\OrderAirconController;
+
 use App\Http\Controllers\GeneralCommentsController;
-use App\Http\Controllers\departments\WaterController;
-use App\Http\Controllers\departments\BigCarController;
-use App\Http\Controllers\departments\FamilyController;
-use App\Http\Controllers\departments\GardenController;
-use App\Http\Controllers\departments\WorkerController;
-use App\Http\Controllers\departments\TeacherController;
-use App\Http\Controllers\departments\CarWaterController;
-use App\Http\Controllers\departments\OrderAdsController;
-use App\Http\Controllers\departments\PublicGeController;
-use App\Http\Controllers\departments\OrderWaterController;
+
 use App\Http\Controllers\departments\ContractingController;
 use App\Http\Controllers\departments\MaintenanceController;
-use App\Http\Controllers\departments\OrderBigCarController;
-use App\Http\Controllers\departments\OrderFamilyController;
-use App\Http\Controllers\departments\OrderGardenController;
-use App\Http\Controllers\departments\OrderWorkerController;
-use App\Http\Controllers\departments\OrderTeacherController;
-use App\Http\Controllers\departments\OrderCarWaterController;
-use App\Http\Controllers\departments\OrderPublicGeController;
-use App\Http\Controllers\departments\CounterInsectsController;
+
 use App\Http\Controllers\departments\HeavyEquipmentController;
 use App\Http\Controllers\departments\Industry\indsProductController;
-use App\Http\Controllers\departments\OrderContractingController;
-use App\Http\Controllers\departments\OrderMaintenanceController;
-use App\Http\Controllers\departments\PartyPreparationController;
-use App\Http\Controllers\departments\OrderCounterInsectsController;
-use App\Http\Controllers\Surveillance\SurveillanceCamerasController;
-use App\Http\Controllers\departments\OrderPartyPreparationController;
-use App\Http\Controllers\departments\SpareParts\OrderSparePartController;
+
 use App\Http\Controllers\departments\SpareParts\SparePartController;
 use App\Http\Controllers\departments\VanTruck\VanTruckController;
 use App\Http\Controllers\departments\VanTruck\VanTruckOrderController;
 use App\Http\Controllers\Furniture\FurnitureTransportationsController;
-use App\Http\Controllers\Surveillance\OrderSurveillanceCamerasController;
+
 use App\Http\Controllers\Furniture\OrderFurnitureTransportationsController;
+use App\Http\Controllers\GeneralOrderController;
+use App\Http\Controllers\GovernementsController;
 use App\Http\Controllers\notificationController;
-use App\Models\AirCondition;
-use App\Models\HeavyEquipment;
-use App\Models\HeavyEquipmentOrder;
-use App\Models\indsProduct;
-use App\Models\SparePartOrder;
-use App\Models\SpareParts;
+use App\Http\Controllers\ProductCartController;
+use App\Http\Controllers\ProductOrderController;
+use App\Http\Controllers\ProductOrderitemsController;
+use App\Http\Controllers\ServiceController;
+
+use App\Models\GeneralOrder;
+use App\Models\ProductOrder;
+use App\Models\ProductOrderitems;
 use App\Models\VanTruckOrder;
 use Illuminate\Support\Facades\Auth;
 
@@ -97,16 +60,18 @@ use Illuminate\Support\Facades\Auth;
 // })->name('home');
 Route::get('/', function () {
 
-
-    if (auth()->check() && auth()->user()->role_id == 3) {
-        return view('front_office.services');}
-        else {
             return view('front_office.home');
-        }
+
     }
 
 )->name('home');
-Route::get('/notifications', [notificationController::class, 'index'])->name('notifications.index');
+Route::middleware('auth')->group(function () {
+    // مسار لتعيين النوتيفيكاشن كـ "مقروء"
+    Route::get('/notification/{notificationId}/read', [NotificationController::class, 'markAsRead'])->name('notification.read');
+    Route::get('/notifications', [notificationController::class, 'index'])->name('notifications.index');
+    Route::get('/notifications/{notificationId}/read', [NotificationController::class, 'markAsRead'])->name('notification.read');
+
+});
 
 Route::get('/page/{slug}', [PageController::class , 'pageSingle'])->name('page');
 Route::get('/search', [SearchController::class, 'index'])->name('search');
@@ -158,7 +123,7 @@ Route::post('/order/complete' , [OrderUserController::class , 'finish'])->name('
 // Rating
 Route::get('/profile/{id}' ,[ProfileController::class , 'show'] )->name('web.profile');
 Route::get('/profile/edit/{id}' ,[ProfileController::class , 'edit'] )->name('web.profile.edit');
-Route::post('/profile/update' ,[ProfileController::class , 'update'] )->name('web.profile.update');
+Route::post('/profile/update' ,[ProfileController::class , 'updateProfile'] )->name('web.profile.update');
 
 // Users
 
@@ -167,7 +132,7 @@ Route::get('/service_provider' , [ProfileController::class , 'users'])->name('we
 // Order Rating
 
 Route::get('/add_rate/{id}' , [RatingUserController::class , 'add_rate'])->name('web.add_rate');
-Route::post('/web-rate/store' , [RatingUserController::class , 'store'])->name('web.add_rate.store');
+Route::post('/web-rate/store/{id}' , [RatingUserController::class , 'store'])->name('web.add_rate.store');
 
 // Messages web.send_message
 
@@ -191,335 +156,308 @@ Route::group(['prefix' => "furniture_transportations"], function(){
     Route::get('/accept_project_furniture_transportation/{id}' , function($id) {
         FurnitureTransportationOrder::find($id)->update(['status' => "completed"]);
     })->name('accept_project_furniture_transportation');
+    Route::get('service/edit/{id}',[FurnitureTransportationsController::class , 'edit_service'])->name('service_furniture_transportations.edit');
+    Route::put('service/update/{id}',[FurnitureTransportationsController::class , 'update_service'])->name('service_furniture_transportations.update');
+    Route::delete('/van-truck-services/{id}', [FurnitureTransportationsController::class, 'destroy_service'])->name('service_furniture_transportations.destroy');
 });
 
 // Surveillance Cameras
-Route::group(['prefix' => "surveillance_cameras"], function(){
-    Route::get('/show' , [SurveillanceCamerasController::class , 'show'])->name('surveillance_cameras_show');
-    Route::post('/add_service' , [SurveillanceCamerasController::class , 'store_service'])->name('surveillance_cameras_store_service');
-    Route::get('/',[SurveillanceCamerasController::class , 'index'])->name('main_surveillance_cameras');
-    Route::get('/service/{id}',[SurveillanceCamerasController::class , 'show_my_service'])->name('main_surveillance_cameras_show_my_service');
-    Route::get('/edit/{id}',[SurveillanceCamerasController::class , 'edit'])->name('main_surveillance_cameras.edit');
-    Route::patch('/update/{id}',[SurveillanceCamerasController::class , 'update'])->name('main_surveillance_cameras.update');
-    Route::post('/accept_offer' , [OrderSurveillanceCamerasController::class , 'store'])->name('accept_offer_surveillance_cameras');
-    Route::get('/order' , [OrderSurveillanceCamerasController::class , 'show_orders'])->name('show_orders_surveillance_cameras');
-    Route::get('/order/{id}' , [OrderSurveillanceCamerasController::class , 'show'])->name('show_order_surveillance_cameras');
-    Route::get('/accept_project_surveillance_cameras/{id}' , function($id) {
-        FollowCameraOrder::find($id)->update(['status' => "completed"]);
-        return redirect()->back();
-    })->name('accept_project_surveillance_cameras');
-});
+// Route::group(['prefix' => "surveillance_cameras"], function(){
+//     Route::get('/show' , [SurveillanceCamerasController::class , 'show'])->name('surveillance_cameras_show');
+//     Route::post('/add_service' , [SurveillanceCamerasController::class , 'store_service'])->name('surveillance_cameras_store_service');
+//     Route::get('/',[SurveillanceCamerasController::class , 'index'])->name('main_surveillance_cameras');
+//     Route::get('/service/{id}',[SurveillanceCamerasController::class , 'show_my_service'])->name('main_surveillance_cameras_show_my_service');
+//     Route::get('/edit/{id}',[SurveillanceCamerasController::class , 'edit'])->name('main_surveillance_cameras.edit');
+//     Route::patch('/update/{id}',[SurveillanceCamerasController::class , 'update'])->name('main_surveillance_cameras.update');
+//     Route::post('/accept_offer' , [OrderSurveillanceCamerasController::class , 'store'])->name('accept_offer_surveillance_cameras');
+//     Route::get('/order' , [OrderSurveillanceCamerasController::class , 'show_orders'])->name('show_orders_surveillance_cameras');
+//     Route::get('/order/{id}' , [OrderSurveillanceCamerasController::class , 'show'])->name('show_order_surveillance_cameras');
+//     Route::get('/accept_project_surveillance_cameras/{id}' , function($id) {
+//         FollowCameraOrder::find($id)->update(['status' => "completed"]);
+//         return redirect()->back();
+//     })->name('accept_project_surveillance_cameras');
+//     Route::get('service/edit/{id}',[SurveillanceCamerasController::class , 'edit_service'])->name('service_surveillance_cameras.edit');
+//     Route::put('service/update/{id}',[SurveillanceCamerasController::class , 'update_service'])->name('service_surveillance_cameras.update');
+//     Route::delete('/van-truck-services/{id}', [SurveillanceCamerasController::class, 'destroy_service'])->name('service_surveillance_cameras.destroy');
+// });
 
 
 // Party Preparation
-Route::group(['prefix' => "party_preparation"], function(){
-    Route::get('/show' , [PartyPreparationController::class , 'show'])->name('party_preparation_show');
-    Route::post('/add_service' , [PartyPreparationController::class , 'store_service'])->name('party_preparation_store_service');
-    Route::get('/',[PartyPreparationController::class , 'index'])->name('main_party_preparation');
-    Route::get('/service/{id}',[PartyPreparationController::class , 'show_my_service'])->name('main_party_preparation_show_my_service');
-    Route::get('/edit/{id}',[PartyPreparationController::class , 'edit'])->name('main_party_preparation.edit');
-    Route::patch('/update/{id}',[PartyPreparationController::class , 'update'])->name('main_party_preparation.update');
-    Route::post('/accept_offer' , [OrderPartyPreparationController::class , 'store'])->name('accept_offer_party_preparation');
-    Route::get('/order' , [OrderPartyPreparationController::class , 'show_orders'])->name('show_orders_party_preparation');
-    Route::get('/order/{id}' , [OrderPartyPreparationController::class , 'show'])->name('show_order_party_preparation');
-    Route::get('/accept_project_party_preparation/{id}' , function($id) {
-        PartyPreparationOrder::find($id)->update(['status' => "completed"]);
-        return redirect()->back();
-    })->name('accept_project_party_preparation');
-});
+// Route::group(['prefix' => "party_preparation"], function(){
+//     Route::get('/show' , [PartyPreparationController::class , 'show'])->name('party_preparation_show');
+//     Route::post('/add_service' , [PartyPreparationController::class , 'store_service'])->name('party_preparation_store_service');
+//     Route::get('/',[PartyPreparationController::class , 'index'])->name('main_party_preparation');
+//     Route::get('/service/{id}',[PartyPreparationController::class , 'show_my_service'])->name('main_party_preparation_show_my_service');
+//     Route::get('/edit/{id}',[PartyPreparationController::class , 'edit'])->name('main_party_preparation.edit');
+//     Route::patch('/update/{id}',[PartyPreparationController::class , 'update'])->name('main_party_preparation.update');
+//     Route::post('/accept_offer' , [OrderPartyPreparationController::class , 'store'])->name('accept_offer_party_preparation');
+//     Route::get('/order' , [OrderPartyPreparationController::class , 'show_orders'])->name('show_orders_party_preparation');
+//     Route::get('/order/{id}' , [OrderPartyPreparationController::class , 'show'])->name('show_order_party_preparation');
+//     Route::get('/accept_project_party_preparation/{id}' , function($id) {
+//         PartyPreparationOrder::find($id)->update(['status' => "completed"]);
+//         return redirect()->back();
+//     })->name('accept_project_party_preparation');
+//     Route::get('service/edit/{id}',[PartyPreparationController::class , 'edit_service'])->name('service_party_preparation.edit');
+//     Route::put('service/update/{id}',[PartyPreparationController::class , 'update_service'])->name('service_party_preparation.update');
+//     Route::delete('/van-truck-services/{id}', [PartyPreparationController::class, 'destroy_service'])->name('service_party_preparation.destroy');
+// });
 
 
 // Garden
-Route::group(['prefix' => "garden"], function(){
-    Route::get('/show' , [GardenController::class , 'show'])->name('garden_show');
-    Route::post('/add_service' , [GardenController::class , 'store_service'])->name('garden_store_service');
-    Route::get('/',[GardenController::class , 'index'])->name('main_garden');
-    Route::get('/service/{id}',[GardenController::class , 'show_my_service'])->name('main_garden_show_my_service');
-    Route::get('/edit/{id}',[GardenController::class , 'edit'])->name('main_garden.edit');
-    Route::patch('/update/{id}',[GardenController::class , 'update'])->name('main_garden.update');
-    Route::post('/accept_offer' , [OrderGardenController::class , 'store'])->name('accept_offer_garden');
-    Route::get('/order' , [OrderGardenController::class , 'show_orders'])->name('show_orders_garden');
-    Route::get('/order/{id}' , [OrderGardenController::class , 'show'])->name('show_order_garden');
-    Route::get('/accept_project_garden/{id}' , function($id) {
-        GardenOrder::find($id)->update(['status' => "completed"]);
-        return redirect()->back();
-    })->name('accept_project_garden');
-});
+// Route::group(['prefix' => "garden"], function(){
+//     Route::get('/show' , [GardenController::class , 'show'])->name('garden_show');
+//     Route::post('/add_service' , [GardenController::class , 'store_service'])->name('garden_store_service');
+//     Route::get('/',[GardenController::class , 'index'])->name('main_garden');
+//     Route::get('/service/{id}',[GardenController::class , 'show_my_service'])->name('main_garden_show_my_service');
+//     Route::get('/edit/{id}',[GardenController::class , 'edit'])->name('main_garden.edit');
+//     Route::patch('/update/{id}',[GardenController::class , 'update'])->name('main_garden.update');
+//     Route::post('/accept_offer' , [OrderGardenController::class , 'store'])->name('accept_offer_garden');
+//     Route::get('/order' , [OrderGardenController::class , 'show_orders'])->name('show_orders_garden');
+//     Route::get('/order/{id}' , [OrderGardenController::class , 'show'])->name('show_order_garden');
+//     Route::get('/accept_project_garden/{id}' , function($id) {
+//         GardenOrder::find($id)->update(['status' => "completed"]);
+//         return redirect()->back();
+//     })->name('accept_project_garden');
+//     Route::get('service/edit/{id}',[GardenController::class , 'edit_service'])->name('service_garden.edit');
+//     Route::put('service/update/{id}',[GardenController::class , 'update_service'])->name('service_garden.update');
+//     Route::delete('/van-truck-services/{id}', [GardenController::class, 'destroy_service'])->name('service_garden.destroy');
+// });
 
-// Counter insects
-Route::group(['prefix' => "counter_insects"], function(){
-    Route::get('/show' , [CounterInsectsController::class , 'show'])->name('counter_insects_show');
-    Route::post('/add_service' , [CounterInsectsController::class , 'store_service'])->name('counter_insects_store_service');
-    Route::get('/',[CounterInsectsController::class , 'index'])->name('main_counter_insects');
-    Route::get('/service/{id}',[CounterInsectsController::class , 'show_my_service'])->name('main_counter_insects_show_my_service');
-    Route::get('/edit/{id}',[CounterInsectsController::class , 'edit'])->name('main_counter_insects.edit');
-    Route::patch('/update/{id}',[CounterInsectsController::class , 'update'])->name('main_counter_insects.update');
-    Route::post('/accept_offer' , [OrderCounterInsectsController::class , 'store'])->name('accept_offer_counter_insects');
-    Route::get('/order' , [OrderCounterInsectsController::class , 'show_orders'])->name('show_orders_counter_insects');
-    Route::get('/order/{id}' , [OrderCounterInsectsController::class , 'show'])->name('show_order_counter_insects');
-    Route::get('/accept_project_counter_insects/{id}' , function($id) {
-        CounterInsectsOrder::find($id)->update(['status' => "completed"]);
-        return redirect()->back();
-    })->name('accept_project_counter_insects');
-});
+// // Counter insects
+// Route::group(['prefix' => "counter_insects"], function(){
+//     Route::get('/show' , [CounterInsectsController::class , 'show'])->name('counter_insects_show');
+//     Route::post('/add_service' , [CounterInsectsController::class , 'store_service'])->name('counter_insects_store_service');
+//     Route::get('/',[CounterInsectsController::class , 'index'])->name('main_counter_insects');
+//     Route::get('/service/{id}',[CounterInsectsController::class , 'show_my_service'])->name('main_counter_insects_show_my_service');
+//     Route::get('/edit/{id}',[CounterInsectsController::class , 'edit'])->name('main_counter_insects.edit');
+//     Route::patch('/update/{id}',[CounterInsectsController::class , 'update'])->name('main_counter_insects.update');
+//     Route::post('/accept_offer' , [OrderCounterInsectsController::class , 'store'])->name('accept_offer_counter_insects');
+//     Route::get('/order' , [OrderCounterInsectsController::class , 'show_orders'])->name('show_orders_counter_insects');
+//     Route::get('/order/{id}' , [OrderCounterInsectsController::class , 'show'])->name('show_order_counter_insects');
+//     Route::get('/accept_project_counter_insects/{id}' , function($id) {
+//         CounterInsectsOrder::find($id)->update(['status' => "completed"]);
+//         return redirect()->back();
+//     })->name('accept_project_counter_insects');
+//     Route::get('service/edit/{id}',[CounterInsectsController::class , 'edit_service'])->name('service_counter_insects.edit');
+//     Route::put('service/update/{id}',[CounterInsectsController::class , 'update_service'])->name('service_counter_insects.update');
+//     Route::delete('/van-truck-services/{id}', [CounterInsectsController::class, 'destroy_service'])->name('service_counter_insects.destroy');
+// });
 
-// Cleaning Service
-Route::group(['prefix' => "cleaning"], function(){
-    Route::get('/show' , [CleaningController::class , 'show'])->name('cleaning_show');
-    Route::post('/add_service' , [CleaningController::class , 'store_service'])->name('cleaning_store_service');
-    Route::get('/',[CleaningController::class , 'index'])->name('main_cleaning');
-    Route::get('/service/{id}',[CleaningController::class , 'show_my_service'])->name('main_cleaning_show_my_service');
-    Route::get('/edit/{id}',[CleaningController::class , 'edit'])->name('main_cleaning.edit');
-    Route::patch('/update/{id}',[CleaningController::class , 'update'])->name('main_cleaning.update');
-    Route::post('/accept_offer' , [OrderCleaningController::class , 'store'])->name('accept_offer_cleaning');
-    Route::get('/order' , [OrderCleaningController::class , 'show_orders'])->name('show_orders_cleaning');
-    Route::get('/order/{id}' , [OrderCleaningController::class , 'show'])->name('show_order_cleaning');
-    Route::get('/accept_project_cleaning/{id}' , function($id) {
-        CleaningOrder::find($id)->update(['status' => "completed"]);
-        return redirect()->back();
-    })->name('accept_project_cleaning');
-});
-
-
-// Teacher
-Route::group(['prefix' => "teacher"], function(){
-    Route::get('/show' , [TeacherController::class , 'show'])->name('teacher_show');
-    Route::post('/add_service' , [TeacherController::class , 'store_service'])->name('teacher_store_service');
-    Route::get('/',[TeacherController::class , 'index'])->name('main_teacher');
-    Route::get('/service/{id}',[TeacherController::class , 'show_my_service'])->name('main_teacher_show_my_service');
-    Route::get('/edit/{id}',[TeacherController::class , 'edit'])->name('main_teacher.edit');
-    Route::patch('/update/{id}',[TeacherController::class , 'update'])->name('main_teacher.update');
-    Route::post('/accept_offer' , [OrderTeacherController::class , 'store'])->name('accept_offer_teacher');
-    Route::get('/order' , [OrderTeacherController::class , 'show_orders'])->name('show_orders_teacher');
-    Route::get('/order/{id}' , [OrderTeacherController::class , 'show'])->name('show_order_teacher');
-    Route::get('/accept_project_teacher/{id}' , function($id) {
-        TeacherOrder::find($id)->update(['status' => "completed"]);
-        return redirect()->back();
-    })->name('accept_project_teacher');
-});
-
-// Family
-Route::group(['prefix' => "family"], function(){
-    Route::get('/show' , [FamilyController::class , 'show'])->name('family_show');
-    Route::post('/add_service' , [FamilyController::class , 'store_service'])->name('family_store_service');
-    Route::get('/',[FamilyController::class , 'index'])->name('main_family');
-    Route::get('/service/{id}',[FamilyController::class , 'show_my_service'])->name('main_family_show_my_service');
-    Route::get('/edit/{id}',[FamilyController::class , 'edit'])->name('main_family.edit');
-    Route::patch('/update/{id}',[FamilyController::class , 'update'])->name('main_family.update');
-    Route::post('/accept_offer' , [OrderFamilyController::class , 'store'])->name('accept_offer_family');
-    Route::get('/order' , [OrderFamilyController::class , 'show_orders'])->name('show_orders_family');
-    Route::get('/order/{id}' , [OrderFamilyController::class , 'show'])->name('show_order_family');
-    Route::get('/accept_project_family/{id}' , function($id) {
-        FamilyOrder::find($id)->update(['status' => "completed"]);
-        return redirect()->back();
-    })->name('accept_project_family');
-});
-
-// Worker
-Route::group(['prefix' => "worker"], function(){
-    Route::get('/show' , [WorkerController::class , 'show'])->name('worker_show');
-    Route::post('/add_service' , [WorkerController::class , 'store_service'])->name('worker_store_service');
-    Route::get('/',[WorkerController::class , 'index'])->name('main_worker');
-    Route::get('/service/{id}',[WorkerController::class , 'show_my_service'])->name('main_worker_show_my_service');
-    Route::get('/edit/{id}',[WorkerController::class , 'edit'])->name('main_worker.edit');
-    Route::patch('/update/{id}',[WorkerController::class , 'update'])->name('main_worker.update');
-    Route::post('/accept_offer' , [OrderWorkerController::class , 'store'])->name('accept_offer_worker');
-    Route::get('/order' , [OrderWorkerController::class , 'show_orders'])->name('show_orders_worker');
-    Route::get('/order/{id}' , [OrderWorkerController::class , 'show'])->name('show_order_worker');
-    Route::get('/accept_project_worker/{id}' , function($id) {
-        WorkerOrder::find($id)->update(['status' => "completed"]);
-        return redirect()->back();
-    })->name('accept_project_worker');
-});
-
-// Public Services
-Route::group(['prefix' => "public_ge"], function(){
-    Route::get('/show' , [PublicGeController::class , 'show'])->name('public_ge_show');
-    Route::post('/add_service' , [PublicGeController::class , 'store_service'])->name('public_ge_store_service');
-    Route::get('/',[PublicGeController::class , 'index'])->name('main_public_ge');
-    Route::get('/service/{id}',[PublicGeController::class , 'show_my_service'])->name('main_public_ge_show_my_service');
-    Route::get('/edit/{id}',[PublicGeController::class , 'edit'])->name('main_public_ge.edit');
-    Route::patch('/update/{id}',[PublicGeController::class , 'update'])->name('main_public_ge.update');
-    Route::post('/accept_offer' , [OrderPublicGeController::class , 'store'])->name('accept_offer_public_ge');
-    Route::get('/order' , [OrderPublicGeController::class , 'show_orders'])->name('show_orders_public_ge');
-    Route::get('/order/{id}' , [OrderPublicGeController::class , 'show'])->name('show_order_public_ge');
-    Route::get('/accept_project_public_ge/{id}' , function($id) {
-        PublicGeOrder::find($id)->update(['status' => "completed"]);
-        return redirect()->back();
-    })->name('accept_project_public_ge');
-});
-
-// Ads
-Route::group(['prefix' => "ads"], function(){
-    Route::get('/show' , [AdsController::class , 'show'])->name('ads_show');
-    Route::post('/add_service' , [AdsController::class , 'store_service'])->name('ads_store_service');
-    Route::get('/',[AdsController::class , 'index'])->name('main_ads');
-    Route::get('/service/{id}',[AdsController::class , 'show_my_service'])->name('main_ads_show_my_service');
-    Route::get('/edit/{id}',[AdsController::class , 'edit'])->name('main_ads.edit');
-    Route::patch('/update/{id}',[AdsController::class , 'update'])->name('main_ads.update');
-    Route::post('/accept_offer' , [OrderAdsController::class , 'store'])->name('accept_offer_ads');
-    Route::get('/order' , [OrderAdsController::class , 'show_orders'])->name('show_orders_ads');
-    Route::get('/order/{id}' , [OrderAdsController::class , 'show'])->name('show_order_ads');
-    Route::get('/accept_project_ads/{id}' , function($id) {
-        AdsOrder::find($id)->update(['status' => "completed"]);
-        return redirect()->back();
-    })->name('accept_project_ads');
-});
-
-// Water
-Route::group(['prefix' => "water"], function(){
-    Route::get('/show' , [WaterController::class , 'show'])->name('water_show');
-    Route::post('/add_service' , [WaterController::class , 'store_service'])->name('water_store_service');
-    Route::get('/',[WaterController::class , 'index'])->name('main_water');
-    Route::get('/service/{id}',[WaterController::class , 'show_my_service'])->name('main_water_show_my_service');
-    Route::get('/edit/{id}',[WaterController::class , 'edit'])->name('main_water.edit');
-    Route::patch('/update/{id}',[WaterController::class , 'update'])->name('main_water.update');
-    Route::post('/accept_offer' , [OrderWaterController::class , 'store'])->name('accept_offer_water');
-    Route::get('/order' , [OrderWaterController::class , 'show_orders'])->name('show_orders_water');
-    Route::get('/order/{id}' , [OrderWaterController::class , 'show'])->name('show_order_water');
-    Route::get('/accept_project_water/{id}' , function($id) {
-        WaterOrder::find($id)->update(['status' => "completed"]);
-        return redirect()->back();
-    })->name('accept_project_water');
-});
-
-// Car Water
-Route::group(['prefix' => "car_water"], function(){
-    Route::get('/show' , [CarWaterController::class , 'show'])->name('car_water_show');
-    Route::post('/add_service' , [CarWaterController::class , 'store_service'])->name('car_water_store_service');
-    Route::get('/',[CarWaterController::class , 'index'])->name('main_car_water');
-    Route::get('/service/{id}',[CarWaterController::class , 'show_my_service'])->name('main_car_water_show_my_service');
-    Route::get('/edit/{id}',[CarWaterController::class , 'edit'])->name('main_car_water.edit');
-    Route::patch('/update/{id}',[CarWaterController::class , 'update'])->name('main_car_water.update');
-    Route::post('/accept_offer' , [OrderCarWaterController::class , 'store'])->name('accept_offer_car_water');
-    Route::get('/order' , [OrderCarWaterController::class , 'show_orders'])->name('show_orders_car_water');
-    Route::get('/order/{id}' , [OrderCarWaterController::class , 'show'])->name('show_order_car_water');
-    Route::get('/accept_project_car_water/{id}' , function($id) {
-        CarWaterOrder::find($id)->update(['status' => "completed"]);
-        return redirect()->back();
-    })->name('accept_project_car_water');
-});
+// // Cleaning Service
+// Route::group(['prefix' => "cleaning"], function(){
+//     Route::get('/show' , [CleaningController::class , 'show'])->name('cleaning_show');
+//     Route::post('/add_service' , [CleaningController::class , 'store_service'])->name('cleaning_store_service');
+//     Route::get('/',[CleaningController::class , 'index'])->name('main_cleaning');
+//     Route::get('/service/{id}',[CleaningController::class , 'show_my_service'])->name('main_cleaning_show_my_service');
+//     Route::get('/edit/{id}',[CleaningController::class , 'edit'])->name('main_cleaning.edit');
+//     Route::patch('/update/{id}',[CleaningController::class , 'update'])->name('main_cleaning.update');
+//     Route::post('/accept_offer' , [OrderCleaningController::class , 'store'])->name('accept_offer_cleaning');
+//     Route::get('/order' , [OrderCleaningController::class , 'show_orders'])->name('show_orders_cleaning');
+//     Route::get('/order/{id}' , [OrderCleaningController::class , 'show'])->name('show_order_cleaning');
+//     Route::get('/accept_project_cleaning/{id}' , function($id) {
+//         CleaningOrder::find($id)->update(['status' => "completed"]);
+//         return redirect()->back();
+//     })->name('accept_project_cleaning');
+//     Route::get('service/edit/{id}',[CleaningController::class , 'edit_service'])->name('service_cleaning.edit');
+//     Route::put('service/update/{id}',[CleaningController::class , 'update_service'])->name('service_cleaning.update');
+//     Route::delete('/van-truck-services/{id}', [CleaningController::class, 'destroy_service'])->name('service_cleaning.destroy');
+// });
 
 
-// Big Car
-Route::group(['prefix' => "big_car"], function(){
-    Route::get('/show' , [BigCarController::class , 'show'])->name('big_car_show');
-    Route::post('/add_service' , [BigCarController::class , 'store_service'])->name('big_car_store_service');
-    Route::get('/',[BigCarController::class , 'index'])->name('main_big_car');
-    Route::get('/service/{id}',[BigCarController::class , 'show_my_service'])->name('main_big_car_show_my_service');
-    Route::get('/edit/{id}',[BigCarController::class , 'edit'])->name('main_big_car.edit');
-    Route::patch('/update/{id}',[BigCarController::class , 'update'])->name('main_big_car.update');
-    Route::post('/accept_offer' , [OrderBigCarController::class , 'store'])->name('accept_offer_big_car');
-    Route::get('/order' , [OrderBigCarController::class , 'show_orders'])->name('show_orders_big_car');
-    Route::get('/order/{id}' , [OrderBigCarController::class , 'show'])->name('show_order_big_car');
-    Route::get('/accept_project_big_car/{id}' , function($id) {
-        BigCarOrder::find($id)->update(['status' => "completed"]);
-        return redirect()->back();
-    })->name('accept_project_big_car');
-});
+// // Teacher
+// Route::group(['prefix' => "teacher"], function(){
+//     Route::get('/show' , [TeacherController::class , 'show'])->name('teacher_show');
+//     Route::post('/add_service' , [TeacherController::class , 'store_service'])->name('teacher_store_service');
+//     Route::get('/',[TeacherController::class , 'index'])->name('main_teacher');
+//     Route::get('/service/{id}',[TeacherController::class , 'show_my_service'])->name('main_teacher_show_my_service');
+//     Route::get('/edit/{id}',[TeacherController::class , 'edit'])->name('main_teacher.edit');
+//     Route::patch('/update/{id}',[TeacherController::class , 'update'])->name('main_teacher.update');
+//     Route::post('/accept_offer' , [OrderTeacherController::class , 'store'])->name('accept_offer_teacher');
+//     Route::get('/order' , [OrderTeacherController::class , 'show_orders'])->name('show_orders_teacher');
+//     Route::get('/order/{id}' , [OrderTeacherController::class , 'show'])->name('show_order_teacher');
+//     Route::get('/accept_project_teacher/{id}' , function($id) {
+//         TeacherOrder::find($id)->update(['status' => "completed"]);
+//         return redirect()->back();
+//     })->name('accept_project_teacher');
+//     Route::get('service/edit/{id}',[TeacherController::class , 'edit_service'])->name('service_teacher.edit');
+//     Route::put('service/update/{id}',[TeacherController::class , 'update_service'])->name('service_teacher.update');
+//     Route::delete('/van-truck-services/{id}', [TeacherController::class, 'destroy_service'])->name('service_teacher.destroy');
+// });
+
+// // Family
+// Route::group(['prefix' => "family"], function(){
+//     Route::get('/show' , [FamilyController::class , 'show'])->name('family_show');
+//     Route::post('/add_service' , [FamilyController::class , 'store_service'])->name('family_store_service');
+//     Route::get('/',[FamilyController::class , 'index'])->name('main_family');
+//     Route::get('/service/{id}',[FamilyController::class , 'show_my_service'])->name('main_family_show_my_service');
+//     Route::get('/edit/{id}',[FamilyController::class , 'edit'])->name('main_family.edit');
+//     Route::patch('/update/{id}',[FamilyController::class , 'update'])->name('main_family.update');
+//     Route::post('/accept_offer' , [OrderFamilyController::class , 'store'])->name('accept_offer_family');
+//     Route::get('/order' , [OrderFamilyController::class , 'show_orders'])->name('show_orders_family');
+//     Route::get('/order/{id}' , [OrderFamilyController::class , 'show'])->name('show_order_family');
+//     Route::get('/accept_project_family/{id}' , function($id) {
+//         FamilyOrder::find($id)->update(['status' => "completed"]);
+//         return redirect()->back();
+//     })->name('accept_project_family');
+//     Route::get('service/edit/{id}',[FamilyController::class , 'edit_service'])->name('service_family.edit');
+//     Route::put('service/update/{id}',[FamilyController::class , 'update_service'])->name('service_family.update');
+//     Route::delete('/van-truck-services/{id}', [FamilyController::class, 'destroy_service'])->name('service_family.destroy');
+// });
+
+// // Worker
+// Route::group(['prefix' => "worker"], function(){
+//     Route::get('/show' , [WorkerController::class , 'show'])->name('worker_show');
+//     Route::post('/add_service' , [WorkerController::class , 'store_service'])->name('worker_store_service');
+//     Route::get('/',[WorkerController::class , 'index'])->name('main_worker');
+//     Route::get('/service/{id}',[WorkerController::class , 'show_my_service'])->name('main_worker_show_my_service');
+//     Route::get('/edit/{id}',[WorkerController::class , 'edit'])->name('main_worker.edit');
+//     Route::patch('/update/{id}',[WorkerController::class , 'update'])->name('main_worker.update');
+//     Route::post('/accept_offer' , [OrderWorkerController::class , 'store'])->name('accept_offer_worker');
+//     Route::get('/order' , [OrderWorkerController::class , 'show_orders'])->name('show_orders_worker');
+//     Route::get('/order/{id}' , [OrderWorkerController::class , 'show'])->name('show_order_worker');
+//     Route::get('/accept_project_worker/{id}' , function($id) {
+//         WorkerOrder::find($id)->update(['status' => "completed"]);
+//         return redirect()->back();
+//     })->name('accept_project_worker');
+//     Route::get('service/edit/{id}',[WorkerController::class , 'edit_service'])->name('service_worker.edit');
+//     Route::put('service/update/{id}',[WorkerController::class , 'update_service'])->name('service_worker.update');
+//     Route::delete('/van-truck-services/{id}', [WorkerController::class, 'destroy_service'])->name('service_worker.destroy');
+// });
+
+// // Public Services
+// Route::group(['prefix' => "public_ge"], function(){
+//     Route::get('/show' , [PublicGeController::class , 'show'])->name('public_ge_show');
+//     Route::post('/add_service' , [PublicGeController::class , 'store_service'])->name('public_ge_store_service');
+//     Route::get('/',[PublicGeController::class , 'index'])->name('main_public_ge');
+//     Route::get('/service/{id}',[PublicGeController::class , 'show_my_service'])->name('main_public_ge_show_my_service');
+//     Route::get('/edit/{id}',[PublicGeController::class , 'edit'])->name('main_public_ge.edit');
+//     Route::patch('/update/{id}',[PublicGeController::class , 'update'])->name('main_public_ge.update');
+//     Route::post('/accept_offer' , [OrderPublicGeController::class , 'store'])->name('accept_offer_public_ge');
+//     Route::get('/order' , [OrderPublicGeController::class , 'show_orders'])->name('show_orders_public_ge');
+//     Route::get('/order/{id}' , [OrderPublicGeController::class , 'show'])->name('show_order_public_ge');
+//     Route::get('/accept_project_public_ge/{id}' , function($id) {
+//         PublicGeOrder::find($id)->update(['status' => "completed"]);
+//         return redirect()->back();
+//     })->name('accept_project_public_ge');
+//     Route::get('service/edit/{id}',[PublicGeController::class , 'edit_service'])->name('service_public_ge.edit');
+//     Route::put('service/update/{id}',[PublicGeController::class , 'update_service'])->name('service_public_ge.update');
+//     Route::delete('/van-truck-services/{id}', [PublicGeController::class, 'destroy_service'])->name('service_public_ge.destroy');
+// });
+
+// // Ads
+// Route::group(['prefix' => "ads"], function(){
+//     Route::get('/show' , [AdsController::class , 'show'])->name('ads_show');
+//     Route::post('/add_service' , [AdsController::class , 'store_service'])->name('ads_store_service');
+//     Route::get('/',[AdsController::class , 'index'])->name('main_ads');
+//     Route::get('/service/{id}',[AdsController::class , 'show_my_service'])->name('main_ads_show_my_service');
+//     Route::get('/edit/{id}',[AdsController::class , 'edit'])->name('main_ads.edit');
+//     Route::patch('/update/{id}',[AdsController::class , 'update'])->name('main_ads.update');
+//     Route::post('/accept_offer' , [OrderAdsController::class , 'store'])->name('accept_offer_ads');
+//     Route::get('/order' , [OrderAdsController::class , 'show_orders'])->name('show_orders_ads');
+//     Route::get('/order/{id}' , [OrderAdsController::class , 'show'])->name('show_order_ads');
+//     Route::get('/accept_project_ads/{id}' , function($id) {
+//         AdsOrder::find($id)->update(['status' => "completed"]);
+//         return redirect()->back();
+//     })->name('accept_project_ads');
+//     Route::get('service/edit/{id}',[AdsController::class , 'edit_service'])->name('service_ads.edit');
+//     Route::put('service/update/{id}',[AdsController::class , 'update_service'])->name('service_ads.update');
+//     Route::delete('/van-truck-services/{id}', [AdsController::class, 'destroy_service'])->name('service_ads.destroy');
+// });
+
+// // Water
+// Route::group(['prefix' => "water"], function(){
+//     Route::get('/show' , [WaterController::class , 'show'])->name('water_show');
+//     Route::post('/add_service' , [WaterController::class , 'store_service'])->name('water_store_service');
+//     Route::get('/',[WaterController::class , 'index'])->name('main_water');
+//     Route::get('/service/{id}',[WaterController::class , 'show_my_service'])->name('main_water_show_my_service');
+//     Route::get('/edit/{id}',[WaterController::class , 'edit'])->name('main_water.edit');
+//     Route::patch('/update/{id}',[WaterController::class , 'update'])->name('main_water.update');
+//     Route::post('/accept_offer' , [OrderWaterController::class , 'store'])->name('accept_offer_water');
+//     Route::get('/order' , [OrderWaterController::class , 'show_orders'])->name('show_orders_water');
+//     Route::get('/order/{id}' , [OrderWaterController::class , 'show'])->name('show_order_water');
+//     Route::get('/accept_project_water/{id}' , function($id) {
+//         WaterOrder::find($id)->update(['status' => "completed"]);
+//         return redirect()->back();
+//     })->name('accept_project_water');
+//     Route::get('service/edit/{id}',[WaterController::class , 'edit_service'])->name('service_water.edit');
+//     Route::put('service/update/{id}',[WaterController::class , 'update_service'])->name('service_water.update');
+//     Route::delete('/van-truck-services/{id}', [WaterController::class, 'destroy_service'])->name('service_water.destroy');
+// });
+
+// // Car Water
+// Route::group(['prefix' => "car_water"], function(){
+//     Route::get('/show' , [CarWaterController::class , 'show'])->name('car_water_show');
+//     Route::post('/add_service' , [CarWaterController::class , 'store_service'])->name('car_water_store_service');
+//     Route::get('/',[CarWaterController::class , 'index'])->name('main_car_water');
+//     Route::get('/service/{id}',[CarWaterController::class , 'show_my_service'])->name('main_car_water_show_my_service');
+//     Route::get('/edit/{id}',[CarWaterController::class , 'edit'])->name('main_car_water.edit');
+//     Route::patch('/update/{id}',[CarWaterController::class , 'update'])->name('main_car_water.update');
+//     Route::post('/accept_offer' , [OrderCarWaterController::class , 'store'])->name('accept_offer_car_water');
+//     Route::get('/order' , [OrderCarWaterController::class , 'show_orders'])->name('show_orders_car_water');
+//     Route::get('/order/{id}' , [OrderCarWaterController::class , 'show'])->name('show_order_car_water');
+//     Route::get('/accept_project_car_water/{id}' , function($id) {
+//         CarWaterOrder::find($id)->update(['status' => "completed"]);
+//         return redirect()->back();
+//     })->name('accept_project_car_water');
+//     Route::get('service/edit/{id}',[CarWaterController::class , 'edit_service'])->name('service_car_water.edit');
+//     Route::put('service/update/{id}',[CarWaterController::class , 'update_service'])->name('service_car_water.update');
+//     Route::delete('/van-truck-services/{id}', [CarWaterController::class, 'destroy_service'])->name('service_car_water.destroy');
+// });
+
+
+// // Big Car
+// Route::group(['prefix' => "big_car"], function(){
+//     Route::get('/show' , [BigCarController::class , 'show'])->name('big_car_show');
+//     Route::post('/add_service' , [BigCarController::class , 'store_service'])->name('big_car_store_service');
+//     Route::get('/',[BigCarController::class , 'index'])->name('main_big_car');
+//     Route::get('/service/{id}',[BigCarController::class , 'show_my_service'])->name('main_big_car_show_my_service');
+//     Route::get('/edit/{id}',[BigCarController::class , 'edit'])->name('main_big_car.edit');
+//     Route::patch('/update/{id}',[BigCarController::class , 'update'])->name('main_big_car.update');
+//     Route::post('/accept_offer' , [OrderBigCarController::class , 'store'])->name('accept_offer_big_car');
+//     Route::get('/order' , [OrderBigCarController::class , 'show_orders'])->name('show_orders_big_car');
+//     Route::get('/order/{id}' , [OrderBigCarController::class , 'show'])->name('show_order_big_car');
+//     Route::get('/accept_project_big_car/{id}' , function($id) {
+//         BigCarOrder::find($id)->update(['status' => "completed"]);
+//         return redirect()->back();
+//     })->name('accept_project_big_car');
+//     Route::get('service/edit/{id}',[BigCarController::class , 'edit_service'])->name('service_big_car.edit');
+//     Route::put('service/update/{id}',[BigCarController::class , 'update_service'])->name('service_big_car.update');
+//     Route::delete('/van-truck-services/{id}', [BigCarController::class, 'destroy_service'])->name('service_big_car.destroy');
+// });
 
 
 
 // Contractings
 Route::group(['prefix' => "contracting"], function(){
-    Route::get('/show' , [ContractingController::class , 'show'])->name('contracting_show');
+
     Route::get('/contracting_sub_show/{id}' , [ContractingController::class , 'contracting_sub_show'])->name('contracting_sub_show');
-    Route::post('/add_service' , [ContractingController::class , 'store_service'])->name('contracting_store_service');
-    Route::get('/',[ContractingController::class , 'index'])->name('main_contracting');
-    Route::get('/service/{id}',[ContractingController::class , 'show_my_service'])->name('main_contracting_show_my_service');
-    Route::get('/edit/{id}',[ContractingController::class , 'edit'])->name('main_contracting.edit');
-    Route::patch('/update/{id}',[ContractingController::class , 'update'])->name('main_contracting.update');
-    Route::post('/accept_offer' , [OrderContractingController::class , 'store'])->name('accept_offer_contracting');
-    Route::get('/order' , [OrderContractingController::class , 'show_orders'])->name('show_orders_contracting');
-    Route::get('/order/{id}' , [OrderContractingController::class , 'show'])->name('show_order_contracting');
-    Route::get('/accept_project_contracting/{id}' , function($id) {
-        ContractingOrder::find($id)->update(['status' => "completed"]);
-        return redirect()->back();
-    })->name('accept_project_contracting');
+
 });
 
 // Car Maintenance
 Route::group(['prefix' => "maintenance"], function(){
-    Route::get('/show' , [MaintenanceController::class , 'show'])->name('maintenance_show');
+
     Route::get('/maintenance_sub_show/{id}' , [MaintenanceController::class , 'maintenance_sub_show'])->name('maintenance_sub_show');
-    Route::post('/add_service' , [MaintenanceController::class , 'store_service'])->name('maintenance_store_service');
-    Route::get('/',[MaintenanceController::class , 'index'])->name('main_maintenance');
-    Route::get('/service/{id}',[MaintenanceController::class , 'show_my_service'])->name('main_maintenance_show_my_service');
-    Route::get('/edit/{id}',[MaintenanceController::class , 'edit'])->name('main_maintenance.edit');
-    Route::patch('/update/{id}',[MaintenanceController::class , 'update'])->name('main_maintenance.update');
-    Route::post('/accept_offer' , [OrderMaintenanceController::class , 'store'])->name('accept_offer_maintenance');
-    Route::get('/order' , [OrderMaintenanceController::class , 'show_orders'])->name('show_orders_maintenance');
-    Route::get('/order/{id}' , [OrderMaintenanceController::class , 'show'])->name('show_order_maintenance');
-    Route::get('/accept_project_maintenance/{id}' , function($id) {
-        MaintenanceOrder::find($id)->update(['status' => "completed"]);
-        return redirect()->back();
-    })->name('accept_project_maintenance');
+
 });
 
 Route::group(['prefix' => "spare_part"], function(){
-    Route::get('/show' , [SparePartController::class , 'show'])->name('spare_part_show');
+
     Route::get('/spare_part_sub_show/{id}' , [SparePartController::class , 'spare_part_sub_show'])->name('spare_part_sub_show');
-    Route::post('/add_service' , [SparePartController::class , 'store_service'])->name('spare_part_store_service');
-    Route::get('/',[SparePartController::class , 'index'])->name('main_spare_part');
-    Route::get('/service/{id}',[SparePartController::class , 'show_my_service'])->name('main_spare_part_show_my_service');
-    Route::get('/edit/{id}',[SparePartController::class , 'edit'])->name('main_spare_part.edit');
-    Route::patch('/update/{id}',[SparePartController::class , 'update'])->name('main_spare_part.update');
-    Route::post('/accept_offer' , [OrderSparePartController::class , 'store'])->name('accept_offer_spare_part');
-    Route::get('/order' , [OrderSparePartController::class , 'show_orders'])->name('show_orders_spare_part');
-    Route::get('/order/{id}' , [OrderSparePartController::class , 'show'])->name('show_order_spare_part');
-    Route::get('/accept_project_spare_part/{id}' , function($id) {
-        SparePartOrder::find($id)->update(['status' => "completed"]);
-        return redirect()->back();
-    })->name('accept_project_spare_part');
+
 });
-Route::group(['prefix' => "air_con"], function(){
-    Route::get('/show' , [AirconController::class , 'show'])->name('air_con_show');
-    Route::post('/add_service' , [AirconController::class , 'store_service'])->name('air_con_store_service');
-    Route::get('/',[AirconController::class , 'index'])->name('main_air_con');
-    Route::get('/service/{id}',[AirconController::class , 'show_my_service'])->name('main_air_con_show_my_service');
-    Route::get('/edit/{id}',[AirconController::class , 'edit'])->name('main_air_con.edit');
-    Route::patch('/update/{id}',[AirconController::class , 'update'])->name('main_air_con.update');
-    Route::post('/accept_offer' , [OrderAirconController::class , 'store'])->name('accept_offer_air_con');
-    Route::get('/order' , [OrderAirconController::class , 'show_orders'])->name('show_orders_air_con');
-    Route::get('/order/{id}' , [OrderAirconController::class , 'show'])->name('show_order_air_con');
-    Route::get('/accept_project_air_con/{id}' , function($id) {
-        AirConditionOrder::find($id)->update(['status' => "completed"]);
-        return redirect()->back();
-    })->name('accept_project_air_con');
-});
+
 // Vans
 Route::group(['prefix' => "van_truck"], function(){
-    Route::get('/show' , [VanTruckController::class , 'show'])->name('van_truck_show');
+
     Route::get('/van_truck_sub_show/{id}' , [VanTruckController::class , 'van_truck_sub_show'])->name('van_truck_sub_show');
-    Route::post('/add_service' , [VanTruckController::class , 'store_service'])->name('van_truck_store_service');
-    Route::get('/',[VanTruckController::class , 'index'])->name('main_van_truck');
-    Route::get('/service/{id}',[VanTruckController::class , 'show_my_service'])->name('main_van_truck_show_my_service');
-    Route::get('/edit/{id}',[VanTruckController::class , 'edit'])->name('main_van_truck.edit');
-    Route::patch('/update/{id}',[VanTruckController::class , 'update'])->name('main_van_truck.update');
-    Route::post('/accept_offer' , [VanTruckOrderController::class , 'store'])->name('accept_offer_van_truck');
-    Route::get('/order' , [VanTruckOrderController::class , 'show_orders'])->name('show_orders_van_truck');
-    Route::get('/order/{id}' , [VanTruckOrderController::class , 'show'])->name('show_order_van_truck');
-    Route::get('/accept_project_van_truck/{id}' , function($id) {
-        VanTruckOrder::find($id)->update(['status' => "completed"]);
-        return redirect()->back();
-    })->name('accept_project_van_truck');
+
 });
 // heavy equip
 Route::group(['prefix' => "heavy_equip"], function(){
-    Route::get('/show' , [HeavyEquipmentController::class , 'show'])->name('heavy_equip_show');
+
     Route::get('/heavy_equip_sub_show/{id}' , [HeavyEquipmentController::class , 'heavy_equip_sub_show'])->name('heavy_equip_sub_show');
-    Route::post('/add_service' , [HeavyEquipmentController::class , 'store_service'])->name('heavy_equip_store_service');
-    Route::get('/',[HeavyEquipmentController::class , 'index'])->name('main_heavy_equip');
-    Route::get('/service/{id}',[HeavyEquipmentController::class , 'show_my_service'])->name('main_heavy_equip_show_my_service');
-    Route::get('/edit/{id}',[HeavyEquipmentController::class , 'edit'])->name('main_heavy_equip.edit');
-    Route::patch('/update/{id}',[HeavyEquipmentController::class , 'update'])->name('main_heavy_equip.update');
-    Route::post('/accept_offer' , [OrderHeavyEquipController::class , 'store'])->name('accept_offer_heavy_equip');
-    Route::get('/order' , [OrderHeavyEquipController::class , 'show_orders'])->name('show_orders_heavy_equip');
-    Route::get('/order/{id}' , [OrderHeavyEquipController::class , 'show'])->name('show_order_heavy_equip');
-    Route::get('/accept_project_heavy_equip/{id}' , function($id) {
-        HeavyEquipmentOrder::find($id)->update(['status' => "completed"]);
-        return redirect()->back();
-    })->name('accept_project_heavy_equip');
+
 });
 //industry
 Route::group(['prefix' => "plastic"], function(){
@@ -527,18 +465,77 @@ Route::group(['prefix' => "plastic"], function(){
     Route::get('/products/{id}', [indsProductController::class, 'show'])->name('indsproducts.show');
     Route::get('/Viewproducts', [indsProductController::class, 'viewProduct'])->name('indsproducts.products');
 
-    Route::post('/accept_offer' , [VanTruckOrderController::class , 'store'])->name('accept_offer_plastic');
-    Route::get('/order' , [VanTruckOrderController::class , 'show_orders'])->name('show_orders_plastic');
-    Route::get('/order/{id}' , [VanTruckOrderController::class , 'show'])->name('show_order_plastic');
+
     Route::get('/accept_project_plastic/{id}' , function($id) {
         VanTruckOrder::find($id)->update(['status' => "completed"]);
         return redirect()->back();
     })->name('accept_project_plastic');
 });
+Route::middleware('auth')->group(function () {
+    Route::get('/cart', [ProductCartController::class, 'index'])->name('pro_cart.index');
+    Route::post('/cart/add/{productId}', [ProductCartController::class, 'add'])->name('pro_cart.add');
+    Route::put('/cart/update/{id}', [ProductCartController::class, 'update'])->name('pro_cart.update');
+    Route::delete('/cart/remove/{id}', [ProductCartController::class, 'remove'])->name('pro_cart.remove');
+    Route::post('/cart/checkout', [ProductCartController::class, 'checkout'])->name('pro_cart.checkout');
+});
+Route::middleware('auth')->group(function () {
+    // الطلبات للمستخدم
+    Route::get('product/orders', [ProductOrderController::class, 'index'])->name('orders.index');
+    Route::get('product/orders/{id}', [ProductOrderController::class, 'show'])->name('orders.show');
+
+    // إدارة الطلبات للمشرف Admin
+
+
+
+});Route::prefix('orders/{orderId}/items')->middleware('auth')->group(function () {
+    Route::get('/', [ProductOrderitemsController::class, 'index'])->name('pro_order_items.index');
+    Route::get('/create', [ProductOrderitemsController::class, 'create'])->name('pro_order_items.create');
+    Route::post('/', [ProductOrderitemsController::class, 'store'])->name('pro_order_items.store');
+});
+
+Route::prefix('order-items')->middleware('auth')->group(function () {
+    Route::get('/{id}/edit', [ProductOrderitemsController::class, 'edit'])->name('pro_order_items.edit');
+    Route::put('/{id}', [ProductOrderitemsController::class, 'update'])->name('pro_order_items.update');
+    Route::delete('/{id}', [ProductOrderitemsController::class, 'destroy'])->name('pro_order_items.destroy');
+});
+
 
 
 
 
 // general_comments
 Route::post('/comments/create' , [GeneralCommentsController::class , 'store'])->name('general_comments.store');
+Route::get('/comments/show/{id}' , [GeneralCommentsController::class , 'index'])->name('general_comments.show');
+Route::get('general_comments/{id}/edit', [GeneralCommentsController::class, 'edit'])->name('general_comments.edit');
 
+Route::put('general_comments/{id}', [GeneralCommentsController::class, 'update'])->name('general_comments.update');
+Route::delete('general_comments/{id}', [GeneralCommentsController::class, 'destroy'])->name('general_comments.destroy');
+
+
+
+
+
+    Route::post('orders', [GeneralOrderController::class, 'store'])->name('general_orders.store');
+
+    // Optionally, you can have a route to view a specific order
+    Route::get('orders/{order}', [GeneralOrderController::class, 'show'])->name('general_orders.show');
+    Route::delete('/orders/{id}', [GeneralOrderController::class, 'destroy'])->name('general_orders.destroy');
+    // List orders for a customer (optional)
+    Route::get('orders', [GeneralOrderController::class, 'index'])->name('general_orders.customer.index');
+    Route::get('/accept_project/{id}' , function($id) {
+        GeneralOrder::find($id)->update(['status' => "completed"]);
+        return redirect()->back();
+    })->name('accept_project');
+
+    route::resource('services', ServiceController::class);
+
+    route::get('show/myservices/{id}', [ServiceController::class,'show_services'])->name('show_myservice');
+    // route::get('sub_show/myservices/{id}', [ServiceController::class,'sub_show'])->name('service_sub_show');
+
+    route::get('add/country', [CountryController::class, 'create'])->name('add_country');
+    route::post('country', [CountryController::class, 'store'])->name('store_country');
+
+
+
+    route::get('add/gover', [GovernementsController::class, 'create'])->name('add_gover');
+    route::post('gover', [GovernementsController::class, 'store'])->name('store_gover');

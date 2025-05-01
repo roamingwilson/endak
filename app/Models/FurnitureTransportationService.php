@@ -23,4 +23,14 @@ class FurnitureTransportationService extends Model
     {
         return $this->morphMany(GeneralComments::class, 'commentable');
     }
+    public function productss()
+{
+    return $this->belongsToMany(Product::class, 'furniture_transportation_service_products')
+                ->withPivot('quantity', 'installation', 'disassembly')
+                ->withTimestamps();
+}
+public function orders()
+    {
+        return $this->morphMany(GeneralOrder::class, 'orderable');
+    }
 }

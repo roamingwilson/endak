@@ -98,7 +98,7 @@
                                     <div>
                                         @if ($user->id == $order->customer_id)
                                             @if ($order->status == 'pending')
-                                                <a href="{{ route('accept_offer_spare_part', $order->id) }}"
+                                                <a href="{{ route('accept_project_spare_part', $order->id) }}"
                                                     class="btn btn-primary">{{ ($lang == 'ar') ? 'أستلام المشروع' : 'Confirm Project' }}</a>
                                             @elseif($order->status == 'completed' && !$rating_spare_part)
                                                 <a href="{{ route('web.add_rate', $order->id) }}"

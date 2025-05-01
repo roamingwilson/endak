@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class BigCarService extends Model
 {
-    use HasFactory;   
+    use HasFactory;
     protected $guarded = [];
     protected static function booted(){
         static::addGlobalScope('status' , function(Builder $builder){
@@ -26,5 +26,9 @@ class BigCarService extends Model
     public function images()
     {
         return $this->morphMany(GeneralImage::class, 'commentable');
+    }
+    public function orders()
+    {
+        return $this->morphMany(GeneralOrder::class, 'orderable');
     }
 }

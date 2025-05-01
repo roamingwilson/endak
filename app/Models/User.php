@@ -28,6 +28,8 @@ class User extends Authenticatable
         'about_me',
         'phone',
         'image',
+        'country',
+        'governement',
     ];
 
     /**
@@ -186,4 +188,10 @@ class User extends Authenticatable
 {
     return $this->hasMany(GeneralComments::class, 'service_provider');
 }
+public function serv(){
+        return $this->hasMany(Services::class , 'user_id');
+}
+
+
+
 }

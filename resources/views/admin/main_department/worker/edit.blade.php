@@ -3,12 +3,12 @@
 @section('title')
     <?php $lang = config('app.locale'); ?>
 
-    {{ ($lang == 'ar')? 'خدمات عامة' : "General Service" }}
+    {{ ($lang == 'ar')? 'عمال وحرفيين باليومية' : "Worker By Days" }}
 
     @endsection
 
 @section('page_name')
-{{ ($lang == 'ar')? 'خدمات عامة' : "General Service" }}
+{{ ($lang == 'ar')? 'عمال وحرفيين باليومية' : "Worker By Days" }}
 
 @endsection
 

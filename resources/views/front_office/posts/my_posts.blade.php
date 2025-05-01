@@ -30,6 +30,7 @@
         $van_truck = App\Models\VanTruckService::where('user_id' , auth()->id())->get();
         $heavy_equip = App\Models\HeavyEquipmentService::where('user_id' , auth()->id())->get();
         $spare_part = App\Models\SparePartServices::where('user_id' , auth()->id())->get();
+        $maintenance_services= App\Models\MaintenanceService::where('user_id' , auth()->id())->get();
 
         ?>
 
@@ -74,6 +75,7 @@
                                                             class="h6">{{ $post->user->first_name . ' ' . $post->user->last_name }}</a>
                                                         <small class="d-block tx-muted">{{ $post->created_at->shortAbsoluteDiffForHumans() }}</small>
                                                     </div>
+
                                                 </div>
                                             </div>
                                         </div>
@@ -107,6 +109,20 @@
                                                     </div>
 
                                                 </div>
+                                                <div class="mt-4 flex justify-content-center" >
+
+                                                    <a class="btn btn-success btn-sm" href="{{route('service_furniture_transportations.edit',$furniture_transportation_service->id)}}">
+                                                        <i class="fe fe-check-circle"></i> {{ __('Edit') }}
+                                                    </a>
+                                                    <form action="{{ route('service_furniture_transportations.destroy', $furniture_transportation_service->id) }}" method="POST" style="display:inline-block;">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button class="btn btn-danger btn-sm" type="submit" onclick="return confirm('{{ $lang == 'ar' ? 'هل أنت متأكد من الحذف؟' : 'Are you sure you want to delete?' }}')">
+                                                            <i class="fe fe-trash-2"></i> {{ $lang == 'ar' ? 'حذف' : 'Delete' }}
+                                                        </button>
+                                                    </form>
+
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -135,6 +151,20 @@
                                                         <small
                                                             class="d-block tx-muted">{{ $follow_camera_service->created_at->shortAbsoluteDiffForHumans() }}</small>
                                                     </div>
+
+                                                </div>
+                                                <div class="mt-4 flex justify-content-center" >
+
+                                                    <a class="btn btn-success btn-sm" href="{{route('service_surveillance_cameras.edit',$follow_camera_service->id)}}">
+                                                        <i class="fe fe-check-circle"></i> {{ __('Edit') }}
+                                                    </a>
+                                                    <form action="{{ route('service_surveillance_cameras.destroy', $follow_camera_service->id) }}" method="POST" style="display:inline-block;">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button class="btn btn-danger btn-sm" type="submit" onclick="return confirm('{{ $lang == 'ar' ? 'هل أنت متأكد من الحذف؟' : 'Are you sure you want to delete?' }}')">
+                                                            <i class="fe fe-trash-2"></i> {{ $lang == 'ar' ? 'حذف' : 'Delete' }}
+                                                        </button>
+                                                    </form>
 
                                                 </div>
                                             </div>
@@ -167,6 +197,20 @@
                                                     </div>
 
                                                 </div>
+                                                <div class="mt-4 flex justify-content-center" >
+
+                                                    <a class="btn btn-success btn-sm" href="{{route('service_party_preparation.edit',$party_preparationservice->id)}}">
+                                                        <i class="fe fe-check-circle"></i> {{ __('Edit') }}
+                                                    </a>
+                                                    <form action="{{ route('service_party_preparation.destroy', $party_preparationservice->id) }}" method="POST" style="display:inline-block;">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button class="btn btn-danger btn-sm" type="submit" onclick="return confirm('{{ $lang == 'ar' ? 'هل أنت متأكد من الحذف؟' : 'Are you sure you want to delete?' }}')">
+                                                            <i class="fe fe-trash-2"></i> {{ $lang == 'ar' ? 'حذف' : 'Delete' }}
+                                                        </button>
+                                                    </form>
+
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -195,6 +239,20 @@
                                                         <small
                                                             class="d-block tx-muted">{{ $garden_service->created_at->shortAbsoluteDiffForHumans() }}</small>
                                                     </div>
+
+                                                </div>
+                                                <div class="mt-4 flex justify-content-center" >
+
+                                                    <a class="btn btn-success btn-sm" href="{{route('service_garden.edit',$garden_service->id)}}">
+                                                        <i class="fe fe-check-circle"></i> {{ __('Edit') }}
+                                                    </a>
+                                                    <form action="{{ route('service_garden.destroy', $garden_service->id) }}" method="POST" style="display:inline-block;">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button class="btn btn-danger btn-sm" type="submit" onclick="return confirm('{{ $lang == 'ar' ? 'هل أنت متأكد من الحذف؟' : 'Are you sure you want to delete?' }}')">
+                                                            <i class="fe fe-trash-2"></i> {{ $lang == 'ar' ? 'حذف' : 'Delete' }}
+                                                        </button>
+                                                    </form>
 
                                                 </div>
                                             </div>
@@ -228,6 +286,20 @@
 
                                                 </div>
                                             </div>
+                                            <div class="mt-4 flex justify-content-center" >
+
+                                                <a class="btn btn-success btn-sm" href="{{route('service_counter_insects.edit',$counter_insects_service->id)}}">
+                                                    <i class="fe fe-check-circle"></i> {{ __('Edit') }}
+                                                </a>
+                                                <form action="{{ route('service_counter_insects.destroy', $counter_insects_service->id) }}" method="POST" style="display:inline-block;">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button class="btn btn-danger btn-sm" type="submit" onclick="return confirm('{{ $lang == 'ar' ? 'هل أنت متأكد من الحذف؟' : 'Are you sure you want to delete?' }}')">
+                                                        <i class="fe fe-trash-2"></i> {{ $lang == 'ar' ? 'حذف' : 'Delete' }}
+                                                    </button>
+                                                </form>
+
+                                            </div>
                                         </div>
                                     </div>
                                 @empty
@@ -242,7 +314,7 @@
                                             </div>
                                             <div class="card-body d-flex flex-column">
                                                 <h5><a href="{{ route('main_teacher_show_my_service' , $teacher_service->id) }}">    {{ ($lang == 'ar')? 'قسم تجهيز حفلات ' : 'Party preparation' }}</a></h5>
-                                                <div class="tx-muted">   {{ ($lang == 'ar')? 'قسم تجهيز حفلات ' : 'Party preparation' }}
+                                                <div class="tx-muted">   {{ ($lang == 'ar')? ' مدرس خصوصي ' : ' teacher' }}
                                                 </div>
                                                 <div class="d-flex align-items-center pt-4 mt-auto">
                                                     <div class="avatar me-3 cover-image rounded-circle">
@@ -255,6 +327,20 @@
                                                         <small
                                                             class="d-block tx-muted">{{ $teacher_service->created_at->shortAbsoluteDiffForHumans() }}</small>
                                                     </div>
+
+                                                </div>
+                                                <div class="mt-4 flex justify-content-center" >
+
+                                                    <a class="btn btn-success btn-sm" href="{{route('service_teacher.edit',$teacher_service->id)}}">
+                                                        <i class="fe fe-check-circle"></i> {{ __('Edit') }}
+                                                    </a>
+                                                    <form action="{{ route('service_teacher.destroy', $teacher_service->id) }}" method="POST" style="display:inline-block;">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button class="btn btn-danger btn-sm" type="submit" onclick="return confirm('{{ $lang == 'ar' ? 'هل أنت متأكد من الحذف؟' : 'Are you sure you want to delete?' }}')">
+                                                            <i class="fe fe-trash-2"></i> {{ $lang == 'ar' ? 'حذف' : 'Delete' }}
+                                                        </button>
+                                                    </form>
 
                                                 </div>
                                             </div>
@@ -272,7 +358,7 @@
                                             </div>
                                             <div class="card-body d-flex flex-column">
                                                 <h5><a href="{{ route('main_cleaning_show_my_service' , $cleaning_service->id) }}">    {{ ($lang == 'ar')? 'قسم تجهيز حفلات ' : 'Party preparation' }}</a></h5>
-                                                <div class="tx-muted">   {{ ($lang == 'ar')? 'قسم تجهيز حفلات ' : 'Party preparation' }}
+                                                <div class="tx-muted">   {{ ($lang == 'ar')? '  خدمات تنظيف ' : 'cleaning ' }}
                                                 </div>
                                                 <div class="d-flex align-items-center pt-4 mt-auto">
                                                     <div class="avatar me-3 cover-image rounded-circle">
@@ -285,6 +371,20 @@
                                                         <small
                                                             class="d-block tx-muted">{{ $cleaning_service->created_at->shortAbsoluteDiffForHumans() }}</small>
                                                     </div>
+
+                                                </div>
+                                                <div class="mt-4 flex justify-content-center" >
+
+                                                    <a class="btn btn-success btn-sm" href="{{route('service_cleaning.edit',$cleaning_service->id)}}">
+                                                        <i class="fe fe-check-circle"></i> {{ __('Edit') }}
+                                                    </a>
+                                                    <form action="{{ route('service_cleaning.destroy', $cleaning_service->id) }}" method="POST" style="display:inline-block;">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button class="btn btn-danger btn-sm" type="submit" onclick="return confirm('{{ $lang == 'ar' ? 'هل أنت متأكد من الحذف؟' : 'Are you sure you want to delete?' }}')">
+                                                            <i class="fe fe-trash-2"></i> {{ $lang == 'ar' ? 'حذف' : 'Delete' }}
+                                                        </button>
+                                                    </form>
 
                                                 </div>
                                             </div>
@@ -317,6 +417,20 @@
                                                     </div>
 
                                                 </div>
+                                                <div class="mt-4 flex justify-content-center" >
+
+                                                    <a class="btn btn-success btn-sm" href="{{route('service_family.edit',$family_service->id)}}">
+                                                        <i class="fe fe-check-circle"></i> {{ __('Edit') }}
+                                                    </a>
+                                                    <form action="{{ route('service_family.destroy', $family_service->id) }}" method="POST" style="display:inline-block;">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button class="btn btn-danger btn-sm" type="submit" onclick="return confirm('{{ $lang == 'ar' ? 'هل أنت متأكد من الحذف؟' : 'Are you sure you want to delete?' }}')">
+                                                            <i class="fe fe-trash-2"></i> {{ $lang == 'ar' ? 'حذف' : 'Delete' }}
+                                                        </button>
+                                                    </form>
+
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -347,6 +461,21 @@
                                                     </div>
 
                                                 </div>
+                                                <div class="mt-4 flex justify-content-center" >
+
+                                                    <a class="btn btn-success btn-sm" href="{{route('service_worker.edit',$worker_service->id)}}">
+                                                        <i class="fe fe-check-circle"></i> {{ __('Edit') }}
+                                                    </a>
+                                                    <form action="{{ route('service_worker.destroy', $worker_service->id) }}" method="POST" style="display:inline-block;">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button class="btn btn-danger btn-sm" type="submit" onclick="return confirm('{{ $lang == 'ar' ? 'هل أنت متأكد من الحذف؟' : 'Are you sure you want to delete?' }}')">
+                                                            <i class="fe fe-trash-2"></i> {{ $lang == 'ar' ? 'حذف' : 'Delete' }}
+                                                        </button>
+                                                    </div>
+
+                                                    </form>
+
                                             </div>
                                         </div>
                                     </div>
@@ -375,6 +504,20 @@
                                                         <small
                                                             class="d-block tx-muted">{{ $public_ge_service->created_at->shortAbsoluteDiffForHumans() }}</small>
                                                     </div>
+
+                                                </div>
+                                                <div class="mt-4 flex justify-content-center" >
+
+                                                    <a class="btn btn-success btn-sm" href="{{route('service_public_ge.edit',$public_ge_service->id)}}">
+                                                        <i class="fe fe-check-circle"></i> {{ __('Edit') }}
+                                                    </a>
+                                                    <form action="{{ route('service_public_ge.destroy', $public_ge_service->id) }}" method="POST" style="display:inline-block;">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button class="btn btn-danger btn-sm" type="submit" onclick="return confirm('{{ $lang == 'ar' ? 'هل أنت متأكد من الحذف؟' : 'Are you sure you want to delete?' }}')">
+                                                            <i class="fe fe-trash-2"></i> {{ $lang == 'ar' ? 'حذف' : 'Delete' }}
+                                                        </button>
+                                                    </form>
 
                                                 </div>
                                             </div>
@@ -409,7 +552,22 @@
                                                     </div>
 
                                                 </div>
+                                                <div class="mt-4 flex justify-content-center" >
+
+                                                    <a class="btn btn-success btn-sm" href="{{route('service_ads.edit',$ads_service->id)}}">
+                                                        <i class="fe fe-check-circle"></i> {{ __('Edit') }}
+                                                    </a>
+                                                    <form action="{{ route('service_ads.destroy', $ads_service->id) }}" method="POST" style="display:inline-block;">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button class="btn btn-danger btn-sm" type="submit" onclick="return confirm('{{ $lang == 'ar' ? 'هل أنت متأكد من الحذف؟' : 'Are you sure you want to delete?' }}')">
+                                                            <i class="fe fe-trash-2"></i> {{ $lang == 'ar' ? 'حذف' : 'Delete' }}
+                                                        </button>
+                                                    </div>
+                                                    </form>
+
                                             </div>
+
                                         </div>
                                     </div>
                                 @empty
@@ -439,6 +597,20 @@
                                                         <small
                                                             class="d-block tx-muted">{{ $car_water_service->created_at->shortAbsoluteDiffForHumans() }}</small>
                                                     </div>
+
+                                                </div>
+                                                <div class="mt-4 flex justify-content-center" >
+
+                                                    <a class="btn btn-success btn-sm" href="{{route('service_car_water.edit',$car_water_service->id)}}">
+                                                        <i class="fe fe-check-circle"></i> {{ __('Edit') }}
+                                                    </a>
+                                                    <form action="{{ route('service_car_water.destroy', $car_water_service->id) }}" method="POST" style="display:inline-block;">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button class="btn btn-danger btn-sm" type="submit" onclick="return confirm('{{ $lang == 'ar' ? 'هل أنت متأكد من الحذف؟' : 'Are you sure you want to delete?' }}')">
+                                                            <i class="fe fe-trash-2"></i> {{ $lang == 'ar' ? 'حذف' : 'Delete' }}
+                                                        </button>
+                                                    </form>
 
                                                 </div>
                                             </div>
@@ -473,6 +645,20 @@
                                                     </div>
 
                                                 </div>
+                                                <div class="mt-4 flex justify-content-center" >
+
+                                                    <a class="btn btn-success btn-sm" href="{{route('service_water.edit',$water_service->id)}}">
+                                                        <i class="fe fe-check-circle"></i> {{ __('Edit') }}
+                                                    </a>
+                                                    <form action="{{ route('service_water.destroy', $water_service->id) }}" method="POST" style="display:inline-block;">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button class="btn btn-danger btn-sm" type="submit" onclick="return confirm('{{ $lang == 'ar' ? 'هل أنت متأكد من الحذف؟' : 'Are you sure you want to delete?' }}')">
+                                                            <i class="fe fe-trash-2"></i> {{ $lang == 'ar' ? 'حذف' : 'Delete' }}
+                                                        </button>
+                                                    </div>
+                                                    </form>
+
                                             </div>
                                         </div>
                                     </div>
@@ -505,6 +691,20 @@
                                                     </div>
 
                                                 </div>
+                                                <div class="mt-4 flex justify-content-center" >
+
+                                                    <a class="btn btn-success btn-sm" href="{{route('service_big_car.edit',$big_car_service->id)}}">
+                                                        <i class="fe fe-check-circle"></i> {{ __('Edit') }}
+                                                    </a>
+                                                    <form action="{{ route('service_big_car.destroy', $big_car_service->id) }}" method="POST" style="display:inline-block;">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button class="btn btn-danger btn-sm" type="submit" onclick="return confirm('{{ $lang == 'ar' ? 'هل أنت متأكد من الحذف؟' : 'Are you sure you want to delete?' }}')">
+                                                            <i class="fe fe-trash-2"></i> {{ $lang == 'ar' ? 'حذف' : 'Delete' }}
+                                                        </button>
+                                                    </form>
+
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -520,7 +720,7 @@
                                             </div>
                                             <div class="card-body d-flex flex-column">
                                                 <h5><a href="{{ route('main_contracting_show_my_service' , $contracting_service->id) }}">
-                                                    {{ ($lang == 'ar')? 'سطحه' : "Big Car" }}
+                                                    {{ ($lang == 'ar')? 'مقاولات' : "contracting" }}
                                                 </a></h5>
                                                 <div class="tx-muted">   {{ ($lang == 'ar')?  $contracting_service->contracting->name_ar : $contracting_service->contracting->name_en }}
                                                 </div>
@@ -535,6 +735,66 @@
                                                         <small
                                                             class="d-block tx-muted">{{ $contracting_service->created_at->shortAbsoluteDiffForHumans() }}</small>
                                                     </div>
+
+                                                </div>
+                                                <div class="mt-4 flex justify-content-center" >
+
+                                                    <a class="btn btn-success btn-sm" href="{{route('service_contracting.edit',$contracting_service->id)}}">
+                                                        <i class="fe fe-check-circle"></i> {{ __('Edit') }}
+                                                    </a>
+                                                    <form action="{{ route('service_contracting.destroy', $contracting_service->id) }}" method="POST" style="display:inline-block;">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button class="btn btn-danger btn-sm" type="submit" onclick="return confirm('{{ $lang == 'ar' ? 'هل أنت متأكد من الحذف؟' : 'Are you sure you want to delete?' }}')">
+                                                            <i class="fe fe-trash-2"></i> {{ $lang == 'ar' ? 'حذف' : 'Delete' }}
+                                                        </button>
+                                                    </form>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @empty
+                                @endforelse
+                                @forelse ($maintenance_services as $maintenance_service)
+                                    <div class="col-md-10">
+                                        <div class="card mx-auto">
+                                            <div class="position-relative">
+
+
+                                                <span class="badge bg-secondary blog-badge">{{ $maintenance_service->add_order }}</span>
+                                            </div>
+                                            <div class="card-body d-flex flex-column">
+                                                <h5><a href="{{ route('main_maintenance_show_my_service' , $maintenance_service->id) }}">
+                                                    {{ ($lang == 'ar')? 'صيانة سيارات' : "maintenance" }}
+                                                </a></h5>
+                                                <div class="tx-muted">   {{ ($lang == 'ar')?  $maintenance_service->maintenance->name_ar : $maintenance_service->maintenance->name_en }}
+                                                </div>
+                                                <div class="d-flex align-items-center pt-4 mt-auto">
+                                                    <div class="avatar me-3 cover-image rounded-circle">
+                                                        <img src="{{ $maintenance_service->user->image ?? asset('images/user.png') }}"
+                                                            class="rounded-circle" alt="img" width="40">
+                                                    </div>
+                                                    <div>
+                                                        <a href="javascript:void(0);"
+                                                            class="h6">{{ $maintenance_service->user->full_name }}</a>
+                                                        <small
+                                                            class="d-block tx-muted">{{ $maintenance_service->created_at->shortAbsoluteDiffForHumans() }}</small>
+                                                    </div>
+
+                                                </div>
+                                                <div class="mt-4 flex justify-content-center" >
+
+                                                    <a class="btn btn-success btn-sm" href="{{route('service_maintenance.edit',$maintenance_service->id)}}">
+                                                        <i class="fe fe-check-circle"></i> {{ __('Edit') }}
+                                                    </a>
+                                                    <form action="{{ route('service_maintenance.destroy', $maintenance_service->id) }}" method="POST" style="display:inline-block;">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button class="btn btn-danger btn-sm" type="submit" onclick="return confirm('{{ $lang == 'ar' ? 'هل أنت متأكد من الحذف؟' : 'Are you sure you want to delete?' }}')">
+                                                            <i class="fe fe-trash-2"></i> {{ $lang == 'ar' ? 'حذف' : 'Delete' }}
+                                                        </button>
+                                                    </form>
 
                                                 </div>
                                             </div>
@@ -567,6 +827,21 @@
                                                         <small
                                                             class="d-block tx-muted">{{ $van_truck_items->created_at->shortAbsoluteDiffForHumans() }}</small>
                                                     </div>
+
+
+                                                </div>
+                                                <div class="mt-4 flex justify-content-center" >
+
+                                                    <a class="btn btn-success btn-sm" href="{{route('service_van_truck.edit',$van_truck_items->id)}}">
+                                                        <i class="fe fe-check-circle"></i> {{ __('Edit') }}
+                                                    </a>
+                                                    <form action="{{ route('service_van_truck.destroy', $van_truck_items->id) }}" method="POST" style="display:inline-block;">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button class="btn btn-danger btn-sm" type="submit" onclick="return confirm('{{ $lang == 'ar' ? 'هل أنت متأكد من الحذف؟' : 'Are you sure you want to delete?' }}')">
+                                                            <i class="fe fe-trash-2"></i> {{ $lang == 'ar' ? 'حذف' : 'Delete' }}
+                                                        </button>
+                                                    </form>
 
                                                 </div>
                                             </div>
@@ -601,6 +876,20 @@
                                                     </div>
 
                                                 </div>
+                                                <div class="mt-4 flex justify-content-center" >
+
+                                                    <a class="btn btn-success btn-sm" href="{{route('service_heavy_equip.edit',$heavy_equip_items->id)}}">
+                                                        <i class="fe fe-check-circle"></i> {{ __('Edit') }}
+                                                    </a>
+                                                    <form action="{{ route('service_heavy_equip.destroy', $heavy_equip_items->id) }}" method="POST" style="display:inline-block;">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button class="btn btn-danger btn-sm" type="submit" onclick="return confirm('{{ $lang == 'ar' ? 'هل أنت متأكد من الحذف؟' : 'Are you sure you want to delete?' }}')">
+                                                            <i class="fe fe-trash-2"></i> {{ $lang == 'ar' ? 'حذف' : 'Delete' }}
+                                                        </button>
+                                                    </form>
+
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -633,6 +922,20 @@
                                                     </div>
 
                                                 </div>
+                                                <div class="mt-4 flex justify-content-center" >
+
+                                                    <a class="btn btn-success btn-sm" href="{{route('service_spare_part.edit',$spare_part_items->id)}}">
+                                                        <i class="fe fe-check-circle"></i> {{ __('Edit') }}
+                                                    </a>
+                                                    <form action="{{ route('service_spare_part.destroy', $spare_part_items->id) }}" method="POST" style="display:inline-block;">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button class="btn btn-danger btn-sm" type="submit" onclick="return confirm('{{ $lang == 'ar' ? 'هل أنت متأكد من الحذف؟' : 'Are you sure you want to delete?' }}')">
+                                                            <i class="fe fe-trash-2"></i> {{ $lang == 'ar' ? 'حذف' : 'Delete' }}
+                                                        </button>
+                                                    </form>
+
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -663,6 +966,20 @@
                                                         <small
                                                             class="d-block tx-muted">{{ $air_condition_items->created_at->shortAbsoluteDiffForHumans() }}</small>
                                                     </div>
+
+                                                </div>
+                                                <div class="mt-4 flex justify-content-center" >
+
+                                                    <a class="btn btn-success btn-sm" href="{{route('service_air_con.edit',$air_condition_items->id)}}">
+                                                        <i class="fe fe-check-circle"></i> {{ __('Edit') }}
+                                                    </a>
+                                                    <form action="{{ route('service_air_con.destroy', $air_condition_items->id) }}" method="POST" style="display:inline-block;">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button class="btn btn-danger btn-sm" type="submit" onclick="return confirm('{{ $lang == 'ar' ? 'هل أنت متأكد من الحذف؟' : 'Are you sure you want to delete?' }}')">
+                                                            <i class="fe fe-trash-2"></i> {{ $lang == 'ar' ? 'حذف' : 'Delete' }}
+                                                        </button>
+                                                    </form>
 
                                                 </div>
                                             </div>

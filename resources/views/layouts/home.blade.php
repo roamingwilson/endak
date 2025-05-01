@@ -8,7 +8,7 @@
     <meta name='viewport' content='width=device-width, initial-scale=1.0, user-scalable=0'>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="author" content="Eslam Badawy">
-    
+
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/jquery-bar-rating/1.2.2/themes/fontawesome-stars.css"
@@ -45,7 +45,9 @@
     <link href="{{ asset('home/assets/libs/@simonwep/pickr/themes/classic.min.css') }}" rel="stylesheet">
     <link href="{{ asset('home/assets/libs/@simonwep/pickr/themes/monolith.min.css') }}" rel="stylesheet">
     <link href="{{ asset('home/assets/libs/@simonwep/pickr/themes/nano.min.css') }}" rel="stylesheet">
- 
+    <!-- إضافة Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+
     <!-- ICONS CSS -->
     <link href="{{ asset('home/assets/css/icons.css') }}" rel="stylesheet">
     @yield('style')
@@ -57,8 +59,41 @@
         *{
             color: black
         }
+        .bottom-nav {
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+        background: #ffcc00;
+        display: flex;
+        justify-content: space-around;
+        padding: 10px 0;
+        border-top: 1px solid #ddd;
+    }
+    .bottom-nav a {
+        text-align: center;
+        color: #000;
+        font-size: 12px;
+        text-decoration: none;
+    }
+    .bottom-nav i {
+        display: block;
+        font-size: 18px;
+    }
+    .btn-secondary {
+    background-color: #6c757d;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-decoration: none;
+    transition: background-color 0.3s;
+}
+
+.btn-secondary:hover {
+    background-color: #5a6268;
+}
+
     </style>
-        
+
 </head>
 
 <body class="main-body light-theme">
@@ -76,7 +111,7 @@
 
     <div class="page">
 
-
+        <?php $lang = config('app.locale'); ?>
         @include('layouts.front_office.header')
 
         <div class="main-content app-content">
@@ -98,10 +133,44 @@
 
             </section> --}}
             @yield('content')
+            <nav class="bottom-nav">
+                <a href="javascript:history.back()">
+                    <i class="fas fa-arrow-left"></i>{{ ($lang ='ar') ? 'رجوع' : 'Go Back' }}
+                </a>
+                <a href="{{ route('home') }}"><i class="fas fa-home"></i> الرئيسية</a>
+                @auth
+                <a href="{{route('web.profile',auth()->id())}}">
+                    <i class="fas fa-user"></i> {{ ($lang = 'ar') ? 'الصفحة الشخصية' : 'profile' }}
+                </a>
+                <a href="{{ route('orders.index') }}"><i class="fas fa-clipboard-list"></i> الطلبات</a>
+                <a href="{{ route('pro_cart.index') }}"><i class="fas fa-shopping-cart"></i> السلة</a>
+                @endauth
+                <a href="#"><i class="fas fa-heart"></i> المفضلة</a>
+                {{-- <a href="#"><i class="fas fa-plus-circle"></i> نشر منتج</a> --}}
+            </nav>
 
         </div>
 
+
+
+
         @include('layouts.front_office.footer')
+
+        <nav class="bottom-nav">
+            <a href="javascript:history.back()">
+                <i class="fas fa-arrow-left"></i>{{ ($lang == 'ar') ? 'رجوع' : 'Go Back' }}
+            </a>
+            <a href="{{ route('home') }}"><i class="fas fa-home"></i> الرئيسية</a>
+            @auth
+            <a href="{{route('web.profile',auth()->id())}}">
+                <i class="fas fa-user"></i> {{ ($lang == 'ar') ? 'الصفحة الشخصية' : 'profile' }}
+            </a>
+            <a href="{{ route('orders.index') }}"><i class="fas fa-clipboard-list"></i> الطلبات</a>
+            <a href="{{ route('pro_cart.index') }}"><i class="fas fa-shopping-cart"></i> السلة</a>
+            @endauth
+            <a href="#"><i class="fas fa-heart"></i> المفضلة</a>
+            {{-- <a href="#"><i class="fas fa-plus-circle"></i> نشر منتج</a> --}}
+        </nav>
 
         @if (Session::has('error'))
             <script>

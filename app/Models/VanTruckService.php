@@ -26,6 +26,10 @@ class VanTruckService extends Model
     {
         return $this->morphMany(GeneralComments::class, 'commentable');
     }
+    public function orders()
+    {
+        return $this->morphMany(GeneralOrder::class, 'orderable');
+    }
     public function images()
     {
         return $this->morphMany(GeneralImage::class, 'commentable');

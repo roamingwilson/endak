@@ -1,13 +1,11 @@
 @extends('layouts.home')
 @section('title')
     <?php $lang = config('app.locale'); ?>
-    {{ $lang == 'ar' ? 'خدمات تنظيف' : 'Cleaning Services' }}
+    {{ ($lang == 'ar')? 'المقاولات' : "Contracting" }}
 @endsection
 
 @section('content')
-    <?php
-    $lang = config('app.locale');
-    ?>
+
     <div class="main-content app-content">
         <section>
             <div class="section banner-4 banner-section">
@@ -16,7 +14,7 @@
                         <div class="col-md-12 text-center">
                             <div class="">
                                 <p class="mb-3 content-1 h5 text-black">
-                                    {{ $lang == 'ar' ? $main->name_ar : 'Cleaning Services' }}
+                                    {{ $lang == 'ar' ? "المقاولات": 'Cleaning Services' }}
 
 
                                 </p>
@@ -90,6 +88,20 @@
                                             alt="user">
                                     @endif
                                 </div>
+                                <div class="mt-4">
+                                    @if (auth()->id() === $service->user_id)
+                                    <a class="btn btn-success btn-sm" href="{{route('services.edit',$service->id)}}">
+                                        <i class="fe fe-check-circle"></i> {{ __('Edit') }}
+                                    </a>
+                                    <form action="{{ route('services.destroy', $service->id) }}" method="POST" style="display:inline-block;">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button class="btn btn-danger btn-sm" type="submit" onclick="return confirm('{{ $lang == 'ar' ? 'هل أنت متأكد من الحذف؟' : 'Are you sure you want to delete?' }}')">
+                                            <i class="fe fe-trash-2"></i> {{ $lang == 'ar' ? 'حذف' : 'Delete' }}
+                                        </button>
+                                    </form>
+                                    @endif
+                                </div>
                             </div>
                         </div>
 
@@ -122,7 +134,7 @@
                                                         href="{{ route('web.send_message', $comment->user->id) }}">
                                                         <i class="fe fe-mail mx-1"></i> {{ __('messages.send_message') }}
                                                     </a>
-                                                    <form action="{{ route('accept_offer_contracting') }}" method="post">
+                                                    <form action="{{ route('general_orders.store') }}" method="post">
                                                         @csrf
                                                         <input type="hidden" name="service_id"
                                                             value="{{ $service->id }}">
@@ -193,7 +205,7 @@
                                 ->where('service_provider', $user->id)
                                 ->first();
                         }
-                        
+
                         ?>
 
                     </div>
@@ -246,7 +258,7 @@
         });
     </script>
 
-    
+
 @endsection --}}
 <div class="me-3 mb-3">
     {{-- <a href="javascript:void(0);"> <img class="avatar avatar-lg rounded-circle thumb-sm"
@@ -262,7 +274,7 @@ alt="64x64" src="../assets/images/profile/2.jpg"> </a> --}}
 <p class="tx-muted"> {{ $comment->description }}</p>
 @if (isset($comment->files))
 @foreach ($comment->files as $item)
- 
+
 <img width="100px" height="100px" src="{{ Storage::url( $item->file) }}" alt="">
 <a href="{{ Storage::url($item->file) }}" target="_blank">Download</a>
 @endforeach

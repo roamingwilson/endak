@@ -4,6 +4,18 @@
     {{ $lang == 'ar' ? 'صيانة السيارات' : 'Maintenance' }}
 @endsection
 
+@php
+
+
+
+
+use App\Models\Services;
+use App\Models\Department;
+
+$services = Services::where('type', 'maintenance')->latest()->paginate(5);
+
+// dd($departments)
+@endphp
 @section('content')
     <?php
     $lang = config('app.locale');
@@ -16,7 +28,7 @@
                         <div class="col-md-12 text-center">
                             <div class="">
                                 <p class="mb-3 content-1 h5 text-black">
-                                    {{ $lang == 'ar' ? $main->name_ar :  $main->name_en }}
+                                    {{-- {{ $lang == 'ar' ? $departments->name_ar :  $departments->name_en }} --}}
 
 
                                 </p>
@@ -50,11 +62,32 @@
                             <?php $user = auth()->user(); ?>
                             <div style="width:600px" class="profile-card rounded-lg shadow-xs bg-white p-15 p-md-30">
 
+
                                 <div class="form-group">
-                                    <label for="" class="mb-1">{{ $lang == 'ar' ? 'الوقت' : 'Time' }}
+                                    <label for="" class="mb-1">{{ $lang == 'ar' ? 'نوع السيارة'  : 'car type' }}
                                         :</label>
-                                    @if (isset($service->time))
-                                        <p>{{ \Carbon\Carbon::parse($service->time)->format('h:i A') }}</p>
+                                        @if (isset($service->equip_type))
+                                        <p>{{ $lang == 'ar' ? $service->equip_type: $service->equip_type }}</p>
+                                    @endif
+
+                                </div>
+                                <div class="form-group">
+                                    <label for="" class="mb-1">{{ $lang == 'ar' ? 'شرح عن الخلل' : 'Note About Issues' }} :</label>
+                                        :</label>
+                                    @if (isset($service->notes))
+                                        <p>{{ $service->notes }}</p>
+                                    @endif
+                                </div>
+                                <div class="form-group">
+                                    <label for="name" class="mb-1">{{ $lang == 'ar' ? 'الموديل' : 'Model' }} : </label>
+                                    @if (isset($service->model))
+                                        <p>{{ $service->model }}</p>
+                                    @endif
+                                </div>
+                                <div class="form-group">
+                                    <label for="name" class="mb-1">{{ $lang == 'ar' ? 'سنه الصنع' : 'Facility Year' }} : </label>
+                                    @if (isset($service->year))
+                                        <p>{{ $service->year }}</p>
                                     @endif
                                 </div>
                                 <div class="form-group">
@@ -90,6 +123,20 @@
                                             alt="user">
                                     @endif
                                 </div>
+                                <div class="mt-4">
+                                    @if (auth()->id() === $service->user_id)
+                                    <a class="btn btn-success btn-sm" href="{{route('services.edit',$service->id)}}">
+                                        <i class="fe fe-check-circle"></i> {{ __('Edit') }}
+                                    </a>
+                                    <form action="{{ route('services.destroy', $service->id) }}" method="POST" style="display:inline-block;">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button class="btn btn-danger btn-sm" type="submit" onclick="return confirm('{{ $lang == 'ar' ? 'هل أنت متأكد من الحذف؟' : 'Are you sure you want to delete?' }}')">
+                                            <i class="fe fe-trash-2"></i> {{ $lang == 'ar' ? 'حذف' : 'Delete' }}
+                                        </button>
+                                    </form>
+                                    @endif
+                                </div>
                             </div>
                         </div>
 
@@ -122,7 +169,7 @@
                                                         href="{{ route('web.send_message', $comment->user->id) }}">
                                                         <i class="fe fe-mail mx-1"></i> {{ __('messages.send_message') }}
                                                     </a>
-                                                    <form action="{{ route('accept_offer_maintenance') }}" method="post">
+                                                    <form action="{{ route('general_orders.store') }}" method="post">
                                                         @csrf
                                                         <input type="hidden" name="service_id"
                                                             value="{{ $service->id }}">
@@ -193,7 +240,7 @@
                                 ->where('service_provider', $user->id)
                                 ->first();
                         }
-                        
+
                         ?>
 
                     </div>
@@ -246,7 +293,7 @@
         });
     </script>
 
-    
+
 @endsection --}}
 <div class="me-3 mb-3">
     {{-- <a href="javascript:void(0);"> <img class="avatar avatar-lg rounded-circle thumb-sm"
@@ -262,7 +309,7 @@ alt="64x64" src="../assets/images/profile/2.jpg"> </a> --}}
 <p class="tx-muted"> {{ $comment->description }}</p>
 @if (isset($comment->files))
 @foreach ($comment->files as $item)
- 
+
 <img width="100px" height="100px" src="{{ Storage::url( $item->file) }}" alt="">
 <a href="{{ Storage::url($item->file) }}" target="_blank">Download</a>
 @endforeach

@@ -4,86 +4,87 @@
     {{ $lang == 'ar' ? 'الصفحة الشخصية' : 'Profile' }}
 @endsection
 @section('style')
-    <link rel="stylesheet" href="{{ asset('css/css-stars.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/video-js.min.css') }}">
+<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+
+    {{-- <link rel="stylesheet" href="{{ asset('css/css-stars.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/video-js.min.css') }}"> --}}
     {{-- <link rel="stylesheet" href="{{ asset('css/app.css') }}"> --}}
-    <style>
-        .profile-cover-container {
-            position: relative;
-            width: 100%;
-            height: 400px;
-            background-color: #f5f5f5;
-        }
+    {{-- <style>
+      .profile-page {
+    background-color: #f3f4f6;
+    min-height: 100vh;
+    direction: rtl;
+}
 
-        .profile-img {
-            width: 150px;
-            height: 150px;
-            object-fit: cover;
-            border-radius: 50%;
-            /* لتكون الصورة دائرية */
-            margin: 0 auto;
-            display: block;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
+.profile-page .top-bar {
+    background-color: #f4be2c;
+    padding: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
 
-        .profile-content {
-            padding-top: 20px;
-        }
+.profile-page .user-avatar {
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin: auto;
+}
 
-        .profile-card {
-            background-color: #fff;
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
+.profile-page .lock-icon {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    background-color: #f4be2c;
+    padding: 4px;
+    border-radius: 50%;
+}
 
-        .user-info .user-name {
-            font-size: 22px;
-            color: #333;
-            margin-top: 15px;
-        }
+.profile-page ul {
+    margin-top: 2rem;
+    padding: 0;
+    list-style: none;
+}
 
-        .user-info .user-role {
-            font-size: 16px;
-            color: #777;
-        }
+.profile-page ul li {
+    padding: 1rem 0;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    font-size: 1rem;
+    border-bottom: 1px solid #eee;
+}
 
-        .user-stats .stat-item {
-            text-align: center;
-            margin-right: 20px;
-        }
+.profile-page ul li i {
+    margin-left: 10px;
+    color: #666;
+}
 
-        .user-stats .stat-value {
-            font-size: 24px;
-            color: #333;
-        }
+.logout-button {
+    background-color: #f44336;
+    color: white;
+    width: 100%;
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    margin-top: 2rem;
+    font-weight: bold;
+}
 
-        .user-stats .stat-label {
-            font-size: 14px;
-            color: #777;
-        }
+.modal-background {
+    background-color: rgba(0, 0, 0, 0.5);
+}
 
-        .stars-card {
-            min-height: 20px;
-        }
+.modal {
+    background: white;
+    padding: 2rem;
+    border-radius: 1rem;
+    text-align: center;
+}
 
-        .stars-card svg {
-            margin-right: 3px;
-            color: #818894;
-        }
-
-        .stars-card svg.active {
-            color: #ffc600;
-            fill: #ffc600;
-        }
-
-        .stars-card i.active svg {
-            color: #ffc600;
-            fill: #ffc600;
-        }
-    </style>
+    </style> --}}
 @endsection
-@section('content')
+{{-- @section('content')
     <section class="profile-cover-container">
         @if (auth()->check())
             @if (auth()->user()->id == $user->id)
@@ -129,13 +130,13 @@
                         @if ($user->role_id == 3)
                             <div class="stat-item">
                                 <span class="stat-label font-14 text-gray">{{ trans('order.count') }}</span>
-                                <strong class="stat-value font-20">{{ count($user->orders) }}</strong>
+                                <strong class="stat-value font-20">{{ $order->count() }}</strong>
                             </div>
                         @endif
                         @if ($user->role_id == 1)
                             <div class="stat-item">
                                 <span class="stat-label font-14 text-gray">{{ trans('order.order_complete_count') }}</span>
-                                <strong class="stat-value font-20">{{ count($user->myorders) }}</strong>
+                                <strong class="stat-value font-20">{{ $order->count()  }}</strong>
                             </div>
                         @endif
                     </div>
@@ -179,7 +180,114 @@
         })
     </script>
 @endif
+@endsection --}}
+{{-- تأكد أن عندك لياوت app --}}
+
+@section('content')
+<div class="profile-page bg-gray-100 min-h-screen">
+    <div class="bg-yellow-400 p-4 flex justify-between items-center">
+        <div class="flex items-center gap-2">
+            <a href="{{ route('home') }}" class="text-white">
+                <i class="fas fa-home"></i> {{-- أيقونة الرجوع --}}
+            </a>
+        </div>
+        <h1 class="text-white text-lg font-bold">  {{ $lang == 'ar' ? 'الصفحة الشخصية' : 'Profile' }}</h1>
+    </div>
+
+    <div class="p-4">
+        {{-- صورة وبروفايل --}}
+        <div class="flex flex-col items-center">
+            <div class="relative">
+                <img src="{{ asset('storage/' . ($user->image ?? 'user.png')) }}" alt="Profile Image" class="w-24 h-24 rounded-full object-cover">
+
+                {{-- <div class="absolute bottom-0 right-0 bg-yellow-400 p-1 rounded-full">
+                    <i class="fas fa-lock text-white text-xs"></i>
+                </div> --}}
+            </div>
+            <h2 class="mt-2 text-lg font-semibold">{{ auth()->user()->first_name }} {{ auth()->user()->last_name }}</h2>
+        </div>
+
+        {{-- القائمة --}}
+        <ul class="mt-6 space-y-4">
+            <li class="flex items-center justify-between">
+                <a href="#" class="flex items-center gap-2 text-gray-700">
+                    <i class="fas fa-wallet"></i>  {{ $lang == 'ar' ? ' رصيدي' : 'my credit' }}
+                </a>
+            </li>
+            <li class="flex items-center justify-between">
+                <a href="{{route('web.profile.edit',auth()->id())}}" class="flex items-center gap-2 text-gray-700">
+                    <i class="fas fa-edit"></i> {{ $lang == 'ar' ? ' تعديل الملف الشخصي ' : 'my credit' }}
+                </a>
+            </li>
+            <li class="flex items-center justify-between">
+                <a href="#" class="flex items-center gap-2 text-gray-700">
+                    <i class="fas fa-star"></i>{{ $lang == 'ar' ? '  تقييم الخدمات ' : 'my credit' }}
+                </a>
+            </li>
+            <li class="flex items-center justify-between">
+                <a href="#" class="flex items-center gap-2 text-gray-700">
+                    <i class="fas fa-comments"></i> {{ $lang == 'ar' ? ' ملاحظات المستخدمين ' : 'my credit' }}
+                </a>
+            </li>
+            <li class="flex items-center justify-between">
+                <a href="#" class="flex items-center gap-2 text-gray-700">
+                    <i class="fas fa-file-alt"></i> {{ $lang == 'ar' ? ' الشروط و الأحكام ' : 'my credit' }}
+                </a>
+            </li>
+            <li class="flex items-center justify-between">
+                <a href="#" class="flex items-center gap-2 text-gray-700">
+                    <i class="fas fa-language"></i>  {{ $lang == 'ar' ? ' اللغة' : 'my credit' }}
+                </a>
+            </li>
+            <li class="flex items-center justify-between">
+                <a href="#" class="flex items-center gap-2 text-gray-700">
+                    <i class="fas fa-question-circle"></i> {{ $lang == 'ar' ? ' الأسئلة الشائعة ' : 'my credit' }}
+                </a>
+            </li>
+            <li class="flex items-center justify-between">
+                <a href="#" class="flex items-center gap-2 text-gray-700">
+                    <i class="fas fa-shield-alt"></i> {{ $lang == 'ar' ? ' سياسة الخصوصية ' : 'my credit' }}
+                </a>
+            </li>
+        </ul>
+
+        {{-- زر تسجيل الخروج --}}
+        <div class="mt-10">
+            <button onclick="confirmLogout()" class="w-full bg-red-500 text-white py-2 rounded-lg"> {{ $lang == 'ar' ? ' تسجيل الخروج' : 'my credit' }}</button>
+        </div>
+    </div>
+</div>
+
+{{-- مودال تأكيد تسجيل الخروج --}}
+<div id="logoutModal" class="fixed inset-0 bg-black bg-opacity-50 hidden justify-center items-center">
+    <div class="bg-white p-6 rounded-lg shadow-lg text-center">
+        <h2 class="text-lg mb-4">هل تريد تسجيل الخروج؟</h2>
+        <div class="flex justify-center gap-4">
+            <form method="POST" action="{{ route('logout') }}">
+                @csrf
+                <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded"> {{ $lang == 'ar' ? ' تسجيل الخروج' : 'my credit' }}</button>
+            </form>
+
+        </div>
+    </div>
+</div>
+
 @endsection
+
+@section('scripts')
+<script>
+    function confirmLogout() {
+        document.getElementById('logoutModal').classList.remove('hidden');
+        document.getElementById('logoutModal').classList.add('flex');
+    }
+
+    function closeLogoutModal() {
+        document.getElementById('logoutModal').classList.add('hidden');
+        document.getElementById('logoutModal').classList.remove('flex');
+    }
+</script>
+@endsection
+
 @section('script')
     {{-- <script src="{{ asset('js/app.js') }}" ></script> --}}
     <script src="{{ asset('js/feather-icons/dist/feather.min.js') }}"></script>

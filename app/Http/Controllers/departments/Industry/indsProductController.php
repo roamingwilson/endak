@@ -58,7 +58,7 @@ class indsProductController extends Controller
             'ind_sub_category_id' => 'required|exists:ind_sub_categories,id',
             'description' => 'nullable|string',
             'price' => 'required|numeric|min:0',
-            'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'image' => 'required|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
         // رفع الصورة إن وجدت
@@ -73,7 +73,7 @@ class indsProductController extends Controller
 
         $products = IndsProduct::all();
 
-        return view('admin.main_department.industry.product.index', compact('products'));
+        return redirect()->back()  ;
     }
     public function show($id) {
         $product = indsProduct::with(['category', 'subcategory', 'filters'])->findOrFail($id);
