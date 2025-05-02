@@ -1,15 +1,15 @@
 @extends('layouts.home')
-
+<?php $lang = config('app.locale'); ?>
 @section('content')
     <div class="orders-container">
-        <h1 class="orders-title">الطلبات</h1>
+        <h1 class="orders-title">   {{ $lang == 'en' ? 'Orders'  : ' الطلبات ' }} </h1>
 
         @foreach ($orders as $order)
             <div class="order-item card shadow-lg mb-4">
                 <div class="card-body">
-                    <h3 class="order-id">رقم الطلب: {{ $order->id }}</h3>
-                    <p class="order-status">الحالة: <span class="status {{ strtolower($order->status) }}">{{ $order->status }}</span></p>
-                    <a href="{{ route('orders.show', $order->id) }}" class="btn btn-primary">عرض التفاصيل</a>
+                    <h3 class="order-id">   {{ $lang == 'en' ? ' Order`s Number'  : '  رقم الطلب  ' }}    : {{ $order->id }}</h3>
+                    <p class="order-status"> {{ $lang == 'en' ? 'Status'  : ' الحالة ' }}: <span class="status {{ strtolower($order->status) }}">{{ $order->status }}</span></p>
+                    <a href="{{ route('orders.show', $order->id) }}" class="btn btn-primary">     {{ $lang == 'en' ? ' details'  : '  عرض التفاصيل  ' }}   </a>
                 </div>
             </div>
         @endforeach

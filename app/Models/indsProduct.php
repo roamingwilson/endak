@@ -19,4 +19,5 @@ class indsProduct extends Model
     }
 
 
+
 }

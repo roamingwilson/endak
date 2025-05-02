@@ -1,39 +1,39 @@
 @extends('layouts.home')
-
+@php  $lang = config('app.locale'); @endphp
 @section('content')
     <div class="container">
-        <h1>سلة المشتريات</h1>
+        <h1>   {{ ($lang =='ar') ? 'سلة المشتريات ' : 'Cart' }}</h1>
 
         @if($cartItems->count() > 0)
             <table class="table">
                 <thead>
                     <tr>
-                        <th>المنتج</th>
-                        <th>السعر</th>
-                        <th>الكمية</th>
-                        <th>الإجمالي</th>
-                        <th>الإجراءات</th>
+                        <th>{{ ($lang =='ar') ? 'المنتج' : 'product' }}</th>
+                        <th>{{ ($lang =='ar') ? 'السعر' : 'Price' }}</th>
+                        <th>{{ ($lang =='ar') ? 'الكمية' : 'Quantity' }}</th>
+                        <th>{{ ($lang =='ar') ? 'الإجمالي' : 'Total' }}</th>
+                        <th>{{ ($lang =='ar') ? 'الإجراءات' : 'Actions' }}</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach($cartItems as $cartItem)
                         <tr>
                             <td>{{ $cartItem->product->title }}</td>
-                            <td>{{ $cartItem->product->price }} ج.م</td>
+                            <td>{{ $cartItem->product->price }} {{ $lang == 'ar' ? 'ر.س' : 'SAR' }} </td>
                             <td>
                                 <form action="{{ route('pro_cart.update', $cartItem->id) }}" method="POST">
                                     @csrf
                                     @method('PUT')
                                     <input type="number" name="quantity" value="{{ $cartItem->quantity }}" min="1" class="form-control" style="width: 70px;">
-                                    <button type="submit" class="btn btn-success mt-2">تحديث</button>
+                                    <button type="submit" class="btn btn-success mt-2">{{ ($lang =='ar') ? 'تحديث' : 'update' }}</button>
                                 </form>
                             </td>
-                            <td>{{ $cartItem->product->price * $cartItem->quantity }} ج.م</td>
+                            <td>{{ $cartItem->product->price * $cartItem->quantity }}   {{ $lang == 'ar' ? 'ر.س' : 'SAR' }} </td>
                             <td>
                                 <form action="{{ route('pro_cart.remove', $cartItem->id) }}" method="POST">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="btn btn-danger">حذف</button>
+                                    <button type="submit" class="btn btn-danger">{{ ($lang =='ar') ? 'حذف' : 'Delete' }}</button>
                                 </form>
                             </td>
                         </tr>
@@ -44,17 +44,17 @@
                 @csrf
 
                 <div class="form-group mb-3 text-center">
-                    <label for="payment_method">اختر وسيلة الدفع:</label>
+                    <label for="payment_method">{{ ($lang =='ar') ? '  اختر وسيلة الدفع' : 'Payment Method' }}   :  </label>
                     <select name="payment_method" id="payment_method" class="form-control" style="max-width: 300px; margin: 0 auto;">
-                        <option value="cash">الدفع نقدًا</option>
-                        <option value="visa">الدفع ببطاقة فيزا</option>
+                        <option value="cash"> {{ ($lang =='ar') ? '  الدفع نقدًا ' : 'Cash On Delivery' }} </option>
+                        <option value="visa"> {{ ($lang =='ar') ? '  الدفع ببطاقة فيزا' : 'Payment With Credit' }} </option>
                     </select>
                 </div>
 
                 <div class="stripe-payment-container">
                     <!-- يظهر فقط إذا كانت طريقة الدفع Visa -->
                     <div id="card-element-container" class="card-element-container" style="display: none;">
-                        <label for="card-element" class="form-label">بطاقة الائتمان/الخصم</label>
+                        <label for="card-element" class="form-label"> {{ ($lang =='ar') ? '  بطاقة الائتمان /الخصم ' : 'Payment With Credit' }}</label>
                         <div id="card-element" class="form-control mb-3"></div>
                         <div id="card-errors" class="text-danger mb-2"></div>
                     </div>
@@ -64,11 +64,11 @@
                 </div>
 
                 <div class="text-center">
-                    <button type="submit" class="btn btn-primary">إتمام الطلب</button>
+                    <button type="submit" class="btn btn-primary">  {{ ($lang =='ar') ? '  إتمام الطلب  ' : 'Submit' }}</button>
                 </div>
             </form>
         @else
-            <p>لا توجد منتجات في السلة.</p>
+            <p>   {{ ($lang =='ar') ? '  لا توجد منتجات في السلة.   ' : 'No products' }}</p>
         @endif
     </div>
 @endsection

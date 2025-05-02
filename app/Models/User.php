@@ -191,6 +191,9 @@ class User extends Authenticatable
 public function serv(){
         return $this->hasMany(Services::class , 'user_id');
 }
+public function prOrder(){
+        return $this->hasMany(ProductOrder::class , 'user_id');
+}
 
 
 

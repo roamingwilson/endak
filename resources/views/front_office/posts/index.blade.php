@@ -5,7 +5,7 @@
 @endsection
 @section('content')
 <div class="container py-5">
-    <h2 class="text-center mb-4">طلباتي</h2>
+    <h2 class="text-center mb-4">{{ $lang == 'ar' ? " طلباتي" : "My services"}}</h2>
 
     <div class="row justify-content-center">
         @forelse ($Services as $service)
@@ -15,27 +15,30 @@
                         <h5 class="card-title text-primary">{{ ($lang == 'ar') ? $service->departments->name_ar : $service->departments->name_en }}</h5>
 
                         <p class="card-text text-muted">
-                            <strong>المدينة:</strong> {{ $service->departments->name_ar  }}
+                            <strong>{{ $lang == 'ar' ? "القسم" : " Department"}}  :</strong> {{ $lang == 'ar' ? $service->departments->name_ar : $service->departments->name_en  }}
+                        </p>
+                        @if ($service->equip_type )
+
+                        <p class="card-text text-muted">
+                            <strong>{{ $lang == 'ar' ? " نوغ المعدة" : "Equipment type"}} :</strong> {{ $service->equip_type }}
+                        </p>
+                        @endif
+                        <p class="card-text text-muted">
+                            <strong>{{ $lang == 'ar' ? " المدينة" : "City"}}  :</strong> {{ $service->city ?? $service->from_city }}
                         </p>
                         <p class="card-text text-muted">
-                            <strong>المدينة:</strong> {{ $service->equip_type }}
-                        </p>
-                        <p class="card-text text-muted">
-                            <strong>المدينة:</strong> {{ $service->city ?? $service->from_city }}
-                        </p>
-                        <p class="card-text text-muted">
-                            <strong>الحي:</strong> {{ $service->neighborhood ?? $service->from_neighborhood }}
+                            <strong>{{ $lang == 'ar' ? " الحي" : "Nighbouhood"}} :</strong> {{ $service->neighborhood ?? $service->from_neighborhood }}
                         </p>
 
                         <p class="card-text">
                             <span class="badge bg-light text-dark">
-                                الحالة: {{ ucfirst($service->status) }}
+                                {{ $lang == 'ar' ? " الحالة" : "Status"}}: {{ ucfirst($service->status) }}
                             </span>
                         </p>
 
                         <div class="d-flex justify-content-between align-items-center mt-3">
                             <a href="{{ route('show_myservice', $service->id) }}" class="btn btn-outline-primary btn-sm">
-                                <i class="fe fe-eye"></i> عرض التفاصيل
+                                <i class="fe fe-eye"></i> {{ $lang == 'ar' ? " عرض التفاصيل" : "Details"}}
                             </a>
                             <small class="text-muted">{{ $service->created_at->diffForHumans() }}</small>
                         </div>

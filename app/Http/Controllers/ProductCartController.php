@@ -89,6 +89,6 @@ class ProductCartController extends Controller
 
         ProductCart::where('user_id', auth()->id())->delete();
 
-        return redirect()->route('pro_order.index')->with('success', 'تم إنشاء الطلب بنجاح');
+        return redirect()->route('home')->with('success', 'تم إنشاء الطلب بنجاح');
     }
     }

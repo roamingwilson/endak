@@ -151,7 +151,7 @@ $lang = config('app.locale');
                             <i class="fas fa-couch nav-icon"></i>
 
                             <p>
-                                {{ ($lang == 'ar')? ' ادارة الطلبات' : 'Furniture Transportations' }}
+                                {{ ($lang == 'ar')? ' ادارة الطلبات' : ' Products orders ' }}
                                 <i class="right fas fa-angle-left"></i>
                             </p>
                         </a>
@@ -160,7 +160,7 @@ $lang = config('app.locale');
                                 <li class="nav-item">
                                     <a href="{{ route('admin.pro_orders.manage') }}" class="nav-link {{ request()->is('admin/furniture_transportations') ? 'active' : '' }}">
                                         <i class="far fa-circle nav-icon"></i>
-                                        {{ ($lang == 'ar')? ' ادارة الطلبات' : 'Furniture Transportations' }}
+                                        {{ ($lang == 'ar')? ' ادارة الطلبات' : 'Manage' }}
                                     </a>
                                 </li>
 

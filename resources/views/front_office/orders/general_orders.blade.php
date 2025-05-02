@@ -79,7 +79,7 @@
 
 @section('content')
 <div class="container">
-    <h1 class="mb-4 text-center"  style=" margin-top: 50px;">{{ __('order.orders_for_customer') }} {{ $user->fullname }}</h1>
+    <h1 class="mb-4 text-center"  style=" margin-top: 50px;"> {{ $lang == 'ar' ? '  طلبات جديدة ' : ' new order' }} :{{ $user->fullname }}</h1>
 
     @if(!$orders)
         <p class="text-center">{{ $lang == 'ar' ? 'لا يوجد طلبات جديدة ' : 'No new order' }}</p>
@@ -98,15 +98,15 @@
                     <div class="order-card">
                         <div class="order-header">
 
-                            #{{ $order->service->type  }}
+                            {{ $order->service->type  }}
                         </div>
                         <div class="order-info">
-                            <div><strong>{{ __('order.status') }}:</strong>
+                            <div><strong>{{ $lang == 'ar' ? 'ا  الحالة  ' : 'status' }}:</strong>
                                 <span class="badge {{ $order->status == 'completed' ? 'bg-success' : 'bg-warning' }}">
                                     {{ $order->status == 'completed' ? __('order.complete') : __('order.pending') }}
                                 </span>
                             </div>
-                            <div><strong>{{ __('order.provider') }}:</strong> {{ $order->user->fullname }}</div>
+                            <div><strong>{{ $lang == 'ar' ? 'ا  المزود  ' : 'Provider' }}:</strong> {{ $order->user->fullname }}</div>
                             {{-- <div><strong>{{ __('order.service') }}:</strong> {{ $order->orderable->name ?? '-' }}</div> --}}
                         </div>
                         <div class="order-actions">

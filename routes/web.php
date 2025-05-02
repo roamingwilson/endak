@@ -123,6 +123,10 @@ Route::post('/order/complete' , [OrderUserController::class , 'finish'])->name('
 // Rating
 Route::get('/profile/{id}' ,[ProfileController::class , 'show'] )->name('web.profile');
 Route::get('/profile/edit/{id}' ,[ProfileController::class , 'edit'] )->name('web.profile.edit');
+Route::get('/feedback' ,[ProfileController::class , 'user_note'] )->name('feedback');
+Route::get('/FAQ' ,[ProfileController::class , 'FAQ'] )->name('faq');
+Route::get('/privcy' ,[ProfileController::class , 'privcy'] )->name('privcy');
+Route::get('/terms' ,[ProfileController::class , 'terms'] )->name('terms');
 Route::post('/profile/update' ,[ProfileController::class , 'updateProfile'] )->name('web.profile.update');
 
 // Users

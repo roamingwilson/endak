@@ -389,7 +389,8 @@
                         <!-- Start::slide -->
 
 
-                        @if (auth()->check())
+
+                        @if (auth()->check() && auth()->user()->role_id == 1)
                             <li class="slide">
                                 <a href="{{ route('services.index') }}" class="side-menu__item">
                                     <span class="side-menu__label" style="color: black;">{{ __('posts.my_posts') }}</span>
@@ -397,6 +398,7 @@
                                 </a>
 
                             </li>
+
                         @endif
                         {{-- @if (auth()->check()) --}}
                         <li class="slide">
@@ -407,15 +409,13 @@
 
                         </li>
                         {{-- @endif --}}
-                        @if (auth()->check())
+
+                        @if (auth()->check() && auth()->user()->role_id == 1)
                             <li class="slide">
                                 <a href="{{ route('general_orders.customer.index') }}" class="side-menu__item">
                                     <span class="side-menu__label" style="color: black;">
-                                        @if (auth()->check() && auth()->user()->role_id == 1)
                                         {{  __('order.my_orders') }}
-                                        @elseif(auth()->check() && auth()->user()->role_id == 3)
-                                        {{ ($lang == 'ar') ? 'مشاريعي' : 'My Projects' }}
-                                        @endif
+
                                     </span>
 
                                 </a>

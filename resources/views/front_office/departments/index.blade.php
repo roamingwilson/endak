@@ -91,18 +91,31 @@
     $departments = \App\Models\Department::all();
 @endphp
 <div class="container mt-4">
-    <h1 class="mb-4 text-center">اختر القسم</h1>
+    <h1 class="mb-4 text-center"> {{ $lang == 'ar' ? "اختيار القسم" : "Choose Department"}}</h1>
 
     <div class="row g-3">
         @foreach($departments as $department)
-            <div class="col-4 col-md-2 text-center">
-                <a href="{{route('services.show',$department->id)}}" class="text-decoration-none text-dark">
-                    <div class="card shadow-sm p-2" style="background-color: #f5f5f5; border-radius: 12px;">
-                        <img src="{{ asset('storage/' . $department->image) }}" alt="{{ $department->name }}" style="width: 60px; height: 60px; object-fit: contain; margin: auto;">
-                        <div class="mt-2 small fw-bold">{{ $department->name_ar }}</div>
-                    </div>
-                </a>
-            </div>
+        @if ($department->name_en == 'plastic')
+        <div class="col-4 col-md-2 text-center">
+            <a href="{{route('indsproducts.index')}}" class="text-decoration-none text-dark">
+                <div class="card shadow-sm p-2" style="background-color: #f5f5f5; border-radius: 12px;">
+                    <img src="{{ asset('storage/' . $department->image) }}" alt="{{ $department->name }}" style="width: 60px; height: 60px; object-fit: contain; margin: auto;">
+                    <div class="mt-2 small fw-bold">{{ $lang == 'ar' ? $department->name_ar : $department->name_en }}</div>
+                </div>
+            </a>
+        </div>
+        @else
+        <div class="col-4 col-md-2 text-center">
+            <a href="{{route('services.show',$department->id)}}" class="text-decoration-none text-dark">
+                <div class="card shadow-sm p-2" style="background-color: #f5f5f5; border-radius: 12px;">
+                    <img src="{{ asset('storage/' . $department->image) }}" alt="{{ $department->name }}" style="width: 60px; height: 60px; object-fit: contain; margin: auto;">
+                    <div class="mt-2 small fw-bold">{{ $lang == 'ar' ? $department->name_ar : $department->name_en }}</div>
+                </div>
+            </a>
+        </div>
+
+        @endif
+
         @endforeach
     </div>
 </div>

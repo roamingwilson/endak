@@ -361,3 +361,5 @@ Route::group(['prefix' => "plastic"], function(){
 Route::get('/admin/orders', [ProductOrderController::class, 'manage'])->name('admin.pro_orders.manage');
 Route::post('/admin/orders/{id}/update-status', [ProductOrderController::class, 'updateStatus'])->name('admin.pro_orders.updateStatus');
 Route::delete('/admin/orders/{id}', [ProductOrderController::class, 'destroy'])->name('admin.pro_orders.destroy');
+Route::get('admin/pro_orders/show/{id}', [ProductOrderController::class, 'adminShow'])->name('admin.pro_orders.show');
+

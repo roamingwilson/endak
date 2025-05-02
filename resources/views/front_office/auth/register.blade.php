@@ -50,8 +50,8 @@
 
                     </div>
                     <div class="form-group">
-                        <label for="departments" class="m-2">{{ __('department.departments') }}</label>
-                        <select name="country" id="tags">
+                        <label for="Country" class="m-2">{{ $lang == 'en' ? 'Country '  : ' الدولة' }}</label>
+                        <select name="country" id="tags" class=" w-100 ">
 
 
                             @foreach ($countries as $country )
@@ -64,8 +64,8 @@
 
                     </div>
                     <div class="form-group">
-                        <label for="departments" class="m-2">{{ __('department.departments') }}</label>
-                        <select name="governement" id="tags" >
+                        <label for="Governement" class="m-2">{{ $lang == 'en' ? 'Governement'  : ' المحافظة' }}</label>
+                        <select name="governement" id="tags" class=" w-100 " >
                             {{-- <option value="">{{ __('department.select_product') }}</option> --}}
                             @foreach ($govers as $gover )
                             {{-- <input class="form-control" name="department_type[]" type="hidden"  value="{{ old('email') }}"> --}}

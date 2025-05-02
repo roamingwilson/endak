@@ -1,22 +1,25 @@
 @extends('layouts.home')
-
+@section('title')
+    {{ __('orders') }}
+    <?php $lang = config('app.locale'); ?>
+@endsection
 @section('content')
 <div class="container my-5">
     <div class="order-details">
-        <h3 class="order-title">تفاصيل الطلب رقم: #{{ $order->id }}</h3>
+        <h3 class="order-title">{{ $lang == 'ar' ? 'تفاصيل الطلب رقم' : 'Order Details' }} #{{ $order->id }}</h3>
 
         @foreach($order->items as $item)
         <div class="order-item card mb-4 shadow-lg">
             <div class="card-body">
-                <h5 class="product-title">{{ $item->product->title }}</h5>
-                <p class="item-quantity">الكمية: <span>{{ $item->quantity }}</span></p>
-                <p class="item-price">السعر: <span>{{ $item->price }} ريال</span></p>
+                <h5 class="product-title">{{ $lang == 'ar' ? 'اسم المنتج' : 'Product Name' }}: {{ $item->product->title }}</h5>
+                <p class="item-quantity">{{ $lang == 'ar' ? 'الكمية' : 'Quantity' }}: <span>{{ $item->quantity }}</span></p>
+                <p class="item-price">{{ $lang == 'ar' ? 'السعر' : 'Price' }}: <span>{{ $item->price }} {{ $lang == 'ar' ? 'ريال' : 'SAR' }}</span></p>
             </div>
         </div>
         @endforeach
 
         <div class="order-total">
-            <h4>الإجمالي: <span>{{ $order->total }} ريال</span></h4>
+            <h4>{{ $lang == 'ar' ? 'الإجمالي' : 'Total' }}: <span>{{ $order->total }} {{ $lang == 'ar' ? 'ريال' : 'SAR' }}</span></h4>
         </div>
 
     </div>

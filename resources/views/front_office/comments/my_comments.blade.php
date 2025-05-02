@@ -24,41 +24,39 @@
             <div class="col-md-6 col-lg-4 mb-4">
                 <div class="card shadow-sm border-0 rounded">
                     <div class="card-body">
-                        <h5 class="card-title text-primary">{{ $comment->customer->fullname  }}</h5>
+                        <h5 class="card-title text-primary">{{ $lang == 'ar' ? 'العميل' : 'Customer' }} : {{ $comment->customer->fullname  }}</h5>
 
 
                         @if (isset($comment->price))
-                            <p class="card-text"><strong>{{ __('السعر') }}: </strong> {{ $comment->price }} {{ __('ر.س') }}</p>
+                            <p class="card-text"><strong>{{ $lang == 'ar' ? 'السعر' : 'Price' }}: </strong> {{ $comment->price }} {{ $lang == 'ar' ? 'ر.س' : 'SAR' }}</p>
                         @endif
                         @if (isset($service->type))
-                            <p class="card-text"><strong>{{ __('قسم الخدمة') }}: </strong> {{ $service->departments->name_ar  }} {{ __('') }}</p>
+                            <p class="card-text"><strong>{{ $lang == 'ar' ?'قسم الخدمة' : 'Department' }}: </strong> {{ ($lang == 'ar') ? $service->departments->name_ar : $service->departments->name_en }}</p>
                         @endif
                         @if (isset($service->equip_type))
-                            <p class="card-text"><strong>{{ __('نوع المعدة او السيارة') }}: </strong> {{ $service->equip_type}} {{ __('') }}</p>
+                            <p class="card-text"><strong>{{ $lang == 'ar' ? 'نوع المعدة او السيارة' : 'Equipment Type' }}: </strong> {{ $service->equip_type}} {{ __('') }}</p>
                         @endif
                         @if (isset($comment->notes))
-                            <p class="card-text"><strong>{{ __('ملحوظة ') }}: </strong> {{ $comment->notes }} {{ __('') }}</p>
+                            <p class="card-text"><strong>{{ $lang == 'ar' ? 'ملحوظة' : 'note' }}: </strong> {{ $comment->notes }} {{ __('') }}</p>
                         @endif
 
-                            <p class="card-text"><strong>{{ __('التاريخ') }}: </strong>{{ $comment->created_at->diffFOrHumans() }}</p>
+                            <p class="card-text"><strong>{{ $lang == 'ar' ? 'الوقت' : 'Time' }}: </strong>{{ $comment->created_at->diffFOrHumans() }}</p>
 
-                        @if (isset($comment->time))
-                            <p class="card-text"><strong>{{ __('الوقت') }}: </strong>{{ \Carbon\Carbon::parse($comment->time)->format('h:i A') }}</p>
-                        @endif
+
 
                         <div class="d-flex justify-content-between mt-3">
                             <a href="{{ route('web.send_message', $comment->customer->id) }}" class="btn btn-outline-primary btn-sm">
                                 <i class="fe fe-mail"></i> {{ __('Send Message') }}
                             </a>
                             <a class="btn btn-success btn-sm" href="{{route('general_comments.edit',$comment->id)}}">
-                                <i class="fe fe-check-circle"></i> {{ __('Edit') }}
+                                <i class="fe fe-check-circle"></i> {{ $lang == 'ar' ? 'تعديل' : 'Edit' }}
                             </a>
                             <form action="{{route('general_comments.destroy',$comment->id)}}" method="post" class="d-inline">
                                 @csrf
                                 @method('DELETE')
 
                                 <button class="btn btn-danger btn-sm" type="submit">
-                                    <i class="fe fe-check-circle"></i> {{ __('delete') }}
+                                    <i class="fe fe-check-circle"></i> {{ $lang == 'ar' ? 'حذف العرض' : 'Delete' }}
                                 </button>
                             </form>
                         </div>

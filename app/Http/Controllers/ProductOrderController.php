@@ -17,15 +17,25 @@ class ProductOrderController extends Controller
     // عرض تفاصيل طلب معين
     public function show($id)
     {
-        $order = ProductOrder::where('user_id', auth()->id())->with('items.product')->findOrFail($id);
+        $order = ProductOrder::with('items.product', 'user')->findOrFail($id);
+
         return view('admin.main_department.industry.show_pro_order', compact('order'));
     }
 
-    // إدارة الطلبات (مثلاً للمشرفين Admin)
     public function manage()
     {
-        $orders = ProductOrder::with('items.product', 'user')->latest()->get();
+        $orders = ProductOrder::with('items.product', 'user')
+            ->latest()
+            ->get();
+        // dd($orders);
         return view('admin.main_department.industry.admin_order', compact('orders'));
+    }
+
+    // عرض تفاصيل الطلب للإدارة
+    public function adminShow($id)
+    {
+        $order = ProductOrder::with('items.product', 'user')->findOrFail($id);
+        return view('admin.main_department.industry.show_admin_order', compact('order'));
     }
 
     // تغيير حالة الطلب (مثلا إلى مكتمل أو ملغي)

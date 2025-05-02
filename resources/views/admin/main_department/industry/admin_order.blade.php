@@ -1,100 +1,73 @@
 @extends('layouts.dashboard.dashboard')
-
+<?php $lang = config('app.locale'); ?>
 @section('content')
-    <h1>إدارة الطلبات</h1>
+<h1 class="page-title">{{ $lang == 'ar' ? 'إدارة الطلبات' : 'Manage Orders' }}</h1>
+
+<div class="orders-container">
     @foreach ($orders as $order)
-        <div class="order-item">
-            <h3>رقم الطلب: {{ $order->id }}</h3>
-            <p>العميل: {{ $order->user->name }}</p>
-            <p>الحالة: {{ $order->status }}</p>
-            <form action="{{ route('admin.pro_orders.updateStatus', $order->id) }}" method="POST">
-                @csrf
-                @method('POST')
-                <select name="status">
-                    <option value="completed" {{ $order->status == 'completed' ? 'selected' : '' }}>مكتمل</option>
-                    <option value="pending" {{ $order->status == 'pending' ? 'selected' : '' }}>معلق</option>
-                    <option value="cancelled" {{ $order->status == 'cancelled' ? 'selected' : '' }}>ملغي</option>
-                </select>
-                <button type="submit">تغيير الحالة</button>
-            </form>
-            <form action="{{ route('admin.pro_orders.destroy', $order->id) }}" method="POST">
-                @csrf
-                @method('DELETE')
-                <button type="submit">حذف الطلب</button>
-            </form>
+        <div class="order-card">
+            <h3>{{ $lang == 'ar' ? 'رقم الطلب' : 'Order ID' }}: {{ $order->id }}</h3>
+            <p>{{ $lang == 'ar' ? 'العميل' : 'Customer' }}: {{ $order->user->first_name . ' ' . $order->user->last_name }}</p>
+            <p>{{ $lang == 'ar' ? 'رقم الجوال' : 'Phone' }}:{{ $order->user->phone }}</p>
+            <p>{{ $lang == 'ar' ? 'الحالة' : 'Status' }}: {{ $order->status }}</p>
+
+            <a href="{{ route('admin.pro_orders.show', $order->id) }}" class="details-btn">
+                {{ $lang == 'ar' ? 'عرض التفاصيل' : 'View Details' }}
+            </a>
         </div>
     @endforeach
+</div>
 @endsection
+
 @section('css')
 <style>
-    h1 {
-        text-align: center;
-        margin-bottom: 30px;
-        font-size: 32px;
-        color: #333;
-    }
+.page-title {
+    text-align: center;
+    font-size: 28px;
+    margin-bottom: 30px;
+    color: #2c3e50;
+}
 
-    .orders-container {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 20px;
-    }
+.orders-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+}
 
-    .order-item {
-        background: #fff;
-        padding: 20px;
-        border-radius: 12px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        transition: 0.3s ease;
-    }
+.order-card {
+    background: #f9f9f9;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+    transition: 0.3s ease;
+}
 
-    .order-item:hover {
-        transform: translateY(-5px);
-    }
+.order-card:hover {
+    transform: translateY(-5px);
+}
 
-    .order-item h3 {
-        margin-bottom: 10px;
-        color: #007BFF;
-    }
+.order-card h3 {
+    color: #2980b9;
+}
 
-    .order-item p {
-        margin-bottom: 8px;
-        color: #555;
-    }
+.order-card p {
+    color: #555;
+    margin-bottom: 8px;
+}
 
-    .order-item form {
-        margin-top: 10px;
-    }
+.details-btn {
+    display: inline-block;
+    background-color: #3498db;
+    color: #fff;
+    padding: 10px;
+    border-radius: 8px;
+    text-align: center;
+    text-decoration: none;
+    transition: background-color 0.3s;
+}
 
-    .order-item select,
-    .order-item button {
-        width: 100%;
-        padding: 10px;
-        margin-top: 5px;
-        font-size: 16px;
-        border: 1px solid #ddd;
-        border-radius: 8px;
-    }
-
-    .order-item button {
-        background-color: #28a745;
-        color: white;
-        cursor: pointer;
-        border: none;
-        margin-top: 10px;
-        transition: background-color 0.3s;
-    }
-
-    .order-item button:hover {
-        background-color: #218838;
-    }
-
-    .order-item form:last-of-type button {
-        background-color: #dc3545;
-    }
-
-    .order-item form:last-of-type button:hover {
-        background-color: #c82333;
-    }
+.details-btn:hover {
+    background-color: #2980b9;
+}
 </style>
 @endsection

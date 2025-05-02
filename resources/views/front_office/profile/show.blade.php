@@ -216,44 +216,36 @@
             </li>
             <li class="flex items-center justify-between">
                 <a href="{{route('web.profile.edit',auth()->id())}}" class="flex items-center gap-2 text-gray-700">
-                    <i class="fas fa-edit"></i> {{ $lang == 'ar' ? ' تعديل الملف الشخصي ' : 'my credit' }}
+                    <i class="fas fa-edit"></i> {{ $lang == 'ar' ? ' تعديل الملف الشخصي ' : 'Edit Profile' }}
+                </a>
+            </li>
+
+            <li class="flex items-center justify-between">
+                <a href="{{route('feedback')}}" class="flex items-center gap-2 text-gray-700">
+                    <i class="fas fa-comments"></i> {{ $lang == 'ar' ? ' ملاحظات المستخدمين ' : 'User`s Feedback' }}
                 </a>
             </li>
             <li class="flex items-center justify-between">
-                <a href="#" class="flex items-center gap-2 text-gray-700">
-                    <i class="fas fa-star"></i>{{ $lang == 'ar' ? '  تقييم الخدمات ' : 'my credit' }}
+                <a href="{{route('terms')}}" class="flex items-center gap-2 text-gray-700">
+                    <i class="fas fa-file-alt"></i> {{ $lang == 'ar' ? ' الشروط و الأحكام ' : 'Terms and Conditions' }}
+                </a>
+            </li>
+
+            <li class="flex items-center justify-between">
+                <a href="{{route('faq')}}" class="flex items-center gap-2 text-gray-700">
+                    <i class="fas fa-question-circle"></i> {{ $lang == 'ar' ? ' الأسئلة الشائعة ' : 'FAQ' }}
                 </a>
             </li>
             <li class="flex items-center justify-between">
-                <a href="#" class="flex items-center gap-2 text-gray-700">
-                    <i class="fas fa-comments"></i> {{ $lang == 'ar' ? ' ملاحظات المستخدمين ' : 'my credit' }}
-                </a>
-            </li>
-            <li class="flex items-center justify-between">
-                <a href="#" class="flex items-center gap-2 text-gray-700">
-                    <i class="fas fa-file-alt"></i> {{ $lang == 'ar' ? ' الشروط و الأحكام ' : 'my credit' }}
-                </a>
-            </li>
-            <li class="flex items-center justify-between">
-                <a href="#" class="flex items-center gap-2 text-gray-700">
-                    <i class="fas fa-language"></i>  {{ $lang == 'ar' ? ' اللغة' : 'my credit' }}
-                </a>
-            </li>
-            <li class="flex items-center justify-between">
-                <a href="#" class="flex items-center gap-2 text-gray-700">
-                    <i class="fas fa-question-circle"></i> {{ $lang == 'ar' ? ' الأسئلة الشائعة ' : 'my credit' }}
-                </a>
-            </li>
-            <li class="flex items-center justify-between">
-                <a href="#" class="flex items-center gap-2 text-gray-700">
-                    <i class="fas fa-shield-alt"></i> {{ $lang == 'ar' ? ' سياسة الخصوصية ' : 'my credit' }}
+                <a href="{{route('privcy')}}" class="flex items-center gap-2 text-gray-700">
+                    <i class="fas fa-shield-alt"></i> {{ $lang == 'ar' ? ' سياسة الخصوصية ' : 'Privcy Policy' }}
                 </a>
             </li>
         </ul>
 
         {{-- زر تسجيل الخروج --}}
         <div class="mt-10">
-            <button onclick="confirmLogout()" class="w-full bg-red-500 text-white py-2 rounded-lg"> {{ $lang == 'ar' ? ' تسجيل الخروج' : 'my credit' }}</button>
+            <a href="{{ route('logout') }}"  onclick="confirmLogout()" class="w-full bg-red-500 text-white py-2 rounded-lg" style="width: 100%"> {{ $lang == 'ar' ? ' تسجيل الخروج' : 'Log Out' }}</a>
         </div>
     </div>
 </div>

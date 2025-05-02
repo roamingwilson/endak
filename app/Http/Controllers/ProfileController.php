@@ -143,5 +143,17 @@ class ProfileController extends Controller
 
     return redirect()->route('web.profile', auth()->id())->with('success', 'تم التحديث بنجاح');
 }
+public function user_note(){
+        return view('front_office.profile.userNote');
+}
+public function privcy(){
+        return view('front_office.profile.privcy');
+}
+public function FAQ(){
+        return view('front_office.profile.faq');
+}
+public function terms(){
+        return view('front_office.profile.terms');
+}
 
 }

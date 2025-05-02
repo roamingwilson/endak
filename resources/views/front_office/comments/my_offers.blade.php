@@ -27,23 +27,23 @@
 
 
                         @if (isset($comment->price))
-                            <p class="card-text"><strong>{{ __('السعر') }}: </strong> {{ $comment->price }} {{ __('ر.س') }}</p>
+                            <p class="card-text"><strong>{{ $lang == 'ar' ? 'السعر' : 'Price' }}: </strong> {{ $comment->price }} {{ $lang == 'ar' ? 'ر.س' : 'SAR' }}</p>
                         @endif
 
                          @if (isset($service->type))
-                            <p class="card-text"><strong>{{ __('قسم الخدمة') }}: </strong> {{ $service->departments->name_ar  }} {{ __('') }}</p>
+                            <p class="card-text"><strong>{{ $lang == 'ar' ?'قسم الخدمة' : 'Department' }}: </strong> {{ ($lang == 'ar') ? $service->departments->name_ar : $service->departments->name_en }}</p>
                         @endif
                         @if (isset($service->equip_type))
-                            <p class="card-text"><strong>{{ __('نوع المعدة او السيارة') }}: </strong> {{ $service->equip_type}} {{ __('') }}</p>
+                            <p class="card-text"><strong>{{ $lang == 'ar' ? 'نوع المعدة او السيارة' : 'Equipment Type' }}: </strong> {{ $service->equip_type}} {{ __('') }}</p>
                         @endif
                         @if (isset($comment->notes))
-                            <p class="card-text"><strong>{{ __('ملحوظة ') }}: </strong> {{ $comment->notes }} {{ __('') }}</p>
+                            <p class="card-text"><strong>{{ $lang == 'ar' ? 'ملحوظة' : 'note' }}: </strong> {{ $comment->notes }} {{ __('') }}</p>
                         @endif
 
-                            <p class="card-text"><strong>{{ __('التاريخ') }}: </strong>{{ $comment->created_at->diffFOrHumans() }}</p>
+                            <p class="card-text"><strong>{{ $lang == 'ar' ? 'التاريخ' : 'Date' }}: </strong>{{ $comment->created_at->diffFOrHumans() }}</p>
 
                         @if (isset($comment->time))
-                            <p class="card-text"><strong>{{ __('الوقت') }}: </strong>{{ \Carbon\Carbon::parse($comment->time)->format('h:i A') }}</p>
+                            <p class="card-text"><strong>{{ $lang == 'ar' ? 'الوقت' : 'Time' }}: </strong>{{ \Carbon\Carbon::parse($comment->time)->format('h:i A') }}</p>
                         @endif
 
                         <div class="d-flex justify-content-between mt-3">
