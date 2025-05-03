@@ -255,7 +255,7 @@ $services = Services::where('type', 'maintenance')->latest()->paginate(5);
 
                                     <div>
                                         <label class="mb-2" for="">{{ __('general.price') }}</label>
-                                        <input class="form-control mb-2" type="text" name="price">
+                                        <input class="form-control mb-2" type="number" name="price">
                                     </div>
 
                                     <div>

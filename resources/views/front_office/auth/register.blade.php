@@ -57,10 +57,10 @@
                     </div>
 
 
-                    <form>
+
                         <div class="mb-3">
                             <label for="country">{{ $lang == 'ar' ? 'الدولة' : 'Country' }}</label>
-                            <select id="country" class="form-control">
+                            <select id="country" name="country" class="form-control">
                                 <option value="">{{ $lang == 'ar' ? 'اختر الدولة' : 'Select Country' }}</option>
                                 @foreach ($countries as $country)
                                     <option value="{{ $country->id }}">
@@ -71,12 +71,12 @@
                         </div>
 
                         <div class="mb-3">
-                            <label for="governement">{{ $lang == 'ar' ? 'المحافظة' : 'Governorate' }}</label>
-                            <select id="governement" class="form-control">
+                            <label for="governement"  >{{ $lang == 'ar' ? 'المحافظة' : 'Governorate' }}</label>
+                            <select id="governement" name="governement"  class="form-control">
                                 <option value="">{{ $lang == 'ar' ? 'اختر المحافظة' : 'Select Governorate' }}</option>
                             </select>
                         </div>
-                    </form>
+
 
 
 
