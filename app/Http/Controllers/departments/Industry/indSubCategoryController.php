@@ -31,7 +31,7 @@ class indSubCategoryController extends Controller
     public function edit($id) {
         $subcategory = indSubCategory::findOrFail($id);
         $categories = indsCategory::all();
-        return view('subcategories.edit', compact('subcategory', 'categories'));
+        return view('admin.main_department.industry.subcategory.edit', compact('subcategory', 'categories'));
     }
 
     public function update(Request $request, $id) {
@@ -43,7 +43,7 @@ class indSubCategoryController extends Controller
         ]);
 
         $subcategory->update($request->all());
-        return redirect()->route('subcategories.index')->with('success', 'تم التعديل بنجاح');
+        return redirect()->route('indsustry.subcat')->with('success', 'تم التعديل بنجاح');
     }
 
     public function destroy($id) {

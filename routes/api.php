@@ -369,3 +369,4 @@ Route::get('/accept_project/{id}' , function($id) {
     GeneralOrder::find($id)->update(['status' => "completed"]);
     return redirect()->back();
 })->name('accept_project');
+Route::get('/countries-governements', [App\Http\Controllers\Api\LocationController::class, 'getCountriesWithGovernements']);

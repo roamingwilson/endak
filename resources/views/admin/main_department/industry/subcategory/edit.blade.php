@@ -1,52 +1,62 @@
 @extends('layouts.dashboard.dashboard')
-
 @section('title')
-    <?php $lang = config('app.locale'); ?>
-
-    {{ ($lang == 'ar')? 'معدات ثقيلة' : "Heavy equipment" }}
-
-    @endsection
+{{ ($lang == 'ar')? 'صناعة البلاستيك' : "Industry" }}
+@endsection
 
 @section('page_name')
-{{ ($lang == 'ar')? 'معدات ثقيلة' : "Heavy equipment" }}
-
+{{ ($lang == 'ar')? 'تعديل القسم الفرعي' : "SubCategory" }}
 @endsection
 
 @section('content')
-    <div class="container">
-        @if ($errors->any())
-            <div class="alert alert-danger">
-                <h3>Error Occured!</h3>
-                <ul>
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
-        @endif
-        <form action="{{ route('admin.heavy_equip.update', $main->id) }}" method="post"
-            enctype="multipart/form-data">
-            @csrf
-            @method('patch')
-            <div class="form-group">
-                <lable class="" for="">{{ __('department.name_ar') }}</lable>
-                <input type="text" name="name_ar" class="form-control mt-2" value="{{ old('name_ar', $main->name_ar) }}" />
-            </div>
-            <div class="form-group">
-                <lable class="" for="">{{ __('department.name_en') }}</lable>
-                <input type="text" name="name_en" class="form-control mt-2"
-                    value="{{ old('name_en', $main->name_en) }}" />
-            </div>
+<div class="container mt-5">
+    <h2>{{ ($lang == 'ar')? 'تعديل القسم الفرعي' : "SubCategory" }} </h2>
 
+    @if(session('success'))
+        <div class="alert alert-success">{{ session('success') }}</div>
+    @endif
 
-            <div class="form-group">
-                <lable class="" for="">{{ __('settings.logo') }}</lable>
-                <input type="file" name="image" class="form-control mt-2 dropify"
-                    value="{{ old('logo', $main->image_url) }}" data-default-file="{{ asset($main->image) }}" />
-            </div>
-            <div class="form-group">
-                <button type="submit" class="btn btn-success">{{ __('general.save') }}</button>
-            </div>
-        </form>
-    </div>
+    @if($errors->any())
+        <div class="alert alert-danger">
+            <ul class="mb-0">
+                @foreach($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
+    <form action="{{ route('indsubcategories.update', $subcategory->id) }}" method="POST">
+        @csrf
+        @method('PUT')
+
+        <div class="mb-3">
+            <label for="name" class="form-label">  {{ ($lang == 'ar')? 'اسم القسم الفرعي' : "SubCategory name" }} </label>
+            <input type="text" name="name" id="name"
+                class="form-control @error('name') is-invalid @enderror"
+                value="{{ old('name', $subcategory->name) }}">
+
+            @error('name')
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+        </div>
+
+        <div class="mb-3">
+            <label for="inds_category_id" class="form-label">    {{ ($lang == 'ar')? 'القسم الرئيسي' : "Category name" }} </label>
+            <select name="inds_category_id" id="inds_category_id"
+                    class="form-select @error('inds_category_id') is-invalid @enderror">
+                @foreach($categories as $category)
+                    <option value="{{ $category->id }}" {{ $subcategory->inds_category_id == $category->id ? 'selected' : '' }}>
+                        {{ $category->name }}
+                    </option>
+                @endforeach
+            </select>
+
+            @error('inds_category_id')
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
+        </div>
+
+        <button type="submit" class="btn btn-primary"> {{ ($lang == 'ar')? 'حفظ التعديلات' : "Save" }}</button>
+    </form>
+</div>
 @endsection

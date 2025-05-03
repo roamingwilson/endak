@@ -81,8 +81,8 @@ Route::group(['prefix' => 'categories'], function () {
     Route::get('/' , [CategoryController::class , 'index'])->name('admin.categories');
     Route::get('/create', [CategoryController::class ,'create'])->name('admin.categories.create');
     Route::post('/create', [CategoryController::class ,'store'])->name('admin.categories.store');
-    Route::get('/edit/{category}' , [CategoryController::class , 'edit'])->name('admin.categories.edit');
-    Route::get('/show/{slug}' , [DepartmentController::class , 'show'])->name('admin.categories.show');
+    Route::get('/edit/{id}' , [CategoryController::class , 'edit'])->name('admin.department.edit');
+    Route::get('/show/{id}' , [DepartmentController::class , 'show'])->name('admin.department.show');
     Route::post('/edit/{category}' , [CategoryController::class , 'update'])->name('admin.categories.update');
     Route::post('update_top_categories', 'CategoriesController@update_top_categories')->name('update_top_categories');
     Route::get('/delete/{slug}', [CategoryController::class ,'destroy'])->name('admin.categories.delete');
@@ -111,7 +111,7 @@ Route::group(['prefix' => 'departments'], function () {
     Route::post('/create', [DepartmentController::class ,'store'])->name('admin.departments.store');
     Route::get('/show/{slug}' , [DepartmentController::class , 'show'])->name('admin.departments.show');
     Route::get('/edit/{category}' , [DepartmentController::class , 'edit'])->name('admin.departments.edit');
-    Route::post('/edit/{category}' , [DepartmentController::class , 'update'])->name('admin.departments.update');
+    Route::put('/edit/{id}' , [DepartmentController::class , 'update'])->name('admin.departments.update');
     Route::post('update_top_departments', 'DepartmentController@update_top_departments')->name('update_top_departments');
     Route::get('/delete/{slug}', [DepartmentController::class ,'destroy'])->name('admin.departments.delete');
 
@@ -362,4 +362,4 @@ Route::get('/admin/orders', [ProductOrderController::class, 'manage'])->name('ad
 Route::post('/admin/orders/{id}/update-status', [ProductOrderController::class, 'updateStatus'])->name('admin.pro_orders.updateStatus');
 Route::delete('/admin/orders/{id}', [ProductOrderController::class, 'destroy'])->name('admin.pro_orders.destroy');
 Route::get('admin/pro_orders/show/{id}', [ProductOrderController::class, 'adminShow'])->name('admin.pro_orders.show');
-
+Route::post('orders/bulk-action', [ProductOrderController::class, 'bulkAction'])->name('admin.orders.bulk_action');

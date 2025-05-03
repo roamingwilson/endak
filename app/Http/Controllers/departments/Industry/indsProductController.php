@@ -7,6 +7,7 @@ use App\Models\indsCategory;
 use App\Models\indsProduct;
 use App\Models\indSubCategory;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class indsProductController extends Controller
 {
@@ -79,10 +80,50 @@ class indsProductController extends Controller
         $product = indsProduct::with(['category', 'subcategory', 'filters'])->findOrFail($id);
         return view('products.show', compact('product'));
     }
+    public function edit($id)
+{
+    $product = indsProduct::findOrFail($id);
+    $categories = IndsCategory::all();
+    $subcategories = IndSubCategory::all();
+
+    return view('admin.main_department.industry.product.edit', compact('product', 'categories', 'subcategories'));
+}
+
     public function viewProduct(){
         $products = indsProduct::latest()->get();
         $categories = indsCategory::all();
         $subcategories = IndSubCategory::all();
         return view('admin.main_department.industry.product.viewproduct', compact('products', 'categories', 'subcategories'));
     }
+    public function update(Request $request, $id)
+    {
+        $product = IndsProduct::findOrFail($id);
+
+        $fields = $request->validate([
+            'title' => 'required|string|max:255',
+            'inds_category_id' => 'required|exists:inds_categories,id',
+            'ind_sub_category_id' => 'required|exists:ind_sub_categories,id',
+            'description' => 'nullable|string',
+            'price' => 'required|numeric|min:0',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+        ]);
+
+
+        // رفع صورة جديدة إن وُجدت
+        if ($request->hasFile('image')) {
+            // حذف الصورة القديمة إن وُجدت
+            if ($product->image && Storage::disk('public')->exists($product->image)) {
+                Storage::disk('public')->delete($product->image);
+            }
+
+            $path = $request->file('image')->store('products', 'public');
+            $fields['image'] = $path;
+        }
+
+        // تحديث بيانات المنتج
+        $product->update($fields);
+
+        return redirect()->route('indsustry.pro')->with('success', 'تم تحديث المنتج بنجاح');
+    }
+
 }

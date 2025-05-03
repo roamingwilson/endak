@@ -10,6 +10,12 @@
 
 @endsection
 @section('content')
+@php
+    use App\Models\Country;
+    use App\Models\Governements;
+
+    $countries = Country::with('Governements')->get();
+@endphp
     <section>
         <div class="container" style="display: flex; justify-content:center;align-items:center">
             <div style="width: 400px;margin-bottom:80px;margin-top:60px">
@@ -49,34 +55,34 @@
                         @error('departments') <span class="error text-danger">{{ $message }}</span> @enderror
 
                     </div>
-                    <div class="form-group">
-                        <label for="Country" class="m-2">{{ $lang == 'en' ? 'Country '  : ' الدولة' }}</label>
-                        <select name="country" id="tags" class=" w-100 ">
 
 
-                            @foreach ($countries as $country )
-                                <option value="{{ $country ->id }}" >
-                                    {{ ($lang == 'ar') ? $country->name_ar : $country->name_en }}
-                                </option>
+                    <form>
+                        <div class="mb-3">
+                            <label for="country">{{ $lang == 'ar' ? 'الدولة' : 'Country' }}</label>
+                            <select id="country" class="form-control">
+                                <option value="">{{ $lang == 'ar' ? 'اختر الدولة' : 'Select Country' }}</option>
+                                @foreach ($countries as $country)
+                                    <option value="{{ $country->id }}">
+                                        {{ $lang == 'ar' ? $country->name_ar : $country->name_en }}
+                                    </option>
                                 @endforeach
                             </select>
-                        @error('departments') <span class="error text-danger">{{ $message }}</span> @enderror
+                        </div>
 
-                    </div>
-                    <div class="form-group">
-                        <label for="Governement" class="m-2">{{ $lang == 'en' ? 'Governement'  : ' المحافظة' }}</label>
-                        <select name="governement" id="tags" class=" w-100 " >
-                            {{-- <option value="">{{ __('department.select_product') }}</option> --}}
-                            @foreach ($govers as $gover )
-                            {{-- <input class="form-control" name="department_type[]" type="hidden"  value="{{ old('email') }}"> --}}
-                                <option value="{{ $gover ->id }}" >
-                                    {{ ($lang == 'ar') ? $gover->name_ar : $gover->name_en }}
-                                </option>
-                            @endforeach
-                        </select>
-                        @error('departments') <span class="error text-danger">{{ $message }}</span> @enderror
+                        <div class="mb-3">
+                            <label for="governement">{{ $lang == 'ar' ? 'المحافظة' : 'Governorate' }}</label>
+                            <select id="governement" class="form-control">
+                                <option value="">{{ $lang == 'ar' ? 'اختر المحافظة' : 'Select Governorate' }}</option>
+                            </select>
+                        </div>
+                    </form>
 
-                    </div>
+
+
+
+
+
                     <div class="form-group">
                         <label for="" class="m-2">{{ __('auth.password') }}</label>
                         <input class="form-control" name="password" type="password" placeholder="{{ __('auth.password') }}" value="{{ old('password') }}">
@@ -136,6 +142,38 @@
         tokenSeparators: [',', ' ']
     })
 </script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        fetch('/get-countries')
+            .then(response => response.json())
+            .then(data => {
+                const countrySelect = document.getElementById('country');
+                const governementSelect = document.getElementById('governement');
 
+                countrySelect.innerHTML = '<option value="">اختر الدولة</option>';
+
+                data.forEach(country => {
+                    const option = document.createElement('option');
+                    option.value = country.id;
+                    option.textContent = country.name;
+                    countrySelect.appendChild(option);
+                });
+
+                countrySelect.addEventListener('change', function () {
+                    const selected = data.find(c => c.id == this.value);
+                    governementSelect.innerHTML = '<option value="">اختر المحافظة</option>';
+
+                    if (selected && selected.governements.length > 0) {
+                        selected.governements.forEach(gov => {
+                            const option = document.createElement('option');
+                            option.value = gov.id;
+                            option.textContent = gov.name;
+                            governementSelect.appendChild(option);
+                        });
+                    }
+                });
+            });
+    });
+</script>
 
 @endsection

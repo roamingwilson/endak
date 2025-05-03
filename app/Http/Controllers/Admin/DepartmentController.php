@@ -89,33 +89,40 @@ if ($modelName) {
     }
 
     public function edit($id){
-        $this->authorize('Update_Department');
+        // $this->authorize('Update_Department');
 
-        $department = Department::find($id);
+        // $department = Department::find($id);
 
-        $data['title'] = __('category_edit');
-        $data['department'] = $department;
-        $data['departments'] = Department::whereStep(0)->with('sub_Departments')->orderBy('id', 'asc')->where('id', '!=', $id)->get();
-
-        if ( ! $department){
-            abort(404);
-        }
-
-        return view('admin.departments.department_edit', $data);
-    }
-    public function show($slug){
-        $this->authorize('Show_Department');
-
-        $department = Department::whereSlug($slug)->first();
-
+        // $data['title'] = __('category_edit');
         // $data['department'] = $department;
-        $departments = Department::whereStep(0)->with('sub_Departments')->orderBy('id', 'asc')->where('slug', '!=', $slug)->get();
-        // dd($departments[1]->posts);
-        if ( ! $department){
-            abort(404);
-        }
+        // $data['departments'] = Department::whereStep(0)->with('sub_Departments')->orderBy('id', 'asc')->where('id', '!=', $id)->get();
 
-        return view('admin.departments.department_show', compact('department' , 'departments'));
+        // if ( ! $department){
+        //     abort(404);
+        // }
+
+        // return view('admin.departments.department_edit', $data);
+        $department = Department::find($id);
+        return view('admin.departments.edit', compact('department'));
+    }
+    // public function show($slug){
+    //     $this->authorize('Show_Department');
+
+    //     $department = Department::whereSlug($slug)->first();
+
+    //     // $data['department'] = $department;
+    //     $departments = Department::whereStep(0)->with('sub_Departments')->orderBy('id', 'asc')->where('slug', '!=', $slug)->get();
+    //     // dd($departments[1]->posts);
+    //     if ( ! $department){
+    //         abort(404);
+    //     }
+
+    //     return view('admin.departments.department_show', compact('department' , 'departments'));
+    // }
+    public function show($id)
+    {
+        $department = Department::find($id);
+        return view('admin.departments.show',compact('department'));
     }
 
     public function update(Request $request, $id){

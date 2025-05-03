@@ -19,6 +19,7 @@ class ProductCartController extends Controller
 
     public function add(Request $request, $productId)
     {
+
         $cart = ProductCart::firstOrCreate(
             ['user_id' => auth()->id(), 'inds_product_id' => $productId],
             ['quantity' => 0]
@@ -27,6 +28,8 @@ class ProductCartController extends Controller
         $cart->increment('quantity');
         return back()->with('success', 'تم إضافة المنتج للسلة');
     }
+
+
 
     public function update(Request $request, $id)
     {
@@ -68,6 +71,7 @@ class ProductCartController extends Controller
             } catch (\Exception $e) {
                 return back()->with('error', 'فشل الدفع: ' . $e->getMessage());
             }
+
         }
 
         // إنشاء الطلب بعد الدفع أو الكاش
@@ -90,5 +94,8 @@ class ProductCartController extends Controller
         ProductCart::where('user_id', auth()->id())->delete();
 
         return redirect()->route('home')->with('success', 'تم إنشاء الطلب بنجاح');
+
+
     }
-    }
+
+}

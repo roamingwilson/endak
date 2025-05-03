@@ -1,6 +1,6 @@
 <?php
 
-
+use App\Http\Controllers\Api\LocationController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PageController;
@@ -32,6 +32,7 @@ use App\Http\Controllers\Furniture\FurnitureTransportationsController;
 use App\Http\Controllers\Furniture\OrderFurnitureTransportationsController;
 use App\Http\Controllers\GeneralOrderController;
 use App\Http\Controllers\GovernementsController;
+use App\Http\Controllers\IndustryController;
 use App\Http\Controllers\notificationController;
 use App\Http\Controllers\ProductCartController;
 use App\Http\Controllers\ProductOrderController;
@@ -543,3 +544,9 @@ Route::delete('general_comments/{id}', [GeneralCommentsController::class, 'destr
 
     route::get('add/gover', [GovernementsController::class, 'create'])->name('add_gover');
     route::post('gover', [GovernementsController::class, 'store'])->name('store_gover');
+
+    Route::get('/products', [IndustryController::class, 'index'])->name('indsustry.index');
+    Route::get('/category', [IndustryController::class, 'show_cat'])->name('indsustry.cat');
+    Route::get('/subcat', [IndustryController::class, 'show_sub_cat'])->name('indsustry.subcat');
+    Route::get('/showproduct', [IndustryController::class, 'show_product'])->name('indsustry.pro');
+    Route::get('/get-countries', [LocationController::class, 'getCountriesWithGovernements']);

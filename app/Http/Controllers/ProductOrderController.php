@@ -26,10 +26,23 @@ class ProductOrderController extends Controller
     {
         $orders = ProductOrder::with('items.product', 'user')
             ->latest()
-            ->get();
+            ->paginate(10);
         // dd($orders);
         return view('admin.main_department.industry.admin_order', compact('orders'));
     }
+    public function bulkAction(Request $request)
+{
+    $ids = $request->bulk_ids;
+    if ($request->bulk_action_btn == 'delete') {
+        ProductOrder::whereIn('id', $ids)->delete();
+        return back()->with('success', 'تم حذف الطلبات المحددة');
+    } elseif ($request->bulk_action_btn == 'update_status') {
+        ProductOrder::whereIn('id', $ids)->update(['status' => $request->status]);
+        return back()->with('success', 'تم تحديث حالة الطلبات المحددة');
+    }
+
+    return back()->with('info', 'لم يتم تنفيذ أي إجراء.');
+}
 
     // عرض تفاصيل الطلب للإدارة
     public function adminShow($id)

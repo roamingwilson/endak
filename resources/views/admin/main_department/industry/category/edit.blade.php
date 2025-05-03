@@ -1,20 +1,20 @@
 @extends('layouts.dashboard.dashboard')
 
 @section('title')
-    <?php $lang = config('app.locale'); ?>
+<?php $lang = config('app.locale'); ?>
 
-    {{ ($lang == 'ar')? 'معدات ثقيلة' : "Heavy equipment" }}
+    {{ ($lang == 'ar')? 'صناعة البلاستيك' : "Industry" }}
 
     @endsection
 
 @section('page_name')
-{{ ($lang == 'ar')? 'معدات ثقيلة' : "Heavy equipment" }}
+{{ ($lang == 'ar')? 'تعديل القسم' : "Category" }}
 
 @endsection
 
 @section('content')
 <div class="container mt-5">
-    <h2 class="mb-4">تعديل القسم: {{ $category->name }}</h2>
+    <h2 class="mb-4">  {{ ($lang == 'ar')? 'تعديل القسم' : "Category" }} : {{ $category->name }}</h2>
 
     {{-- رسائل الأخطاء --}}
     @if($errors->any())
@@ -35,10 +35,10 @@
         <input type="hidden" name="industry_id" value="{{ $industry->id }}">
              @endif
         <div class="mb-3">
-            <label for="name" class="form-label">اسم القسم</label>
+            <label for="name" class="form-label"> {{ ($lang == 'ar')? 'اسم القسم' : "Category name" }}  </label>
             <input type="text" name="name" id="name"
                    class="form-control @error('name') is-invalid @enderror"
-                   value="{{ old('name', $category->name) }}" placeholder="مثال: خامات بلاستيك">
+                   value="{{ old('name', $category->name) }}" placeholder=": خامات بلاستيك">
 
             @error('name')
                 <div class="invalid-feedback">{{ $message }}</div>
@@ -47,8 +47,8 @@
 
 
 
-        <button type="submit" class="btn btn-primary">حفظ التعديلات</button>
-        <a href="{{ route('indscategories.index') }}" class="btn btn-secondary">إلغاء</a>
+        <button type="submit" class="btn btn-primary">       </button>
+
     </form>
 </div>
 @endsection

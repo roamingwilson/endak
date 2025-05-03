@@ -41,7 +41,7 @@
     <td>
         <a href="{{ route('admin.departments.edit', $department->id) }}" class="btn btn-primary btn-sm"><i
                 class="la la-pencil"></i> </a>
-        <a href="{{ route('admin.departments.show', $department->slug) }}" class="btn btn-outline-info btn-sm"
+        <a href="{{ route('admin.department.show', $department->id) }}" class="btn btn-outline-info btn-sm"
             target="_blank"><i class="la la-eye"></i> </a>
         <a href="{{ route('admin.departments.delete', $department->slug) }}" class="btn btn-danger btn-sm"
             title="@lang('general.delete')"><i class="la la-trash-o"></i> </a>

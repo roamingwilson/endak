@@ -12,6 +12,7 @@ class indsCategoryController extends Controller
     public function index() {
         $categories = indsCategory::latest()->get();
         $industry = industries::first();
+
         // dd($industry);
         return view('admin.main_department.industry.category.index', compact('categories','industry'));
     }
@@ -43,7 +44,7 @@ class indsCategoryController extends Controller
         ]);
 
         $category->update($request->all());
-        return view('admin.main_department.industry.category.index')->with('success', 'تم تعديل القسم بنجاح');
+        return view('admin.main_department.industry.category.show')->with('success', 'تم تعديل القسم بنجاح');
     }
 
     public function destroy($id) {

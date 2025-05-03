@@ -13,7 +13,8 @@ class Country extends Model
         'name_en'
     ];
 
-    public function governements(){
-        $this->hasMany(Governements::class);
+    public function governements()
+    {
+        return $this->hasMany(Governements::class,'country_id');
     }
 }

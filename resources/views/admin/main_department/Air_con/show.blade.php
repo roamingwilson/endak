@@ -40,7 +40,7 @@ $lang = config('app.locale');
                     <div class="row">
                         @forelse ($services as $service)
 
-                            @if (auth()->user()->governement== $service->user->governement)
+                            @if (auth()->user()->country == $service->user->country && auth()->user()->governement== $service->user->governement)
                                 <div class="col-md-4">
                                     <div class="card">
                                         <div class="position-relative">

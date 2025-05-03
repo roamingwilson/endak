@@ -97,7 +97,9 @@
                         <p class="mt-2 small fw-bold">{{ $product->price }} ريال</p>
 
 
-                        {{-- إضافة للسلة --}}
+                        @if (auth()->check())
+
+
                         <form action="{{ route('pro_cart.add', $product->id) }}" method="POST">
                             @csrf
                             <div class="d-flex align-items-center mt-2">
@@ -105,7 +107,16 @@
                                 <button type="submit" class="btn btn-warning btn-sm ml-2"> {{ ($lang == 'ar')? ' إضافة إلى السلة' : 'Add to cart' }}</button>
                             </div>
                         </form>
+                        @else
+                        <form action="{{ route('register-page') }}" method="get">
+                            @csrf
+                            <div class="d-flex align-items-center mt-2">
+                                <input type="number" name="quantity" value="1" min="1" class="form-control w-50" style="max-width: 100px;">
+                                <button type="submit" class="btn btn-warning btn-sm ml-2"> {{ ($lang == 'ar')? ' إضافة إلى السلة' : 'Add to cart' }}</button>
+                            </div>
+                        </form>
 
+                                @endif
                     </div>
                 </div>
             </div>
