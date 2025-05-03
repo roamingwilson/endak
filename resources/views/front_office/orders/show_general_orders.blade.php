@@ -131,15 +131,15 @@ h2 {
     <div class="card shadow border-0 rounded p-4">
         {{-- <h4>{{ ($lang == 'ar') ? 'معلومات الطلب' : 'Order Info' }}</h4> --}}
         <ul class="list-group list-group-flush">
-            <h4>{{ $lang == 'ar' ? 'ا  معلومات الطلب  ' : 'Order Info' }}</h4>
+            <h4>{{ $lang == 'ar' ? '  معلومات الطلب  ' : 'Order Info' }}</h4>
 
             <li class="list-group-item"><strong>{{ ($lang == 'ar') ? 'رقم الطلب' : 'Order  Number' }}:</strong> {{ $order->id }}</li>
 
-            <li class="list-group-item"><strong>{{ $lang == 'ar' ? 'ا  الحالة  ' : 'status' }}:</strong> {{ ($lang == 'ar') ? 'مكتمل' : $order->status }}</li>
+            <li class="list-group-item"><strong>{{ $lang == 'ar' ? '  الحالة  ' : 'status' }}:</strong> {{ ($lang == 'ar') ? 'مكتمل' : $order->status }}</li>
 
 
 
-            <li class="list-group-item"><strong>{{ $lang == 'ar' ? 'ا  المزود  ' : 'Provider' }}:</strong> {{ $order->user->first_name ?? '' }} {{ $order->user->last_name ?? '' }}</li>
+            <li class="list-group-item"><strong>{{ $lang == 'ar' ? '  المزود  ' : 'Provider' }}:</strong> {{ $order->user->first_name ?? '' }} {{ $order->user->last_name ?? '' }}</li>
         </ul>
 
 
@@ -166,7 +166,7 @@ $rating = App\Models\Rating::where('order_id' , $order->id)->first();
                                 @if ($order->status == 'pending')
                                     <a href="{{ route('accept_project', $order->id) }}"
                                         class="btn btn-primary">{{ ($lang == 'ar') ? 'أستلام المشروع' : 'Confirm Project' }}</a>
-                                @elseif($order->status == 'completed' && !$rating )
+                                @elseif($order->status == 'completed'  )
                                     <a href="{{ route('web.add_rate', $order->id) }}"
                                         class="btn btn-primary">{{ ($lang == 'ar') ? 'تقييم العمل' : 'Rate Work' }}</a>
                                 @endif

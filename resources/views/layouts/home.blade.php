@@ -135,9 +135,7 @@
             @yield('content')
             @php  $lang = config('app.locale'); @endphp
             <nav class="bottom-nav">
-                <a href="javascript:history.back()">
-                    <i class="fas fa-arrow-left"></i>{{ ($lang =='ar') ? 'رجوع' : 'Go Back' }}
-                </a>
+
                 <a href="{{ route('home') }}"><i class="fas fa-home"></i> {{ ($lang =='ar') ? 'الرئيسية' : 'Home' }}</a>
                 @auth
                 <a href="{{route('web.profile',auth()->id())}}">
@@ -158,9 +156,7 @@
         @include('layouts.front_office.footer')
         @php  $lang = config('app.locale'); @endphp
         <nav class="bottom-nav">
-            <a href="javascript:history.back()">
-                <i class="fas fa-arrow-left"></i>{{ ($lang == 'ar') ? 'رجوع' : 'Go Back' }}
-            </a>
+
             <a href="{{ route('home') }}"><i class="fas fa-home"></i> {{ ($lang =='ar') ? 'الرئيسية' : 'Home' }}</a>
             @auth
             <a href="{{route('web.profile',auth()->id())}}">

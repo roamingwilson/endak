@@ -311,7 +311,7 @@ Route::group(['prefix' => 'air_con/service_provider' ] , function(){
     Route::post('/add_offer' , [ApiAirconController::class , 'service_provider_add_offer']);
 });
 //heavy equip
-Route::group(['prefix' => 'heavy_equip' ] , function(){
+Route::group(['prefix' => 'air_con' ] , function(){
     Route::get('/' , [ApiAirconController::class , 'index']);
     Route::post('/store_service' , [ApiAirconController::class , 'storeService']);
     Route::post('/accept_offer' , [ApiAirconController::class , 'accept_offer']);

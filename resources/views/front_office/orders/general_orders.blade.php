@@ -91,7 +91,7 @@
             @foreach($orders as $order)
 
 
-            @if ($orders && $order->status !== 'completed')
+            @if ($orders)
 
 
                 <div class="col-md-6">

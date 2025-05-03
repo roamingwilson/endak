@@ -49,6 +49,6 @@ class indSubCategoryController extends Controller
     public function destroy($id) {
         $subcategory = indSubCategory::findOrFail($id);
         $subcategory->delete();
-        return redirect()->route('subcategories.index')->with('success', 'تم الحذف بنجاح');
+        return redirect()->back()->with('success', 'تم الحذف بنجاح');
     }
 }

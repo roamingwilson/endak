@@ -24,8 +24,12 @@
                                 <td>{{ $loop->iteration }}</td>
                                 <td>{{ $cat->name }}</td>
                                 <td>
-                                    <a href="{{route('indscategories.edit',$cat->id)}}" class="btn btn-sm btn-info"> {{ ($lang == 'ar')? 'تعديل ' : " Edit" }}</a>
-                                    <a href="{{route('indscategories.destroy',$cat->id)}}" class="btn btn-sm btn-danger"> {{ ($lang == 'ar')? 'حذف ' : " Delete" }}</a>
+                                    <a href="{{ route('indscategories.edit', $cat->id) }}" class="btn btn-sm btn-info">{{ $lang == 'ar' ? 'تعديل' : 'Edit' }}</a>
+                                    <form action="{{ route('indscategories.destroy', $cat->id) }}" method="POST" style="display:inline-block;" class="delete-form">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-sm btn-danger delete-btn">{{ $lang == 'ar' ? 'حذف' : 'Delete' }}</button>
+                                    </form>
                                 </td>
                             </tr>
                         @endforeach
