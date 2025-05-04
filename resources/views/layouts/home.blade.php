@@ -52,6 +52,46 @@
     <link href="{{ asset('home/assets/css/icons.css') }}" rel="stylesheet">
     @yield('style')
     <style>
+
+    @media (max-width: 768px) {
+    .card {
+        margin-bottom: 20px;
+    }
+    .card-body {
+        padding: 10px;
+    }
+    .col-md-4 {
+
+        flex: 1 0 100%;
+    }
+    .form-control {
+        width: 100%;
+    }
+    .profile-card {
+        width: 100%;
+    }
+    .profile-cover-container {
+        padding: 20px 0;
+    }
+    .form-group {
+        margin-bottom: 15px;
+    }
+    img.card-img-top {
+        width: 100%;
+        height: auto;
+    }
+    .text-center {
+        text-align: center;
+    }
+}
+
+
+@media (max-width: 1024px) {
+    .container {
+        padding: 0 15px;
+    }
+}
+
         a{
             text-decoration: none;
             color: black
