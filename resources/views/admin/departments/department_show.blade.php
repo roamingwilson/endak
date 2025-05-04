@@ -2,7 +2,7 @@
 
 @extends('layouts.dashboard.dashboard')
 
-<?php $lang = config('app.locale'); ?>
+
 @section('content')
     <div class="content container-fluid">
         <!-- Page Title -->
