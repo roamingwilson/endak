@@ -70,7 +70,6 @@ Route::middleware('auth')->group(function () {
     // مسار لتعيين النوتيفيكاشن كـ "مقروء"
     Route::get('/notification/{notificationId}/read', [NotificationController::class, 'markAsRead'])->name('notification.read');
     Route::get('/notifications', [notificationController::class, 'index'])->name('notifications.index');
-    Route::get('/notifications/{notificationId}/read', [NotificationController::class, 'markAsRead'])->name('notification.read');
 
 });
 
@@ -150,11 +149,11 @@ Route::post('/order/items' , [OrderUserController::class , 'product_order'])->na
 // furniture_transportations
 Route::group(['prefix' => "furniture_transportations"], function(){
     Route::get('/show' , [FurnitureTransportationsController::class , 'show'])->name('furniture_transportations_show');
-    Route::post('/add_service' , [FurnitureTransportationsController::class , 'store_service'])->name('furniture_transportations_store_service');
+    // Route::post('/add_service' , [FurnitureTransportationsController::class , 'store_service'])->name('furniture_transportations_store_service');
     Route::get('/',[FurnitureTransportationsController::class , 'index'])->name('main_furniture_transportations');
     Route::get('/service/{id}',[FurnitureTransportationsController::class , 'show_my_service'])->name('main_furniture_transportations_show_my_service');
-    Route::get('/edit/{id}',[FurnitureTransportationsController::class , 'edit'])->name('main_furniture_transportations.edit');
-    Route::patch('/update/{id}',[FurnitureTransportationsController::class , 'update'])->name('main_furniture_transportations.update');
+    // Route::get('/edit/{id}',[FurnitureTransportationsController::class , 'edit'])->name('main_furniture_transportations.edit');
+    // Route::patch('/update/{id}',[FurnitureTransportationsController::class , 'update'])->name('main_furniture_transportations.update');
     Route::post('/accept_offer' , [OrderFurnitureTransportationsController::class , 'store'])->name('accept_offer_furniture');
     Route::get('/order' , [OrderFurnitureTransportationsController::class , 'show_orders'])->name('show_orders_furniture');
     Route::get('/order/{id}' , [OrderFurnitureTransportationsController::class , 'show'])->name('show_order_furniture');

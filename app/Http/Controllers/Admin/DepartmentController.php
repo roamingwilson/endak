@@ -17,6 +17,7 @@ class DepartmentController extends Controller
         $this->authorize('Show_All_Departments');
         $data['title'] = __('department');
         $data['departments'] = Department::with('sub_Departments', 'sub_Departments.sub_Departments')->orderBy('id', 'desc')->paginate(2);
+        // dd($data);
 
         return view('admin.departments.departments', $data);
     }
@@ -170,10 +171,10 @@ if ($modelName) {
         return redirect()->route('admin.departments')->with('success' , "Updated Successfully");
 
     }
-    public function destroy($slug)
+    public function destroy($id)
     {
 
-        $department = Department::where('slug',$slug)->first()->with('sub_Departments', 'sub_Departments.sub_Departments');
+        $department = Department::findOrFail($id);
         $department->delete();
 
         return redirect()->route('admin.departments')->with('success' , "Deleted Successfully");

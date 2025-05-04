@@ -359,14 +359,14 @@ Route::prefix('services')->group(function () {
 
 
 //general comment
-Route::post('orders', [ApiGeneralOrderController::class, 'store'])->name('general_orders.store');
+Route::post('orders', [ApiGeneralOrderController::class, 'store']);
 
-Route::get('orders/{order}', [ApiGeneralOrderController::class, 'show'])->name('general_orders.show');
-Route::delete('/orders/{id}', [ApiGeneralOrderController::class, 'destroy'])->name('general_orders.destroy');
+Route::get('orders/{order}', [ApiGeneralOrderController::class, 'show']);
+Route::delete('/orders/{id}', [ApiGeneralOrderController::class, 'destroy']);
 
-Route::get('orders', [ApiGeneralOrderController::class, 'index'])->name('general_orders.customer.index');
-Route::get('/accept_project/{id}' , function($id) {
+Route::get('orders', [ApiGeneralOrderController::class, 'index']);
+Route::get('/accept_project/{id}', function ($id) {
     GeneralOrder::find($id)->update(['status' => "completed"]);
     return redirect()->back();
-})->name('accept_project');
+});
 Route::get('/countries-governements', [App\Http\Controllers\Api\LocationController::class, 'getCountriesWithGovernements']);

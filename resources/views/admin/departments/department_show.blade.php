@@ -2,7 +2,7 @@
 
 @extends('layouts.dashboard.dashboard')
 
-
+<?php $lang = config('app.locale'); ?>
 @section('content')
     <div class="content container-fluid">
         <!-- Page Title -->
@@ -45,24 +45,24 @@
                             <td class="width30">{{ __("products.products") }}</td>
                             <td>
                                 @foreach ($department->products as $product)
-                                    
+
                                 <li>{{  $product->name_ar }}</li>
                                 @endforeach
                             </td>
-                        </tr>      
+                        </tr>
                         @endif
-                     
+
                         <tr>
                             <td class="width30">{{ __("department.image") }}</td>
                             <td>
                                 <div class="image" >
                                     <img width="100" height="100" src="{{ $department->image_url ?? "" }}" alt="Not" class="custom_img">
-                                    
+
                                 </div>
                             </td>
                         </tr>
 
-                  
+
 
                     </thead>
                 </table>

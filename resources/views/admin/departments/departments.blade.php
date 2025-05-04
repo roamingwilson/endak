@@ -3,6 +3,7 @@
 @extends('layouts.dashboard.dashboard')
 @section('title')
     {{ __('department.departments') }}
+    <?php $lang = config('app.locale'); ?>
 @endsection
 @section('page-header-right')
     <button name="bulk_action_btn" type="button" class=" ml-1 btn btn-primary btn-xl bulk_action_btn" value="1">
@@ -19,7 +20,7 @@
 @section('content')
 
  {{-- <button name="bulk_action_btn" type="button" class=" ml-1 btn btn-primary btn-xl bulk_action_btn" value="1">
-   <img src='{{ url("uploads/images/top-menu.png") }}'/>  
+   <img src='{{ url("uploads/images/top-menu.png") }}'/>
     {{__('mark_as_top')}}
 </button>
 <button name="bulk_action_btn" type="button" class=" ml-1 btn btn-warning btn-xl bulk_action_btn" value="0">
@@ -53,6 +54,7 @@
 
                         <tbody>
                         @foreach($departments as $department)
+                        {{-- @dd($department) --}}
                             @include('admin.departments.department_loop', ['department' => $department])
 
                             {{-- @foreach($department->sub_Departments as $sub_Department)
@@ -103,7 +105,7 @@
 
 @endsection
 
-    {{-- 
+    {{--
             // $(document).on('click', '.btn_delete', function(e){
         //     e.preventDefault();
 
@@ -185,7 +187,7 @@
             } else {
                 return;
             }
-            
+
         });
     </script>
 @endsection
