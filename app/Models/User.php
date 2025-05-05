@@ -94,81 +94,11 @@ class User extends Authenticatable
     {
         return $this->hasMany(Order::class, 'customer_id', 'id');
     }
+
+
     public function rates()
     {
-        $orders = $this->orders()
-            ->where('status', 'complete')
-            ->where('admin_status', 'active')
-            ->get();
-
-        $otherOrder1 = FurnitureTransportationOrder::where('service_provider_id' , $this->id)->where('status', 'completed')->get();
-        $otherOrder2 = FollowCameraOrder::where('service_provider_id' , $this->id)->where('status', 'completed')->get();
-        $otherOrder3 = PartyPreparationOrder::where('service_provider_id' , $this->id)->where('status', 'completed')->get();
-        $otherOrder4 = GardenOrder::where('service_provider_id' , $this->id)->where('status', 'completed')->get();
-        $otherOrder5 = CounterInsectsOrder::where('service_provider_id' , $this->id)->where('status', 'completed')->get();
-        $otherOrder6 = CleaningOrder::where('service_provider_id' , $this->id)->where('status', 'completed')->get();
-        $otherOrder7 = TeacherOrder::where('service_provider_id' , $this->id)->where('status', 'completed')->get();
-        $otherOrder8 = FamilyOrder::where('service_provider_id' , $this->id)->where('status', 'completed')->get();
-        $otherOrder9 = WorkerOrder::where('service_provider_id' , $this->id)->where('status', 'completed')->get();
-        $otherOrder10 = PublicGeOrder::where('service_provider_id' , $this->id)->where('status', 'completed')->get();
-        $otherOrder11 = AdsOrder::where('service_provider_id' , $this->id)->where('status', 'completed')->get();
-        $otherOrder12 = WaterOrder::where('service_provider_id' , $this->id)->where('status', 'completed')->get();
-        $otherOrder13 = CarWaterOrder::where('service_provider_id' , $this->id)->where('status', 'completed')->get();
-        $otherOrder14 = BigCarOrder::where('service_provider_id' , $this->id)->where('status', 'completed')->get();
-        $otherOrder15 = ContractingOrder::where('service_provider_id' , $this->id)->where('status', 'completed')->get();
-        $otherOrder16= HeavyEquipmentOrder::where('service_provider_id' , $this->id)->where('status', 'completed')->get();
-        $otherOrder17= AirConditionOrder::where('service_provider_id' , $this->id)->where('status', 'completed')->get();
-        $otherOrder18= SparePartOrder::where('service_provider_id' , $this->id)->where('status', 'completed')->get();
-        $otherOrder19= VanTruckOrder::where('service_provider_id' , $this->id)->where('status', 'completed')->get();
-
-        $mergedOrders = $orders->merge($otherOrder1)
-        ->merge($otherOrder2)
-        ->merge($otherOrder3)
-        ->merge($otherOrder4)
-        ->merge($otherOrder5)
-        ->merge($otherOrder6)
-        ->merge($otherOrder7)
-        ->merge($otherOrder8)
-        ->merge($otherOrder9)
-        ->merge($otherOrder10)
-        ->merge($otherOrder11)
-        ->merge($otherOrder12)
-        ->merge($otherOrder13)
-        ->merge($otherOrder14)
-        ->merge($otherOrder15)
-        ->merge($otherOrder16)
-        ->merge($otherOrder17)
-        ->merge($otherOrder18)
-        ->merge($otherOrder19)
-        ;
-        $rate = 0;
-
-
-        if (!empty($mergedOrders)) {
-            $rates = 0;
-            $count = 0;
-
-            foreach ($mergedOrders as $order) {
-                $orderRate = Rating::where('order_id' , $order->id)->first();
-                if(isset($orderRate->rate)){
-                    if (!empty($orderRate->rate) and $orderRate->rate > 0) {
-                        $count += 1;
-                        $rates += $orderRate->rate;
-                    }
-                }
-
-            }
-
-            if ($rates > 0) {
-                if ($count < 1) {
-                    $count = 1;
-                }
-
-                $rate = number_format($rates / $count, 2);
-            }
-        }
-
-        return $rate;
+        return round($this->rate()->avg('rate')) ?? 0;
     }
 
 
@@ -194,6 +124,11 @@ public function serv(){
 public function prOrder(){
         return $this->hasMany(ProductOrder::class , 'user_id');
 }
+public function favoriteDepartments()
+{
+    return $this->belongsToMany(Department::class, 'favorites')->withTimestamps();
+}
+
 
 
 

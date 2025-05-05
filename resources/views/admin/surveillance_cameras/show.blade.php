@@ -10,6 +10,7 @@ $lang = config('app.locale');
 
 @endsection
 @section('content')
+
 @php
 
 
@@ -22,6 +23,7 @@ $services = Services::where('department_id', $departments->id)->latest()->pagina
 @endphp
 
     <div class="main-content app-content">
+
         <section>
             <div class="section banner-4 banner-section">
                 <div class="container">
@@ -29,12 +31,25 @@ $services = Services::where('department_id', $departments->id)->latest()->pagina
                         <div class="col-md-12 text-center">
                             <div class="">
                                 <p class="mb-3 content-1 h5 fs-1">{{ ($lang == 'ar')? 'قسم انظمة و كاميرات مراقبة ' : 'Systems and Surveillance Cameras' }}
+                                    <form method="POST" action="{{ route('favorites.toggle', $departments->id) }}" class="d-inline">
+                                        @csrf
+                                        <button type="submit" class="btn btn-sm {{ auth()->user()->favoriteDepartments->contains($departments->id) ? 'btn-danger' : 'btn-outline-primary' }}">
+                                            @if(auth()->user()->favoriteDepartments->contains($departments->id))
+                                                ❤️
+                                            @else
+                                                🤍
+                                            @endif
+                                        </button>
+                                    </form>
                                 </p>
                             </div>
                         </div>
                     </div>
                 </div>
+
+
             </div>
+
         </section>
     </div>
     @if (auth()->check() && auth()->user()->role_id == 3)

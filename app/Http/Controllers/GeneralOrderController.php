@@ -75,6 +75,16 @@ class GeneralOrderController extends Controller
 
         return view('front_office.orders.general_orders', compact('orders','user','comments'));
     }
+    public function previous(){
+        // dd('ok');
+        $user = auth()->user();
+        $user_id = $user->id;
+        $orders = GeneralOrder::with('service')->where('user_id', $user_id)->latest()->paginate(10);
+
+
+        $comments = GeneralComments::where('customer_id', $user_id);
+        return view('front_office.orders.complete_general_orders', compact('orders', 'user', 'comments'));
+    }
     public function show($id)
     {
         // Fetch the order by its ID

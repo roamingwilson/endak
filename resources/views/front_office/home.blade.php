@@ -98,6 +98,7 @@
         @if ($department->name_en == 'plastic')
         <div class="col-4 col-md-2 text-center">
             <a href="{{route('indsproducts.index')}}" class="text-decoration-none text-dark">
+
                 <div class="card shadow-sm p-2" style="background-color: #f5f5f5; border-radius: 12px;">
                     <img src="{{ asset('storage/' . $department->image) }}" alt="{{ $department->name }}" style="width: 60px; height: 60px; object-fit: contain; margin: auto;">
                     <div class="mt-2 small fw-bold">{{ $lang == 'ar' ? $department->name_ar : $department->name_en }}</div>

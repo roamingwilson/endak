@@ -92,14 +92,15 @@ $lang = config('app.locale');
                         @csrf
                         <input type="hidden" name="user_id" value="{{ $user->id }}">
                         <input type="hidden" name="spare_part_id" value="{{ $main->id }}">
+                        <input type="hidden" name="brand" value="{{ $main->name_en }}">
 
                         <div class="form-group mt-2">
-                            <label for="name" class="mb-1">{{ $lang == 'ar' ? 'الفئة' : 'brand' }} : </label>
-                            <input type="text" class="form-control" name="brand">
+                            <label for="name" class="mb-1">{{ $lang == 'ar' ? 'الفئة' : 'Model' }} : </label>
+                            <input type="text" class="form-control" name="model">
                         </div>
                         <div class="form-group mt-2">
                             <label for="name" class="mb-1">{{ $lang == 'ar' ? 'سنة الصنع' : 'year made' }} : </label>
-                            <input type="text" class="form-control" name="year_made">
+                            <input type="number" class="form-control" name="year_made">
                         </div>
                         <div class="form-group mt-2">
                             <label for="name" class="mb-1">{{ $lang == 'ar' ? 'رقم الهيكل' : 'part number' }} : </label>
@@ -169,13 +170,17 @@ $lang = config('app.locale');
                 <form action="{{ route('register-page') }}" method="get" enctype="multipart/form-data"
                     style="width:600px;margin-top:10px" class="profile-card rounded-lg shadow-xs bg-white p-15 p-md-30">
                     @csrf
+                    <input type="hidden" name="user_id" value="{{ $user->id }}">
+                    <input type="hidden" name="spare_part_id" value="{{ $main->id }}">
+                    <input type="hidden" name="brand" value="{{ $main->name_en }}">
+
                     <div class="form-group mt-2">
                         <label for="name" class="mb-1">{{ $lang == 'ar' ? 'الفئة' : 'brand' }} : </label>
-                        <input type="text" class="form-control" name="brand">
+                        <input type="text" class="form-control" name="model">
                     </div>
                     <div class="form-group mt-2">
                         <label for="name" class="mb-1">{{ $lang == 'ar' ? 'سنة الصنع' : 'year made' }} : </label>
-                        <input type="text" class="form-control" name="year_made">
+                        <input type="number" class="form-control" name="year_made">
                     </div>
                     <div class="form-group mt-2">
                         <label for="name" class="mb-1">{{ $lang == 'ar' ? 'رقم الهيكل' : 'part number' }} : </label>
@@ -223,9 +228,8 @@ $lang = config('app.locale');
                             :</label>
                         <textarea class="form-control" name="notes" cols="30" rows="5"></textarea>
                     </div>
-                    <hr>
                     <div class="form-group mt-2" style="text-align: right;margin-right:10px">
-                        <button class="btn mt-2 form-control"
+                        <button class="btn mt-2 form-control" type="submit"
                             style="background-color: #fdca3d">{{ $lang == 'ar' ? 'ارسال' : 'Send' }}</button>
                     </div>
                 </form>

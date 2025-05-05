@@ -41,7 +41,7 @@ $services = Services::where('department_id', $departments->id)->latest()->pagina
                     <div class="col-xl-12">
                         <div class="row">
                             @forelse ($services as $service)
-
+                            {{-- @dd($service) --}}
                             @if (auth()->user()->governement== $service->user->governement)
                                 <div class="col-md-4">
                                     <div class="card">
@@ -97,7 +97,7 @@ $services = Services::where('department_id', $departments->id)->latest()->pagina
 
                         <div class="form-group mt-2">
                             <label for="name" class="mb-1 mt-2">{{ $lang == 'ar' ? 'نوع الاكل' : 'Food Type' }} : </label>
-                            <input type="text" class="form-control" name="type">
+                            <input type="text" class="form-control" name="model">
                             <label for="name" class="mb-1">{{ $lang == 'ar' ? 'الوقت' : 'Time' }} : </label>
                             <input type="time" class="form-control" name="time">
                             <label for="name" class="mb-1">{{ $lang == 'ar' ? 'التاريخ' : 'Date' }} : </label>

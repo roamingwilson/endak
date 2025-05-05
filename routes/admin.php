@@ -84,10 +84,11 @@ Route::group(['prefix' => 'categories'], function () {
     Route::get('/edit/{id}' , [CategoryController::class , 'edit'])->name('admin.department.edit');
     Route::get('/show/{id}' , [DepartmentController::class , 'show'])->name('admin.department.show');
     Route::post('/edit/{category}' , [CategoryController::class , 'update'])->name('admin.categories.update');
-    Route::post('update_top_categories', 'CategoriesController@update_top_categories')->name('update_top_categories');
+    // Route::post('update_top_categories', 'CategoriesController@update_top_categories')->name('update_top_categories');
     Route::get('/delete/{slug}', [CategoryController::class ,'destroy'])->name('admin.categories.delete');
 
 });
+
 
 
 // Pages
@@ -112,7 +113,7 @@ Route::group(['prefix' => 'departments'], function () {
     Route::get('/show/{slug}' , [DepartmentController::class , 'show'])->name('admin.departments.show');
     Route::get('/edit/{category}' , [DepartmentController::class , 'edit'])->name('admin.departments.edit');
     Route::put('/edit/{id}' , [DepartmentController::class , 'update'])->name('admin.departments.update');
-    Route::post('update_top_departments', 'DepartmentController@update_top_departments')->name('update_top_departments');
+    Route::post('update_top_departments', [DepartmentController::class,'update_top_departments'])->name('update_top_departments');
     Route::delete('/{id}', [DepartmentController::class, 'destroy'])->name('admin.departments.destroy');
 
 });
@@ -173,12 +174,12 @@ Route::group(['prefix' => 'user_management'], function () {
 // furniture transportations
 
 Route::group(['prefix' => "furniture_transportations"], function(){
-    Route::get('/service_provider' , [FurnitureTransportationsController::class , 'service_provider'])->name('furniture_transportations_service');
+    // Route::get('/service_provider' , [FurnitureTransportationsController::class , 'service_provider'])->name('furniture_transportations_service');
     // Route::get('/add_service' , [FurnitureTransportationsController::class , 'add_service'])->name('furniture_transportations_add_service');
-    Route::post('/add_service' , [FurnitureTransportationsController::class , 'store_service'])->name('furniture_transportations_store_service');
-    Route::get('/',[FurnitureTransportationsController::class , 'index'])->name('main_furniture_transportations');
-    Route::get('/edit/{id}',[FurnitureTransportationsController::class , 'edit'])->name('main_furniture_transportations.edit');
-    Route::patch('/update/{id}',[FurnitureTransportationsController::class , 'update'])->name('main_furniture_transportations.update');
+    // Route::post('/add_service' , [FurnitureTransportationsController::class , 'store_service'])->name('furniture_transportations_store_service');
+    // Route::get('/',[FurnitureTransportationsController::class , 'index'])->name('main_furniture_transportations');
+    // Route::get('/edit/{id}',[FurnitureTransportationsController::class , 'edit'])->name('main_furniture_transportations.edit');
+    // Route::patch('/update/{id}',[FurnitureTransportationsController::class , 'update'])->name('main_furniture_transportations.update');
     // Products
     Route::get('/products',[ProductFurnitureTransportationsController::class , 'index'])->name('main_furniture_transportations.product');
     Route::get('/products/create',[ProductFurnitureTransportationsController::class , 'create'])->name('main_furniture_transportations.product.create');

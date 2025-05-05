@@ -27,6 +27,7 @@ use App\Http\Controllers\departments\Industry\indsProductController;
 use App\Http\Controllers\departments\SpareParts\SparePartController;
 use App\Http\Controllers\departments\VanTruck\VanTruckController;
 use App\Http\Controllers\departments\VanTruck\VanTruckOrderController;
+use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\Furniture\FurnitureTransportationsController;
 
 use App\Http\Controllers\Furniture\OrderFurnitureTransportationsController;
@@ -526,6 +527,7 @@ Route::delete('general_comments/{id}', [GeneralCommentsController::class, 'destr
     Route::delete('/orders/{id}', [GeneralOrderController::class, 'destroy'])->name('general_orders.destroy');
     // List orders for a customer (optional)
     Route::get('orders', [GeneralOrderController::class, 'index'])->name('general_orders.customer.index');
+    Route::get('pre/order', [GeneralOrderController::class, 'previous'])->name('pre_order.customer');
     Route::get('/accept_project/{id}' , function($id) {
         GeneralOrder::find($id)->update(['status' => "completed"]);
         return redirect()->back();
@@ -549,3 +551,8 @@ Route::delete('general_comments/{id}', [GeneralCommentsController::class, 'destr
     Route::get('/subcat', [IndustryController::class, 'show_sub_cat'])->name('indsustry.subcat');
     Route::get('/showproduct', [IndustryController::class, 'show_product'])->name('indsustry.pro');
     Route::get('/get-countries', [LocationController::class, 'getCountriesWithGovernements']);
+
+    Route::middleware('auth')->group(function () {
+        Route::get('/favorites', [FavoriteController::class, 'index'])->name('favorites.index');
+        Route::post('/favorites/toggle/{departmentId}', [FavoriteController::class, 'toggle'])->name('favorites.toggle');
+    });

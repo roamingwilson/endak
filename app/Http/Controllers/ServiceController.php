@@ -382,6 +382,7 @@ class ServiceController extends Controller
                 $spare_parts = Cache::remember('spare_part', 60, function () {
                     return SpareParts::where('spare_part_id', '!=',0)->paginate();
                 });
+
                 return view('admin.main_department.spare_part.show_myservice', compact('service','spare_parts'));
 
             case 'truks':

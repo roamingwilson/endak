@@ -8,7 +8,7 @@
 
 
 <div class="container py-5">
-    <h2 class="text-center mb-4">{{ __('My Offers') }}</h2>
+    <h2 class="text-center mb-4"> {{ $lang == 'ar' ? 'العروض' :   " Offers"  }}</h2>
 
     <!-- عرض العروض مع تنظيم الألوان والخطوط -->
     <div class="row justify-content-center">

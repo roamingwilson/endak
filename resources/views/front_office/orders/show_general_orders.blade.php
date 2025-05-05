@@ -163,14 +163,17 @@ $rating = App\Models\Rating::where('order_id' , $order->id)->first();
                         </h5>
                         <div>
                             @if ($user->id == $order->user_id)
-                                @if ($order->status == 'pending')
-                                    <a href="{{ route('accept_project', $order->id) }}"
-                                        class="btn btn-primary">{{ ($lang == 'ar') ? 'أستلام المشروع' : 'Confirm Project' }}</a>
-                                @elseif($order->status == 'completed'  )
-                                    <a href="{{ route('web.add_rate', $order->id) }}"
-                                        class="btn btn-primary">{{ ($lang == 'ar') ? 'تقييم العمل' : 'Rate Work' }}</a>
-                                @endif
+                            @if ($order->status == 'pending')
+                                <a href="{{ route('accept_project', $order->id) }}"
+                                    class="btn btn-primary">{{ ($lang == 'ar') ? 'أستلام المشروع' : 'Confirm Project' }}</a>
+                            @elseif($order->status == 'completed' && !$rating)
+                                <a href="{{ route('web.add_rate', $order->id) }}" class="btn btn-primary">
+                                    {{ $lang == 'ar' ? 'تقييم العمل' : 'Rate Work' }}
+                                </a>
+                            @elseif($order->status == 'completed' && $rating)
+                                <span class="text-success">{{ $lang == 'ar' ? 'تم التقييم مسبقًا' : 'Already Rated' }}</span>
                             @endif
+                        @endif
                         </div>
                     </div>
 

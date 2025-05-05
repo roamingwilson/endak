@@ -79,10 +79,10 @@
 
 @section('content')
 <div class="container">
-    <h1 class="mb-4 text-center"  style=" margin-top: 50px;"> {{ $lang == 'ar' ? '  طلبات جديدة ' : ' new order' }} :{{ $user->fullname }}</h1>
+    <h1 class="mb-4 text-center"  style=" margin-top: 50px;"> {{ $lang == 'ar' ? '  طلبات السابقة ' : ' new order' }} </h1>
 
     @if(!$orders)
-        <p class="text-center">{{ $lang == 'ar' ? 'لا يوجد طلبات جديدة ' : 'No new order' }}</p>
+        <p class="text-center">{{ $lang == 'ar' ? 'لا يوجد طلبات سابقة ' : 'No new order' }}</p>
     @else
         <div class="row">
 
@@ -91,7 +91,7 @@
             @foreach($orders as $order)
 
 
-            @if ($orders && $order->status !== 'completed')
+            @if ($orders && $order->status == 'completed')
 
 
                 <div class="col-md-6">
@@ -119,10 +119,7 @@
                 @endif
             @endforeach
         </div>
-        <div class="  mb-4" >
-            <a href="{{route('pre_order.customer')}}" class=" btn btn-success ">{{ $lang == 'ar' ? 'الطلبات السابقة' : 'previous Orders' }}
-                </a>
-            </div>
+
 
         <!-- Pagination -->
         <div class="d-flex justify-content-center mt-4">

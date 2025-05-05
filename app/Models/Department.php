@@ -29,6 +29,10 @@ class Department extends Model
     {
         return $this->morphMany(UserDepartment::class, 'commentable');
     }
+    public function favoriteDepartments()
+{
+    return $this->belongsToMany(User::class, 'favorites')->withTimestamps();
+}
     // public function departmentNameParent()
     // {
     //     $parent_id = $this->id;

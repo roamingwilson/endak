@@ -53,6 +53,32 @@
     @yield('style')
     <style>
 
+    .favorite-btn {
+        background-color: #fff;
+        border: 1px solid #ccc;
+        padding: 8px 14px;
+        border-radius: 20px;
+        font-size: 14px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .favorite-btn:hover {
+        background-color: #fdca3d;
+        color: #000;
+        border-color: #fdca3d;
+    }
+
+    .favorite-btn.favorited {
+        background-color: #e74c3c;
+        color: white;
+        border-color: #e74c3c;
+    }
+
+
+
+
+
     @media (max-width: 768px) {
     .card {
         margin-bottom: 20px;
@@ -152,9 +178,10 @@
     <div class="page">
 
         <?php $lang = config('app.locale'); ?>
+
+
         @include('layouts.front_office.header')
 
-        <div class="main-content app-content">
 
             @yield('header')
             {{-- <section>
@@ -205,7 +232,7 @@
             <a href="{{ route('orders.index') }}"><i class="fas fa-clipboard-list"></i>  {{ ($lang =='ar') ? 'الطلبات' : 'orders' }}</a>
             <a href="{{ route('pro_cart.index') }}"><i class="fas fa-shopping-cart"></i> {{ ($lang =='ar') ? 'السلة' : 'Cart' }}</a>
             @endauth
-            {{-- <a href="#"><i class="fas fa-heart"></i> المفضلة</a> --}}
+            <a href="{{ route('favorites.index') }}"><i >❤️</i>   {{ $lang == 'ar' ? 'المفضلة' : 'Favorites' }}</a>
             {{-- <a href="#"><i class="fas fa-plus-circle"></i> نشر منتج</a> --}}
         </nav>
 

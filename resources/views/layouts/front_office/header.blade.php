@@ -400,7 +400,7 @@
                             </li>
 
                         @endif
-                        {{-- @if (auth()->check()) --}}
+                        @if (auth()->check())
                         <li class="slide">
                             <a href="{{ route('web.user.service_provider') }}" class="side-menu__item">
                                 <span class="side-menu__label" style="color: black;">{{ __('user.service_provider') }}</span>
@@ -408,7 +408,7 @@
                             </a>
 
                         </li>
-                        {{-- @endif --}}
+                        @endif
 
                         @if (auth()->check() && auth()->user()->role_id == 1)
                             <li class="slide">

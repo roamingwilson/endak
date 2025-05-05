@@ -141,59 +141,65 @@ class RatingUserController extends Controller
     //     return view('front_office.rate.add_rate' , compact('order' , 'id' , 'department_name')) ;
     // }
 
-   public function add_rate($id){
-    $order = GeneralOrder::findOrFail($id);
+    public function add_rate($id)
+    {
+        $order = GeneralOrder::findOrFail($id);
 
-    // تحقق أن المستخدم هو العميل
-    if (auth()->id() != $order->user_id) {
-        abort(403);
+        if (auth()->id() != $order->user_id) {
+            abort(403);
+        }
+
+        return view('front_office.rate.add_rate', compact('order'));
     }
 
-    return view('front_office.rate.add_rate', compact('order'));
-   }
-
-    public function store(Request $request,$id){
+    public function store(Request $request, $id)
+    {
         $request->validate([
             'order_id' => 'required',
-            'professionalism_in_dealing' => "required",
-            'communication_and_follow_up' => "required",
+            'professionalism_in_dealing' => 'required',
+            'communication_and_follow_up' => 'required',
             'quality_of_work_delivered' => 'required',
             'experience_in_the_project_field' => 'required',
             'delivery_on_time' => 'required',
             'deal_with_him_again' => 'required',
         ]);
 
+        if ($request->order_id != $id) {
+            abort(400, 'Invalid Order ID.');
+        }
 
-     $order = GeneralOrder::findOrFail($id);
-        // dd($order->service_provider_id);
+        $order = GeneralOrder::findOrFail($id);
+        if (Rating::where('order_id', $order->id)->exists()) {
+            return back()->with('error', __('لقد قمت بتقييم هذا الطلب من قبل'));
+        }
+        // حماية من التقييم المكرر
+        // if (Rating::where('order_id', $id)->where('creator_id', auth()->id())->exists()) {
+        //     return back()->withErrors(['error' => 'لقد قمت بتقييم هذا الطلب مسبقًا.']);
+        // }
 
         $data = $request->all();
-        $data['creator_id'] = auth()->user()->id;
-        $data['user_id'] = $order->service_provider_id;
-        $data = $request->all();
-        $rates = 0;
-        $rates += (int)$data['professionalism_in_dealing'];
-        $rates += (int)$data['communication_and_follow_up'];
-        $rates += (int)$data['quality_of_work_delivered'];
-        $rates += (int)$data['experience_in_the_project_field'];
-        $rates += (int)$data['delivery_on_time'];
-        $rates += (int)$data['deal_with_him_again'];
+        $rates = (int) $data['professionalism_in_dealing']
+            + (int) $data['communication_and_follow_up']
+            + (int) $data['quality_of_work_delivered']
+            + (int) $data['experience_in_the_project_field']
+            + (int) $data['delivery_on_time']
+            + (int) $data['deal_with_him_again'];
 
-        $rate = Rating::create([
+        Rating::create([
             'order_id' => $request->order_id,
             'department_name' => $request->department_name ?? 'general',
-            'creator_id' => auth()->user()->id,
-            'user_id' =>$order->service_provider_id,
-            'professionalism_in_dealing' => (int)$data['professionalism_in_dealing'],
-            'communication_and_follow_up' => (int)$data['communication_and_follow_up'],
-            'quality_of_work_delivered' => (int)$data['quality_of_work_delivered'],
-            'experience_in_the_project_field' => (int)$data['experience_in_the_project_field'],
-            'deal_with_him_again' => (int)$data['deal_with_him_again'],
-            'delivery_on_time' => (int)$data['delivery_on_time'],
-            'rate' => $rates > 0 ? number_format($rates, 2) / 6 : 0,
-            'comment' => $data['comment'],
-            'created_at' => time(),
+            'creator_id' => auth()->id(),
+            'user_id' => $order->service_provider_id,
+            'professionalism_in_dealing' => (int) $data['professionalism_in_dealing'],
+            'communication_and_follow_up' => (int) $data['communication_and_follow_up'],
+            'quality_of_work_delivered' => (int) $data['quality_of_work_delivered'],
+            'experience_in_the_project_field' => (int) $data['experience_in_the_project_field'],
+            'deal_with_him_again' => (int) $data['deal_with_him_again'],
+            'delivery_on_time' => (int) $data['delivery_on_time'],
+            'rate' => round($rates / 6, 2),
+            'comment' => $data['comment'] ?? null,
         ]);
-        return redirect()->route('home')->with('success', "Add Rating successfully");
+
+        return redirect()->route('home')->with('success', 'تمت إضافة التقييم بنجاح');
     }
 }

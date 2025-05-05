@@ -39,8 +39,8 @@
                         <label for=""
                             class="mb-1">{{ $lang == 'ar' ? 'نوع الاكل' : 'Food Type' }}
                             :</label>
-                        @if (isset($service->type))
-                            <p>{{ $service->type }}</p>
+                        @if (isset($service->model))
+                            <p>{{ $service->model }}</p>
                         @endif
                     </div>
                     <div class="form-group">
@@ -183,80 +183,7 @@
                                             {!! no_data() !!}
                                         @endforelse
                                      </div>
-                                {{--</div> --}}
 
-                                {{-- <div class="row">
-                                    <div class="container">
-                                        <div class="d-flex flex-wrap justify-content-between">
-                                            @forelse ($service->comments as $comment)
-                                                <div class="border mb-4 p-4 br-5"
-                                                    style="flex: 1 1 calc(33.333% - 1rem); margin: 0.5rem;">
-                                                    <div class="d-flex align-items-center">
-                                                        <h5 class="mt-0 mr-3">
-                                                            {{ $comment->user->first_name . ' ' . $comment->user->last_name }}
-                                                        </h5>
-                                                        @if(auth()->check() && auth()->id() == $service->user_id)
-
-
-                                                        <a class="dropdown-item mb-2" href="{{ route('web.send_message', $comment->user->id) }}">
-                                                            <i class="fe fe-mail mx-1"></i> {{ __('messages.send_message') }}
-                                                        </a>
-                                                         <form action="{{ route('accept_offer_furniture') }}" method="post">
-                                                            @csrf
-                                                            <input type="hidden" name="service_id" value="{{ $service->id }}">
-                                                            <input type="hidden" name="service_provider_id" value="{{ $comment->user->id }}">
-                                                            <input type="hidden" name="customer_id" value="{{ $service->user_id }}">
-                                                            <button class="btn btn-primary" type="submit" >
-                                                                 {{ ($lang == 'ar') ? 'قبول العرض' : "Accept Offer" }}
-                                                            </button>
-                                                        </form>
-                                                        @endif
-                                                    </div>
-
-                                                    @if (isset($comment->price))
-                                                        <p>{{ __('general.price') . ' : ' . $comment->price }}</p>
-                                                    @endif
-                                                    @if (isset($comment->body))
-                                                        <p>{{ 'Body : ' . $comment->body }}</p>
-                                                    @endif
-                                                    @if (isset($comment->date))
-                                                        <p>{{ __('general.date') . ' : ' . $comment->date }}</p>
-                                                    @endif
-                                                    @if (isset($comment->time))
-                                                        <p>{{ __('general.time') . ' : ' . $comment->time }}</p>
-                                                    @endif
-                                                    @if (isset($comment->city))
-                                                        <p>{{ ($lang == 'ar' ? 'المدينة' : 'City') . ' : ' . $comment->city }}
-                                                        </p>
-                                                    @endif
-                                                    @if (isset($comment->neighborhood))
-                                                        <p>{{ ($lang == 'ar' ? 'الحي' : 'Neighborhood') . ' : ' . $comment->neighborhood }}
-                                                        </p>
-                                                    @endif
-                                                    @if (isset($comment->location))
-                                                        <p>{{ ($lang == 'ar' ? 'الموقع' : 'Location') . ' : ' . $comment->location }}
-                                                        </p>
-                                                    @endif
-                                                    @if (isset($comment->day))
-                                                        <p>{{ __('general.day') . ' : ' . $comment->day }}</p>
-                                                    @endif
-                                                    @if (isset($comment->number_of_days_of_warranty))
-                                                        <p>{{ ($lang == 'ar' ? 'عدد ايام الضمان' : 'Number of Days of Warranty') . ' : ' . $comment->number_of_days_of_warranty }}
-                                                        </p>
-                                                    @endif
-                                                    @if (isset($comment->notes))
-                                                        <p>{{ ($lang == 'ar' ? 'ملاحظات عن العمل المطلوب' : 'Notes') . ' : ' . $comment->notes }}
-                                                        </p>
-                                                    @endif
-                                                </div>
-
-                                            @empty
-                                                {!! no_data() !!}
-                                            @endforelse
-                                        </div>
-                                    </div>
-
-                                </div> --}}
                             </div>
 
 

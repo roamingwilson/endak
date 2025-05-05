@@ -54,16 +54,16 @@
                                 <div class="form-group">
                                     <label for="" class="mb-1">{{ $lang == 'ar' ? ' اسم السيارة ' : 'brand' }}
                                         :</label>
-                                        @if (isset($service->type))
-                                        <p>{{ $service->type  }}</p>
+                                        @if (isset($service->brand))
+                                        <p>{{ $service->brand  }}</p>
                                     @endif
 
                                 </div>
                                 <div class="form-group">
-                                    <label for="" class="mb-1">{{ $lang == 'ar' ? ' الفئة ' : 'brand' }}
+                                    <label for="" class="mb-1">{{ $lang == 'ar' ? ' الفئة ' : 'mode;' }}
                                         :</label>
-                                        @if (isset($service->type))
-                                        <p>{{  $service->type  }}</p>
+                                        @if (isset($service->model))
+                                        <p>{{  $service->model  }}</p>
                                     @endif
 
                                 </div>
@@ -71,8 +71,8 @@
                                 <div class="form-group">
                                     <label for="" class="mb-1">{{ $lang == 'ar' ? 'سنة الصنع' : 'year_made' }}
                                         :</label>
-                                    @if (isset($service->year_made))
-                                        <p>{{ $service->year_made }}</p>
+                                    @if (isset($service->year))
+                                        <p>{{ $service->year }}</p>
                                     @endif
                                 </div>
                                 <div class="form-group">

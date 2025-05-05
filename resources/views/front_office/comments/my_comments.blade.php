@@ -8,7 +8,7 @@
 
 
 <div class="container py-5">
-    <h2 class="text-center mb-4">{{ __('My Offers') }}</h2>
+    <h2 class="text-center mb-4"> {{ $lang == 'ar' ? 'عروضي' :   "My Offers"  }}</h2>
 
     <!-- عرض العروض مع تنظيم الألوان والخطوط -->
     <div class="row justify-content-center">
@@ -46,7 +46,7 @@
 
                         <div class="d-flex justify-content-between mt-3">
                             <a href="{{ route('web.send_message', $comment->customer->id) }}" class="btn btn-outline-primary btn-sm">
-                                <i class="fe fe-mail"></i> {{ __('Send Message') }}
+                                <i class="fe fe-mail"></i> {{ $lang == 'ar' ? 'ارسال رسالة' : 'send message' }}
                             </a>
                             <a class="btn btn-success btn-sm" href="{{route('general_comments.edit',$comment->id)}}">
                                 <i class="fe fe-check-circle"></i> {{ $lang == 'ar' ? 'تعديل' : 'Edit' }}
