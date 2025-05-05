@@ -150,7 +150,7 @@ public function privcy(){
         return view('front_office.profile.privcy');
 }
 public function FAQ(){
-        return view('front_office.profile.faq');
+        return view('front_office.profile.FAQ');
 }
 public function terms(){
         return view('front_office.profile.terms');

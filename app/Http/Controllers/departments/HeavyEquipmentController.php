@@ -89,7 +89,7 @@ public function show(){
 public function heavy_equip_sub_show($id){
     $user = auth()->user();
     $main = HeavyEquipment::find($id);
-    $services = HeavyEquipmentService::where('heavy_equip_id' ,$id)->paginate();
+    $services = HeavyEquipmentService::where('heavy_equip_id' ,$id)->paginate(5);
 
     return view('admin.main_department.heavy_equip.show_sub_heavyequip' , compact( 'main','services'  ));
 }
