@@ -192,7 +192,7 @@ class ServiceController extends Controller
             case 'big car':
                 return view('admin.main_department.big_car.show', compact('departments'));
             case 'air condition':
-                return view('admin.main_department.air_con.show', compact('departments'));
+                return view('admin.main_department.Air_con.show', compact('departments'));
             case 'car water':
                 return view('admin.main_department.car_water.show', compact('departments'));
             case 'family':
@@ -297,7 +297,7 @@ class ServiceController extends Controller
             case 'big car':
                 return view('admin.main_department.big_car.edit_service', compact('service'));
             case 'air condition':
-                return view('admin.main_department.air_con.edit_service', compact('service'));
+                return view('admin.main_department.Air_con.edit_service', compact('service'));
             case 'car water':
                 return view('admin.main_department.car_water.edit_service', compact('service'));
             case 'family':
@@ -397,7 +397,7 @@ class ServiceController extends Controller
             case 'big car':
                 return view('admin.main_department.big_car.show_myservice', compact('service'));
             case 'air condition':
-                return view('admin.main_department.air_con.show_myservice', compact('service'));
+                return view('admin.main_department.Air_con.show_myservice', compact('service'));
             case 'car water':
                 return view('admin.main_department.car_water.show_myservice', compact('service'));
             case 'family':

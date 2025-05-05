@@ -5,7 +5,7 @@
 
     <!-- META DATA -->
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="author" content="Eslam Badawy">
 
@@ -76,18 +76,106 @@
     }
 
 
+    @media (max-width: 767px) {
+            /* تحسين حجم النصوص */
+            .bottom-nav a {
+                font-size: 12px; /* تصغير الحجم قليلاً ليكون أفضل للموبايل */
+            }
 
+            /* تحسين العرض */
+            .page {
+                padding-bottom: 50px; /* إضافة حواف مناسبة */
+            }
 
+            /* تحجيم الصور لتناسب العرض */
+            .avatar img {
+                width: 40px !important;
+                height: 40px !important;
+            }
 
+            /* تحسين عرض الهيدر */
+            .header {
+                text-align: center;
+                padding: 10px;
+            }
 
+            /* تحسين ال banner section */
+            .banner-section {
+                padding: 30px 0;
+            }
 
+            /* تعديل العرض والتنسيق */
+            .card-body h5 {
+                font-size: 16px;
+            }
 
-        a{
-            text-decoration: none;
-            color: black
+            .card-body .tx-muted {
+                font-size: 14px;
+            }
+
+            /* جعل المحتوى أكثر توافقًا مع الموبايل */
+            .favorite-btn {
+                padding: 6px 12px;
+                font-size: 12px;
+            }
         }
-        *{
-            color: black
+
+        /* تكبير الأيقونات في القائمة */
+        @media (max-width: 600px) {
+            .bottom-nav i {
+                font-size: 22px; /* تكبير الأيقونات قليلاً على الموبايل */
+            }
+
+            /* تصغير حجم الأزرار */
+            .favorite-btn {
+                font-size: 12px;
+            }
+        }
+
+        /* تحسين الـ pagination */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .pagination li {
+            margin: 0 5px;
+        }
+
+        .pagination a {
+            padding: 10px 20px;
+            background-color: #f1f1f1;
+            border: 1px solid #ddd;
+            color: #000;
+            text-decoration: none;
+        }
+
+        .pagination a:hover {
+            background-color: #ddd;
+        }
+
+        /* تحسين الأزرار */
+        .favorite-btn {
+            background-color: #fff;
+            border: 1px solid #ccc;
+            padding: 8px 14px;
+            border-radius: 20px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .favorite-btn:hover {
+            background-color: #fdca3d;
+            color: #000;
+            border-color: #fdca3d;
+        }
+
+        .favorite-btn.favorited {
+            background-color: #e74c3c;
+            color: white;
+            border-color: #e74c3c;
         }
         .bottom-nav {
         position: fixed;
@@ -191,6 +279,7 @@
             </section> --}}
             @yield('content')
             @php  $lang = config('app.locale'); @endphp
+            <div class="container-fluid">
             <nav class="bottom-nav">
 
                 <a href="{{ route('home') }}"><i class="fas fa-home"></i> {{ ($lang =='ar') ? 'الرئيسية' : 'Home' }}</a>

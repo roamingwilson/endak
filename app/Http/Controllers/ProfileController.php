@@ -147,13 +147,13 @@ public function user_note(){
         return view('front_office.profile.userNote');
 }
 public function privcy(){
-        return view('front_office.profile.privcy');
+        return view('front_office.profile.Privcy');
 }
 public function FAQ(){
         return view('front_office.profile.FAQ');
 }
 public function terms(){
-        return view('front_office.profile.terms');
+        return view('front_office.profile.Terms');
 }
 
 }
