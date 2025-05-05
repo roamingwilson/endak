@@ -134,6 +134,7 @@ h2 {
             <h4>{{ $lang == 'ar' ? '  معلومات الطلب  ' : 'Order Info' }}</h4>
 
             <li class="list-group-item"><strong>{{ ($lang == 'ar') ? 'رقم الطلب' : 'Order  Number' }}:</strong> {{ $order->id }}</li>
+            <li class="list-group-item"><strong>{{ ($lang == 'ar') ? ' الخدمة' : 'Order  Number' }}:</strong> {{ $order->service->type}}</li>
 
             <li class="list-group-item"><strong>{{ $lang == 'ar' ? '  الحالة  ' : 'status' }}:</strong> {{ ($lang == 'ar') ? 'مكتمل' : $order->status }}</li>
 
