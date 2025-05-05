@@ -10,7 +10,7 @@
     <div class="main-content app-content">
         <section>
             <div class="section banner-4 banner-section">
-                <div class="container">
+                <div class="container-fluid">
                     <div class="row align-items-center">
                         <div class="col-md-12 text-center">
                             <div class="">
@@ -121,7 +121,7 @@
                                                             <i class="fe fe-mail mx-1"></i> {{ __('messages.send_message') }}
                                                         </a>
                                                     </div>
-                                                    
+
                                                     @if (isset($comment->price))
                                                         <p>{{ __('general.price') . ' : ' . $comment->price }}</p>
                                                     @endif
@@ -168,11 +168,11 @@
                                 </div>
                             </div>
 
-                            
+
 
 
                         </div>
- 
+
                         <?php
                         $user = auth()->user();
                         $is_add = App\Models\GeneralComments::where('commentable_type' , 'App\Models\FurnitureTransportationService')->where('commentable_id', $service->id)
@@ -232,7 +232,7 @@
         });
     </script>
 
-    
+
 @endsection --}}
 <div class="me-3 mb-3">
     {{-- <a href="javascript:void(0);"> <img class="avatar avatar-lg rounded-circle thumb-sm"
@@ -248,7 +248,7 @@ alt="64x64" src="../assets/images/profile/2.jpg"> </a> --}}
 <p class="tx-muted"> {{ $comment->description }}</p>
 @if (isset($comment->files))
 @foreach ($comment->files as $item)
- 
+
 <img width="100px" height="100px" src="{{ Storage::url( $item->file) }}" alt="">
 <a href="{{ Storage::url($item->file) }}" target="_blank">Download</a>
 @endforeach

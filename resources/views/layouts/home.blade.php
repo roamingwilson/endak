@@ -198,8 +198,11 @@
                     </div>
                 </div>
 
-            </section> --}}
-            @yield('content')
+                            </section> --}}
+                <div class="container-fluid">
+                    @yield('content')
+                </div>
+
             @php  $lang = config('app.locale'); @endphp
             <nav class="bottom-nav">
 

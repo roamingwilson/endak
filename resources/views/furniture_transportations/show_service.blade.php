@@ -10,11 +10,11 @@
     <div class="main-content app-content">
         <section>
             <div class="section banner-4 banner-section">
-                <div class="container">
+                <div class="container-fluid">
                     <div class="row align-items-center">
                         <div class="col-md-12 text-center">
                             <div class="">
-                                <p class="mb-3 content-1 h5 text-white">{{ ($lang == 'ar')? 'نقل عفش' : 'Furniture Transportations' }} 
+                                <p class="mb-3 content-1 h5 text-white">{{ ($lang == 'ar')? 'نقل عفش' : 'Furniture Transportations' }}
                                     {{-- <span
                                         class="tx-info-dark">{{ __('general.center') }}
                                     </span> --}}
@@ -74,17 +74,17 @@
                             <div class="row align-items-center">
                                 <div class="col-md-12 text-center">
                                     <div class="">
-                                        <p class="mb-3 content-1 h5 text-white">{{ __('posts.my_posts') }} 
+                                        <p class="mb-3 content-1 h5 text-white">{{ __('posts.my_posts') }}
                                         </p>
-                                       
+
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-    
+
                 </section> --}}
-    
+
                 <section class="section">
                     <div class="container">
                         <div class="row">
@@ -95,8 +95,8 @@
                                         <div class="col-md-6">
                                             <div class="card">
                                                 <div class="position-relative">
-                                                    
-                                                    
+
+
                                                     <span class="badge bg-secondary blog-badge">{{ $furniture_transportation_service->add_order }}</span>
                                                 </div>
                                                 <div class="card-body d-flex flex-column">
@@ -114,7 +114,7 @@
                                                             <small
                                                                 class="d-block tx-muted">{{ $furniture_transportation_service->created_at->shortAbsoluteDiffForHumans() }}</small>
                                                         </div>
-                                                        
+
                                                     </div>
                                                 </div>
                                             </div>
@@ -122,11 +122,11 @@
                                     @empty
                                         {!! no_data() !!}
                                     @endforelse
-    
+
                                 </div>
-    
+
                             </div>
-                            
+
                         </div>
                     </div>
                 </section>

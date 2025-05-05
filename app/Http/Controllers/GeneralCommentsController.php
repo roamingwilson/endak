@@ -35,41 +35,60 @@ use App\Models\VanTruckService;
 
 class GeneralCommentsController extends Controller
 {
-    public function store(Request $request){
+    public function store(Request $request)
+    {
 
-        $service = Services::findOrFail($request->service_id);
+        $validated = $request->validate([
+            'service_id' => 'required|exists:services,id',
+            'body' => 'nullable|string|max:1000',
+            'price' => 'nullable|numeric|min:0',
+            'date' => 'nullable|date',
+            'time' => 'nullable|date_format:H:i',
+            'notes' => 'nullable|string|max:1000',
+            'city' => 'nullable|string|max:255',
+            'location' => 'nullable|string|max:255',
+            'day' => 'nullable|string|max:100',
+            'number_of_days_of_warranty' => 'nullable|integer|min:0',
+        ]);
 
-    // العميل اللي طالب الخدمة
+        // جلب الخدمة
+        $service = Services::findOrFail($validated['service_id']);
+
+        // العميل صاحب الخدمة
         $customer = User::findOrFail($service->user_id);
 
+        // مزود الخدمة (المستخدم الحالي)
         $user = auth()->user();
 
+        // إنشاء العرض
         $comment = new GeneralComments([
-            'service_provider'                      => $user->id,
-            'customer_id'                           => $customer->id,
-            'body'                                  => $request->body  ?? null,
-            'price'                                 => $request->price  ?? null,
-            'date'                                  => $request->date  ?? null,
-            'time'                                  => $request->time  ?? null,
-            'notes'                                 => $request->notes  ?? null,
-            'city'                                  => $request->city  ?? null,
-            'location'                              => $request->location  ?? null,
-            'day'                                   => $request->day  ?? null,
-            'number_of_days_of_warranty'            => $request->number_of_days_of_warranty  ?? null,
-
+            'service_provider' => $user->id,
+            'customer_id' => $customer->id,
+            'body' => $validated['body'] ?? null,
+            'price' => $validated['price'] ?? null,
+            'date' => $validated['date'] ?? null,
+            'time' => $validated['time'] ?? null,
+            'notes' => $validated['notes'] ?? null,
+            'city' => $validated['city'] ?? null,
+            'location' => $validated['location'] ?? null,
+            'day' => $validated['day'] ?? null,
+            'number_of_days_of_warranty' => $validated['number_of_days_of_warranty'] ?? null,
         ]);
+
+        // ربط العرض بالخدمة
         $service->comments()->save($comment);
 
-        // $type = ;
-        if($comment){
+        // إرسال إشعار للعميل إذا تم حفظ العرض
+        if ($comment) {
             $customer->notify(new CommentNotification([
                 'id' => $comment->id,
-                'title' => "قدم $user->first_name  لك عرضا",
-                'body' => "$comment->notes",
+                'title' => "قدم $user->first_name لك عرضًا",
+                'body' => $comment->notes,
                 'url' => route('notifications.index'),
             ]));
         }
-        return redirect()->route('home')->with('success','تم تقديم العرض بنجاح');
+
+        return redirect()->route('home')->with('success', 'تم تقديم العرض بنجاح');
     }
     public function index($id){
         $comments = GeneralComments::where('customer_id', $id)
