@@ -5,11 +5,11 @@
 
     <!-- META DATA -->
     <meta charset="UTF-8">
-    <meta name='viewport' content='width=device-width, initial-scale=1.0, user-scalable=0'>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="author" content="Eslam Badawy">
 
-
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/jquery-bar-rating/1.2.2/themes/fontawesome-stars.css"
         rel="stylesheet">
@@ -39,7 +39,7 @@
     {{-- @if(config('app.locale') == 'ar') --}}
     <link href="{{ asset('home/assets/libs/bootstrap/css/bootstrap.rtl.min.css') }}" rel="stylesheet">
     {{-- @else --}}
-    <link id="style" href="{{ asset('home/assets/libs/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
+
     {{-- @endif --}}
     <!-- Simonwep-picker CSS -->
     <link href="{{ asset('home/assets/libs/@simonwep/pickr/themes/classic.min.css') }}" rel="stylesheet">
@@ -79,44 +79,8 @@
 
 
 
-    @media (max-width: 768px) {
-    .card {
-        margin-bottom: 20px;
-    }
-    .card-body {
-        padding: 10px;
-    }
-    .col-md-4 {
-
-        flex: 1 0 100%;
-    }
-    .form-control {
-        width: 100%;
-    }
-    .profile-card {
-        width: 100%;
-    }
-    .profile-cover-container {
-        padding: 20px 0;
-    }
-    .form-group {
-        margin-bottom: 15px;
-    }
-    img.card-img-top {
-        width: 100%;
-        height: auto;
-    }
-    .text-center {
-        text-align: center;
-    }
-}
 
 
-@media (max-width: 1024px) {
-    .container {
-        padding: 0 15px;
-    }
-}
 
         a{
             text-decoration: none;
@@ -157,6 +121,32 @@
 .btn-secondary:hover {
     background-color: #5a6268;
 }
+
+@media (max-width: 767.98px) {
+            .card-body h5 {
+                font-size: 16px;
+            }
+
+            .card-body .tx-muted {
+                font-size: 14px;
+            }
+
+            .avatar img {
+                width: 30px !important;
+                height: 30px !important;
+            }
+
+            .banner-section {
+                padding: 30px 0 !important;
+            }
+        }
+
+        .banner-section {
+            background-color: #444;
+            padding: 60px 0;
+            color: #fff;
+        }
+
 
     </style>
 
@@ -232,7 +222,7 @@
             <a href="{{ route('orders.index') }}"><i class="fas fa-clipboard-list"></i>  {{ ($lang =='ar') ? 'الطلبات' : 'orders' }}</a>
             <a href="{{ route('pro_cart.index') }}"><i class="fas fa-shopping-cart"></i> {{ ($lang =='ar') ? 'السلة' : 'Cart' }}</a>
             @endauth
-            <a href="{{ route('favorites.index') }}"><i >❤️</i>   {{ $lang == 'ar' ? 'المفضلة' : 'Favorites' }}</a>
+            {{-- <a href="{{ route('favorites.index') }}"><i >❤️</i>   {{ $lang == 'ar' ? 'المفضلة' : 'Favorites' }}</a> --}}
             {{-- <a href="#"><i class="fas fa-plus-circle"></i> نشر منتج</a> --}}
         </nav>
 
