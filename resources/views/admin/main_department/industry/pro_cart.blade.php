@@ -1,10 +1,11 @@
 @extends('layouts.home')
 @php  $lang = config('app.locale'); @endphp
 @section('content')
-    <div class="container">
+    <div class="container-fluid" style="margin-top: auto">
         <h1>   {{ ($lang =='ar') ? 'سلة المشتريات ' : 'Cart' }}</h1>
 
         @if($cartItems->count() > 0)
+        <div class="table-responsive">
             <table class="table">
                 <thead>
                     <tr>
@@ -24,7 +25,7 @@
                                 <form action="{{ route('pro_cart.update', $cartItem->id) }}" method="POST">
                                     @csrf
                                     @method('PUT')
-                                    <input type="number" name="quantity" value="{{ $cartItem->quantity }}" min="1" class="form-control" style="width: 70px;">
+                                    <input type="number" name="quantity" value="{{ $cartItem->quantity }}" min="1" class="form-control" style="width: auto;">
                                     <button type="submit" class="btn btn-success mt-2">{{ ($lang =='ar') ? 'تحديث' : 'update' }}</button>
                                 </form>
                             </td>
@@ -40,12 +41,13 @@
                     @endforeach
                 </tbody>
             </table>
+        </div>
             <form action="{{ route('pro_cart.checkout') }}" method="POST" class="mt-4" id="payment-form">
                 @csrf
 
                 <div class="form-group mb-3 text-center">
                     <label for="payment_method">{{ ($lang =='ar') ? '  اختر وسيلة الدفع' : 'Payment Method' }}   :  </label>
-                    <select name="payment_method" id="payment_method" class="form-control" style="max-width: 300px; margin: 0 auto;">
+                    <select name="payment_method" id="payment_method" class="form-control" style="max-width: auto; margin: 0 auto;">
                         <option value="cash"> {{ ($lang =='ar') ? '  الدفع نقدًا ' : 'Cash On Delivery' }} </option>
                         <option value="visa"> {{ ($lang =='ar') ? '  الدفع ببطاقة فيزا' : 'Payment With Credit' }} </option>
                     </select>
@@ -76,11 +78,10 @@
 @section('style')
 <style>
     /* تصميم سلة المشتريات */
-    .container {
-        padding: 20px;
-        max-width: 1200px;
-        margin: 0 auto;
-    }
+    .container-fluid {
+    margin-top: 20px; /* تعديل مهم */
+    padding-top: 10px;
+}
 
     h1 {
         text-align: center;
@@ -93,14 +94,14 @@
     .table {
         width: 100%;
         border-collapse: collapse;
-        margin-bottom: 20px;
+        margin-bottom: auto;
     }
 
     .table th, .table td {
         padding: 12px;
         text-align: center;
         border: 1px solid #ddd;
-        font-size: 16px;
+        font-size: auto;
     }
 
     .table th {
@@ -112,9 +113,9 @@
     }
 
     .table input[type="number"] {
-        width: 70px;
+        width: auto;
         padding: 5px;
-        font-size: 14px;
+        font-size: auto;
         text-align: center;
     }
 
@@ -150,7 +151,7 @@
 
     /* تصميم Stripe Container */
     .stripe-payment-container {
-        max-width: 500px;
+        max-width: auto;
         margin: 0 auto;
         padding: 20px;
         background-color: #fff;
@@ -207,7 +208,80 @@
 
     .btn:active {
         transform: translateY(2px);
+    } .table-responsive {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
     }
+
+    /* تحسين التصميم للموبايل الصغير */
+    @media (max-width: 400px) {
+        h1 {
+            font-size: 18px;
+        }
+        .container-fluid {
+            padding-top: 100px;
+    }
+
+        .table th, .table td {
+            font-size: 12px;
+            padding: 6px;
+        }
+
+        .form-control {
+            font-size: 14px;
+            padding: 8px;
+            width: 100%;
+        }
+
+        .btn {
+            font-size: 14px;
+            padding: 10px;
+            width: 100%;
+        }
+
+        .stripe-payment-container {
+            padding: 10px;
+        }
+
+        .card-element-container {
+            margin-bottom: 15px;
+        }
+    }
+
+    /* لضبط عرض عناصر Stripe والمحدد */
+    #card-element, #payment_method {
+        width: 100% !important;
+    }
+    @media (max-width: 400px) {
+    h1 {
+        font-size: 18px;
+    }
+
+    .table th, .table td {
+        font-size: 12px;
+        padding: 8px;
+    }
+
+    .btn {
+        font-size: 14px;
+        padding: 10px;
+    }
+
+    .form-control {
+        font-size: 14px;
+        padding: 10px;
+        width: 100%;
+    }
+
+    .stripe-payment-container {
+        padding: 10px;
+    }
+
+    .text-center {
+        text-align: center;
+    }
+}
+
 </style>
 @endsection
 

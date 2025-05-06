@@ -5842,7 +5842,7 @@ a.tag {
   transform: rotate(-45deg);
 }
 
-@media (min-width: 320px) {
+@media (min-width: 1400px) {
   [data-width=boxed] body {
     background-color: var(--default-body-bg-color);
   }
@@ -6868,28 +6868,4 @@ h6,
 
 .bottom--4r {
   bottom: -4rem;
-}
-@media (max-width: 576px) {
-    body {
-      overflow-x: hidden;
-    }
-
-    .container,
-    .row,
-    .col {
-      max-width: 100% !important;
-      padding: 0 10px;
-      margin: 0 auto;
-    }
-
-    .ms--20p,
-    .mb--10p,
-    .mt-lg--13p {
-      margin: 0 !important;
-    }
-
-    .px-6,
-    .py-6 {
-      padding: 1rem !important;
-    }
 }

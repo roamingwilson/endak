@@ -90,7 +90,7 @@
 @php
     $departments = \App\Models\Department::all();
 @endphp
-<div class="container" style="margin-top: 20%">
+<div class="container" style=" padding-top: 100px;">
     <h1 class="mb-4 text-center"> {{ $lang == 'ar' ? "اختيار القسم" : "Choose Department"}}</h1>
 
     <div class="row g-3">

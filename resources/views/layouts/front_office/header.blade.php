@@ -216,10 +216,10 @@
                       <div class="media d-flex align-items-center justify-content-between">
                           <div class="d-flex align-items-center">
                               @if ($sender_me->image)
-                                  <img src="{{ $sender_me->image_url }}" alt="User Avatar" width="40px" height="40px"
+                                  <img src="{{ $sender_me->image_url }}" alt="User Avatar" width="auto" height="40px"
                                        class="img-size-50 mr-3 img-circle">
                               @else
-                                  <img src="{{ asset('storage/users/default_avatar.png') }}" alt="User Avatar" width="40px" height="40px" class="img-size-50 mr-3 img-circle">
+                                  <img src="{{ asset('storage/users/default_avatar.png') }}" alt="User Avatar" width="auto" height="40px" class="img-size-50 mr-3 img-circle">
                               @endif
                               <h6 class="dropdown-item-title mb-0">
                                   {{ $sender_me->first_name }}
