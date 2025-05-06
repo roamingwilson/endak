@@ -97,7 +97,7 @@
 
 </head>
 
-<body class="main-body light-theme">
+<body class="main-body light-theme" >
     @php  $lang = config('app.locale'); @endphp
 
     <!-- Back-to-top -->

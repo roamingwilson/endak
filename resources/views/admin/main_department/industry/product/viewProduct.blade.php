@@ -18,7 +18,7 @@
     ];
 @endphp
 
-<div class="container my-4">
+<div class="container ">
 
     {{-- الفلاتر --}}
     <div class="filter-cards mb-4">
@@ -235,7 +235,17 @@
             flex: 1 1 100%;
         }
     }
+    @media (max-width: 768px) {
+    body {
+        padding-top: 90px; /* عشان الـ navbar ما يغطيش الصفحة */
+    }
+}
 
+@media (min-width: 769px) {
+    body {
+        padding-top: 70px; /* أو حسب ارتفاع الـ navbar */
+    }
+}
     /* المنتجات */
     /* ترتيب المنتجات */
 /* عرض المنتجات */
