@@ -174,12 +174,12 @@ Route::group(['prefix' => 'user_management'], function () {
 // furniture transportations
 
 Route::group(['prefix' => "furniture_transportations"], function(){
-    // Route::get('/service_provider' , [FurnitureTransportationsController::class , 'service_provider'])->name('furniture_transportations_service');
-    // Route::get('/add_service' , [FurnitureTransportationsController::class , 'add_service'])->name('furniture_transportations_add_service');
-    // Route::post('/add_service' , [FurnitureTransportationsController::class , 'store_service'])->name('furniture_transportations_store_service');
-    // Route::get('/',[FurnitureTransportationsController::class , 'index'])->name('main_furniture_transportations');
-    // Route::get('/edit/{id}',[FurnitureTransportationsController::class , 'edit'])->name('main_furniture_transportations.edit');
-    // Route::patch('/update/{id}',[FurnitureTransportationsController::class , 'update'])->name('main_furniture_transportations.update');
+    Route::get('/service_provider' , [FurnitureTransportationsController::class , 'service_provider'])->name('furniture_transportations_service');
+    Route::get('/add_service' , [FurnitureTransportationsController::class , 'add_service'])->name('furniture_transportations_add_service');
+    Route::post('/add_service' , [FurnitureTransportationsController::class , 'store_service'])->name('furniture_transportations_store_service');
+    Route::get('/',[FurnitureTransportationsController::class , 'index'])->name('main_furniture_transportations');
+    Route::get('/edit/{id}',[FurnitureTransportationsController::class , 'edit'])->name('main_furniture_transportations.edit');
+    Route::patch('/update/{id}',[FurnitureTransportationsController::class , 'update'])->name('main_furniture_transportations.update');
     // Products
     Route::get('/products',[ProductFurnitureTransportationsController::class , 'index'])->name('main_furniture_transportations.product');
     Route::get('/products/create',[ProductFurnitureTransportationsController::class , 'create'])->name('main_furniture_transportations.product.create');
@@ -187,7 +187,7 @@ Route::group(['prefix' => "furniture_transportations"], function(){
     Route::get('/products/edit/{id}',[ProductFurnitureTransportationsController::class , 'edit'])->name('main_furniture_transportations.product.edit');
     Route::patch('/products/update/{id}',[ProductFurnitureTransportationsController::class , 'update'])->name('main_furniture_transportations.product.update');
     Route::get('/products/delete/{id}',[ProductFurnitureTransportationsController::class , 'destroy'])->name('main_furniture_transportations.product.delete');
-    // Route::get('/products',[ProductFurnitureTransportationsController::class , 'index'])->name('main_furniture_transportations.product.status');
+    Route::get('/products',[ProductFurnitureTransportationsController::class , 'index'])->name('main_furniture_transportations.product.status');
 });
 
 // Surveillance Cameras
