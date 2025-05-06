@@ -364,3 +364,7 @@ Route::post('/admin/orders/{id}/update-status', [ProductOrderController::class, 
 Route::delete('/admin/orders/{id}', [ProductOrderController::class, 'destroy'])->name('admin.pro_orders.destroy');
 Route::get('admin/pro_orders/show/{id}', [ProductOrderController::class, 'adminShow'])->name('admin.pro_orders.show');
 Route::post('orders/bulk-action', [ProductOrderController::class, 'bulkAction'])->name('admin.orders.bulk_action');
+
+
+
+Route::get('/admin/service/orders', [PostController::class, 'showOrdersForservice'])->name('admin.service.order');

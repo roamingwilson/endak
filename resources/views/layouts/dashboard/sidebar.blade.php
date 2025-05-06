@@ -151,13 +151,13 @@ $lang = config('app.locale');
                     {{-- @can('Edit_Admin_Settings') --}}
                         <ul class="nav nav-treeview">
                             <li class="nav-item">
-                                <a href="{{ route('admin.department.show', $department->id)}}" class="nav-link {{ request()->is('admin/furniture_transportations') ? 'active' : '' }}">
+                                <a href="{{ route('main_furniture_transportations') }}" class="nav-link {{ request()->is('admin/furniture_transportations') ? 'active' : '' }}">
                                     <i class="far fa-circle nav-icon"></i>
                                     {{ ($lang == 'ar')? 'نقل عفش' : 'Furniture Transportations' }}
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="{{ route('main_furniture_transportations.product') }}" class="nav-link {{ request()->is('admin/furniture_transportations/products') ? 'active' : '' }}">
+                                <a href="{{ route('admin.department.show', $department->id) }}" class="nav-link {{ request()->is('admin/furniture_transportations/products') ? 'active' : '' }}">
                                     <i class="far fa-circle nav-icon"></i>
                                     {{ ($lang == 'ar')? 'منتجات قسم نقل عفش' : 'Product Furniture Transportations' }}
                                 </a>
@@ -994,6 +994,39 @@ $lang = config('app.locale');
                                     <a href="{{ route('admin.posts') }}" class="nav-link {{ request()->is('admin/posts') ? 'active' : '' }}">
                                         <i class="far fa-circle nav-icon"></i>
                                         <p> {{ __('posts.posts') }} </p>
+                                    </a>
+                                </li>
+                                {{-- <li class="nav-item">
+                                    <a href="{{ route('admin.pages.create') }}" class="nav-link {{ request()->is('admin/pages/create') ? 'active' : '' }}">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p> {{ __('page.page_create') }} </p>
+                                    </a>
+                                </li> --}}
+                                {{-- <li class="nav-item">
+                                    <a href="" class="nav-link {{ request()->is('admin/pages/edit') ? 'active' : '' }}">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p> {{ __('page.edit_page') }} </p>
+                                    </a>
+                                </li> --}}
+
+                            </ul>
+                        {{-- @endcan --}}
+
+                    </li>
+                    <li class="nav-item has-treeview">
+                        <a href="" class="nav-link {{ request()->is('admin/posts*') ? 'active' : '' }}">
+                            <i class="fas fa-file-alt nav-icon"></i>
+                            <p>
+                                {{ ($lang == 'ar')? ' طلبات الخدمات' : 'Services order' }}
+                                <i class="right fas fa-angle-left"></i>
+                            </p>
+                        </a>
+                        {{-- @can('Edit_Admin_Settings') --}}
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="{{ route('admin.service.order') }}" class="nav-link {{ request()->is('admin/posts') ? 'active' : '' }}">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>  {{ ($lang == 'ar')? ' طلبات الخدمات' : 'Services order' }}</p>
                                     </a>
                                 </li>
                                 {{-- <li class="nav-item">
