@@ -33,7 +33,7 @@ $lang = config('app.locale');
                         <div class="row">
                             @forelse ($services as $service)
                             {{-- @dd(auth()->user()->governement) --}}
-                            @if (auth()->user()->governement== $service->user->governement)
+                            @if (auth()->user()->governement == $service->user->governement)
                                 <div class="col-md-4">
                                     <div class="card">
                                         <div class="position-relative">
@@ -52,7 +52,7 @@ $lang = config('app.locale');
                                         </div>
                                         <div class="card-body d-flex flex-column">
                                             <h5><a href="{{ route('show_myservice', $service->id) }}">
-                                                    {{ $lang == 'ar' ? $service->name_ar : $service->name_en }}</a></h5>
+                                                    {{ $lang == 'ar' ? $service->name_ar : $service->name_en }} </a></h5>
                                             <div class="tx-muted">
                                                 {{ $service->user->full_name }}
                                             </div>
@@ -100,7 +100,7 @@ $lang = config('app.locale');
                         </div>
                         <div class="form-group mt-2">
                             <label for="name" class="mb-1">{{ $lang == 'ar' ? 'سنة الصنع' : 'year made' }} : </label>
-                            <input type="number" class="form-control" name="year_made">
+                            <input type="number" class="form-control" name="year">
                         </div>
                         <div class="form-group mt-2">
                             <label for="name" class="mb-1">{{ $lang == 'ar' ? 'رقم الهيكل' : 'part number' }} : </label>
@@ -108,7 +108,7 @@ $lang = config('app.locale');
                         </div>
                         <div class="form-group mt-2">
                             <label for="name" class="mb-1">{{ $lang == 'ar' ? ' اسم القطعة المطلوب' : 'part name' }} : </label>
-                            <input type="text" class="form-control" name="name">
+                            <input type="text" class="form-control" name="car-type">
                         </div>
 
                         <div class="form-group mt-2">
@@ -180,7 +180,7 @@ $lang = config('app.locale');
                     </div>
                     <div class="form-group mt-2">
                         <label for="name" class="mb-1">{{ $lang == 'ar' ? 'سنة الصنع' : 'year made' }} : </label>
-                        <input type="number" class="form-control" name="year_made">
+                        <input type="number" class="form-control" name="year">
                     </div>
                     <div class="form-group mt-2">
                         <label for="name" class="mb-1">{{ $lang == 'ar' ? 'رقم الهيكل' : 'part number' }} : </label>
@@ -188,7 +188,7 @@ $lang = config('app.locale');
                     </div>
                     <div class="form-group mt-2">
                         <label for="name" class="mb-1">{{ $lang == 'ar' ? ' اسم القطعة المطلوب' : 'part name' }} : </label>
-                        <input type="text" class="form-control" name="name">
+                        <input type="text" class="form-control" name="car_type">
                     </div>
 
                     <div class="form-group mt-2">

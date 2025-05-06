@@ -103,7 +103,7 @@ $services = Services::where('department_id', $departments->id)->latest()->pagina
                         </div>
                         <div class="form-group mt-2">
                             <label for="name" class="mb-1">{{ $lang == 'ar' ? 'الوجهة' : 'Destination' }} : </label>
-                            <input type="text" class="form-control" name="destination">
+                            <input type="text" class="form-control" name="city">
                         </div>
                         <div class="form-group mt-2">
                             <label for="name" class="mb-1">{{ $lang == 'ar' ? 'نوع السيارة' : 'Car Type' }} : </label>

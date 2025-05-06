@@ -57,6 +57,11 @@ $services = Services::where('department_id', $departments->id)->latest()->pagina
                                                 {{ $lang == 'ar' ? $service->name_ar : $service->name_en }}</a></h5>
                                         <div class="tx-muted">
                                             {{ $service->user->full_name }}
+
+                                        </div>
+                                        <div class="tx-muted">
+                                            {{ $service->created_at->diffForHumans() }}
+
                                         </div>
 
                                     </div>
@@ -100,7 +105,7 @@ $services = Services::where('department_id', $departments->id)->latest()->pagina
                         </div>
                         <div class="form-group mt-2">
                             <label for="name" class="mb-1">{{ $lang == 'ar' ? 'سنة الصنع' : 'year made' }} : </label>
-                            <input type="text" class="form-control" name="year_made">
+                            <input type="text" class="form-control" name="year">
                         </div>
                         <div class="form-group mt-2">
                             <label for="name" class="mb-1">{{ $lang == 'ar' ? 'رقم الهيكل' : 'part number' }} : </label>
@@ -108,7 +113,7 @@ $services = Services::where('department_id', $departments->id)->latest()->pagina
                         </div>
                         <div class="form-group mt-2">
                             <label for="name" class="mb-1">{{ $lang == 'ar' ? ' اسم القطعة المطلوب' : 'part name' }} : </label>
-                            <input type="text" class="form-control" name="name">
+                            <input type="text" class="form-control" name="car_type">
                         </div>
 
                         <div class="form-group mt-2">

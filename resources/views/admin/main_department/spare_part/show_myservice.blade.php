@@ -34,7 +34,7 @@
         <div class="profile-content pt-40">
             <div class="container position-relative d-flex justify-content-center ">
                 <?php $user = auth()->user(); ?>
-                <div style="width:400px" class="profile-card rounded-lg shadow-xs bg-white p-15 p-md-30">
+                <div style="width:100%" class="profile-card rounded-lg shadow-xs bg-white p-15 p-md-30">
                     <div class="form-group mt-2">
                         @if (isset($service->images))
                             @foreach ($service->images as $item)
@@ -54,16 +54,16 @@
                                 <div class="form-group">
                                     <label for="" class="mb-1">{{ $lang == 'ar' ? ' اسم السيارة ' : 'brand' }}
                                         :</label>
-                                        @if (isset($service->brand))
-                                        <p>{{ $service->brand  }}</p>
+                                        @if (isset($service->equip_type))
+                                        <p>{{ $service->equip_type  }}</p>
                                     @endif
 
                                 </div>
                                 <div class="form-group">
-                                    <label for="" class="mb-1">{{ $lang == 'ar' ? ' الفئة ' : 'mode;' }}
+                                    <label for="" class="mb-1">{{ $lang == 'ar' ? ' الفئة ' : 'brand' }}
                                         :</label>
-                                        @if (isset($service->model))
-                                        <p>{{  $service->model  }}</p>
+                                        @if (isset($service->brand))
+                                        <p>{{  $service->brand  }}</p>
                                     @endif
 
                                 </div>
@@ -80,6 +80,13 @@
                                         :</label>
                                     @if (isset($service->part_number))
                                         <p>{{ $service->part_number }}</p>
+                                    @endif
+                                </div>
+                                <div class="form-group">
+                                    <label for="" class="mb-1">{{ $lang == 'ar' ? 'اسم القطعة المطلوبة' : 'part_number' }}
+                                        :</label>
+                                    @if (isset($service->car_type))
+                                        <p>{{ $service->car_type }}</p>
                                     @endif
                                 </div>
                                 <div class="form-group">

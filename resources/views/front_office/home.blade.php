@@ -129,15 +129,15 @@
     })
 </script>
 @endif
-@if (Session::has('info'))
+{{-- @if (Session::has('info'))
 <script>
     swal("Message", "{{ Session::get('info') }}", 'info', {
         button: true,
         button: "Ok",
         timer: 3000,
     })
-</script>
-@endif
+</script> --}}
+{{-- @endif --}}
 @endsection
 @section('script')
     <script src="{{ asset('js/feather-icons/dist/feather.min.js') }}"></script>

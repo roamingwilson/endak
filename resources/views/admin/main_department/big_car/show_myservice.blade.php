@@ -56,8 +56,8 @@
                     <div class="form-group">
                         <label for="" class="mb-1">{{ $lang == 'ar' ? 'الوجهة' : 'Destination' }}
                             :</label>
-                        @if (isset($service->destination))
-                            <p>{{ $service->destination }}</p>
+                        @if (isset($service->city))
+                            <p>{{ $service->city }}</p>
                         @endif
                     </div>
                     <div class="form-group">
