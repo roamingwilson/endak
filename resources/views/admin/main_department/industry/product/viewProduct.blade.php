@@ -91,7 +91,7 @@
         <div class="col-4 col-md-2 text-center">
                 <div class="card shadow-sm p-2" style="background-color: #f5f5f5; border-radius: 12px;">
                     <img  src="{{ $product->image ? asset('storage/'.$product->image) : asset('images/default-product.png') }}"
-                         class="" alt="{{ $product->title }}" style="width: 100px; height: 100px; object-fit: contain; margin: auto;">
+                         class="" alt="{{ $product->title }}" style="width: 100%; height: 100%; object-fit: contain; margin: auto;">
                     <div class="product-info">
                         <h5 class="mt-2 small fw-bold">{{ $product->title }}</h5>
                         <p class="mt-2 small fw-bold">{{ $product->price }} ريال</p>
