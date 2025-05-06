@@ -86,7 +86,7 @@
                 <div class="container position-relative d-flex justify-content-center ">
                     <?php $user = auth()->user(); ?>
                     <form action="{{ route('services.store') }}" method="POST" enctype="multipart/form-data"
-                        style="width:400px" class="profile-card rounded-lg shadow-xs bg-white p-15 p-md-30">
+                        style="width:100%" class="profile-card rounded-lg shadow-xs bg-white p-15 p-md-30">
                         @csrf
                         <input type="hidden" name="user_id" value="{{ $user->id }}">
                         <input type="hidden" name="department_id" value="{{ $departments->id }}">
@@ -97,14 +97,14 @@
                                     value="{{ $product->id }}" class="m-2">
 
                                 <div class="d-flex align-items-center justify-content-between m-2">
-                                    <label for="product-{{ $product->id }}" class="ml-2 mr-3" style="min-width: 150px;">
+                                    <label for="product-{{ $product->id }}" class="ml-2 mr-3" style="min-width: auto;">
                                         {{ $lang == 'ar' ? $product->name_ar : $product->name_en }}
                                     </label>
-                                    <img src="{{ $product->image_url }}" width="50px" height="50px" alt=""
+                                    <img src="{{ $product->image_url }}" width="auto" height="auto" alt=""
                                         style="margin-right: 15px;">
                                     <input max="10" class="form-control m-2" type="number"
                                         name="quantities[{{ $product->id }}]" placeholder="الكمية"
-                                        style="display: none; width: 100px;" id="quantity-{{ $product->id }}"
+                                        style="display: none; width: auto;" id="quantity-{{ $product->id }}"
                                         min="1">
                                 </div>
                                 <div>
@@ -176,10 +176,10 @@
                                 value="{{ $product->id }}" class="m-2">
 
                             <div class="d-flex align-items-center justify-content-between m-2">
-                                <label for="product-{{ $product->id }}" class="ml-2 mr-3" style="min-width: 150px;">
+                                <label for="product-{{ $product->id }}" class="ml-2 mr-3" style="min-width: auto;">
                                     {{ $lang == 'ar' ? $product->name_ar : $product->name_en }}
                                 </label>
-                                <img src="{{ $product->image_url }}" width="50px" height="50px" alt=""
+                                <img src="{{ $product->image_url }}" width="auto" height="auto" alt=""
                                     style="margin-right: 15px;">
                                 <input max="10" class="form-control m-2" type="number"
                                     name="quantities[{{ $product->id }}]" placeholder="الكمية"

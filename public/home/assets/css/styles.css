@@ -5090,7 +5090,6 @@ a.tag {
 }
 @media (min-width: 992px) {
   [data-nav-layout=horizontal] .main-menu-container .slide-left {
-    margin-bottom: auto;
     inset-inline-start: 23px;
   }
 }
@@ -5100,7 +5099,6 @@ a.tag {
     position: absolute;
     inset-block-start: 9px;
     padding: 6px;
-    margin-bottom: auto;
     color: #fff;
     display: flex;
     align-items: center;
@@ -5119,7 +5117,6 @@ a.tag {
     padding: 6px;
     color: #fff;
     display: flex;
-    margin-bottom: auto;
     align-items: center;
     justify-content: center;
     z-index: 1;
@@ -5619,8 +5616,6 @@ a.tag {
   }
   .main-menu-container {
     display: block;
-    margin-top: 40px;
-    margin-bottom: auto;
   }
   .main-menu-container .login-btn {
     border-color: var(--border);
@@ -5847,13 +5842,12 @@ a.tag {
   transform: rotate(-45deg);
 }
 
-@media (min-width: 1400px) {
+@media (min-width: 320px) {
   [data-width=boxed] body {
     background-color: var(--default-body-bg-color);
   }
   [data-width=boxed] .container {
-    max-width: 600px;
-    margin-bottom: auto;
+    max-width: 1200px;
   }
   [data-width=boxed] .page {
     width: 85%;
@@ -6874,4 +6868,28 @@ h6,
 
 .bottom--4r {
   bottom: -4rem;
+}
+@media (max-width: 576px) {
+    body {
+      overflow-x: hidden;
+    }
+
+    .container,
+    .row,
+    .col {
+      max-width: 100% !important;
+      padding: 0 10px;
+      margin: 0 auto;
+    }
+
+    .ms--20p,
+    .mb--10p,
+    .mt-lg--13p {
+      margin: 0 !important;
+    }
+
+    .px-6,
+    .py-6 {
+      padding: 1rem !important;
+    }
 }

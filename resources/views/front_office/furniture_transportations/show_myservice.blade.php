@@ -31,15 +31,15 @@
         <div class="profile-content pt-40">
             <div class="container position-relative d-flex justify-content-center ">
                 <?php $user = auth()->user(); ?>
-                <div style="width:400px" class="profile-card rounded-lg shadow-xs bg-white p-15 p-md-30">
+                <div style="width:100%" class="profile-card rounded-lg shadow-xs bg-white p-15 p-md-30">
 
                     @foreach ($products as $product)
                         <div class="form-group mt-2 d-flex align-items-center justify-content-between"
                             style="gap: 20px; border-bottom: 1px solid #ccc; padding-bottom: 10px;">
-                            <label class="ml-2 mr-3" style="min-width: 150px;">
+                            <label class="ml-2 mr-3" style="min-width: auto;">
                                 {{ $lang == 'ar' ? $product->product_item->name_ar : $product->product_item->name_en }}
                             </label>
-                            <img src="{{ $product->product_item->image_url }}" width="50px" height="50px" alt=""
+                            <img src="{{ $product->product_item->image_url }}" width="auto" height="auto" alt=""
                                 style="margin-right: 15px;">
                             <label>
                                 {{ $lang == 'ar' ? 'الكمية' : 'Quantity' }}: {{ $product->quantity }}
