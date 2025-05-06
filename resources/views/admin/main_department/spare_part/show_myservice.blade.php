@@ -16,7 +16,7 @@
                         <div class="col-md-12 text-center">
                             <div class="">
                                 <p class="mb-3 content-1 h5 text-black">
-                                    {{ $lang == 'ar' ? $service->type : 'spare parts Services' }}
+                                    {{ $lang == 'ar' ? 'قطع غيار': 'spare parts Services' }}
 
 
                                 </p>
@@ -34,7 +34,7 @@
         <div class="profile-content pt-40">
             <div class="container position-relative d-flex justify-content-center ">
                 <?php $user = auth()->user(); ?>
-                <div style="width:600px" class="profile-card rounded-lg shadow-xs bg-white p-15 p-md-30">
+                <div style="width:400px" class="profile-card rounded-lg shadow-xs bg-white p-15 p-md-30">
                     <div class="form-group mt-2">
                         @if (isset($service->images))
                             @foreach ($service->images as $item)
@@ -48,7 +48,7 @@
                     <div class="profile-content pt-40">
                         <div class="container position-relative d-flex justify-content-center ">
                             <?php $user = auth()->user(); ?>
-                            <div style="width:600px" class="profile-card rounded-lg shadow-xs bg-white p-15 p-md-30">
+                            <div style="width:100%" class="profile-card rounded-lg shadow-xs bg-white p-15 p-md-30">
 
 
                                 <div class="form-group">

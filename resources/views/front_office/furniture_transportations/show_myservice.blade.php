@@ -31,7 +31,7 @@
         <div class="profile-content pt-40">
             <div class="container position-relative d-flex justify-content-center ">
                 <?php $user = auth()->user(); ?>
-                <div style="width:700px" class="profile-card rounded-lg shadow-xs bg-white p-15 p-md-30">
+                <div style="width:400px" class="profile-card rounded-lg shadow-xs bg-white p-15 p-md-30">
 
                     @foreach ($products as $product)
                         <div class="form-group mt-2 d-flex align-items-center justify-content-between"

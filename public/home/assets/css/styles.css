@@ -3,7 +3,7 @@
 [Master Stylesheet]
 
 Project        :   Hostma - Modern Web Hosting Template
-Copyright      :   Spruko Technologies Private Limited 
+Copyright      :   Spruko Technologies Private Limited
 Author         :   Spruko
 Author URL     :   https://themeforest.net/user/spruko
 Support	       :   support@spruko.com
@@ -5090,6 +5090,7 @@ a.tag {
 }
 @media (min-width: 992px) {
   [data-nav-layout=horizontal] .main-menu-container .slide-left {
+    margin-bottom: auto;
     inset-inline-start: 23px;
   }
 }
@@ -5099,6 +5100,7 @@ a.tag {
     position: absolute;
     inset-block-start: 9px;
     padding: 6px;
+    margin-bottom: auto;
     color: #fff;
     display: flex;
     align-items: center;
@@ -5117,6 +5119,7 @@ a.tag {
     padding: 6px;
     color: #fff;
     display: flex;
+    margin-bottom: auto;
     align-items: center;
     justify-content: center;
     z-index: 1;
@@ -5616,6 +5619,8 @@ a.tag {
   }
   .main-menu-container {
     display: block;
+    margin-top: 40px;
+    margin-bottom: auto;
   }
   .main-menu-container .login-btn {
     border-color: var(--border);
@@ -5847,7 +5852,8 @@ a.tag {
     background-color: var(--default-body-bg-color);
   }
   [data-width=boxed] .container {
-    max-width: 1200px;
+    max-width: 600px;
+    margin-bottom: auto;
   }
   [data-width=boxed] .page {
     width: 85%;

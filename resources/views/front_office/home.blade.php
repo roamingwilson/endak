@@ -90,8 +90,8 @@
 @php
     $departments = \App\Models\Department::all();
 @endphp
-<div class="container mt-4" style="margin-top: auto">
-    <h1 class="mb-4 text-center"> {{ $lang == 'ar' ? "اختيار القسم" : "Choose Department"}}</h1>
+<div class="container" style="margin-top: 20%">
+    <h1 class="mb-4 mt-4 text-center"> {{ $lang == 'ar' ? "اختيار القسم" : "Choose Department"}}</h1>
 
     <div class="row g-3">
         @foreach($departments as $department)

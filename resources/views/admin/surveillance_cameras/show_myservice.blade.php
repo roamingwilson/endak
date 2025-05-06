@@ -33,7 +33,7 @@
             <div class="container position-relative d-flex justify-content-center ">
                 <?php $user = auth()->user(); ?>
                 {{-- `user_id`, `finger`, `camera`, `smart`, `fire_system`, `security_system`, `network`, `notes` --}}
-                <div style="width:700px" class="profile-card rounded-lg shadow-xs bg-white p-15 p-md-30">
+                <div style="width:100%" class="profile-card rounded-lg shadow-xs bg-white p-15 p-md-30">
                     <div class="form-group mt-2">
                         @if (isset($service->finger) && $service->finger == 1)
                             <label for="">

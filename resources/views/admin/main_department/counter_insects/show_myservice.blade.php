@@ -36,7 +36,7 @@
         <div class="profile-content pt-40">
             <div class="container position-relative d-flex justify-content-center ">
                 <?php $user = auth()->user(); ?>
-                <div style="width:600px" class="profile-card rounded-lg shadow-xs bg-white p-15 p-md-30">
+                <div style="width:100%" class="profile-card rounded-lg shadow-xs bg-white p-15 p-md-30">
                     <div class="form-group mt-2">
                         @foreach ($service->images as $item)
                             <img width="80px" height="80px" src="{{ asset('storage/' . $item->path) }}" alt="">

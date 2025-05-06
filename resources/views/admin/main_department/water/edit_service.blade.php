@@ -44,7 +44,7 @@ $lang = config('app.locale');
                 <div class="container position-relative d-flex justify-content-center mt-4">
                     <?php $user = auth()->user(); ?>
                     <form action="{{route('services.update',$service->id)}}" method="POST" enctype="multipart/form-data"
-                        style="width: 600px;" class="profile-card rounded-lg shadow-xs bg-white p-4">
+                        style="width: 100%;" class="profile-card rounded-lg shadow-xs bg-white p-4">
                         @csrf
                         @method('PUT')
                         {{-- @dd($cars) --}}

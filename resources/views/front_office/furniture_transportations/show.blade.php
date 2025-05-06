@@ -6,48 +6,7 @@
 @section('style')
 
 @endsection
-@section('style')
-<script>
-    @media (max-width: 768px) {
-    .card {
-        margin-bottom: 20px;
-    }
-    .card-body {
-        padding: 10px;
-    }
-    .col-md-4 {
 
-        flex: 1 0 100%;
-    }
-    .form-control {
-        width: 100%;
-    }
-    .profile-card {
-        width: 100%;
-    }
-    .profile-cover-container {
-        padding: 20px 0;
-    }
-    .form-group {
-        margin-bottom: 15px;
-    }
-    img.card-img-top {
-        width: 100%;
-        height: auto;
-    }
-    .text-center {
-        text-align: center;
-    }
-}
-
-
-@media (max-width: 1024px) {
-    .container {
-        padding: 0 15px;
-    }
-}
-</script>
-@endsection
 @section('content')
     <?php
     $lang = config('app.locale');
@@ -127,7 +86,7 @@
                 <div class="container position-relative d-flex justify-content-center ">
                     <?php $user = auth()->user(); ?>
                     <form action="{{ route('services.store') }}" method="POST" enctype="multipart/form-data"
-                        style="width:700px" class="profile-card rounded-lg shadow-xs bg-white p-15 p-md-30">
+                        style="width:400px" class="profile-card rounded-lg shadow-xs bg-white p-15 p-md-30">
                         @csrf
                         <input type="hidden" name="user_id" value="{{ $user->id }}">
                         <input type="hidden" name="department_id" value="{{ $departments->id }}">
@@ -209,7 +168,7 @@
             <div class="container position-relative d-flex justify-content-center ">
 
                 <form action="{{ route('register-page') }}" method="get" enctype="multipart/form-data"
-                    style="width:600px" class="profile-card rounded-lg shadow-xs bg-white p-15 p-md-30">
+                    style="width:100%" class="profile-card rounded-lg shadow-xs bg-white p-15 p-md-30">
                     @csrf
                     @foreach ($products as $product)
                         <div class="form-group mt-2 d-flex align-items-center">

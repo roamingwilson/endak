@@ -32,7 +32,7 @@
         <div class="profile-content pt-40">
             <div class="container position-relative d-flex justify-content-center ">
                 <?php $user = auth()->user(); ?>
-                <div style="width:600px" class="profile-card rounded-lg shadow-xs bg-white p-15 p-md-30">
+                <div style="width:100%" class="profile-card rounded-lg shadow-xs bg-white p-15 p-md-30">
                     <div class="form-group mt-2">
                         @if (isset($service->images))
                             @foreach ($service->images as $item)
@@ -46,7 +46,7 @@
                     <div class="profile-content pt-40">
                         <div class="container position-relative d-flex justify-content-center ">
                             <?php $user = auth()->user(); ?>
-                            <div style="width:600px" class="profile-card rounded-lg shadow-xs bg-white p-15 p-md-30">
+                            <div style="width:100%" class="profile-card rounded-lg shadow-xs bg-white p-15 p-md-30">
 
                                 <div class="form-group">
                                     <label for="" class="mb-1">{{ $lang == 'ar' ? 'الوقت' : 'Time' }}

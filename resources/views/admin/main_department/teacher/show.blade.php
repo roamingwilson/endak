@@ -89,7 +89,7 @@ $services = Services::where('department_id', $departments->id)->latest()->pagina
                 <div class="container position-relative d-flex justify-content-center ">
                     <?php $user = auth()->user(); ?>
                     <form action="{{ route('services.store') }}" method="POST" enctype="multipart/form-data"
-                        style="width:600px;margin-top:10px" class="profile-card rounded-lg shadow-xs bg-white p-15 p-md-30">
+                        style="width:100%;margin-top:10px" class="profile-card rounded-lg shadow-xs bg-white p-15 p-md-30">
                         @csrf
                         <input type="hidden" name="user_id" value="{{ $user->id }}">
                         <input type="hidden" name="department_id" value="{{ $departments->id }}">
@@ -140,7 +140,7 @@ $services = Services::where('department_id', $departments->id)->latest()->pagina
         <div class="profile-content pt-40">
             <div class="container position-relative d-flex justify-content-center ">
                 <form action="{{ route('register-page') }}" method="get" enctype="multipart/form-data"
-                    style="width:600px;margin-top:10px" class="profile-card rounded-lg shadow-xs bg-white p-15 p-md-30">
+                    style="width:100%;margin-top:10px" class="profile-card rounded-lg shadow-xs bg-white p-15 p-md-30">
                     @csrf
                     <div class="form-group mt-2">
                         <label for="" class="mb-1">{{ $lang == 'ar' ? 'ملاحظة عن العمل المطلوب' : 'Note About Work' }} :</label>
