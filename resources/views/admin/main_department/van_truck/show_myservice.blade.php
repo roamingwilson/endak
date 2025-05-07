@@ -115,7 +115,7 @@
                                     <div class="mt-4">
                                         @if (auth()->id() === $service->user_id)
                                         <a class="btn btn-success btn-sm" href="{{route('services.edit',$service->id)}}">
-                                            <i class="fe fe-check-circle"></i> {{ __('Edit') }}
+                                            <i class="fe fe-check-circle"></i> {{ $lang == 'ar' ? 'تعديل' : 'Edit' }}
                                         </a>
                                         <form action="{{ route('services.destroy', $service->id) }}" method="POST" style="display:inline-block;">
                                             @csrf

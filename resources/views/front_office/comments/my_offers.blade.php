@@ -70,10 +70,12 @@
     @endforeach
     </div>
 
-    <!-- التنقل بين الصفحات -->
+    @if ($comments)
+
     <div class="d-flex justify-content-center mt-4">
         {{ $comments->links() }}
     </div>
+    @endif
 </div>
 @endsection
 

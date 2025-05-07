@@ -94,7 +94,7 @@
                          class="" alt="{{ $product->title }}" style="width: 100%; height: 100%; object-fit: contain; margin: auto;">
                     <div class="product-info">
                         <h5 class="mt-2 small fw-bold">{{ $product->title }}</h5>
-                        <p class="mt-2 small fw-bold">{{ $product->price }} ريال</p>
+                        <p class="mt-2 small fw-bold">{{ $product->price }} {{ ($lang == 'ar')? 'ر.س' : 'SAR' }}</p>
 
 
                         @if (auth()->check())
@@ -102,17 +102,17 @@
 
                         <form action="{{ route('pro_cart.add', $product->id) }}" method="POST">
                             @csrf
-                            <div class="d-flex align-items-center mt-2">
-                                <input type="number" name="quantity" value="1" min="1" class="form-control w-50" style="max-width: 100px;">
-                                <button type="submit" class="btn btn-warning btn-sm ml-2"> {{ ($lang == 'ar')? ' إضافة إلى السلة' : 'Add to cart' }}</button>
+                            <div class="d-flex align-items-center mt-2 flex-wrap">
+                                <input type="number" name="quantity" value="1" min="1" class="form-control w-100 mb-2" style="max-width: 120px;">
+                                <button type="submit" class="btn btn-warning btn-sm ml-2">{{ ($lang == 'ar')? ' إضافة إلى السلة' : 'Add to cart' }}</button>
                             </div>
                         </form>
                         @else
                         <form action="{{ route('register-page') }}" method="get">
                             @csrf
-                            <div class="d-flex align-items-center mt-2">
-                                <input type="number" name="quantity" value="1" min="1" class="form-control w-50" style="max-width: 100px;">
-                                <button type="submit" class="btn btn-warning btn-sm ml-2"> {{ ($lang == 'ar')? ' إضافة إلى السلة' : 'Add to cart' }}</button>
+                            <div class="d-flex align-items-center mt-2 flex-wrap">
+                                <input type="number" name="quantity" value="1" min="1" class="form-control w-100 mb-2" style="max-width: 120px;">
+                                <button type="submit" class="btn btn-warning btn-sm ml-2">{{ ($lang == 'ar')? ' إضافة إلى السلة' : 'Add to cart' }}</button>
                             </div>
                         </form>
 
@@ -246,7 +246,22 @@
         padding-top: 70px;
          /* أو حسب ارتفاع الـ navbar */
     }
+
 }
+@media (max-width: 576px) {
+    .d-flex.align-items-center.mt-2 {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .d-flex.align-items-center.mt-2 input,
+    .d-flex.align-items-center.mt-2 button {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin-bottom: 10px;
+    }
+}
+
     /* المنتجات */
     /* ترتيب المنتجات */
 /* عرض المنتجات */

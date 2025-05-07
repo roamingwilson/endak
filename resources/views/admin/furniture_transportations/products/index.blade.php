@@ -24,7 +24,7 @@
                     </button>
                 </div>
                 <div class="d-flex">
-                    
+
                     <button type="submit" name="bulk_action_btn" value="delete" class="btn btn-danger delete_confirm mr-2">
                         <i class="la la-trash"></i> {{ __('general.delete') }}
                     </button>
@@ -34,7 +34,7 @@
                 </div>
             </div>
         </div>
-        
+
         <div class="col-sm-12">
             @if ($products->count())
                 <div class="cls_table table-responsive">
@@ -43,8 +43,8 @@
                             <tr>
                                 <th><input class="bulk_check_all" type="checkbox" /></th>
                                 <th>@lang('department.name_ar')</th>
-                                <th>@lang('department.name_en')</th> 
-                                <th>@lang('general.status')</th> 
+                                <th>@lang('department.name_en')</th>
+                                <th>@lang('general.status')</th>
                                 <th>{{ __('department.image') }}</th>
                                 <th>@lang('general.actions')</th>
                             </tr>
@@ -60,8 +60,8 @@
                                     </label>
                                 </td>
                                 <td>{{ $product->name_ar }} </td>
-                                <td>{{ $product->name_en }} </td> 
-                                <td>@if($product->status == 'active' && $lang == 'ar') {{ "معروض" }} @elseif($product->status == 'active' && $lang == 'en') {{ "Active" }} @elseif($product->status == 'disactive' && $lang == 'ar') {{ "غير معروض" }} @else {{ "Dis Active" }} @endif</td> 
+                                <td>{{ $product->name_en }} </td>
+                                <td>@if($product->status == 'active' && $lang == 'ar') {{ "معروض" }} @elseif($product->status == 'active' && $lang == 'en') {{ "Active" }} @elseif($product->status == 'disactive' && $lang == 'ar') {{ "غير معروض" }} @else {{ "Dis Active" }} @endif</td>
                                 <td> <img src="{{ $product->image_url }}" alt="" width="200px" height="150px" />
                                 </td>
                                 <td>
