@@ -151,14 +151,13 @@ $lang = config('app.locale');
                     {{-- @can('Edit_Admin_Settings') --}}
                         <ul class="nav nav-treeview">
                             <li class="nav-item">
-                                <a href="{{ route('main_furniture_transportations') }}" class="nav-link {{ request()->is('admin/furniture_transportations') ? 'active' : '' }}">
+                                <a href="{{ route('admin.department.show', $department->id)  }}" class="nav-link {{ request()->is('admin/furniture_transportations') ? 'active' : '' }}">
                                     <i class="far fa-circle nav-icon"></i>
                                     {{ ($lang == 'ar')? 'نقل عفش' : 'Furniture Transportations' }}
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="{{ route('admin.department.show', $department->id) }}" class="nav-link {{ request()->is('admin/furniture_transportations/products') ? 'active' : '' }}">
-                                    <i class="far fa-circle nav-icon"></i>
+                                <a href="{{ route('main_furniture_transportations.product') }}" class="nav-link {{ request()->is('admin/furniture_transportations/products') ? 'active' : '' }}">                                    <i class="far fa-circle nav-icon"></i>
                                     {{ ($lang == 'ar')? 'منتجات قسم نقل عفش' : 'Product Furniture Transportations' }}
                                 </a>
                             </li>

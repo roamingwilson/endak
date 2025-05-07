@@ -151,7 +151,7 @@ Route::post('/order/items' , [OrderUserController::class , 'product_order'])->na
 Route::group(['prefix' => "furniture_transportations"], function(){
     Route::get('/show' , [FurnitureTransportationsController::class , 'show'])->name('furniture_transportations_show');
     // Route::post('/add_service' , [FurnitureTransportationsController::class , 'store_service'])->name('furniture_transportations_store_service');
-    Route::get('/',[FurnitureTransportationsController::class , 'index'])->name('main_furniture_transportations');
+    // Route::get('/',[FurnitureTransportationsController::class , 'index'])->name('main_furniture_transportations');
     Route::get('/service/{id}',[FurnitureTransportationsController::class , 'show_my_service'])->name('main_furniture_transportations_show_my_service');
     // Route::get('/edit/{id}',[FurnitureTransportationsController::class , 'edit'])->name('main_furniture_transportations.edit');
     // Route::patch('/update/{id}',[FurnitureTransportationsController::class , 'update'])->name('main_furniture_transportations.update');

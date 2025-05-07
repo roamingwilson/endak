@@ -39,7 +39,7 @@
                             <label class="ml-2 mr-3" style="min-width: auto;">
                                 {{ $lang == 'ar' ? $product->product_item->name_ar : $product->product_item->name_en }}
                             </label>
-                            <img src="{{ $product->product_item->image_url }}" width="auto" height="auto" alt=""
+                            <img src="{{ $product->product_item->image_url }}" width="50px" height="50px" alt=""
                                 style="margin-right: 15px;">
                             <label>
                                 {{ $lang == 'ar' ? 'الكمية' : 'Quantity' }}: {{ $product->quantity }}
@@ -67,7 +67,7 @@
                         <label for="name" class="mb-1">{{ $lang == 'ar' ? 'المدينة' : 'City' }} :
                             {{ $service->from_city }} || {{ $lang == 'ar' ? 'الحي' : 'Neighborhood' }} :
                             {{ $service->from_neighborhood }} || {{ $lang == 'ar' ? 'الدور' : 'Home' }} :
-                            {{ $service->from_home }}</label>
+                            {{ $service->part_number }}</label>
 
                     </div>
                     <hr>
@@ -76,7 +76,7 @@
                         <label for="name" class="mb-1">{{ $lang == 'ar' ? 'المدينة' : 'City' }} :
                             {{ $service->to_city }} || {{ $lang == 'ar' ? 'الحي' : 'Neighborhood' }} :
                             {{ $service->to_neighborhood }} || {{ $lang == 'ar' ? 'الدور' : 'Home' }} :
-                            {{ $service->to_home }}</label>
+                            {{ $service->location }}</label>
 
                     </div>
                     <div class="form-group">

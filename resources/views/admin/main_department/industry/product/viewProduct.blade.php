@@ -236,18 +236,15 @@
         }
     }
     @media (max-width: 768px) {
-        body {
-        padding-top: 70px;
-        padding-left: 20px;
-        padding-right: 20px;
+    body {
+        padding-top: 90px; /* عشان الـ navbar ما يغطيش الصفحة */
     }
 }
 
 @media (min-width: 769px) {
     body {
         padding-top: 70px;
-        padding-left: 20px;
-        padding-right: 20px;
+         /* أو حسب ارتفاع الـ navbar */
     }
 }
     /* المنتجات */

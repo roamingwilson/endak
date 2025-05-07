@@ -100,7 +100,7 @@
                                     <label for="product-{{ $product->id }}" class="ml-2 mr-3" style="min-width: auto;">
                                         {{ $lang == 'ar' ? $product->name_ar : $product->name_en }}
                                     </label>
-                                    <img src="{{ $product->image_url }}" width="auto" height="auto" alt=""
+                                    <img src="{{ $product->image_url }}" width="50px" height="50px" alt=""
                                         style="margin-right: 15px;">
                                     <input max="10" class="form-control m-2" type="number"
                                         name="quantities[{{ $product->id }}]" placeholder="الكمية"
@@ -131,6 +131,8 @@
                             <input type="text" class="form-control" name="from_city">
                             <label for="name" class="mb-1">{{ $lang == 'ar' ? 'الحي' : 'Neighborhood' }} : </label>
                             <input type="text" class="form-control" name="from_neighborhood">
+                            <label for="name" class="mb-1">{{ $lang == 'ar' ? 'الدور' : 'Home' }} : </label>
+                            <input type="text" class="form-control" name="part_number">
 
                         </div>
                         <hr>
@@ -141,6 +143,8 @@
                             <label for="name" class="mb-1">{{ $lang == 'ar' ? 'الحي' : 'Neighborhood' }} :
                             </label>
                             <input type="text" class="form-control" name="to_neighborhood">
+                            <label for="name" class="mb-1">{{ $lang == 'ar' ? 'الدور' : 'Home' }} : </label>
+                            <input type="text" class="form-control" name="location">
 
 
                         </div>
@@ -179,11 +183,11 @@
                                 <label for="product-{{ $product->id }}" class="ml-2 mr-3" style="min-width: auto;">
                                     {{ $lang == 'ar' ? $product->name_ar : $product->name_en }}
                                 </label>
-                                <img src="{{ $product->image_url }}" width="auto" height="auto" alt=""
+                                <img src="{{ $product->image_url }}" width="50px" height="50px" alt=""
                                     style="margin-right: 15px;">
                                 <input max="10" class="form-control m-2" type="number"
                                     name="quantities[{{ $product->id }}]" placeholder="الكمية"
-                                    style="display: none; width: 100px;" id="quantity-{{ $product->id }}"
+                                    style="display: none; width: auto;" id="quantity-{{ $product->id }}"
                                     min="1">
                             </div>
                             <div>
@@ -208,7 +212,7 @@
                         <label for="name" class="mb-1">{{ $lang == 'ar' ? 'الحي' : 'Neighborhood' }} : </label>
                         <input type="text" class="form-control" name="from_neighborhood">
                         <label for="name" class="mb-1">{{ $lang == 'ar' ? 'الدور' : 'Home' }} : </label>
-                        <input type="text" class="form-control" name="from_home">
+                        <input type="text" class="form-control" name="part_number">
                     </div>
                     <hr>
                     <label for="name" class="mb-1">{{ $lang == 'ar' ? 'الي' : 'To' }} : </label>
@@ -219,7 +223,7 @@
                         </label>
                         <input type="text" class="form-control" name="to_neighborhood">
                         <label for="name" class="mb-1">{{ $lang == 'ar' ? 'الدور' : 'Home' }} : </label>
-                        <input type="text" class="form-control" name="to_home">
+                        <input type="text" class="form-control" name="location">
                     </div>
                     <div class="form-group">
                         <label for="" class="mb-1">{{ $lang == 'ar' ? 'ملاحظة عن العمل المطلوب' : 'Note About Work' }} :</label>

@@ -3,6 +3,8 @@
 <?php $lang = config('app.locale'); ?>
 
 @section('content')
+<div>
+
     <h1>{{ $lang == 'ar' ? 'إضافة منتج جديد للطلب' : 'Add New Product to Order' }}</h1>
 
     <form action="{{ route('pro_order_items.store', $orderId) }}" method="POST">
@@ -13,7 +15,7 @@
         </label>
         <select name="inds_product_id" id="inds_product_id">
             @foreach ($products as $product)
-                <option value="{{ $product->id }}">{{ $product->title }}</option>
+            <option value="{{ $product->id }}">{{ $product->title }}</option>
             @endforeach
         </select>
 
@@ -31,20 +33,6 @@
             {{ $lang == 'ar' ? 'إضافة' : 'Add' }}
         </button>
     </form>
-@endsection
-@section('style')
-<style>
-    @media (max-width: 768px) {
-    body {
-        padding-top: 90px; /* عشان الـ navbar ما يغطيش الصفحة */
-    }
-}
+</div>
+    @endsection
 
-@media (min-width: 769px) {
-    body {
-        padding-top: 70px; /* أو حسب ارتفاع الـ navbar */
-    }
-}
-</style>
-
-@endsection

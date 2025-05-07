@@ -187,7 +187,7 @@ Route::group(['prefix' => "furniture_transportations"], function(){
     Route::get('/products/edit/{id}',[ProductFurnitureTransportationsController::class , 'edit'])->name('main_furniture_transportations.product.edit');
     Route::patch('/products/update/{id}',[ProductFurnitureTransportationsController::class , 'update'])->name('main_furniture_transportations.product.update');
     Route::get('/products/delete/{id}',[ProductFurnitureTransportationsController::class , 'destroy'])->name('main_furniture_transportations.product.delete');
-    Route::get('/products',[ProductFurnitureTransportationsController::class , 'index'])->name('main_furniture_transportations.product.status');
+    // Route::get('/products',[ProductFurnitureTransportationsController::class , 'index'])->name('main_furniture_transportations.product.status');
 });
 
 // Surveillance Cameras

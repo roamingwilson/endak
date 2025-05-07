@@ -11,10 +11,10 @@ use App\Models\FurnitureTransportationProduct;
 class ProductFurnitureTransportationsController extends Controller
 {
     public function index(Request $request){
-        
+
         $ids = $request->bulk_ids;
         $now = Carbon::now()->toDateTimeString();
-        // delete 
+        // delete
         if ($request->bulk_action_btn === 'delete' &&  is_array($ids) && count($ids)) {
             FurnitureTransportationProduct::whereIn('id', $ids)->delete();
             return back()->with('success', __('general.deleted_successfully'));
@@ -35,7 +35,7 @@ class ProductFurnitureTransportationsController extends Controller
     }
 
     public function store(Request $request){
-        
+
         $request->validate([
             'name_ar'           => "required",
             'name_en'           => "required",
@@ -56,7 +56,7 @@ class ProductFurnitureTransportationsController extends Controller
     }
 
     public function edit($id)
-    
+
     {
         $product = FurnitureTransportationProduct::whereId($id)->first();
         if (!$product){

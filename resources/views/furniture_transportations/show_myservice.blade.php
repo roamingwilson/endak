@@ -10,7 +10,7 @@
     <div class="main-content app-content">
         <section>
             <div class="section banner-4 banner-section">
-                <div class="container-fluid">
+                <div class="container">
                     <div class="row align-items-center">
                         <div class="col-md-12 text-center">
                             <div class="">
@@ -30,7 +30,7 @@
         <div class="profile-content pt-40">
             <div class="container position-relative d-flex justify-content-center ">
                 <?php $user = auth()->user(); ?>
-                <div style="width:300px" class="profile-card rounded-lg shadow-xs bg-white p-15 p-md-30">
+                <div style="width:100%" class="profile-card rounded-lg shadow-xs bg-white p-15 p-md-30">
 
                     @foreach ($products as $product)
                         <div class="form-group mt-2 d-flex align-items-center justify-content-between"
