@@ -124,7 +124,7 @@ $services = Services::where('department_id', $departments->id)->latest()->pagina
                         <hr>
 
 
-                        </div>
+
                         <hr>
                         <div class="form-group mt-2" style="text-align: right;margin-right:10px">
                             <button class="btn mt-2 form-control"  style="background-color: #fdca3d">{{ $lang == 'ar' ? 'ارسال' : 'Send' }}</button>

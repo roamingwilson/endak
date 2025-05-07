@@ -48,7 +48,7 @@
         @empty
             <div class="col-12">
                 <div class="alert alert-info text-center">
-                    لا توجد خدمات حالياً
+                    {{ $lang == 'ar' ? "لا توجد خدمات حالياً ": "No sevices"}}
                 </div>
             </div>
         @endforelse
@@ -58,4 +58,20 @@
         {{ $Services->links() }}
     </div>
 </div>
+@endsection
+@section('style')
+<style>
+            @media (max-width: 768px) {
+    body {
+        padding-top: 90px; /* عشان الـ navbar ما يغطيش الصفحة */
+    }
+}
+
+@media (min-width: 769px) {
+    body {
+        padding-top: 70px; /* أو حسب ارتفاع الـ navbar */
+    }
+}
+</style>
+
 @endsection

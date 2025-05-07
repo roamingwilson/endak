@@ -78,4 +78,20 @@
     @endif
 </div>
 @endsection
+@section('style')
+<style>
+            @media (max-width: 768px) {
+    body {
+        padding-top: 90px; /* عشان الـ navbar ما يغطيش الصفحة */
+    }
+}
+
+@media (min-width: 769px) {
+    body {
+        padding-top: 70px; /* أو حسب ارتفاع الـ navbar */
+    }
+}
+</style>
+
+@endsection
 
