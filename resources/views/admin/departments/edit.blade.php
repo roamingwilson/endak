@@ -33,10 +33,7 @@
                 <input type="text" name="name_ar" class="form-control mt-2" value="{{ old('name_ar', $department->name_ar) }}" />
             </div>
             <div class="form-group">
-                <lable class="" for="">{{ __('department.name_en') }}</lable>
-                <input type="text" name="name_en" class="form-control mt-2"
-                    value="{{ old('name_en', $department->name_en) }}" />
-            </div>
+
 
 
             <div class="form-group">

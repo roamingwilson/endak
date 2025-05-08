@@ -143,7 +143,7 @@
         // });
 
     --}}
-@section('js')
+{{-- @section('js')
     <script type="text/javascript">
 
         $(document).on('change', '#bulk_check_all', function(){
@@ -190,4 +190,4 @@
 
         });
     </script>
-@endsection
+@endsection --}}
