@@ -42,7 +42,13 @@
 
                     </div>
                     <hr>
-
+                      <div class="form-group">
+                        <label for="" class="mb-1">{{ $lang == 'ar' ? 'الموقع' : 'Location' }}
+                            :</label>
+                        @if (isset($service->from_city))
+                            <p>{{$lang == 'ar'? $form_city->name_ar:$form_city->name_en}}</p>
+                        @endif
+                    </div>
                     <div class="form-group">
                         <label for=""
                             class="mb-1">{{ $lang == 'ar' ? 'ملاحظة عن العمل المطلوب' : 'Note About Work' }}

@@ -49,15 +49,15 @@
                     <div class="form-group">
                         <label for="" class="mb-1">{{ $lang == 'ar' ? 'الموقع' : 'Location' }}
                             :</label>
-                        @if (isset($service->location))
-                            <p>{{ $service->location }}</p>
+                        @if (isset($service->from_city))
+                            <p>{{$lang == 'ar'? $form_city->name_ar:$form_city->name_en}}</p>
                         @endif
                     </div>
                     <div class="form-group">
                         <label for="" class="mb-1">{{ $lang == 'ar' ? 'الوجهة' : 'Destination' }}
                             :</label>
-                        @if (isset($service->city))
-                            <p>{{ $service->city }}</p>
+                        @if (isset($service->to_city))
+                            <p> {{$lang == 'ar'? $to_city->name_ar:$to_city->name_en}}</p>
                         @endif
                     </div>
                     <div class="form-group">

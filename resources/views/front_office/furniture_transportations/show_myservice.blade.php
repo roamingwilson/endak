@@ -65,7 +65,8 @@
                     <label for="name" class="mb-1">{{ $lang == 'ar' ? 'من' : 'From' }} : </label>
                     <div class="form-group mt-2">
                         <label for="name" class="mb-1">{{ $lang == 'ar' ? 'المدينة' : 'City' }} :
-                            {{ $service->from_city }} || {{ $lang == 'ar' ? 'الحي' : 'Neighborhood' }} :
+                                {{$lang == 'ar'? $form_city->name_ar:$form_city->name_en}}
+                                 || {{ $lang == 'ar' ? 'الحي' : 'Neighborhood' }} :
                             {{ $service->from_neighborhood }} || {{ $lang == 'ar' ? 'الدور' : 'Home' }} :
                             {{ $service->part_number }}</label>
 
@@ -74,7 +75,7 @@
                     <label for="name" class="mb-1">{{ $lang == 'ar' ? 'الي' : 'To' }} : </label>
                     <div class="form-group mt-2">
                         <label for="name" class="mb-1">{{ $lang == 'ar' ? 'المدينة' : 'City' }} :
-                            {{ $service->to_city }} || {{ $lang == 'ar' ? 'الحي' : 'Neighborhood' }} :
+                                {{$lang == 'ar'? $to_city->name_ar:$to_city->name_en}} || {{ $lang == 'ar' ? 'الحي' : 'Neighborhood' }} :
                             {{ $service->to_neighborhood }} || {{ $lang == 'ar' ? 'الدور' : 'Home' }} :
                             {{ $service->location }}</label>
 

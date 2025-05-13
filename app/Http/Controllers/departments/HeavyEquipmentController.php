@@ -4,6 +4,7 @@ namespace App\Http\Controllers\departments;
 
 use App\Http\Controllers\Controller;
 use App\Models\GeneralImage;
+use App\Models\Governements;
 use App\Models\HeavyEquipment;
 use App\Models\HeavyEquipmentService;
 use App\Notifications\CommentNotification;
@@ -89,9 +90,16 @@ public function show(){
 public function heavy_equip_sub_show($id){
     $user = auth()->user();
     $main = HeavyEquipment::find($id);
+        if (auth()->check()) {
+             $user = auth()->user();
+            $cities = Governements::where('country_id', $user->country)->get();
+            // dd($user->country);
+        }else{
+             $cities = Governements::where('country_id', 178)->get();
+        }
     // $services = HeavyEquipmentService::where('heavy_equip_id' ,$id)->paginate(5);
 
-    return view('admin.main_department.heavy_equip.show_sub_heavyequip' , compact( 'main' ));
+    return view('admin.main_department.heavy_equip.show_sub_heavyequip' , compact( 'cities','main' ));
 }
 
 public function store_service(Request $request )

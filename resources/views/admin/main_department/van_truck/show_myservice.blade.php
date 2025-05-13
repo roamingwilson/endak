@@ -69,7 +69,8 @@
                                     <label for="" class="mb-1">{{ $lang == 'ar' ? ' من المدينة ' : 'from City' }}
                                         :</label>
                                     @if (isset($service->from_city))
-                                        <p>{{ $service->from_city }}</p>
+                                        <p>    {{$lang == 'ar'? $form_city->name_ar:$form_city->name_en}}
+</p>
                                     @endif
                                 </div>
                                 <div class="form-group">
@@ -83,7 +84,7 @@
                                     <label for="" class="mb-1">{{ $lang == 'ar' ? ' الي المدينة' : 'to City' }}
                                         :</label>
                                     @if (isset($service->to_city))
-                                        <p>{{ $service->to_city }}</p>
+                                        <p>{{$lang == 'ar'? $to_city->name_ar:$to_city->name_en}}</p>
                                     @endif
                                 </div>
                                 <div class="form-group">

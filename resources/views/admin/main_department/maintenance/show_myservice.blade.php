@@ -87,15 +87,15 @@ $services = Services::where('type', 'maintenance')->latest()->paginate(5);
                                 <div class="form-group">
                                     <label for="name" class="mb-1">{{ $lang == 'ar' ? 'سنه الصنع' : 'Facility Year' }} : </label>
                                     @if (isset($service->year))
-                                        <p>{{ $service->year }}</p>
+                                        <p>{{ $service->year }} sadasd</p>
                                     @endif
                                 </div>
                                 <div class="form-group">
                                     <label for="" class="mb-1">{{ $lang == 'ar' ? 'المدينة' : 'City' }}
                                         :</label>
-                                    @if (isset($service->city))
-                                        <p>{{ $service->city }}</p>
-                                    @endif
+
+                                        <p>{{$lang == 'ar'? $form_city->name_ar : $form_city->name_en}}</p>
+
                                 </div>
                                 <div class="form-group">
                                     <label for="" class="mb-1">{{ $lang == 'ar' ? 'الحي' : 'Neighborhood' }}

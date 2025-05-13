@@ -5,6 +5,7 @@ namespace App\Http\Controllers\departments\SpareParts;
 use App\Http\Controllers\Controller;
 use App\Models\Department;
 use App\Models\GeneralImage;
+use App\Models\Governements;
 use App\Models\SpareParts;
 use App\Models\SparePartServices;
 use App\Notifications\CommentNotification;
@@ -64,6 +65,7 @@ class SparePartController extends Controller
     }
     public function show_sub_department($id){
         $spare_part = SpareParts::find($id);
+
         return view('admin.main_department.spare_part.index' , compact('spare_part'));
     }
     public function delete($id)
@@ -93,7 +95,15 @@ class SparePartController extends Controller
         $departments = Department::where('name_en', 'spare parts')->first();
         $services = SparePartServices::where('spare_part_id' ,$id)->paginate();
 
-        return view('admin.main_department.spare_part.show_sub_sparepart' , compact( 'departments','main','services'  ));
+          if (auth()->check()) {
+             $user = auth()->user();
+            $cities = Governements::where('country_id', $user->country)->get();
+            // dd($user->country);
+        }else{
+             $cities = Governements::where('country_id', 178)->get();
+        }
+
+        return view('admin.main_department.spare_part.show_sub_sparepart' , compact( 'departments','cities','main','services'  ));
     }
 
     public function store_service(Request $request)

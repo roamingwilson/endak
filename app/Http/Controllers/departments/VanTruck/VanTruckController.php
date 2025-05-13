@@ -4,6 +4,7 @@ namespace App\Http\Controllers\departments\VanTruck;
 
 use App\Http\Controllers\Controller;
 use App\Models\GeneralImage;
+use App\Models\Governements;
 use App\Models\VanTruck;
 use App\Models\VanTruckService;
 use App\Notifications\CommentNotification;
@@ -88,8 +89,15 @@ class VanTruckController extends Controller
         $user = auth()->user();
         $main = VanTruck::find($id);
         $services = VanTruckService::where('vantruck_id' ,$id)->paginate();
+           if (auth()->check()) {
+             $user = auth()->user();
+            $cities = Governements::where('country_id', $user->country)->get();
+            // dd($user->country);
+        }else{
+             $cities = Governements::where('country_id', 178)->get();
+        }
 
-        return view('admin.main_department.van_truck.show_sub_van_truck' , compact( 'main','services'  ));
+        return view('admin.main_department.van_truck.show_sub_van_truck' , compact( 'cities','main','services'  ));
     }
 
     public function store_service(Request $request)

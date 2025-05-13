@@ -37,6 +37,7 @@ $services = Services::where('department_id', $departments->id)->latest()->pagina
                     <div class="col-xl-12">
                         <div class="row">
                             @forelse ($services as $service)
+                    @if (auth()->user()->governement == $service->from_city)
                             <div class="col-md-4">
                                 <div class="card">
                                     <div class="position-relative">
@@ -63,7 +64,7 @@ $services = Services::where('department_id', $departments->id)->latest()->pagina
                                     </div>
                                 </div>
                             </div>
-
+                        @endif
                         @empty
                                 {!! no_data() !!}
                             @endforelse
@@ -95,9 +96,16 @@ $services = Services::where('department_id', $departments->id)->latest()->pagina
                             <label for="" class="mb-1">{{ $lang == 'ar' ? 'ارفاق صور' : 'Share Photos' }} :</label>
                             <input class="form-control" name="images[]" type="file" multiple>
                         </div>
-                        <div class="form-group mt-2">
-                            <label for="name" class="mb-1">{{ $lang == 'ar' ? 'المدينة' : 'City' }} : </label>
-                            <input type="text" class="form-control" name="city">
+                      <div class="form-group mt-2">
+                        <label for="name" class="mb-1">{{ $lang == 'ar' ? 'المدينة' : 'City' }} : </label>
+                         <select name="from_city" class="form-control js-select2-custom">
+                            <option value="">{{ __('اختر المدينة') }}</option>
+                            @foreach ($cities as $city)
+                                <option value="{{ $city->id }}">
+                                    {{ $lang == 'ar' ?  $city->name_ar :$city->name_en  }}
+                                </option>
+                            @endforeach
+                             </select>
                             <label for="name" class="mb-1">{{ $lang == 'ar' ? 'الحي' : 'Neighborhood' }} : </label>
                             <input type="text" class="form-control" name="neighborhood">
                             <label for="name" class="mb-1">{{ $lang == 'ar' ? 'الوقت' : 'Time' }} : </label>

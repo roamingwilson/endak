@@ -7,6 +7,7 @@ use App\Models\GeneralImage;
 use Illuminate\Http\Request;
 use App\Models\ContractingService;
 use App\Http\Controllers\Controller;
+use App\Models\Governements;
 use App\Notifications\CommentNotification;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
@@ -88,8 +89,15 @@ class ContractingController extends Controller
         $user = auth()->user();
         $main = Contracting::find($id);
         $services = ContractingService::where('contracting_id' ,$id)->paginate();
+           if (auth()->check()) {
+             $user = auth()->user();
+            $cities = Governements::where('country_id', $user->country)->get();
+            // dd($user->country);
+        }else{
+             $cities = Governements::where('country_id', 178)->get();
+        }
 
-        return view('admin.main_department.contracting.show_sub_contracting' , compact( 'main','services'  ));
+        return view('admin.main_department.contracting.show_sub_contracting' , compact( 'cities','main','services'  ));
     }
 
     public function store_service(Request $request )

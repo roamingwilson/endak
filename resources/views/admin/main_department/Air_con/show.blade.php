@@ -40,7 +40,8 @@ $lang = config('app.locale');
                     <div class="row">
                         @forelse ($services as $service)
 
-                            @if (auth()->user()->country == $service->user->country && auth()->user()->governement== $service->user->governement)
+                              @if (auth()->user()->governement == $service->from_city)
+
                                 <div class="col-md-4">
                                     <div class="card">
                                         <div class="position-relative">
@@ -106,16 +107,23 @@ $lang = config('app.locale');
                             <input type="hidden" name="type" value="{{ $departments->name_en }}">
 
 
-                            <div class="mb-3">
-                                <label class="form-label">{{ $lang == 'ar' ? ' نوع المكيف' : 'Aircon name' }} </label>
-                                <div class="radio-group" role="group" aria-label="Aircon Type">
-                                    <input type="radio" class="radio-groupk" name="split" id="split" value="1" autocomplete="off">
-                                    <label  for="split">{{ $lang == 'ar' ? 'سبليت' : 'Split' }}</label>
-
-                                    <input type="radio" class="radio-groupk" name="window" id="window" value="1" autocomplete="off">
-                                    <label  for="window">{{ $lang == 'ar' ? 'شباك' : 'Window' }}</label>
+                          <div class="mb-3">
+                            <label class="form-label">{{ $lang == 'ar' ? 'نوع المكيف' : 'Aircon Type' }}</label>
+                            <div class="d-flex gap-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="split" id="split" value="1">
+                                    <label class="form-check-label" for="split">
+                                        {{ $lang == 'ar' ? 'سبليت' : 'Split' }}
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="split" id="window" value="1">
+                                    <label class="form-check-label" for="window">
+                                        {{ $lang == 'ar' ? 'شباك' : 'Window' }}
+                                    </label>
                                 </div>
                             </div>
+                        </div>
 
                             <!-- نوع الخدمة -->
                             <div class="mb-3">
@@ -161,7 +169,14 @@ $lang = config('app.locale');
 
                             <div class="form-group mt-2">
                                 <label for="name" class="mb-1">{{ $lang == 'ar' ? 'المدينة' : 'City' }} : </label>
-                                <input type="text" class="form-control" name="city">
+                               <select name="from_city" class="form-control js-select2-custom">
+                            <option value="">{{ __('اختر المدينة') }}</option>
+                            @foreach ($cities as $city)
+                                <option value="{{ $city->id }}">
+                                    {{ $lang == 'ar' ?  $city->name_ar :$city->name_en  }}
+                                </option>
+                            @endforeach
+  </select>
                                 <label for="name" class="mb-1">{{ $lang == 'ar' ? 'الحي' : 'Neighborhood' }} : </label>
                                 <input type="text" class="form-control" name="neighborhood">
 
@@ -205,7 +220,7 @@ $lang = config('app.locale');
 
 
 
-                            <div class="mb-3">
+                            {{-- <div class="mb-3">
                                 <label class="form-label ">{{ $lang == 'ar' ? ' نوع المكيف' : 'Aircon name' }} </label>
                                 <div class="d-flex gap-3">
                                   <div class="form-check">
@@ -217,7 +232,26 @@ $lang = config('app.locale');
                                     <label class="form-check-label" for="window">{{ $lang == 'ar' ? '  شباك' : 'window' }}</label>
                                   </div>
                                 </div>
-                              </div>
+                              </div> --}}
+                         <div class="mb-3">
+                            <label class="form-label">{{ $lang == 'ar' ? 'نوع المكيف' : 'Aircon Type' }}</label>
+                            <div class="d-flex gap-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="split" id="split" value="1">
+                                    <label class="form-check-label" for="split">
+                                        {{ $lang == 'ar' ? 'سبليت' : 'Split' }}
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="split" id="window" value="1">
+                                    <label class="form-check-label" for="window">
+                                        {{ $lang == 'ar' ? 'شباك' : 'Window' }}
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+
 
                                <!-- نوع الخدمة -->
                             <div class="mb-3">
@@ -263,7 +297,14 @@ $lang = config('app.locale');
 
                             <div class="form-group mt-2">
                                 <label for="name" class="mb-1">{{ $lang == 'ar' ? 'المدينة' : 'City' }} : </label>
-                                <input type="text" class="form-control" name="city">
+                               <select name="from_city" class="form-control js-select2-custom">
+                            <option value="">{{ __('اختر المدينة') }}</option>
+                            @foreach ($cities as $city)
+                                <option value="{{ $city->id }}">
+                                    {{ $lang == 'ar' ?  $city->name_ar :$city->name_en  }}
+                                </option>
+                            @endforeach
+  </select>
                                 <label for="name" class="mb-1">{{ $lang == 'ar' ? 'الحي' : 'Neighborhood' }} : </label>
                                 <input type="text" class="form-control" name="neighborhood">
 

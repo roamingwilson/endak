@@ -58,9 +58,9 @@
                                 <div class="form-group">
                                     <label for="" class="mb-1">{{ $lang == 'ar' ? 'المدينة' : 'City' }}
                                         :</label>
-                                    @if (isset($service->city))
-                                        <p>{{ $service->city }}</p>
-                                    @endif
+                                    @if (isset($service->from_city))
+                            <p>{{$lang == 'ar'? $form_city->name_ar:$form_city->name_en}}</p>
+                        @endif
                                 </div>
                                 <div class="form-group">
                                     <label for="" class="mb-1">{{ $lang == 'ar' ? 'الحي' : 'Neighborhood' }}

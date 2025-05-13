@@ -66,8 +66,8 @@
                                 <div class="form-group">
                                     <label for="" class="mb-1">{{ $lang == 'ar' ? 'الموقع' : 'location' }}
                                         :</label>
-                                    @if (isset($service->location))
-                                        <p>{{ $service->location }}</p>
+                                    @if (isset($service->from_city))
+                                     <p>{{$lang == 'ar'? $form_city->name_ar:$form_city->name_en}}</p>
                                     @endif
                                 </div>
 

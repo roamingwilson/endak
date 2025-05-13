@@ -60,7 +60,8 @@ $services = Services::where('department_id', $departments->id)->latest()->pagina
                         <div class="row">
                             @forelse ($services as $service)
 
-                            @if (auth()->user()->governement== $service->user->governement)
+                               @if (auth()->user()->governement == $service->from_city)
+
                                 <div class="col-md-4">
                                     <div class="card">
                                         <div class="position-relative">
@@ -114,46 +115,49 @@ $services = Services::where('department_id', $departments->id)->latest()->pagina
                         <input type="hidden" name="type" value="{{ $departments->name_en }}">
                         <label for="">
 
-                            <input type="checkbox" name="finger"
-                                value="1"
-                                class="m-2">{{ $lang == 'ar' ? 'بصمة' : 'Finger' }}
-                        </label>
-                        <label for="">
+                         <label>
+    <input type="checkbox" name="finger" value="1" class="m-2">
+    {{ $lang == 'ar' ? 'بصمة' : 'Finger' }}
+</label>
 
-                            <input type="checkbox" name="camera"
-                                value="1"
-                                class="m-2">{{ $lang == 'ar' ? 'كاميرات مراقبة' : 'Surveillance Cameras' }}
-                        </label>
-                        <label for="">
+<label>
+    <input type="checkbox" name="camera" value="1" class="m-2">
+    {{ $lang == 'ar' ? 'كاميرات مراقبة' : 'Surveillance Cameras' }}
+</label>
 
-                            <input type="checkbox" name="smart"
-                                value="1"
-                                class="m-2">{{ $lang == 'ar' ? 'سمارت' : 'Smart' }}
-                        </label>
-                        <label for="">
+<label>
+    <input type="checkbox" name="smart" value="1" class="m-2">
+    {{ $lang == 'ar' ? 'سمارت' : 'Smart' }}
+</label>
 
-                            <input type="checkbox" name="fire_system"
-                                value="1"
-                                class="m-2">{{ $lang == 'ar' ? 'انظمة اطفاء حرائق' : 'Fire System' }}
-                        <label for="">
+<label>
+    <input type="checkbox" name="fire_system" value="1" class="m-2">
+    {{ $lang == 'ar' ? 'أنظمة إطفاء حرائق' : 'Fire System' }}
+</label>
 
-                            <input type="checkbox" name="network"
-                                value="1"
-                                class="m-2">{{ $lang == 'ar' ? 'الشبكات' : 'Fire System' }}
-                        </label>
-                        <label for="">
+<label>
+    <input type="checkbox" name="network" value="1" class="m-2">
+    {{ $lang == 'ar' ? 'شبكات' : 'Networks' }}
+</label>
 
-                            <input type="checkbox" name="security_system"
-                                value="1"
-                                class="m-2">{{ $lang == 'ar' ? 'انظمة امنية'  : 'Security System' }}
-                        </label>
-                        <label for="">
+<label>
+    <input type="checkbox" name="security_system" value="1" class="m-2">
+    {{ $lang == 'ar' ? 'أنظمة أمنية' : 'Security Systems' }}
+</label>
 
-                            <input type="checkbox" name="finger"
-                                value="1"
-                                class="m-2">{{ $lang == 'ar' ? 'شبكات' : 'Networks' }}
-                        </label>
+
+                        <br>
                         <div class="form-group mt-2">
+                          <label for="name" class="mb-1 mt-2">{{ $lang == 'ar' ? 'المدينة' : 'City' }} : </label>
+                              <select name="from_city" class="form-control js-select2-custom">
+                            <option value="">{{ __('اختر المدينة') }}</option>
+                            @foreach ($cities as $city)
+                                <option value="{{ $city->id }}">
+                                    {{ $lang == 'ar' ?  $city->name_ar :$city->name_en  }}
+                                </option>
+                            @endforeach
+                            </select>
+
                             <label for="" class="mb-1">{{ $lang == 'ar' ? 'ملاحظة عن العمل المطلوب' : 'Note About Work' }} :</label>
                             <textarea class="form-control" name="notes" cols="30" rows="5"></textarea>
                         </div>

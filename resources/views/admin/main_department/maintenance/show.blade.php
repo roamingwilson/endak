@@ -33,8 +33,8 @@ $lang = config('app.locale');
                         <div class="row">
                             @forelse ($services as $service)
                             {{-- @dd(auth()->user()->governement) --}}
-                            @if (auth()->user()->governement== $service->user->governement)
-                                <div class="col-md-4">
+                             @if (auth()->user()->governement == $service->from_city)
+                                 <div class="col-md-4">
                                     <div class="card">
                                         <div class="position-relative">
                                             <a href="{{ route('show_myservice', $service->id) }}">
@@ -98,7 +98,14 @@ $lang = config('app.locale');
                         </div>
                         <div class="form-group mt-2">
                             <label for="name" class="mb-1">{{ $lang == 'ar' ? 'المدينة' : 'City' }} : </label>
-                            <input type="text" class="form-control" name="city">
+                            <select name="from_city" class="form-control js-select2-custom">
+                            <option value="">{{ __('اختر المدينة') }}</option>
+                            @foreach ($cities as $city)
+                                <option value="{{ $city->id }}">
+                                    {{ $lang == 'ar' ?  $city->name_ar :$city->name_en  }}
+                                </option>
+                            @endforeach
+  </select>
                             <label for="name" class="mb-1">{{ $lang == 'ar' ? 'الحي' : 'Neighborhood' }} : </label>
                             <input type="text" class="form-control" name="neighborhood">
 
@@ -140,7 +147,14 @@ $lang = config('app.locale');
                     </div>
                     <div class="form-group mt-2">
                         <label for="name" class="mb-1">{{ $lang == 'ar' ? 'المدينة' : 'City' }} : </label>
-                        <input type="text" class="form-control" name="city">
+                        <select name="from_city" class="form-control js-select2-custom">
+                            <option value="">{{ __('اختر المدينة') }}</option>
+                            @foreach ($cities as $city)
+                                <option value="{{ $city->id }}">
+                                    {{ $lang == 'ar' ?  $city->name_ar :$city->name_en  }}
+                                </option>
+                            @endforeach
+  </select>
                         <label for="name" class="mb-1">{{ $lang == 'ar' ? 'الحي' : 'Neighborhood' }} : </label>
                         <input type="text" class="form-control" name="neighborhood">
 

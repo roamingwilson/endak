@@ -41,6 +41,7 @@ $services = Services::where('department_id', $departments->id)->latest()->pagina
                     <div class="col-xl-12">
                         <div class="row">
                             @forelse ($services as $service)
+                             @if (auth()->user()->governement == $service->from_city)
                             <div class="col-md-4">
                                 <div class="card">
                                     <div class="position-relative">
@@ -67,7 +68,7 @@ $services = Services::where('department_id', $departments->id)->latest()->pagina
                                     </div>
                                 </div>
                             </div>
-
+@endif
                         @empty
                                 {!! no_data() !!}
                             @endforelse
@@ -105,9 +106,16 @@ $services = Services::where('department_id', $departments->id)->latest()->pagina
                             <textarea class="form-control" name="notes" cols="30" rows="5"></textarea>
                         </div>
 
-                        <div class="form-group mt-2">
+                       <div class="form-group mt-2">
                             <label for="name" class="mb-1">{{ $lang == 'ar' ? 'الموقع' : 'Location' }} : </label>
-                            <input type="text" class="form-control" name="location">
+                             <select name="from_city" class="form-control js-select2-custom">
+                            <option value="">{{ __('اختر المدينة') }}</option>
+                            @foreach ($cities as $city)
+                                <option value="{{ $city->id }}">
+                                    {{ $lang == 'ar' ?  $city->name_ar :$city->name_en  }}
+                                </option>
+                            @endforeach
+                             </select>
                         </div>
 
 

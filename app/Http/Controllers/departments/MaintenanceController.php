@@ -8,6 +8,7 @@ use App\Models\GeneralImage;
 use Illuminate\Http\Request;
 use App\Models\MaintenanceService;
 use App\Http\Controllers\Controller;
+use App\Models\Governements;
 use App\Notifications\CommentNotification;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
@@ -89,8 +90,16 @@ class MaintenanceController extends Controller
         $user = auth()->user();
         $main = Maintenance::find($id);
         $services = MaintenanceService::where('maintenance_id' ,$id)->paginate();
+          if (auth()->check()) {
+             $user = auth()->user();
+            $cities = Governements::where('country_id', $user->country)->get();
+            // dd($user->country);
+        }else{
+             $cities = Governements::where('country_id', 178)->get();
+        }
 
-        return view('admin.main_department.maintenance.show_sub_maintenance' , compact( 'main','services'  ));
+
+        return view('admin.main_department.maintenance.show_sub_maintenance' , compact( 'main','cities','services'  ));
     }
 
     public function store_service(Request $request )
