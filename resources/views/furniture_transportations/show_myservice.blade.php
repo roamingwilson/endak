@@ -98,10 +98,10 @@
 
     </section>
     <section class="section d-flex align-items-center justify-content-center">
-        <div class="container" >
-            <div class="row justify-content-center" >
-                <div class="col-xl-8" >
-                    <div class="card" >
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-xl-8">
+                    <div class="card">
                         <div class="card-body pb-0 align-items-center" style="height: 100%;">
                             <h5 class="mb-4 d-flex align-items-center justify-content-center">
                                 {{ $lang == 'ar' ? 'العروض' : 'Offers' }}</h5>
@@ -117,8 +117,10 @@
                                                         <h5 class="mt-0 mr-3">
                                                             {{ $comment->user->first_name . ' ' . $comment->user->last_name }}
                                                         </h5>
-                                                        <a class="dropdown-item mb-2" href="{{ route('web.send_message', $comment->user->id) }}">
-                                                            <i class="fe fe-mail mx-1"></i> {{ __('messages.send_message') }}
+                                                        <a class="dropdown-item mb-2"
+                                                            href="{{ route('web.send_message', $comment->user->id) }}">
+                                                            <i class="fe fe-mail mx-1"></i>
+                                                            {{ __('messages.send_message') }}
                                                         </a>
                                                     </div>
 
@@ -132,7 +134,8 @@
                                                         <p>{{ __('general.date') . ' : ' . $comment->date }}</p>
                                                     @endif
                                                     @if (isset($comment->time))
-                                                        <p>{{ __('general.time') . ' : ' . \Carbon\Carbon::parse($comment->time)->format('h:i A') }}</p>
+                                                        <p>{{ __('general.time') . ' : ' . \Carbon\Carbon::parse($comment->time)->format('h:i A') }}
+                                                        </p>
                                                     @endif
                                                     @if (isset($comment->city))
                                                         <p>{{ ($lang == 'ar' ? 'المدينة' : 'City') . ' : ' . $comment->city }}
@@ -175,9 +178,7 @@
 
                         <?php
                         $user = auth()->user();
-                        $is_add = App\Models\GeneralComments::where('commentable_type' , 'App\Models\FurnitureTransportationService')->where('commentable_id', $service->id)
-                            ->where('service_provider', $user->id)
-                            ->first();
+                        $is_add = App\Models\GeneralComments::where('commentable_type', 'App\Models\FurnitureTransportationService')->where('commentable_id', $service->id)->where('service_provider', $user->id)->first();
                         ?>
 
                     </div>

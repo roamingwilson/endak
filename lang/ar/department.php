@@ -17,4 +17,6 @@ return [
     "edit_department"                               => "تعديل قسم",
     "select_input"                                  => 'حدد المدخلات',
     'inputs'                                        => "المدخلات",
+    "country"  => 'الدولة',
+    "city"  => 'المحافظة'
 ];

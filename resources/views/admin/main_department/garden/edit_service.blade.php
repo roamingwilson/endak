@@ -1,11 +1,10 @@
 @extends('layouts.home')
 @section('title')
-<?php
-$lang = config('app.locale');
-?>
-       {{ ($lang == 'ar')? 'تنسيق حدائق وزراعة' : 'Garden and Agriculture Coordination' }}
-
-    @endsection
+    <?php
+    $lang = config('app.locale');
+    ?>
+    {{ $lang == 'ar' ? 'تنسيق حدائق وزراعة' : 'Garden and Agriculture Coordination' }}
+@endsection
 
 @section('content')
 
@@ -16,7 +15,8 @@ $lang = config('app.locale');
                     <div class="row align-items-center">
                         <div class="col-md-12 text-center">
                             <div class="">
-                                <p class="mb-3 content-1 h5 fs-1">            {{ ($lang == 'ar')? 'تنسيق حدائق وزراعة' : 'Garden and Agriculture Coordination' }}
+                                <p class="mb-3 content-1 h5 fs-1">
+                                    {{ $lang == 'ar' ? 'تنسيق حدائق وزراعة' : 'Garden and Agriculture Coordination' }}
 
 
 
@@ -29,31 +29,30 @@ $lang = config('app.locale');
         </section>
     </div>
 
-        <section class="profile-cover-container mb-2">
-            @if($errors->any())
+    <section class="profile-cover-container mb-2">
+        @if ($errors->any())
             <div class="alert alert-danger">
                 <ul class="mb-0">
-                    @foreach($errors->all() as $error)
+                    @foreach ($errors->all() as $error)
                         <li>{{ $error }}</li>
                     @endforeach
                 </ul>
             </div>
-                @endif
+        @endif
 
-            <div class="profile-content pt-40">
+        <div class="profile-content pt-40">
 
 
-                <div class="container position-relative d-flex justify-content-center mt-4">
-                    <?php $user = auth()->user(); ?>
-                    <form action="{{route('services.update',$service->id)}}" method="POST" enctype="multipart/form-data"
-                        style="width: 100%;" class="profile-card rounded-lg shadow-xs bg-white p-4">
-                        @csrf
-                        @method('PUT')
-                        {{-- @dd($cars) --}}
+            <div class="container position-relative d-flex justify-content-center mt-4">
+                <?php $user = auth()->user(); ?>
+                <form action="{{ route('services.update', $service->id) }}" method="POST" enctype="multipart/form-data"
+                    style="width: 100%;" class="profile-card rounded-lg shadow-xs bg-white p-4">
+                    @csrf
+                    @method('PUT')
+                    {{-- @dd($cars) --}}
 
-                        @foreach ($service->images as $item)
-                        <img width="80px" height="80px" src="{{ asset('storage/' . $item->path) }}"
-                            alt="">
+                    @foreach ($service->images as $item)
+                        <img width="80px" height="80px" src="{{ asset('storage/' . $item->path) }}" alt="">
                     @endforeach
 
 
@@ -61,37 +60,56 @@ $lang = config('app.locale');
                     <input type="hidden" name="department_id" value="{{ $service->departments->id }}">
                     <input type="hidden" name="type" value="{{ $service->departments->name_en }}">
 
-                        <div class="form-group mt-2">
-                            <label for="" class="mb-1">{{ $lang == 'ar' ? 'ملاحظة عن العمل المطلوب' : 'Note About Work' }} :</label>
-                            <textarea class="form-control" name="notes" cols="30" rows="5">{{ old('notes', $service->notes) }} </textarea>
-                        </div>
+                    <div class="form-group mt-2">
+                        <label for=""
+                            class="mb-1">{{ $lang == 'ar' ? 'ملاحظة عن العمل المطلوب' : 'Note About Work' }} :</label>
+                        <textarea class="form-control" name="notes" cols="30" rows="5">{{ old('notes', $service->notes) }} </textarea>
+                    </div>
 
-                        <div class="form-group mt-2">
-                            <label for="" class="mb-1">{{ $lang == 'ar' ? 'ارفاق صور' : 'Share Photos' }} :</label>
-                            <input class="form-control" name="images[]" type="file" multiple>
-                        </div>
-                        <div class="form-group mt-2">
-                            <label for="name" class="mb-1">{{ $lang == 'ar' ? 'المدينة' : 'City' }} : </label>
-                            <input type="text" class="form-control" name="city" value="{{old('city',$service->city)}}">
-                            <label for="name" class="mb-1">{{ $lang == 'ar' ? 'الحي' : 'Neighborhood' }} : </label>
-                            <input type="text" class="form-control" name="neighborhood" value="{{old('neighborhood',$service->neighborhood)}}" >
+                    <div class="form-group mt-2">
+                        <label for="" class="mb-1">{{ $lang == 'ar' ? 'ارفاق صور' : 'Share Photos' }} :</label>
+                        <input class="form-control" name="images[]" type="file" multiple>
+                    </div>
+                    <br>
+                    <div class="form-group mt-2">
+                        <label for="name" class="mb-1 mt-2">{{ $lang == 'ar' ? 'المدينة' : 'City' }} : </label>
+                        <select name="from_city" class="form-control js-select2-custom">
+                            <option value="">{{ __('اختر المدينة') }}</option>
+                            @foreach ($cities as $city)
+                                <option value="{{ $city->id }}">
+                                    {{ $lang == 'ar' ? $city->name_ar : $city->name_en }}
+                                </option>
+                            @endforeach
+                        </select>
+                        <label for="name" class="mb-1">{{ $lang == 'ar' ? 'الحي' : 'Neighborhood' }} : </label>
+                        <input type="text" class="form-control" name="neighborhood"
+                            value="{{ old('neighborhood', $service->neighborhood) }}">
 
-                        </div>
-                        <div class="form-group mt-3 text-end">
-                            <button type="submit" class="btn btn-info w-100">
-                                {{ $lang == 'ar' ? 'تحديث' : 'Update' }}
-                            </button>
-                        </div>
+                    </div>
+                    <div class="voice-note-container">
+                        <div id="recordingStatus" style="margin-bottom: 8px; color: #d9534f; display: none;"></div>
+                        <button id="startRecord" class="btn btn-primary">{{ $lang == 'ar' ? 'بدء التسجيل' : 'Start Recording' }}</button>
+                        <button id="stopRecord" class="btn btn-danger" disabled>{{ $lang == 'ar' ? 'ايقاف التسجيل' : 'Stop Recording' }}</button>
+                        <button id="resetRecord" class="btn btn-secondary" style="display:none;">{{ $lang == 'ar' ? 'إعادة التسجيل' : 'Reset Recording' }}</button>
+                        <span id="recordingTimer" style="margin-left: 10px; font-weight: bold; display:none;">00:00</span>
+                        <audio id="audioPlayback" controls style="display: none; margin-top: 10px;"></audio>
+                        <a id="downloadLink" style="display: none; margin-top: 10px;" class="btn btn-success">{{ $lang == 'ar' ? 'تنزيل التسجيل' : 'Download Recording' }}</a>
+                    </div>
+                    <div class="form-group mt-3 text-end">
+                        <button type="submit" class="btn btn-info w-100">
+                            {{ $lang == 'ar' ? 'تحديث' : 'Update' }}
+                        </button>
+                    </div>
 
-                    </form>
-                </div>
-
-
-
+                </form>
             </div>
 
 
-        </section>
+
+        </div>
+
+
+    </section>
 
 
 
@@ -111,17 +129,17 @@ $lang = config('app.locale');
                 }
             });
         });
-        function increaseQty() {
-    let qtyInput = document.getElementById("quantity");
-    qtyInput.value = parseInt(qtyInput.value) + 1;
-  }
 
-  function decreaseQty() {
-    let qtyInput = document.getElementById("quantity");
-    if (parseInt(qtyInput.value) > 1) {
-      qtyInput.value = parseInt(qtyInput.value) - 1;
-    }
-  }
+        function increaseQty() {
+            let qtyInput = document.getElementById("quantity");
+            qtyInput.value = parseInt(qtyInput.value) + 1;
+        }
+
+        function decreaseQty() {
+            let qtyInput = document.getElementById("quantity");
+            if (parseInt(qtyInput.value) > 1) {
+                qtyInput.value = parseInt(qtyInput.value) - 1;
+            }
+        }
     </script>
 @endsection
-

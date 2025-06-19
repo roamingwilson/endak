@@ -79,6 +79,17 @@
                             {{ $lang == 'ar' ? 'لا يوجد ملاحظات' : 'No Notes' }}
                         @endif
                     </div>
+                    @if (!empty($service->notes_voice))
+                    <div class="form-group">
+                        <label class="mb-1">{{ $lang == 'ar' ? 'ملاحظة صوتية' : 'Voice Note' }} :</label>
+                        <audio controls style="width:100%">
+                            <source src="{{ asset('storage/' . $service->notes_voice) }}" type="audio/wav">
+                            <source src="{{ asset('storage/' . $service->notes_voice) }}" type="audio/mpeg">
+                            <source src="{{ asset('storage/' . $service->notes_voice) }}" type="audio/ogg">
+                            {{ $lang == 'ar' ? 'متصفحك لا يدعم تشغيل الصوت' : 'Your browser does not support the audio element.' }}
+                        </audio>
+                    </div>
+                @endif
                     <div class="form-group">
                         <label for="" class="mb-1">{{ $lang == 'ar' ? 'صاحب العمل' : 'Customer' }}
                             :</label>
@@ -87,6 +98,7 @@
                             <img width="250px" height="250px" src="{{ asset($service->user->image_url) }}" alt="user">
                         @endif
                     </div>
+
                     <div class="mt-4">
                         @if (auth()->id() === $service->user_id)
                         <a class="btn btn-success btn-sm" href="{{route('services.edit',$service->id)}}">

@@ -24,17 +24,17 @@
                     <!-- End::header-element -->
                     @auth
 
-                    <a href="#" class="brand-main">
-                        <img src="{{asset('storage/'.($user->image) ?? 'users/user.png' )}}" width="50" height="50" alt="img"
-                            class="desktop-logo logo-dark">
-                        {{-- <img src="../assets/images/brand/toggle-dark.png" alt="img"
+                        <a href="#" class="brand-main">
+                            <img src="{{ asset('storage/' . $user->image ?? 'users/user.png') }}" width="50"
+                                height="50" alt="img" class="desktop-logo logo-dark">
+                            {{-- <img src="../assets/images/brand/toggle-dark.png" alt="img"
                             class="mobile-logo mobile-dark mx-3">
                         <img src="../assets/images/brand/logo-color.png" alt="img" class="desktop-logo logo-color">
                         <img src="../assets/images/brand/toggle-color.png" alt="img"
                             class="mobile-logo mobile-color"> --}}
-                    </a>
+                        </a>
 
-                        @endauth
+                    @endauth
                     {{-- <ul class="categories-dropdowns">
                         <li class="category-dropdown px-2 py-3">
                             <a href="javascript:void(0);" class="avatar bg-white-1 border rounded-circle tx-15 border-white-2 categorydropdown" onclick="toggleDropdown(this)">
@@ -134,9 +134,11 @@
                         <span class="avatar bg-white-1 border rounded-circle tx-15 border-white-2 me-2"><i
                                 class="bi bi-telephone"></i></span>
                         <div class="d-none d-md-block">
-                            <a href="javascript:void(0);" class="nav-link tx-15 p-0" style="color: black;">{{ __('general.call_to_us') }}</a>
+                            <a href="javascript:void(0);" class="nav-link tx-15 p-0"
+                                style="color: black;">{{ __('general.call_to_us') }}</a>
                             <a href="tel:{{ $settings->phone ?? '01150099801' }}"
-                                class="mb-0 nav-link p-0 tx-13 op-8 lh-sm" style="color: black;">{{ $settings->phone ?? '01150099801' }}</a>
+                                class="mb-0 nav-link p-0 tx-13 op-8 lh-sm"
+                                style="color: black;">{{ $settings->phone ?? '01150099801' }}</a>
                         </div>
                     </li>
 
@@ -145,13 +147,14 @@
 
                         @if (auth()->check())
                             <span class="avatar bg-white-1 border rounded-circle tx-15 border-white-2 me-2">
-                                <a href="{{ route('logout') }}" style="color: black;"><i class="bi bi-box-arrow-in-right"></i>
+                                <a href="{{ route('logout') }}" style="color: black;"><i
+                                        class="bi bi-box-arrow-in-right"></i>
                                 </a>
 
                             </span>
                             <div class="d-none d-md-block">
-                                <a href="{{ route('web.profile', $user->id) }}"
-                                    class="nav-link tx-15 p-0" style="color: black;">{{ $user->first_name }}</a>
+                                <a href="{{ route('web.profile', $user->id) }}" class="nav-link tx-15 p-0"
+                                    style="color: black;">{{ $user->first_name }}</a>
                             </div>
                             @if ($user->role_name == 'admin')
                                 <a style="{{ $lang == 'ar' ? 'margin-right: 10px;' : 'margin-left: 10px;' }} color:white"
@@ -164,8 +167,8 @@
 
                             </span>
                             <div class="d-none d-md-block">
-                                <a href="{{ route('login-page') }}"
-                                    class="nav-link tx-15 p-0" style="color: black;">{{ __('auth.login') }}</a>
+                                <a href="{{ route('login-page') }}" class="nav-link tx-15 p-0"
+                                    style="color: black;">{{ __('auth.login') }}</a>
                             </div>
                         @endif
 
@@ -176,104 +179,120 @@
                             overflow-y: auto;
                         }
                     </style>
-  @if (auth()->check())
-  <li class="d-flex align-items-center position-relative me-md-4 me-2 dropdown">
-      <?php
-          // جلب آخر رسالة للمستقبل للمستخدم
-          $message = App\Models\Message::where('recipient_id', auth()->user()->id)->latest()->first();
-      ?>
-      <span data-bs-toggle="dropdown" aria-expanded="false" style="color: #1a4388"
-          class="dropdown-toggle avatar bg-white-1 border rounded-circle tx-15 border-white-2 me-2" style="border: none; margin: 0;">
-          <i class="bi bi-chat">
-              @if(isset($message) && ($message->created_at >= Carbon\Carbon::now()->subMinutes(10)) )
-                  <span style="color:red">1</span> <!-- إشعار بوجود رسالة جديدة -->
-              @endif
-          </i>
-      </span>
+                    @if (auth()->check())
+                        <li class="d-flex align-items-center position-relative me-md-4 me-2 dropdown">
+                            <?php
+                            // جلب آخر رسالة للمستقبل للمستخدم
+                            $message = App\Models\Message::where('recipient_id', auth()->user()->id)
+                                ->latest()
+                                ->first();
+                            ?>
+                            <span data-bs-toggle="dropdown" aria-expanded="false" style="color: #1a4388"
+                                class="dropdown-toggle avatar bg-white-1 border rounded-circle tx-15 border-white-2 me-2"
+                                style="border: none; margin: 0;">
+                                <i class="bi bi-chat">
+                                    @if (isset($message) && $message->created_at >= Carbon\Carbon::now()->subMinutes(10))
+                                        <span style="color:red">1</span> <!-- إشعار بوجود رسالة جديدة -->
+                                    @endif
+                                </i>
+                            </span>
 
-      <?php
-          // جلب جميع المحادثات
-          $sender = auth()->user();
-          $conversations = App\Models\Conversation::where(function($query) use ($sender) {
-              $query->where('sender_id', $sender->id);
-          })->orWhere(function($query) use ($sender) {
-              $query->where('recipient_id', $sender->id);
-          })->orderBy('created_at', 'desc')->get(); // جلب جميع المحادثات بترتيب تنازلي
-      ?>
+                            <?php
+                            // جلب جميع المحادثات
+                            $sender = auth()->user();
+                            $conversations = App\Models\Conversation::where(function ($query) use ($sender) {
+                                $query->where('sender_id', $sender->id);
+                            })
+                                ->orWhere(function ($query) use ($sender) {
+                                    $query->where('recipient_id', $sender->id);
+                                })
+                                ->orderBy('created_at', 'desc')
+                                ->get(); // جلب جميع المحادثات بترتيب تنازلي
+                            ?>
 
-      <ul class="dropdown-menu dropdown-menu-end">
-          @forelse ($conversations as $conversation)
-              <?php
-                  // تحديد المرسل أو المستقبل
-                  $id = (auth()->user()->id == $conversation->sender_id) ? $conversation->recipient->id : $conversation->sender->id;
-                  $sender_me = App\Models\User::find($id);
-                  $message = App\Models\Message::where('conversation_id', $conversation->id)->latest()->first();
-              ?>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                @forelse ($conversations as $conversation)
+                                    <?php
+                                    // تحديد المرسل أو المستقبل
+                                    $id = auth()->user()->id == $conversation->sender_id ? $conversation->recipient->id : $conversation->sender->id;
+                                    $sender_me = App\Models\User::find($id);
+                                    $message = App\Models\Message::where('conversation_id', $conversation->id)->latest()->first();
+                                    ?>
 
-              <li>
-                  <a href="{{ route('web.send_message', $id) }}" class="dropdown-item">
-                      <!-- Message Start -->
-                      <div class="media d-flex align-items-center justify-content-between">
-                          <div class="d-flex align-items-center">
-                              @if ($sender_me->image)
-                                  <img src="{{ $sender_me->image_url }}" alt="User Avatar" width="auto" height="40px"
-                                       class="img-size-50 mr-3 img-circle">
-                              @else
-                                  <img src="{{ asset('storage/users/default_avatar.png') }}" alt="User Avatar" width="auto" height="40px" class="img-size-50 mr-3 img-circle">
-                              @endif
-                              <h6 class="dropdown-item-title mb-0">
-                                  {{ $sender_me->first_name }}
-                              </h6>
-                          </div>
+                                    <li>
+                                        <a href="{{ route('web.send_message', $id) }}" class="dropdown-item">
+                                            <!-- Message Start -->
+                                            <div class="media d-flex align-items-center justify-content-between">
+                                                <div class="d-flex align-items-center">
+                                                    @if ($sender_me->image)
+                                                        <img src="{{ $sender_me->image_url }}" alt="User Avatar"
+                                                            width="auto" height="40px"
+                                                            class="img-size-50 mr-3 img-circle">
+                                                    @else
+                                                        <img src="{{ asset('storage/users/default_avatar.png') }}"
+                                                            alt="User Avatar" width="auto" height="40px"
+                                                            class="img-size-50 mr-3 img-circle">
+                                                    @endif
+                                                    <h6 class="dropdown-item-title mb-0">
+                                                        {{ $sender_me->first_name }}
+                                                    </h6>
+                                                </div>
 
-                          <div class="media-body m-2">
-                              <p class="text-sm mt-3">
-                                  {{ implode(' ', array_slice(explode(' ', $message->message), 0, 5)) }}
-                                  @if (strlen($message->message) > 5) ... @endif
-                              </p>
-                          </div>
-                      </div>
-                      <!-- Message End -->
-                  </a>
-              </li>
-          @empty
-              <li>لا توجد رسائل</li>
-          @endforelse
-          <li><hr class="dropdown-divider"></li>
-      </ul>
-  </li>
-@endif
+                                                <div class="media-body m-2">
+                                                    <p class="text-sm mt-3">
+                                                        {{ implode(' ', array_slice(explode(' ', $message->message), 0, 5)) }}
+                                                        @if (strlen($message->message) > 5)
+                                                            ...
+                                                        @endif
+                                                    </p>
+                                                </div>
+                                            </div>
+                                            <!-- Message End -->
+                                        </a>
+                                    </li>
+                                @empty
+                                    <li>لا توجد رسائل</li>
+                                @endforelse
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                            </ul>
+                        </li>
+                    @endif
 
                     @if (auth()->check())
-                    <li class="d-flex align-items-center position-relative me-md-4 me-2 dropdown">
-                        <?php $notifications = auth()->user()->unreadNotifications; ?>
+                        <li class="d-flex align-items-center position-relative me-md-4 me-2 dropdown">
+                            <?php $notifications = auth()->user()->unreadNotifications; ?>
 
-                        <span data-bs-toggle="dropdown" aria-expanded="false" class="dropdown-toggle avatar bg-white-1 border rounded-circle tx-15 border-white-2 me-2"
-                            style="border: none; margin: 0;">
-                            <i class="bi bi-alarm"><span style="color:red">{{ ($notifications->count() == 0) ? '' : $notifications->count() }}</span></i>
-                        </span>
+                            <span data-bs-toggle="dropdown" aria-expanded="false"
+                                class="dropdown-toggle avatar bg-white-1 border rounded-circle tx-15 border-white-2 me-2"
+                                style="border: none; margin: 0;">
+                                <i class="bi bi-alarm"><span
+                                        style="color:red">{{ $notifications->count() == 0 ? '' : $notifications->count() }}</span></i>
+                            </span>
 
-                        <ul class="dropdown-menu dropdown-menu-end">
-                            @forelse ($notifications as $notification)
-                                <li>
-                                    <a href="{{ route('notification.read', $notification->id) }}" class="dropdown-item">
-                                        <!-- Display notification title -->
-                                        <div class="media">
-                                            <div class="d-flex align-items-center">
-                                                <p>{{ $notification->data['title'] }}</p>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                @forelse ($notifications as $notification)
+                                    <li>
+                                        <a href="{{ route('notification.read', $notification->id) }}"
+                                            class="dropdown-item">
+                                            <!-- Display notification title -->
+                                            <div class="media">
+                                                <div class="d-flex align-items-center">
+                                                    <p>{{ $notification->data['title'] }}</p>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </a>
+                                        </a>
+                                    </li>
+                                @empty
+                                    <li class="dropdown-item">لا توجد اشعارات</li>
+                                @endforelse
+                                <li>
+                                    <hr class="dropdown-divider">
                                 </li>
-                            @empty
-                                <li class="dropdown-item">لا توجد اشعارات</li>
-                            @endforelse
-                            <li>
-                                <hr class="dropdown-divider">
-                            </li>
-                        </ul>
-                    </li>
-                @endif
+                            </ul>
+                        </li>
+                    @endif
 
 
                 </ul>
@@ -312,7 +331,7 @@
 
                         <!-- Start::slide -->
                         <li class="slide">
-                            <a href="{{ route('home') }}" class="side-menu__item" >
+                            <a href="{{ route('home') }}" class="side-menu__item">
                                 <span class="side-menu__label" style="color: black;">{{ __('general.home') }}</span>
                                 {{-- <i class="fe fe-chevron-down side-menu__angle"></i> --}}
                             </a>
@@ -320,9 +339,10 @@
                         <!-- End::slide -->
 
                         <!-- Start::slide -->
-                                               <li class="slide">
+                        <li class="slide">
                             <a href="{{ route('departments') }}" class="side-menu__item">
-                                <span class="side-menu__label" style="color: black;">{{ __('department.departments') }}</span>
+                                <span class="side-menu__label"
+                                    style="color: black;">{{ __('department.departments') }}</span>
                                 {{-- <i class="fe fe-chevron-down side-menu__angle"></i> --}}
                             </a>
                         </li>
@@ -334,7 +354,8 @@
                         <!--    <?php $departments = App\Models\Department::paginate(5); ?>-->
                         <!--    <ul class="slide-menu child1 mega-slide-menu-onefr without-icon">-->
                         <!--        <li class="mega-menu">-->
-                        <!--            @forelse ($departments as $department)-->
+                        <!--            @forelse ($departments as $department)
+-->
                         <!--                <div class="">-->
                         <!--                    <ul>-->
                         <!--                        <li>-->
@@ -348,7 +369,8 @@
                         <!--                                    class="tx-14 tx-primary">{{ $lang == 'ar' ? $department->name_ar : $department->name_en }}</span>-->
                         <!--                            </p>-->
                         <!--                        </li>-->
-                        <!--                        @forelse ($department->sub_Departments as $sub_Department)-->
+                        <!--                        @forelse ($department->sub_Departments as $sub_Department)
+-->
                         <!--                            <li class="slide">-->
                         <!--                                <a href="{{ route('web.posts', $sub_Department->id) }}"-->
                         <!--                                    class="side-menu__item">-->
@@ -370,14 +392,16 @@
                         <!--                                    </div>-->
                         <!--                                </a>-->
                         <!--                            </li>-->
-                        <!--                        @empty-->
-                        <!--                        @endforelse-->
+                    <!--                        @empty-->
+                        <!--
+@endforelse-->
 
 
                         <!--                    </ul>-->
                         <!--                </div>-->
-                        <!--            @empty-->
-                        <!--            @endforelse-->
+                    <!--            @empty-->
+                        <!--
+@endforelse-->
 
 
                         <!--        </li>-->
@@ -393,54 +417,53 @@
                         @if (auth()->check() && auth()->user()->role_id == 1)
                             <li class="slide">
                                 <a href="{{ route('services.index') }}" class="side-menu__item">
-                                    <span class="side-menu__label" style="color: black;">{{ __('posts.my_posts') }}</span>
+                                    <span class="side-menu__label"
+                                        style="color: black;">{{ $lang == 'ar' ? 'طلباتي' : 'Services' }}</span>
                                     <i class="fe fe-chevron-down side-menu__angle"></i>
                                 </a>
 
                             </li>
-
                         @endif
                         @if (auth()->check())
-                        <li class="slide">
-                            <a href="{{ route('web.user.service_provider') }}" class="side-menu__item">
-                                <span class="side-menu__label" style="color: black;">{{ __('user.service_provider') }}</span>
-                                <i class="fe fe-chevron-down side-menu__angle"></i>
-                            </a>
+                            <li class="slide">
+                                <a href="{{ route('web.user.service_provider') }}" class="side-menu__item">
+                                    <span class="side-menu__label"
+                                        style="color: black;">{{ __('user.service_provider') }}</span>
+                                    <i class="fe fe-chevron-down side-menu__angle"></i>
+                                </a>
 
-                        </li>
+                            </li>
                         @endif
 
                         @if (auth()->check() && auth()->user()->role_id == 1)
                             <li class="slide">
                                 <a href="{{ route('general_orders.customer.index') }}" class="side-menu__item">
                                     <span class="side-menu__label" style="color: black;">
-                                        {{  __('order.my_orders') }}
+                                        {{ $lang == 'ar' ? 'العروض المقبولة' : 'Accepted Orders' }}
 
                                     </span>
 
                                 </a>
-
-
                         @endif
                         @if (auth()->check())
-                        @if (auth()->check() && auth()->user()->role_id == 1)
-                            <li class="slide">
-                                <a href="{{ route('general_comments.show', $user->id) }}" class="side-menu__item">
-                                    <span class="side-menu__label" style="color: black;">
-                                        {{ ($lang == 'ar') ? 'العروض المقدمة' : 'My offers' }}
+                            @if (auth()->check() && auth()->user()->role_id == 1)
+                                <li class="slide">
+                                    <a href="{{ route('general_comments.show', $user->id) }}"
+                                        class="side-menu__item">
+                                        <span class="side-menu__label" style="color: black;">
+                                            {{ $lang == 'ar' ? 'العروض المقدمة' : 'My offers' }}
+                            @endif
+                            </span>
 
-
-                                        @endif
-                                    </span>
-
-                                </a>
+                            </a>
 
 
                         @endif
                         @if (auth()->check() && auth()->user()->role_id == 3)
                             <li class="slide">
                                 <a href="{{ route('web.comments.my_comments', $user->id) }}" class="side-menu__item">
-                                    <span class="side-menu__label" style="color: black;">{{ ($lang == 'ar' ) ? "عروضي" :  "My Comments" }}</span>
+                                    <span class="side-menu__label"
+                                        style="color: black;">{{ $lang == 'ar' ? 'عروضي' : 'My Comments' }}</span>
                                     <i class="fe fe-chevron-down side-menu__angle"></i>
                                 </a>
 
@@ -475,11 +498,11 @@
                         <li class="slide has-sub">
                             <a href="javascript:void(0);" class="side-menu__item">
                                 <span class="side-menu__label" style="color: black;">
-                                    {{ (session()->has('locale') && session()->get('locale') == 'en') ? __('general.english') : __('general.arabic') }}
+                                    {{ session()->has('locale') && session()->get('locale') == 'en' ? __('general.english') : __('general.arabic') }}
                                 </span>
                                 <span class="float-right text-muted text-sm">
-                                {{-- <img src="{{ (session()->has('locale') && session()->get('locale') == 'ar') ? URL::asset('images/flags/SA.png') : URL::asset('images/flags/US.png') }}" alt=""> --}}
-                            </span>
+                                    {{-- <img src="{{ (session()->has('locale') && session()->get('locale') == 'ar') ? URL::asset('images/flags/SA.png') : URL::asset('images/flags/US.png') }}" alt=""> --}}
+                                </span>
                             </a>
                             <ul class="slide-menu child1 mega-slide-menu-onefr without-icon">
                                 <li class="slide">

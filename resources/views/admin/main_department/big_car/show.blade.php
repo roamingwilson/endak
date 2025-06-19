@@ -1,23 +1,21 @@
 @extends('layouts.home')
 @section('title')
-<?php
-$lang = config('app.locale');
-?>
-    {{ ($lang == 'ar')?  'سطحه' : "Big Car" }}
-
+    <?php
+    $lang = config('app.locale');
+    ?>
+    {{ $lang == 'ar' ? 'سطحه' : 'Big Car' }}
 @endsection
 
 @section('content')
-@php
+    @php
 
+        $lang = config('app.locale');
 
-$lang = config('app.locale');
+        use App\Models\Services;
 
-use App\Models\Services;
+        $services = Services::where('department_id', $departments->id)->latest()->paginate(5);
 
-$services = Services::where('department_id', $departments->id)->latest()->paginate(5);
-
-@endphp
+    @endphp
 
     <div class="main-content app-content">
         <section>
@@ -26,7 +24,7 @@ $services = Services::where('department_id', $departments->id)->latest()->pagina
                     <div class="row align-items-center">
                         <div class="col-md-12 text-center">
                             <div class="">
-                                <p class="mb-3 content-1 h5 fs-1">    {{ ($lang == 'ar')?  'سطحه' : "Big Car" }}
+                                <p class="mb-3 content-1 h5 fs-1"> {{ $lang == 'ar' ? 'سطحه' : 'Big Car' }}
 
                                 </p>
                             </div>
@@ -43,39 +41,41 @@ $services = Services::where('department_id', $departments->id)->latest()->pagina
                     <div class="col-xl-12">
                         <div class="row">
                             @forelse ($services as $service)
+                                @if (auth()->user()->governement == $service->from_city)
+                                    <div class="col-md-4">
+                                        <div class="card">
+                                            <div class="position-relative">
+                                                <a href="{{ route('show_myservice', $service->id) }}">
+                                                    @php
+                                                        $firstImage = $service->images->first();
+                                                    @endphp
 
-                               @if (auth()->user()->governement == $service->from_city)
+                                                    @if ($firstImage)
+                                                        <img class="card-img-top"
+                                                            src="{{ asset('storage/' . $firstImage->path) }}" alt="img"
+                                                            width="300" height="300">
+                                                    @else
+                                                        <img class="card-img-top"
+                                                            src="{{ asset('images/placeholder.png') }}" alt="no image"
+                                                            width="300" height="300">
+                                                    @endif
 
-                                <div class="col-md-4">
-                                    <div class="card">
-                                        <div class="position-relative">
-                                            <a href="{{ route('show_myservice', $service->id) }}">
-                                                @php
-                                                $firstImage = $service->images->first();
-                                            @endphp
-
-                                            @if ($firstImage)
-                                                <img class="card-img-top" src="{{ asset('storage/' . $firstImage->path) }}" alt="img" width="300" height="300">
-                                            @else
-                                                <img class="card-img-top" src="{{ asset('images/placeholder.png') }}" alt="no image" width="300" height="300">
-                                            @endif
-
-                                            </a>
-                                        </div>
-                                        <div class="card-body d-flex flex-column">
-                                            <h5><a href="{{ route('show_myservice', $service->id) }}">
-                                                    {{ $lang == 'ar' ? $service->name_ar : $service->name_en }}</a></h5>
-                                            <div class="tx-muted">
-                                                {{ $service->user->full_name }}
+                                                </a>
                                             </div>
-                                            <div class="tx-muted">
-                                                {{ $service->created_at->diffForHumans() }}
+                                            <div class="card-body d-flex flex-column">
+                                                <h5><a href="{{ route('show_myservice', $service->id) }}">
+                                                        {{ $lang == 'ar' ? $service->name_ar : $service->name_en }}</a></h5>
+                                                <div class="tx-muted">
+                                                    {{ $service->user->full_name }}
+                                                </div>
+                                                <div class="tx-muted">
+                                                    {{ $service->created_at->diffForHumans() }}
+                                                </div>
+
+
                                             </div>
-
-
                                         </div>
                                     </div>
-                                </div>
                                 @endif
                             @empty
                                 {!! no_data() !!}
@@ -100,28 +100,99 @@ $services = Services::where('department_id', $departments->id)->latest()->pagina
 
                         <div class="form-group mt-2">
                             <label for="name" class="mb-1">{{ $lang == 'ar' ? 'الموقع' : 'Location' }} : </label>
-                          <select name="from_city" class="form-control js-select2-custom">
-                            <option value="">{{ __('اختر المدينة') }}</option>
-                            @foreach ($cities as $city)
-                                <option value="{{ $city->id }}">
-                                    {{ $lang == 'ar' ?  $city->name_ar :$city->name_en  }}
-                                </option>
-                            @endforeach
-  </select>
+                            <select name="from_city" class="form-control js-select2-custom">
+                                <option value="">{{ __('اختر المدينة') }}</option>
+                                @foreach ($cities as $city)
+                                    <option value="{{ $city->id }}">
+                                        {{ $lang == 'ar' ? $city->name_ar : $city->name_en }}
+                                    </option>
+                                @endforeach
+                            </select>
                         </div>
                         <div class="form-group mt-2">
                             <label for="name" class="mb-1">{{ $lang == 'ar' ? 'الوجهة' : 'Destination' }} : </label>
-                             <select name="to_city" class="form-control js-select2-custom">
-                            <option value="">{{ __('اختر المدينة') }}</option>
-                            @foreach ($cities as $city)
-                                <option value="{{ $city->id }}">
-                                    {{ $lang == 'ar' ?  $city->name_ar :$city->name_en  }}
-                                </option>
-                            @endforeach
-   </select>
+                            <select name="to_city" class="form-control js-select2-custom">
+                                <option value="">{{ __('اختر المدينة') }}</option>
+                                @foreach ($cities as $city)
+                                    <option value="{{ $city->id }}">
+                                        {{ $lang == 'ar' ? $city->name_ar : $city->name_en }}
+                                    </option>
+                                @endforeach
+                            </select>
                         </div>
                         <div class="form-group mt-2">
-                            <label for="name" class="mb-1">{{ $lang == 'ar' ? 'نوع السيارة' : 'Car Type' }} : </label>
+                            <label for="name" class="mb-1">{{ $lang == 'ar' ? 'نوع السيارة' : 'Car Type' }} :
+                            </label>
+                            <input type="text" class="form-control" name="car_type">
+                        </div>
+
+                        <div class="form-group mt-2">
+                            <label for="" class="mb-1">{{ $lang == 'ar' ? 'ارفاق صور' : 'Share Photos' }}
+                                :</label>
+                            <input class="form-control" name="images[]" type="file" multiple>
+                        </div>
+                        <div class="form-group mt-2">
+                            <label for="name" class="mb-1">{{ $lang == 'ar' ? 'الوقت' : 'Time' }} : </label>
+                            <input type="time" class="form-control" name="time">
+                        </div>
+
+                        <hr>
+                        <div class="form-group mt-2">
+                            <label for=""
+                                class="mb-1">{{ $lang == 'ar' ? 'ملاحظة عن العمل المطلوب' : 'Note About Work' }}
+                                :</label>
+                            <textarea class="form-control" name="notes" cols="30" rows="5"></textarea>
+                        </div>
+                        <div class="voice-note-container">
+                            <div id="recordingStatus" style="margin-bottom: 8px; color: #d9534f; display: none;"></div>
+                            <button id="startRecord" class="btn btn-primary">{{ $lang == 'ar' ? 'بدء التسجيل' : 'Start Recording' }}</button>
+                            <button id="stopRecord" class="btn btn-danger" disabled>{{ $lang == 'ar' ? 'ايقاف التسجيل' : 'Stop Recording' }}</button>
+                            <button id="resetRecord" class="btn btn-secondary" style="display:none;">{{ $lang == 'ar' ? 'إعادة التسجيل' : 'Reset Recording' }}</button>
+                            <span id="recordingTimer" style="margin-left: 10px; font-weight: bold; display:none;">00:00</span>
+                            <audio id="audioPlayback" controls style="display: none; margin-top: 10px;"></audio>
+                            <a id="downloadLink" style="display: none; margin-top: 10px;" class="btn btn-success">{{ $lang == 'ar' ? 'تنزيل التسجيل' : 'Download Recording' }}</a>
+                        </div>
+                        <div class="form-group mt-2" style="text-align: right;margin-right:10px">
+                            <button class="btn mt-2 form-control"
+                                style="background-color: #fdca3d">{{ $lang == 'ar' ? 'ارسال' : 'Send' }}</button>
+                        </div>
+                    </form>
+
+
+                </div>
+
+
+            </div>
+
+
+        </section>
+    @else
+        <section class="profile-cover-container mb-2">
+
+            <div class="profile-content pt-40">
+                <div class="container position-relative d-flex justify-content-center ">
+                    <form action="{{ route('register-page') }}" method="get" enctype="multipart/form-data"
+                        style="width:100%;margin-top:10px" class="profile-card rounded-lg shadow-xs bg-white p-15 p-md-30">
+                        @csrf
+                        <div class="form-group mt-2">
+                            <label for="name" class="mb-1">{{ $lang == 'ar' ? 'الموقع' : 'Location' }} : </label>
+                            <select name="from_city" class="form-control js-select2-custom">
+                                <option value="">{{ __('اختر المدينة') }}</option>
+                                @foreach ($cities as $city)
+                                    <option value="{{ $city->id }}">
+                                        {{ $lang == 'ar' ? $city->name_ar : $city->name_en }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="form-group mt-2">
+                            <label for="name" class="mb-1">{{ $lang == 'ar' ? 'الوجهة' : 'Destination' }} :
+                            </label>
+                            <input type="text" class="form-control" name="destination">
+                        </div>
+                        <div class="form-group mt-2">
+                            <label for="name" class="mb-1">{{ $lang == 'ar' ? 'نوع السيارة' : 'Car Type' }} :
+                            </label>
                             <input type="text" class="form-control" name="car_type">
                         </div>
 
@@ -156,65 +227,6 @@ $services = Services::where('department_id', $departments->id)->latest()->pagina
 
 
         </section>
-    @else
-    <section class="profile-cover-container mb-2">
-
-        <div class="profile-content pt-40">
-            <div class="container position-relative d-flex justify-content-center ">
-                <form action="{{ route('register-page') }}" method="get" enctype="multipart/form-data"
-                    style="width:100%;margin-top:10px" class="profile-card rounded-lg shadow-xs bg-white p-15 p-md-30">
-                    @csrf
-                    <div class="form-group mt-2">
-                        <label for="name" class="mb-1">{{ $lang == 'ar' ? 'الموقع' : 'Location' }} : </label>
-                      <select name="from_city" class="form-control js-select2-custom">
-                            <option value="">{{ __('اختر المدينة') }}</option>
-                            @foreach ($cities as $city)
-                                <option value="{{ $city->id }}">
-                                    {{ $lang == 'ar' ?  $city->name_ar :$city->name_en  }}
-                                </option>
-                            @endforeach
-  </select>
-                    </div>
-                    <div class="form-group mt-2">
-                        <label for="name" class="mb-1">{{ $lang == 'ar' ? 'الوجهة' : 'Destination' }} : </label>
-                        <input type="text" class="form-control" name="destination">
-                    </div>
-                    <div class="form-group mt-2">
-                        <label for="name" class="mb-1">{{ $lang == 'ar' ? 'نوع السيارة' : 'Car Type' }} : </label>
-                        <input type="text" class="form-control" name="car_type">
-                    </div>
-
-                    <div class="form-group mt-2">
-                        <label for="" class="mb-1">{{ $lang == 'ar' ? 'ارفاق صور' : 'Share Photos' }}
-                            :</label>
-                        <input class="form-control" name="images[]" type="file" multiple>
-                    </div>
-                    <div class="form-group mt-2">
-                        <label for="name" class="mb-1">{{ $lang == 'ar' ? 'الوقت' : 'Time' }} : </label>
-                        <input type="time" class="form-control" name="time">
-                    </div>
-
-                    <hr>
-                    <div class="form-group mt-2">
-                        <label for=""
-                            class="mb-1">{{ $lang == 'ar' ? 'ملاحظة عن العمل المطلوب' : 'Note About Work' }}
-                            :</label>
-                        <textarea class="form-control" name="notes" cols="30" rows="5"></textarea>
-                    </div>
-                    <div class="form-group mt-2" style="text-align: right;margin-right:10px">
-                        <button class="btn mt-2 form-control"
-                            style="background-color: #fdca3d">{{ $lang == 'ar' ? 'ارسال' : 'Send' }}</button>
-                    </div>
-                </form>
-
-
-            </div>
-
-
-        </div>
-
-
-    </section>
     @endif
 @endsection
 @section('script')
@@ -228,6 +240,17 @@ $services = Services::where('department_id', $departments->id)->latest()->pagina
                 } else {
                     quantityInput.style.display = 'none';
                     quantityInput.value = '';
+                }
+            });
+        });
+        $(document).ready(function() {
+            $('.js-select2-custom').select2({
+                placeholder: "{{ $lang == 'ar' ? 'اختر المدينة' : 'Select City' }}",
+                allowClear: true,
+                language: {
+                    noResults: function() {
+                        return "{{ $lang == 'ar' ? 'لا توجد نتائج' : 'No Results Found' }}";
+                    }
                 }
             });
         });

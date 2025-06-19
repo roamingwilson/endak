@@ -1,8 +1,8 @@
 @extends('layouts.home')
 @section('title')
-<?php
-$lang = config('app.locale');
-?>
+    <?php
+    $lang = config('app.locale');
+    ?>
     {{ $lang == 'ar' ? 'قسم كاميرات مراقبة ' : 'Surveillance Cameras' }}
 @endsection
 
@@ -15,7 +15,8 @@ $lang = config('app.locale');
                     <div class="row align-items-center">
                         <div class="col-md-12 text-center">
                             <div class="">
-                                <p class="mb-3 content-1 h5 fs-1">        {{ $lang == 'ar' ? 'قسم كاميرات مراقبة ' : 'Surveillance Cameras' }}
+                                <p class="mb-3 content-1 h5 fs-1">
+                                    {{ $lang == 'ar' ? 'قسم كاميرات مراقبة ' : 'Surveillance Cameras' }}
 
                                 </p>
                             </div>
@@ -26,75 +27,91 @@ $lang = config('app.locale');
         </section>
     </div>
 
-        <section class="profile-cover-container mb-2">
-            @if($errors->any())
+    <section class="profile-cover-container mb-2">
+        @if ($errors->any())
             <div class="alert alert-danger">
                 <ul class="mb-0">
-                    @foreach($errors->all() as $error)
+                    @foreach ($errors->all() as $error)
                         <li>{{ $error }}</li>
                     @endforeach
                 </ul>
             </div>
-                @endif
+        @endif
 
-            <div class="profile-content pt-40">
-
-
-                <div class="container position-relative d-flex justify-content-center mt-4">
-                    <?php $user = auth()->user(); ?>
-                    <form action="{{route('services.update',$service->id)}}" method="POST" enctype="multipart/form-data"
-                        style="width: 100%;" class="profile-card rounded-lg shadow-xs bg-white p-4">
-                        @csrf
-                        @method('PUT')
-                        {{-- @dd($cars) --}}
+        <div class="profile-content pt-40">
 
 
+            <div class="container position-relative d-flex justify-content-center mt-4">
+                <?php $user = auth()->user(); ?>
+                <form action="{{ route('services.update', $service->id) }}" method="POST" enctype="multipart/form-data"
+                    style="width: 100%;" class="profile-card rounded-lg shadow-xs bg-white p-4">
+                    @csrf
+                    @method('PUT')
+                    {{-- @dd($cars) --}}
 
 
 
-                        <input type="hidden" name="user_id" value="{{ $user->id }}">
-                        <input type="hidden" name="department_id" value="{{ $service->departments->id }}">
-                        <input type="hidden" name="type" value="{{ $service->departments->name_en }}">
 
 
-                        <input type="checkbox" name="finger"
-                        value="1"
+                    <input type="hidden" name="user_id" value="{{ $user->id }}">
+                    <input type="hidden" name="department_id" value="{{ $service->departments->id }}">
+                    <input type="hidden" name="type" value="{{ $service->departments->name_en }}">
+
+
+                    <input type="checkbox" name="finger" value="1"
                         class="m-2">{{ $lang == 'ar' ? 'بصمة' : 'Finger' }}
-                </label>
-                <label for="">
+                    </label>
+                    <label for="">
 
-                    <input type="checkbox" name="camera"
-                        value="1"
-                        class="m-2">{{ $lang == 'ar' ? 'كاميرات مراقبة' : 'Surveillance Cameras' }}
-                </label>
-                <label for="">
+                        <input type="checkbox" name="camera" value="1"
+                            class="m-2">{{ $lang == 'ar' ? 'كاميرات مراقبة' : 'Surveillance Cameras' }}
+                    </label>
+                    <label for="">
 
-                    <input type="checkbox" name="smart"
-                        value="1"
-                        class="m-2">{{ $lang == 'ar' ? 'سمارت' : 'Smart' }}
-                </label>
-                <label for="">
+                        <input type="checkbox" name="smart" value="1"
+                            class="m-2">{{ $lang == 'ar' ? 'سمارت' : 'Smart' }}
+                    </label>
+                    <label for="">
 
-                    <input type="checkbox" name="fire_system"
-                        value="1"
-                        class="m-2">{{ $lang == 'ar' ? 'انظمة اطفاء حرائق' : 'Fire System' }}
-                </label>
-                <label for="">
+                        <input type="checkbox" name="fire_system" value="1"
+                            class="m-2">{{ $lang == 'ar' ? 'انظمة اطفاء حرائق' : 'Fire System' }}
+                    </label>
+                    <label for="">
 
-                    <input type="checkbox" name="security_system"
-                        value="1"
-                        class="m-2">{{ $lang == 'ar' ? 'انظمة امنية'  : 'Security System' }}
-                </label>
-                <label for="">
+                        <input type="checkbox" name="security_system" value="1"
+                            class="m-2">{{ $lang == 'ar' ? 'انظمة امنية' : 'Security System' }}
+                    </label>
+                    <label for="">
 
-                    <input type="checkbox" name="network"
-                        value="1"
-                        class="m-2">{{ $lang == 'ar' ? 'شبكات' : 'Networks' }}
-                </label>
-                <div class="form-group mt-2">
-                    <label for="" class="mb-1">{{ $lang == 'ar' ? 'ملاحظة عن العمل المطلوب' : 'Note About Work' }} :</label>
-                    <textarea class="form-control" name="notes" cols="30" rows="5"></textarea>
-                </div>
+                        <input type="checkbox" name="network" value="1"
+                            class="m-2">{{ $lang == 'ar' ? 'شبكات' : 'Networks' }}
+                    </label>
+                    <br>
+                    <div class="form-group mt-2">
+                        <label for="name" class="mb-1 mt-2">{{ $lang == 'ar' ? 'المدينة' : 'City' }} : </label>
+                        <select name="from_city" class="form-control js-select2-custom">
+                            <option value="">{{ __('اختر المدينة') }}</option>
+                            @foreach ($cities as $city)
+                                <option value="{{ $city->id }}">
+                                    {{ $lang == 'ar' ? $city->name_ar : $city->name_en }}
+                                </option>
+                            @endforeach
+                        </select>
+                        <div class="form-group mt-2">
+                            <label for=""
+                                class="mb-1">{{ $lang == 'ar' ? 'ملاحظة عن العمل المطلوب' : 'Note About Work' }}
+                                :</label>
+                            <textarea class="form-control" name="notes" cols="30" rows="5"></textarea>
+                        </div>
+                        <div class="voice-note-container">
+                            <div id="recordingStatus" style="margin-bottom: 8px; color: #d9534f; display: none;"></div>
+                            <button id="startRecord" class="btn btn-primary">{{ $lang == 'ar' ? 'بدء التسجيل' : 'Start Recording' }}</button>
+                            <button id="stopRecord" class="btn btn-danger" disabled>{{ $lang == 'ar' ? 'ايقاف التسجيل' : 'Stop Recording' }}</button>
+                            <button id="resetRecord" class="btn btn-secondary" style="display:none;">{{ $lang == 'ar' ? 'إعادة التسجيل' : 'Reset Recording' }}</button>
+                            <span id="recordingTimer" style="margin-left: 10px; font-weight: bold; display:none;">00:00</span>
+                            <audio id="audioPlayback" controls style="display: none; margin-top: 10px;"></audio>
+                            <a id="downloadLink" style="display: none; margin-top: 10px;" class="btn btn-success">{{ $lang == 'ar' ? 'تنزيل التسجيل' : 'Download Recording' }}</a>
+                        </div>
                         <hr>
 
                         <div class="form-group mt-3 text-end">
@@ -102,15 +119,15 @@ $lang = config('app.locale');
                                 {{ $lang == 'ar' ? 'تحديث' : 'Update' }}
                             </button>
                         </div>
-                    </form>
-                </div>
-
-
-
+                </form>
             </div>
 
 
-        </section>
+
+        </div>
+
+
+    </section>
 
 
 
@@ -130,17 +147,17 @@ $lang = config('app.locale');
                 }
             });
         });
-        function increaseQty() {
-    let qtyInput = document.getElementById("quantity");
-    qtyInput.value = parseInt(qtyInput.value) + 1;
-  }
 
-  function decreaseQty() {
-    let qtyInput = document.getElementById("quantity");
-    if (parseInt(qtyInput.value) > 1) {
-      qtyInput.value = parseInt(qtyInput.value) - 1;
-    }
-  }
+        function increaseQty() {
+            let qtyInput = document.getElementById("quantity");
+            qtyInput.value = parseInt(qtyInput.value) + 1;
+        }
+
+        function decreaseQty() {
+            let qtyInput = document.getElementById("quantity");
+            if (parseInt(qtyInput.value) > 1) {
+                qtyInput.value = parseInt(qtyInput.value) - 1;
+            }
+        }
     </script>
 @endsection
-

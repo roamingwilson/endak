@@ -129,7 +129,46 @@ public function favoriteDepartments()
     return $this->belongsToMany(Department::class, 'favorites')->withTimestamps();
 }
 
+/**
+ * Check if the user is currently online
+ *
+ * @return bool
+ */
+public function isOnline()
+{
+    // If there's no last_seen_at column, we'll use a simple approach
+    // You can modify this based on your needs
 
+    // Option 1: Simple approach - consider user online if they logged in within last 5 minutes
+    if (isset($this->last_seen_at)) {
+        return $this->last_seen_at->diffInMinutes(now()) < 5;
+    }
 
+    // Option 2: If you have a sessions table or cache-based approach
+    // You can implement a more sophisticated online detection here
+
+    // Option 3: Default to true for now (you can modify this logic)
+    return true;
+}
+
+/**
+ * Get the user's online status with a colored indicator
+ *
+ * @return string
+ */
+public function getOnlineStatusAttribute()
+{
+    return $this->isOnline() ? 'online' : 'offline';
+}
+
+/**
+ * Get the user's online status color
+ *
+ * @return string
+ */
+public function getOnlineStatusColorAttribute()
+{
+    return $this->isOnline() ? 'text-success' : 'text-muted';
+}
 
 }

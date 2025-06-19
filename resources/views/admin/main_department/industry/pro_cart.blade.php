@@ -1,14 +1,19 @@
 @extends('layouts.home')
 @php  $lang = config('app.locale'); @endphp
 @section('content')
-    <div class="container-fluid" style="margin-top: auto">
-        <h1>   {{ ($lang =='ar') ? 'سلة المشتريات ' : 'Cart' }}</h1>
+    <div class="container-fluid" style="margin-top: 10px !important; padding-top: 0 !important;">
+        <div class="cart-header">
+            <i class="fas fa-shopping-cart"></i>
+            {{ ($lang =='ar') ? 'سلة المشتريات ' : 'Cart' }}
+        </div>
 
         @if($cartItems->count() > 0)
         <div class="table-responsive">
             <table class="table">
                 <thead>
                     <tr>
+                        {{-- إذا كان لديك صورة للمنتج أضف هذا العمود --}}
+                        {{-- <th>{{ ($lang =='ar') ? 'صورة' : 'Image' }}</th> --}}
                         <th>{{ ($lang =='ar') ? 'المنتج' : 'product' }}</th>
                         <th>{{ ($lang =='ar') ? 'السعر' : 'Price' }}</th>
                         <th>{{ ($lang =='ar') ? 'الكمية' : 'Quantity' }}</th>
@@ -19,14 +24,18 @@
                 <tbody>
                     @foreach($cartItems as $cartItem)
                         <tr>
-                            <td>{{ $cartItem->product->title }}</td>
+                            {{-- إذا كان لديك صورة للمنتج أضف هذا العمود --}}
+                            {{-- <td><img src="{{ $cartItem->product->image_url }}" style="width:40px;height:40px;border-radius:8px"></td> --}}
+                            <td class="product-title">{{ $cartItem->product->title }}</td>
                             <td>{{ $cartItem->product->price }} {{ $lang == 'ar' ? 'ر.س' : 'SAR' }} </td>
                             <td>
                                 <form action="{{ route('pro_cart.update', $cartItem->id) }}" method="POST">
                                     @csrf
                                     @method('PUT')
                                     <input type="number" name="quantity" value="{{ $cartItem->quantity }}" min="1" class="form-control" style="width: auto;">
-                                    <button type="submit" class="btn btn-success mt-2">{{ ($lang =='ar') ? 'تحديث' : 'update' }}</button>
+                                    <button type="submit" class="btn btn-success mt-2">
+                                        <i class="fas fa-sync-alt"></i> {{ ($lang =='ar') ? 'تحديث' : 'update' }}
+                                    </button>
                                 </form>
                             </td>
                             <td>{{ $cartItem->product->price * $cartItem->quantity }}   {{ $lang == 'ar' ? 'ر.س' : 'SAR' }} </td>
@@ -34,7 +43,9 @@
                                 <form action="{{ route('pro_cart.remove', $cartItem->id) }}" method="POST">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="btn btn-danger">{{ ($lang =='ar') ? 'حذف' : 'Delete' }}</button>
+                                    <button type="submit" class="btn btn-danger">
+                                        <i class="fas fa-trash"></i> {{ ($lang =='ar') ? 'حذف' : 'Delete' }}
+                                    </button>
                                 </form>
                             </td>
                         </tr>
@@ -66,222 +77,84 @@
                 </div>
 
                 <div class="text-center">
-                    <button type="submit" class="btn btn-primary">  {{ ($lang =='ar') ? '  إتمام الطلب  ' : 'Submit' }}</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-credit-card"></i>  {{ ($lang =='ar') ? '  إتمام الطلب  ' : 'Submit' }}
+                    </button>
                 </div>
             </form>
         @else
-            <p>   {{ ($lang =='ar') ? '  لا توجد منتجات في السلة.   ' : 'No products' }}</p>
+            <p class="text-center mt-4" style="font-size: 20px; font-weight: bold; color: #007bff;">   {{ ($lang =='ar') ? '  لا توجد منتجات في السلة.   ' : 'No products' }}</p>
         @endif
     </div>
 @endsection
 
 @section('style')
 <style>
-    /* تصميم سلة المشتريات */
-    .container-fluid {
-    margin-top: 20px; /* تعديل مهم */
-    padding-top: 10px;
+.container-fluid {
+    margin-top: 10px !important;
+    padding-top: 0 !important;
 }
 
-    h1 {
-        text-align: center;
-        font-size: 24px;
-        margin-bottom: 20px;
-        color: #333;
+.cart-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-size: 28px;
+    font-weight: bold;
+    color: #007bff;
+    margin-bottom: 10px !important;
+}
+.cart-header i {
+    color: #28a745;
+    font-size: 32px;
+}
+
+.table {
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.07);
+}
+
+.table th, .table td {
+    vertical-align: middle !important;
+}
+
+.table tbody tr:hover {
+    background: #f1f7ff;
+    transition: background 0.2s;
+}
+
+.btn-success, .btn-danger, .btn-primary {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-weight: 600;
+    font-size: 15px;
+}
+
+.btn-danger i, .btn-success i, .btn-primary i {
+    font-size: 16px;
+}
+
+.product-title {
+    font-weight: 600;
+    color: #333;
+}
+
+@media (max-width: 600px) {
+    .table-responsive {
+        font-size: 13px;
     }
-
-    /* الجدول */
-    .table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-bottom: auto;
-    }
-
-    .table th, .table td {
-        padding: 12px;
-        text-align: center;
-        border: 1px solid #ddd;
-        font-size: auto;
-    }
-
-    .table th {
-        background-color: #f4f4f4;
-    }
-
-    .table td {
-        background-color: #fff;
-    }
-
-    .table input[type="number"] {
-        width: auto;
-        padding: 5px;
-        font-size: auto;
-        text-align: center;
-    }
-
-    /* أزرار التحديث والحذف */
-    .btn {
-        padding: 8px 16px;
-        font-size: 14px;
-        border-radius: 5px;
-        cursor: pointer;
-    }
-
-    .btn-success {
-        background-color: #28a745;
-        color: #fff;
-        border: none;
-    }
-
-    .btn-danger {
-        background-color: #dc3545;
-        color: #fff;
-        border: none;
-    }
-
-    .btn-primary {
-        background-color: #007bff;
-        color: #fff;
-        border: none;
-    }
-
-    .btn:hover {
-        opacity: 0.9;
-    }
-
-    /* تصميم Stripe Container */
-    .stripe-payment-container {
-        max-width: auto;
-        margin: 0 auto;
-        padding: 20px;
-        background-color: #fff;
-        border-radius: 10px;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    }
-
-    .form-label {
-        font-size: 16px;
-        color: #333;
-        margin-bottom: 8px;
-        font-weight: 600;
-    }
-
-    .form-control {
-        height: 45px;
-        border-radius: 8px;
-        border: 1px solid #ddd;
-        padding: 0 15px;
-        font-size: 16px;
-        transition: border-color 0.3s ease, box-shadow 0.3s ease;
-    }
-
-    .form-control:focus {
-        border-color: #007bff;
-        box-shadow: 0 0 10px rgba(0, 123, 255, 0.2);
-    }
-
-    .card-element-container {
-        margin-bottom: 20px;
-    }
-
-    #card-errors {
-        font-size: 14px;
-        color: #dc3545;
-    }
-
-    .btn {
-        width: 100%;
-        padding: 12px;
-        background-color: #007bff;
-        color: white;
-        font-size: 18px;
-        border-radius: 8px;
-        border: none;
-        cursor: pointer;
-        transition: background-color 0.3s ease, transform 0.3s ease;
-    }
-
-    .btn:hover {
-        background-color: #0056b3;
-        transform: translateY(-2px);
-    }
-
-    .btn:active {
-        transform: translateY(2px);
-    } .table-responsive {
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-    }
-
-    /* تحسين التصميم للموبايل الصغير */
-    @media (max-width: 400px) {
-        h1 {
-            font-size: 18px;
-        }
-        .container-fluid {
-            padding-top: 100px;
-    }
-
-        .table th, .table td {
-            font-size: 12px;
-            padding: 6px;
-        }
-
-        .form-control {
-            font-size: 14px;
-            padding: 8px;
-            width: 100%;
-        }
-
-        .btn {
-            font-size: 14px;
-            padding: 10px;
-            width: 100%;
-        }
-
-        .stripe-payment-container {
-            padding: 10px;
-        }
-
-        .card-element-container {
-            margin-bottom: 15px;
-        }
-    }
-
-    /* لضبط عرض عناصر Stripe والمحدد */
-    #card-element, #payment_method {
-        width: 100% !important;
-    }
-    @media (max-width: 400px) {
-    h1 {
-        font-size: 18px;
-    }
-
-    .table th, .table td {
-        font-size: 12px;
-        padding: 8px;
-    }
-
-    .btn {
-        font-size: 14px;
-        padding: 10px;
-    }
-
-    .form-control {
-        font-size: 14px;
-        padding: 10px;
-        width: 100%;
-    }
-
-    .stripe-payment-container {
-        padding: 10px;
-    }
-
-    .text-center {
-        text-align: center;
+    .cart-header {
+        font-size: 20px;
     }
 }
 
+body {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+}
 </style>
 @endsection
 

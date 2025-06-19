@@ -7,4 +7,6 @@ return [
     'chat'      => "المحادثات",
     'send_message'      => "ارسال رسالة",
     'Edit'             => 'تعديل',
+    'type_and_enter' => "اكتب رسالتك واضغط Enter...",
+    'empty_message' => "رسالة وسائط",
 ];

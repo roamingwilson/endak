@@ -81,6 +81,17 @@
                             {{ $lang == 'ar' ? 'لا يوجد ملاحظات' : 'No Notes' }}
                         @endif
                     </div>
+                    @if (!empty($service->notes_voice))
+                    <div class="form-group">
+                        <label class="mb-1">{{ $lang == 'ar' ? 'ملاحظة صوتية' : 'Voice Note' }} :</label>
+                        <audio controls style="width:100%">
+                            <source src="{{ asset('storage/' . $service->notes_voice) }}" type="audio/wav">
+                            <source src="{{ asset('storage/' . $service->notes_voice) }}" type="audio/mpeg">
+                            <source src="{{ asset('storage/' . $service->notes_voice) }}" type="audio/ogg">
+                            {{ $lang == 'ar' ? 'متصفحك لا يدعم تشغيل الصوت' : 'Your browser does not support the audio element.' }}
+                        </audio>
+                    </div>
+                @endif
                     <div class="form-group">
                         <label for=""
                             class="mb-1">{{ $lang == 'ar' ? 'صاحب العمل' : 'Customer' }}

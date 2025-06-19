@@ -17,7 +17,7 @@ use App\Models\VanTruck;
 use App\Notifications\CommentNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
-
+use Illuminate\Support\Facades\Storage;
 
 class ServiceController extends Controller
 {
@@ -28,10 +28,10 @@ class ServiceController extends Controller
     {
         $userId = auth()->id();
 
-        $Services = Services::where('user_id', auth()->id())->latest()->paginate(6);
-        return view('front_office.posts.index', compact('Services'));
+        $services = Services::where('user_id', auth()->id())->latest()->paginate(6);
 
 
+        return view('front_office.posts.index', compact('services'));
     }
 
     /**
@@ -93,10 +93,25 @@ class ServiceController extends Controller
             'network' => 'nullable|boolean',
 
             'notes' => 'nullable|string',
-            'notes_voice' => 'nullable|string',
+            'notes_voice' => 'nullable|file|mimes:audio/wav,audio/mpeg,audio/ogg|max:5120',
             'status' => 'nullable|in:open,close,pending,confirm',
         ]);
 
+        // Enhanced note_voice handling
+        if ($request->filled('voice_note_data')) {
+            // Handle base64-encoded audio (from JS recorder)
+            $voiceData = $request->input('voice_note_data');
+            $voiceData = preg_replace('/^data:audio\/(wav|mpeg|ogg);base64,/', '', $voiceData);
+            $voiceData = base64_decode($voiceData);
+            $fileName = 'services/notes_voice/' . uniqid() . '.wav';
+            Storage::disk('public')->put($fileName, $voiceData);
+            $data['notes_voice'] = $fileName;
+        } elseif ($request->hasFile('notes_voice')) {
+            // Handle traditional file upload
+            $file = $request->file('notes_voice');
+            $fileName = $file->store('services/notes_voice', 'public');
+            $data['notes_voice'] = $fileName;
+        }
 
 
         $service = Services::create($data);
@@ -117,31 +132,32 @@ class ServiceController extends Controller
                     ]);
                 }
             }
-
         }
+        //custom services id
 
-            if ($service && $request->hasFile('images')) {
-                $files = $request->file('images');
 
-                if (!is_array($files)) {
-                    $files = [$files];
-                }
+        if ($service && $request->hasFile('images')) {
+            $files = $request->file('images');
 
-                foreach ($files as $file) {
-                    $path = $file->store('services', [
-                        'disk' => 'public',
-                    ]);
-
-                    $image = new GeneralImage([
-                        'path' => $path,
-                    ]);
-
-                    // ✅ حفظ الصورة داخل الحلقة
-                    $service->images()->save($image);
-                }
+            if (!is_array($files)) {
+                $files = [$files];
             }
 
-        return redirect()->route('home')->with('success' , 'تم اضافة الطلب بنجاح') ;
+            foreach ($files as $file) {
+                $path = $file->store('services', [
+                    'disk' => 'public',
+                ]);
+
+                $image = new GeneralImage([
+                    'path' => $path,
+                ]);
+
+                // ✅ حفظ الصورة داخل الحلقة
+                $service->images()->save($image);
+            }
+        }
+
+        return redirect()->route('home')->with('success', 'تم اضافة الطلب بنجاح');
     }
 
 
@@ -153,11 +169,11 @@ class ServiceController extends Controller
     {
         $departments = Department::find($id);
         if (auth()->check()) {
-             $user = auth()->user();
+            $user = auth()->user();
             $cities = Governements::where('country_id', $user->country)->get();
             // dd($user->country);
-        }else{
-             $cities = Governements::where('country_id', 178)->get();
+        } else {
+            $cities = Governements::where('country_id', 178)->get();
         }
 
 
@@ -169,23 +185,23 @@ class ServiceController extends Controller
 
             case 'furniture transport':
                 $products = FurnitureTransportationProduct::get();
-                return view('front_office.furniture_transportations.show', compact('departments','cities','products'));
+                return view('front_office.furniture_transportations.show', compact('departments', 'cities', 'products'));
 
             case 'maintenance':
                 $user = auth()->user();
 
                 $maintenancess = Cache::remember('maintenance', 60, function () {
-                    return Maintenance::where('maintenance_id', '!=',0)->paginate();
+                    return Maintenance::where('maintenance_id', '!=', 0)->paginate();
                 });
-                return view('admin.main_department.maintenance.front_show', compact('departments','cities','maintenancess'));
+                return view('admin.main_department.maintenance.front_show', compact('departments', 'cities', 'maintenancess'));
 
             case 'spare parts':
                 $user = auth()->user();
 
                 $spare_parts = Cache::remember('spare_part', 60, function () {
-                    return SpareParts::where('spare_part_id', '!=',0)->paginate();
+                    return SpareParts::where('spare_part_id', '!=', 0)->paginate();
                 });
-                return view('admin.main_department.spare_part.front_show', compact('departments','cities','spare_parts'));
+                return view('admin.main_department.spare_part.front_show', compact('departments', 'cities', 'spare_parts'));
 
             case 'truks':
                 $user = auth()->user();
@@ -194,74 +210,80 @@ class ServiceController extends Controller
                     return VanTruck::where('vantruck_id', '!=', 0)->paginate();
                 });
 
-                return view('admin.main_department.van_truck.front_show', compact('departments','cities', 'user', 'van_truck'));
+                return view('admin.main_department.van_truck.front_show', compact('departments', 'cities', 'user', 'van_truck'));
 
             case 'big car':
-                return view('admin.main_department.big_car.show', compact('departments','cities'));
+                return view('admin.main_department.big_car.show', compact('departments', 'cities'));
             case 'air condition':
-                return view('admin.main_department.Air_con.show', compact('departments','cities'));
+                return view('admin.main_department.Air_con.show', compact('departments', 'cities'));
             case 'car water':
-                return view('admin.main_department.car_water.show', compact('departments','cities'));
+                return view('admin.main_department.car_water.show', compact('departments', 'cities'));
             case 'family':
-                return view('admin.main_department.family.show', compact('departments','cities'));
+                return view('admin.main_department.family.show', compact('departments', 'cities'));
             case 'cleaning':
-                return view('admin.main_department.cleaning.show', compact('departments','cities'));
+                return view('admin.main_department.cleaning.show', compact('departments', 'cities'));
             case 'teacher':
-                return view('admin.main_department.teacher.show', compact('departments','cities'));
+                return view('admin.main_department.teacher.show', compact('departments', 'cities'));
             case 'security camera': //
-                return view('admin.surveillance_cameras.show', compact('departments','cities'));
+                return view('admin.surveillance_cameras.show', compact('departments', 'cities'));
             case 'party':
-                return view('admin.main_department.party_preparation.show', compact('departments','cities'));
+                return view('admin.main_department.party_preparation.show', compact('departments', 'cities'));
             case 'garden':
-                return view('admin.main_department.garden.show', compact('departments','cities'));
-            case 'contracting'://
+                return view('admin.main_department.garden.show', compact('departments', 'cities'));
+            case 'contracting': //
                 $user = auth()->user();
 
                 $contractingss = Cache::remember('contracting', 60, function () {
-                    return Contracting::where('contracting_id', '!=',0)->paginate();
+                    return Contracting::where('contracting_id', '!=', 0)->paginate();
                 });
-                return view('admin.main_department.contracting.front_show', compact('departments','cities','contractingss'));
+                return view('admin.main_department.contracting.front_show', compact('departments', 'cities', 'contractingss'));
             case 'workers':
-                return view('admin.main_department.worker.show', compact('departments','cities'));
+                return view('admin.main_department.worker.show', compact('departments', 'cities'));
             case 'public ge':
-                return view('admin.main_department.public_ge.show', compact('departments','cities'));
-            case 'insect'://
-                return view('admin.main_department.counter_insects.show', compact('departments','cities'));
+                return view('admin.main_department.public_ge.show', compact('departments', 'cities'));
+            case 'insect': //
+                return view('admin.main_department.counter_insects.show', compact('departments', 'cities'));
             case 'plastic':
-                    return view('admin.main_department.industry.product.index', compact('departments','cities'));
+                return view('admin.main_department.industry.product.index', compact('departments', 'cities'));
             case 'ads':
 
-                return view('admin.main_department.ads.show', compact('departments','cities'));
+                return view('admin.main_department.ads.show', compact('departments', 'cities'));
             case 'water':
-                return view('admin.main_department.water.show', compact('departments','cities'));
+                return view('admin.main_department.water.show', compact('departments', 'cities'));
 
             case 'heavy equipment':
                 $user = auth()->user();
 
                 $heavy_equips = Cache::remember('heavy_equip', 60, function () {
-                    return HeavyEquipment::where('heavy_equip_id', '!=',0)->paginate();
+                    return HeavyEquipment::where('heavy_equip_id', '!=', 0)->paginate();
                 });
                 // dd($heavy_equips);
-                return view('admin.main_department.heavy_equip.front_show', compact('departments','cities','heavy_equips'));
+                return view('admin.main_department.heavy_equip.front_show', compact('departments', 'cities', 'heavy_equips'));
 
             default:
                 abort(404); // لو الاسم مش من ضمن اللي فوق
         }
-
-
-
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit( $id)
+    public function edit($id)
     {
+        if (auth()->check()) {
+            $user = auth()->user();
+            $cities = Governements::where('country_id', $user->country)->get();
+            // dd($user->country);
+        } else {
+            $cities = Governements::where('country_id', 178)->get();
+        }
 
+        $service = Services::where('id', $id)->latest()->first();
 
-        $service = Services::where('id',$id)->latest()->first();
-
-        $date = ['service' => $service];
+        $date = [
+            'service' => $service,
+            'cities' => $cities
+        ];
         if (auth()->id() !== $service->user_id) {
             abort(403, 'Unauthorized action.');
         }
@@ -276,23 +298,23 @@ class ServiceController extends Controller
             case 'furniture transport':
                 $products = FurnitureTransportationProduct::get();
 
-                return view('front_office.furniture_transportations.edit_service', compact('service','products'));
+                return view('front_office.furniture_transportations.edit_service', compact('service', 'cities', 'products'));
 
             case 'maintenance':
                 $user = auth()->user();
                 $departments = Department::where('type', 'maintenance');
                 $maintenancess = Cache::remember('maintenance', 60, function () {
-                    return Maintenance::where('maintenance_id', '!=',0)->paginate();
+                    return Maintenance::where('maintenance_id', '!=', 0)->paginate();
                 });
-                return view('admin.main_department.maintenance.edit_service', compact('service','departments','maintenancess'));
+                return view('admin.main_department.maintenance.edit_service', compact('service', 'cities', 'departments', 'maintenancess'));
 
             case 'spare parts':
                 $user = auth()->user();
 
                 $spare_parts = Cache::remember('spare_part', 60, function () {
-                    return SpareParts::where('spare_part_id', '!=',0)->paginate();
+                    return SpareParts::where('spare_part_id', '!=', 0)->paginate();
                 });
-                return view('admin.main_department.spare_part.edit_service', compact('service','spare_parts'));
+                return view('admin.main_department.spare_part.edit_service', compact('service', 'cities', 'spare_parts'));
 
             case 'truks':
                 $user = auth()->user();
@@ -301,7 +323,7 @@ class ServiceController extends Controller
                     return VanTruck::where('vantruck_id', '!=', 0)->paginate();
                 });
 
-                return view('admin.main_department.van_truck.edit_service', compact('service', 'user', 'van_truck'));
+                return view('admin.main_department.van_truck.edit_service', compact('service', 'cities', 'user', 'van_truck'));
 
             case 'big car':
                 return view('admin.main_department.big_car.edit_service', $date);
@@ -321,21 +343,21 @@ class ServiceController extends Controller
                 return view('admin.main_department.party_preparation.edit_service', $date);
             case 'garden':
                 return view('admin.main_department.garden.edit_service', $date);
-            case 'contracting'://
+            case 'contracting': //
                 $user = auth()->user();
 
                 $contractingss = Cache::remember('contracting', 60, function () {
-                    return Contracting::where('contracting_id', '!=',0)->paginate();
+                    return Contracting::where('contracting_id', '!=', 0)->paginate();
                 });
-                return view('admin.main_department.contracting.edit_service', compact('service','contractingss'));
+                return view('admin.main_department.contracting.edit_service', compact('service', 'cities', 'contractingss'));
             case 'workers':
                 return view('admin.main_department.worker.edit_service', $date);
             case 'public ge':
                 return view('admin.main_department.public_ge.edit_service', $date);
-            case 'insect'://
+            case 'insect': //
                 return view('admin.main_department.counter_insects.edit_service', $date);
             case 'plastic':
-                    return view('admin.main_department.plastic.edit_service', $date);
+                return view('admin.main_department.plastic.edit_service', $date);
             case 'ads':
 
                 return view('admin.main_department.ads.edit_service', $date);
@@ -346,31 +368,31 @@ class ServiceController extends Controller
                 $user = auth()->user();
 
                 $heavy_equips = Cache::remember('heavy_equip', 60, function () {
-                    return HeavyEquipment::where('heavy_equip_id', '!=',0)->paginate();
+                    return HeavyEquipment::where('heavy_equip_id', '!=', 0)->paginate();
                 });
-                return view('admin.main_department.heavy_equip.edit_service', compact('service','heavy_equips'));
+                return view('admin.main_department.heavy_equip.edit_service', compact('service', 'cities', 'heavy_equips'));
 
             default:
                 abort(404); // لو الاسم مش من ضمن اللي فوق
         }
-
     }
 
-    public function show_services($id){
+    public function show_services($id)
+    {
 
 
 
         $user = auth()->user();
 
-         if (auth()->user() ){
+        if (auth()->user()) {
 
-             $service = Services::where('id',$id)->latest()->first();
+            $service = Services::where('id', $id)->latest()->first();
             // dd($service);
             $form_city = Governements::where('id', $service->from_city)->first();
             $to_city = Governements::where('id', $service->to_city)->first();
-         }
+        }
         // dd($city);
-         $date = [
+        $date = [
             'service' => $service,
             'form_city' => $form_city,
             'to_city' => $to_city,
@@ -388,24 +410,24 @@ class ServiceController extends Controller
                 $products = $service->products()->get();
                 // dd($products);
 
-                return view('front_office.furniture_transportations.show_myservice', compact('service','from_city','to_city','products'));
+                return view('front_office.furniture_transportations.show_myservice', compact('service', 'form_city', 'to_city', 'products'));
 
             case 'maintenance':
                 $user = auth()->user();
                 $departments = Department::where('type', 'maintenance');
                 $maintenancess = Cache::remember('maintenance', 60, function () {
-                    return Maintenance::where('maintenance_id', '!=',0)->paginate();
+                    return Maintenance::where('maintenance_id', '!=', 0)->paginate();
                 });
-                return view('admin.main_department.maintenance.show_myservice', compact('service','form_city' , 'to_city','departments','maintenancess'));
+                return view('admin.main_department.maintenance.show_myservice', compact('service', 'form_city', 'to_city', 'departments', 'maintenancess'));
 
             case 'spare parts':
                 $user = auth()->user();
 
                 $spare_parts = Cache::remember('spare_part', 60, function () {
-                    return SpareParts::where('spare_part_id', '!=',0)->paginate();
+                    return SpareParts::where('spare_part_id', '!=', 0)->paginate();
                 });
 
-                return view('admin.main_department.spare_part.show_myservice', compact('service','form_city','to_city','spare_parts'));
+                return view('admin.main_department.spare_part.show_myservice', compact('service', 'form_city', 'to_city', 'spare_parts'));
 
             case 'truks':
                 $user = auth()->user();
@@ -414,7 +436,7 @@ class ServiceController extends Controller
                     return VanTruck::where('vantruck_id', '!=', 0)->paginate();
                 });
 
-                return view('admin.main_department.van_truck.show_myservice', compact('service','form_city','to_city', 'user', 'van_truck'));
+                return view('admin.main_department.van_truck.show_myservice', compact('service', 'form_city', 'to_city', 'user', 'van_truck'));
 
             case 'big car':
                 return view('admin.main_department.big_car.show_myservice', $date);
@@ -434,21 +456,21 @@ class ServiceController extends Controller
                 return view('admin.main_department.party_preparation.show_myservice', $date);
             case 'garden':
                 return view('admin.main_department.garden.show_myservice', $date);
-            case 'contracting'://
+            case 'contracting': //
                 $user = auth()->user();
 
                 $contractingss = Cache::remember('contracting', 60, function () {
-                    return Contracting::where('contracting_id', '!=',0)->paginate();
+                    return Contracting::where('contracting_id', '!=', 0)->paginate();
                 });
-                return view('admin.main_department.contracting.show_myservice', compact('service','form_city','to_city','contractingss'));
+                return view('admin.main_department.contracting.show_myservice', compact('service', 'form_city', 'to_city', 'contractingss'));
             case 'workers':
                 return view('admin.main_department.worker.show_myservice', $date);
             case 'public ge':
                 return view('admin.main_department.public_ge.show_myservice', $date);
-            case 'insect'://
+            case 'insect': //
                 return view('admin.main_department.counter_insects.show_myservice', $date);
             case 'plastic':
-                    return view('admin.main_department.plastic.show_myservice', $date);
+                return view('admin.main_department.plastic.show_myservice', $date);
             case 'ads':
 
                 return view('admin.main_department.ads.show_myservice', $date);
@@ -459,15 +481,14 @@ class ServiceController extends Controller
                 $user = auth()->user();
 
                 $heavy_equips = Cache::remember('heavy_equip', 60, function () {
-                    return HeavyEquipment::where('heavy_equip_id', '!=',0)->paginate();
+                    return HeavyEquipment::where('heavy_equip_id', '!=', 0)->paginate();
                 });
 
-                return view('admin.main_department.heavy_equip.show_myservice', compact('service','form_city','to_city','heavy_equips'));
+                return view('admin.main_department.heavy_equip.show_myservice', compact('service', 'form_city', 'to_city', 'heavy_equips'));
 
             default:
                 abort(404); // لو الاسم مش من ضمن اللي فوق
         }
-
     }
 
 
@@ -526,16 +547,17 @@ class ServiceController extends Controller
             'network' => 'nullable|boolean',
 
             'notes' => 'nullable|string',
-            'notes_voice' => 'nullable|string',
+            'notes_voice' => 'nullable|file|mimes:audio/wav,audio/mpeg,audio/ogg|max:5120',
             'status' => 'nullable|in:open,close,pending,confirm',
         ]);
 
 
 
-            $service = Services::findOrFail($id);
-            // dd($service);
+        $service = Services::findOrFail($id);
 
-            $service->update($data);
+        // dd($service);
+
+        $service->update($data);
 
 
         if (strtolower($service->type) == 'furniture transport') {
@@ -555,24 +577,23 @@ class ServiceController extends Controller
                 }
             }
         }
-        if($service->comments == true)
-        {
-        $comments = $service->comments;
+        if ($service->comments == true) {
+            $comments = $service->comments;
 
-        foreach ($comments as $comment) {
-            $provider = $comment->user;
-            $customer = $comment->customer;
+            foreach ($comments as $comment) {
+                $provider = $comment->user;
+                $customer = $comment->customer;
 
-            $provider->notify(new CommentNotification([
-                'id' => $comment->id,
-                'title' => "قام $customer->fullname بتعديل أو حذف الخدمة",
-                'body' => "قدم عرض جديد",
-                'url' => route('notifications.index'),
-            ]));
+                $provider->notify(new CommentNotification([
+                    'id' => $comment->id,
+                    'title' => "قام $customer->fullname بتعديل أو حذف الخدمة",
+                    'body' => "قدم عرض جديد",
+                    'url' => route('notifications.index'),
+                ]));
 
-            $comment->delete(); // حذف التعليق هنا أيضاً
+                $comment->delete(); // حذف التعليق هنا أيضاً
+            }
         }
-    }
 
         if ($service && $request->hasFile('images')) {
             $files = $request->file('images');
@@ -604,6 +625,6 @@ class ServiceController extends Controller
         $service->delete();
 
 
-    return redirect()->route('home')->with('success', 'تم حذف الطلب بنجاح');
+        return redirect()->route('home')->with('success', 'تم حذف الطلب بنجاح');
     }
 }

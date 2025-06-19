@@ -111,6 +111,15 @@ $lang = config('app.locale');
                             <input type="text" class="form-control" name="neighborhood">
 
                         </div>
+                        <div class="voice-note-container">
+                            <div id="recordingStatus" style="margin-bottom: 8px; color: #d9534f; display: none;"></div>
+                            <button id="startRecord" class="btn btn-primary">{{ $lang == 'ar' ? 'بدء التسجيل' : 'Start Recording' }}</button>
+                            <button id="stopRecord" class="btn btn-danger" disabled>{{ $lang == 'ar' ? 'ايقاف التسجيل' : 'Stop Recording' }}</button>
+                            <button id="resetRecord" class="btn btn-secondary" style="display:none;">{{ $lang == 'ar' ? 'إعادة التسجيل' : 'Reset Recording' }}</button>
+                            <span id="recordingTimer" style="margin-left: 10px; font-weight: bold; display:none;">00:00</span>
+                            <audio id="audioPlayback" controls style="display: none; margin-top: 10px;"></audio>
+                            <a id="downloadLink" style="display: none; margin-top: 10px;" class="btn btn-success">{{ $lang == 'ar' ? 'تنزيل التسجيل' : 'Download Recording' }}</a>
+                        </div>
                         <hr>
                         <div class="form-group mt-2" style="text-align: right;margin-right:10px">
                             <button class="btn mt-2 form-control"
