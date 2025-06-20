@@ -131,12 +131,17 @@
                         </div>
                         <div class="voice-note-container">
                             <div id="recordingStatus" style="margin-bottom: 8px; color: #d9534f; display: none;"></div>
-                            <button id="startRecord" class="btn btn-primary">{{ $lang == 'ar' ? 'بدء التسجيل' : 'Start Recording' }}</button>
-                            <button id="stopRecord" class="btn btn-danger" disabled>{{ $lang == 'ar' ? 'ايقاف التسجيل' : 'Stop Recording' }}</button>
-                            <button id="resetRecord" class="btn btn-secondary" style="display:none;">{{ $lang == 'ar' ? 'إعادة التسجيل' : 'Reset Recording' }}</button>
-                            <span id="recordingTimer" style="margin-left: 10px; font-weight: bold; display:none;">00:00</span>
+                            <button id="startRecord"
+                                class="btn btn-primary">{{ $lang == 'ar' ? 'بدء التسجيل' : 'Start Recording' }}</button>
+                            <button id="stopRecord" class="btn btn-danger"
+                                disabled>{{ $lang == 'ar' ? 'ايقاف التسجيل' : 'Stop Recording' }}</button>
+                            <button id="resetRecord" class="btn btn-secondary"
+                                style="display:none;">{{ $lang == 'ar' ? 'إعادة التسجيل' : 'Reset Recording' }}</button>
+                            <span id="recordingTimer"
+                                style="margin-left: 10px; font-weight: bold; display:none;">00:00</span>
                             <audio id="audioPlayback" controls style="display: none; margin-top: 10px;"></audio>
-                            <a id="downloadLink" style="display: none; margin-top: 10px;" class="btn btn-success">{{ $lang == 'ar' ? 'تنزيل التسجيل' : 'Download Recording' }}</a>
+                            <a id="downloadLink" style="display: none; margin-top: 10px;"
+                                class="btn btn-success">{{ $lang == 'ar' ? 'تنزيل التسجيل' : 'Download Recording' }}</a>
                         </div>
                         <hr>
 
@@ -163,7 +168,8 @@
             <div class="profile-content pt-40">
                 <div class="container position-relative d-flex justify-content-center ">
                     <form action="{{ route('register-page') }}" method="get" enctype="multipart/form-data"
-                        style="width:600px;margin-top:10px" class="profile-card rounded-lg shadow-xs bg-white p-15 p-md-30">
+                        style="width:600px;margin-top:10px"
+                        class="profile-card rounded-lg shadow-xs bg-white p-15 p-md-30">
                         @csrf
                         <div class="form-group mt-2">
                             <label for=""
@@ -196,6 +202,20 @@
                             <input type="time" class="form-control" name="time">
                         </div>
                         <hr>
+                        <div class="voice-note-container">
+                            <div id="recordingStatus" style="margin-bottom: 8px; color: #d9534f; display: none;"></div>
+                            <button id="startRecord"
+                                class="btn btn-primary">{{ $lang == 'ar' ? 'بدء التسجيل' : 'Start Recording' }}</button>
+                            <button id="stopRecord" class="btn btn-danger"
+                                disabled>{{ $lang == 'ar' ? 'ايقاف التسجيل' : 'Stop Recording' }}</button>
+                            <button id="resetRecord" class="btn btn-secondary"
+                                style="display:none;">{{ $lang == 'ar' ? 'إعادة التسجيل' : 'Reset Recording' }}</button>
+                            <span id="recordingTimer"
+                                style="margin-left: 10px; font-weight: bold; display:none;">00:00</span>
+                            <audio id="audioPlayback" controls style="display: none; margin-top: 10px;"></audio>
+                            <a id="downloadLink" style="display: none; margin-top: 10px;"
+                                class="btn btn-success">{{ $lang == 'ar' ? 'تنزيل التسجيل' : 'Download Recording' }}</a>
+                        </div>
 
                         <hr>
                         <div class="form-group mt-2" style="text-align: right;margin-right:10px">

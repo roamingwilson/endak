@@ -152,7 +152,7 @@ class AuthController extends Controller
             //     // dd($modelName);
 
             //     $modelClass = "App\\Models\\$modelName";
-            //     $main_department = new UserDepartment([
+            //     $main_department = new UserDepartment([  
             //         'user_id' => $user->id,
             //         'commentable_id' => $id,
             //     ]);

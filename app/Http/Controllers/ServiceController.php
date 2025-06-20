@@ -551,32 +551,72 @@ class ServiceController extends Controller
             'status' => 'nullable|in:open,close,pending,confirm',
         ]);
 
+        $data['clean'] = $request->has('clean') ?? false;
+        $data['feryoun'] = $request->has('feryoun') ?? false;
+        $data['maintance'] = $request->has('maintance') ?? false;
+        $data['finger'] = $request->has('finger') ?? false;
+        $data['camera'] = $request->has('camera') ?? false;
+        $data['smart'] = $request->has('smart') ?? false;
+        $data['fire_system'] = $request->has('fire_system') ?? false;
+        $data['security_system'] = $request->has('security_system') ?? false;
+        $data['network'] = $request->has('network') ?? false;
+
+        if ($request->filled('voice_note_data')) {
+            // Handle base64-encoded audio (from JS recorder)
+            $voiceData = $request->input('voice_note_data');
+            $voiceData = preg_replace('/^data:audio\/(wav|mpeg|ogg);base64,/', '', $voiceData);
+            $voiceData = base64_decode($voiceData);
+            $fileName = 'services/notes_voice/' . uniqid() . '.wav';
+            Storage::disk('public')->put($fileName, $voiceData);
+            $data['notes_voice'] = $fileName;
+        } elseif ($request->hasFile('notes_voice')) {
+            // Handle traditional file upload
+            $file = $request->file('notes_voice');
+            $fileName = $file->store('services/notes_voice', 'public');
+            $data['notes_voice'] = $fileName;
+        }
 
 
         $service = Services::findOrFail($id);
 
-        // dd($service);
+        // update furniture transportation products
+
 
         $service->update($data);
 
 
-        if (strtolower($service->type) == 'furniture transport') {
-            $quantities = $request->quantity;
-            $installation = $request->installation;
-            $disassembly = $request->disassembly;
+        if (
+            strtolower($service->type) === 'furniture transport' &&
+            $request->has('selected_products')
+        ) {
+            $quantities = $request->quantities ?? [];
+            $installation = $request->installation ?? [];
+            $disassembly = $request->disassembly ?? [];
+            $selectedProducts = $request->selected_products ?? [];
 
-            foreach ($request->selected_products as $key => $value) {
-                if (isset($quantities[$value]) && !is_null($quantities[$value])) {
-                    FurnitureTransportationServiceProducts::updateOrCreate([
-                        'service_id' => $service->id,
-                        'product_id' => $value,
-                        'quantity' => $quantities[$value],
-                        'installation' => $installation[$value] ?? 0,
-                        'disassembly' => $disassembly[$value] ?? 0,
-                    ]);
+            // حذف المنتجات غير المختارة حاليًا
+            FurnitureTransportationServiceProducts::where('service_id', $service->id)
+                ->whereNotIn('product_id', $selectedProducts)
+                ->delete();
+
+            // تحديث أو إنشاء المنتجات المختارة
+            foreach ($selectedProducts as $productId) {
+                if (isset($quantities[$productId]) && !is_null($quantities[$productId])) {
+                    FurnitureTransportationServiceProducts::updateOrCreate(
+                        [
+                            'service_id' => $service->id,
+                            'product_id' => $productId,
+                        ],
+                        [
+                            'quantity' => $quantities[$productId],
+                            'installation' => $installation[$productId] ?? 0,
+                            'disassembly' => $disassembly[$productId] ?? 0,
+                        ]
+                    );
                 }
             }
         }
+
         if ($service->comments == true) {
             $comments = $service->comments;
 

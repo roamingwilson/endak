@@ -1,7 +1,7 @@
 @extends('layouts.home')
 @section('title')
     <?php $lang = config('app.locale'); ?>
-    {{ $lang == 'ar' ? 'شاحنات' : "Van Truck" }}
+    {{ $lang == 'ar' ? 'شاحنات' : 'Van Truck' }}
 @endsection
 
 @section('content')
@@ -58,10 +58,11 @@
                                     @endif
                                 </div>
                                 <div class="form-group">
-                                    <label for="" class="mb-1">{{ $lang == 'ar' ? ' نوع الشاحنة ' : 'truck type' }}
+                                    <label for=""
+                                        class="mb-1">{{ $lang == 'ar' ? ' نوع الشاحنة ' : 'truck type' }}
                                         :</label>
-                                        @if (isset($service->equip_type ))
-                                        <p>{{ $lang == 'ar' ? $service->equip_type  : $service->equip_type  }}</p>
+                                    @if (isset($service->equip_type))
+                                        <p>{{ $lang == 'ar' ? $service->equip_type : $service->equip_type }}</p>
                                     @endif
 
                                 </div>
@@ -69,12 +70,13 @@
                                     <label for="" class="mb-1">{{ $lang == 'ar' ? ' من المدينة ' : 'from City' }}
                                         :</label>
                                     @if (isset($service->from_city))
-                                        <p>    {{$lang == 'ar'? $form_city->name_ar:$form_city->name_en}}
-</p>
+                                        <p> {{ $lang == 'ar' ? $form_city->name_ar : $form_city->name_en }}
+                                        </p>
                                     @endif
                                 </div>
                                 <div class="form-group">
-                                    <label for="" class="mb-1">{{ $lang == 'ar' ? ' من الحي ' : 'from Neighborhood' }}
+                                    <label for=""
+                                        class="mb-1">{{ $lang == 'ar' ? ' من الحي ' : 'from Neighborhood' }}
                                         :</label>
                                     @if (isset($service->from_neighborhood))
                                         <p>{{ $service->from_neighborhood }}</p>
@@ -84,27 +86,29 @@
                                     <label for="" class="mb-1">{{ $lang == 'ar' ? ' الي المدينة' : 'to City' }}
                                         :</label>
                                     @if (isset($service->to_city))
-                                        <p>{{$lang == 'ar'? $to_city->name_ar:$to_city->name_en}}</p>
+                                        <p>{{ $lang == 'ar' ? $to_city->name_ar : $to_city->name_en }}</p>
                                     @endif
                                 </div>
                                 <div class="form-group">
-                                    <label for="" class="mb-1">{{ $lang == 'ar' ? ' الي الحي' : 'to Neighborhood' }}
+                                    <label for=""
+                                        class="mb-1">{{ $lang == 'ar' ? ' الي الحي' : 'to Neighborhood' }}
                                         :</label>
                                     @if (isset($service->to_neighborhood))
                                         <p>{{ $service->to_neighborhood }}</p>
                                     @endif
                                 </div>
                                 @if (!empty($service->notes_voice))
-                                <div class="form-group">
-                                    <label class="mb-1">{{ $lang == 'ar' ? 'ملاحظة صوتية' : 'Voice Note' }} :</label>
-                                    <audio controls style="width:100%">
-                                        <source src="{{ asset('storage/' . $service->notes_voice) }}" type="audio/wav">
-                                        <source src="{{ asset('storage/' . $service->notes_voice) }}" type="audio/mpeg">
-                                        <source src="{{ asset('storage/' . $service->notes_voice) }}" type="audio/ogg">
-                                        {{ $lang == 'ar' ? 'متصفحك لا يدعم تشغيل الصوت' : 'Your browser does not support the audio element.' }}
-                                    </audio>
-                                </div>
-                            @endif
+                                    <div class="form-group">
+                                        <label class="mb-1">{{ $lang == 'ar' ? 'ملاحظة صوتية' : 'Voice Note' }} :</label>
+                                        <audio controls style="width:100%">
+                                            <source src="{{ asset('storage/' . $service->notes_voice) }}" type="audio/wav">
+                                            <source src="{{ asset('storage/' . $service->notes_voice) }}"
+                                                type="audio/mpeg">
+                                            <source src="{{ asset('storage/' . $service->notes_voice) }}" type="audio/ogg">
+                                            {{ $lang == 'ar' ? 'متصفحك لا يدعم تشغيل الصوت' : 'Your browser does not support the audio element.' }}
+                                        </audio>
+                                    </div>
+                                @endif
                                 <div class="form-group">
                                     <label for=""
                                         class="mb-1">{{ $lang == 'ar' ? 'ملاحظة عن العمل المطلوب' : 'Note About Work' }}
@@ -126,16 +130,19 @@
 
                                     <div class="mt-4">
                                         @if (auth()->id() === $service->user_id)
-                                        <a class="btn btn-success btn-sm" href="{{route('services.edit',$service->id)}}">
-                                            <i class="fe fe-check-circle"></i> {{ $lang == 'ar' ? 'تعديل' : 'Edit' }}
-                                        </a>
-                                        <form action="{{ route('services.destroy', $service->id) }}" method="POST" style="display:inline-block;">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button class="btn btn-danger btn-sm" type="submit" onclick="return confirm('{{ $lang == 'ar' ? 'هل أنت متأكد من الحذف؟' : 'Are you sure you want to delete?' }}')">
-                                                <i class="fe fe-trash-2"></i> {{ $lang == 'ar' ? 'حذف' : 'Delete' }}
-                                            </button>
-                                        </form>
+                                            <a class="btn btn-success btn-sm"
+                                                href="{{ route('services.edit', $service->id) }}">
+                                                <i class="fe fe-check-circle"></i> {{ $lang == 'ar' ? 'تعديل' : 'Edit' }}
+                                            </a>
+                                            <form action="{{ route('services.destroy', $service->id) }}" method="POST"
+                                                style="display:inline-block;">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button class="btn btn-danger btn-sm" type="submit"
+                                                    onclick="return confirm('{{ $lang == 'ar' ? 'هل أنت متأكد من الحذف؟' : 'Are you sure you want to delete?' }}')">
+                                                    <i class="fe fe-trash-2"></i> {{ $lang == 'ar' ? 'حذف' : 'Delete' }}
+                                                </button>
+                                            </form>
                                         @endif
 
                                     </div>
@@ -163,7 +170,7 @@
                                 <div class="container">
 
                                     @forelse ($service->comments as $comment)
-                                    {{-- @dd($comment) --}}
+                                        {{-- @dd($comment) --}}
                                         <div class="col-12 border mb-4 p-4 br-5">
                                             <div class="d-flex align-items-center">
                                                 <h5 class="mt-0 mr-3">
@@ -182,10 +189,12 @@
                                                         <input type="hidden" name="service_provider_id"
                                                             value="{{ $comment->user->id }}">
                                                         <input type="hidden" name="customer_id"
-                                                            value="{{  $comment->customer->id  }}">
-                                                            <input type="hidden" name="status" value="pending">
-                                                            <input type="hidden" name="orderable_id" value="{{ $service->id }}">
-                                                            <input type="hidden" name="orderable_type" value="{{ get_class($service) }}">
+                                                            value="{{ $comment->customer->id }}">
+                                                        <input type="hidden" name="status" value="pending">
+                                                        <input type="hidden" name="orderable_id"
+                                                            value="{{ $service->id }}">
+                                                        <input type="hidden" name="orderable_type"
+                                                            value="{{ get_class($service) }}">
                                                         <button class="btn btn-primary" type="submit">
 
                                                             {{ $lang == 'ar' ? 'قبول العرض' : 'Accept Offer' }}
@@ -245,12 +254,9 @@
                         <?php
                         $user = auth()->user();
                         if ($user) {
-                            $is_add = App\Models\GeneralComments::where('commentable_id', $service->id)
-                                ->where('commentable_type', 'App\Models\ContractingService')
-                                ->where('service_provider', $user->id)
-                                ->first();
+                            $is_add = App\Models\GeneralComments::where('commentable_id', $service->id)->where('commentable_type', 'App\Models\ContractingService')->where('service_provider', $user->id)->first();
                         }
-
+                        
                         ?>
 
                     </div>
@@ -262,7 +268,7 @@
                                     method="POST" enctype="multipart/form-data">
                                     @csrf
                                     <input type="hidden" value="{{ $service->id }}" name="service_id">
-                                    <input type="hidden" value="{{$service->equip_type }}" name="body">
+                                    <input type="hidden" value="{{ $service->equip_type }}" name="body">
                                     {{-- <input type="hidden" value="{{ $user->id }}" name="service_provider"> --}}
 
                                     <div>

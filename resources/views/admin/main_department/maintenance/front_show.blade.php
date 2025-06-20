@@ -102,38 +102,6 @@
         </section>
     </div>
     @if (auth()->check() && auth()->user()->role_id == 3)
-        <section class="section mt-3">
-            <div class="container">
-                <div class="row">
-                    <div class="col-xl-12">
-                        <div class="row">
-                            <div class="cards-container">
-                                @foreach ($maintenancess as $item)
-                                    <div class="card card-custom ">
-                                        @if ($item->image)
-                                            <a href="{{ route('maintenance_sub_show' , $item->id) }}" class="d-flex justify-content-center align-items-center">
-                                                <img src="{{ $item->image_url }}" class="card-img-top mt-2 "
-                                                    alt="{{ $item->name_ar }}">
-                                            </a>
-                                        @endif
-                                        <div class="card-body">
-                                            <a href="{{ route('maintenance_sub_show' , $item->id) }}">
-                                                <p class="card-text">{{ $lang == 'ar' ? $item->name_ar : $item->name_en }}</p>
-                                            </a>
-                                        </div>
-                                    </div>
-                                @endforeach
-
-
-
-                            </div>
-
-                        </div>
-                        {{-- {!! $services->links() !!} --}}
-                    </div>
-                </div>
-        </section>
-    @elseif(auth()->check() && auth()->user()->role_id == 1)
         <section class="profile-cover-container mb-2 mt-3">
 
             <div class="profile-content pt-40">
@@ -143,59 +111,49 @@
                         @foreach ($maintenancess as $item)
                             <div class="card card-custom ">
                                 @if ($item->image)
-                                    <a href="{{ route('maintenance_sub_show' , $item->id) }}" class="d-flex justify-content-center align-items-center">
+                                    <a href="{{ route('maintenance_sub_show', $item->id) }}"
+                                        class="d-flex justify-content-center align-items-center">
                                         <img src="{{ $item->image_url }}" class="card-img-top mt-2 "
                                             alt="{{ $item->name_ar }}">
                                     </a>
                                 @endif
                                 <div class="card-body">
-                                    <a href="{{ route('maintenance_sub_show' , $item->id) }}">
+                                    <a href="{{ route('maintenance_sub_show', $item->id) }}">
                                         <p class="card-text">{{ $lang == 'ar' ? $item->name_ar : $item->name_en }}</p>
                                     </a>
                                 </div>
                             </div>
                         @endforeach
-
-
-
                     </div>
-
                 </div>
-
-
             </div>
+        @elseif(auth()->check() && auth()->user()->role_id == 1)
+            <section class="profile-cover-container mb-2 mt-3">
 
-
-        </section>
-    @else
-        <section class="section overflow-hidden mt-3">
-            <div class="container">
-                <div class="row">
-                    <div class="heading-section">
-                        <div class="heading-subtitle">
-                            <span class="tx-primary tx-16 fw-semibold"
-                                style="color: black;">{{ __('department.departments') }}</span>
-                        </div>
-                    </div>
-
-                    <div class="cards-container">
-                        @foreach ($maintenancess as $item)
-                            <div class="card card-custom ">
-                                @if ($item->image)
-                                    <a href="{{ route('maintenance_sub_show' , $item->id) }}" class="d-flex justify-content-center align-items-center">
-                                        <img src="{{ $item->image_url }}" class="card-img-top mt-2 "
-                                            alt="{{ $item->name_ar }}">
-                                    </a>
-                                @endif
-                                <div class="card-body">
-                                    <a href="{{ route('maintenance_sub_show' , $item->id) }}">
-                                        <p class="card-text">{{ $lang == 'ar' ? $item->name_ar : $item->name_en }}</p>
-                                    </a>
+                <div class="profile-content pt-40">
+                    <div class="container position-relative d-flex justify-content-center ">
+                        <?php $user = auth()->user(); ?>
+                        <div class="cards-container">
+                            @foreach ($maintenancess as $item)
+                                <div class="card card-custom ">
+                                    @if ($item->image)
+                                        <a href="{{ route('maintenance_sub_show', $item->id) }}"
+                                            class="d-flex justify-content-center align-items-center">
+                                            <img src="{{ $item->image_url }}" class="card-img-top mt-2 "
+                                                alt="{{ $item->name_ar }}">
+                                        </a>
+                                    @endif
+                                    <div class="card-body">
+                                        <a href="{{ route('maintenance_sub_show', $item->id) }}">
+                                            <p class="card-text">{{ $lang == 'ar' ? $item->name_ar : $item->name_en }}</p>
+                                        </a>
+                                    </div>
                                 </div>
-                            </div>
-                        @endforeach
+                            @endforeach
 
 
+
+                        </div>
 
                     </div>
 
@@ -203,7 +161,45 @@
                 </div>
 
 
-        </section>
+            </section>
+        @else
+            <section class="section overflow-hidden mt-3">
+                <div class="container">
+                    <div class="row">
+                        <div class="heading-section">
+                            <div class="heading-subtitle">
+                                <span class="tx-primary tx-16 fw-semibold"
+                                    style="color: black;">{{ __('department.departments') }}</span>
+                            </div>
+                        </div>
+
+                        <div class="cards-container">
+                            @foreach ($maintenancess as $item)
+                                <div class="card card-custom ">
+                                    @if ($item->image)
+                                        <a href="{{ route('maintenance_sub_show', $item->id) }}"
+                                            class="d-flex justify-content-center align-items-center">
+                                            <img src="{{ $item->image_url }}" class="card-img-top mt-2 "
+                                                alt="{{ $item->name_ar }}">
+                                        </a>
+                                    @endif
+                                    <div class="card-body">
+                                        <a href="{{ route('maintenance_sub_show', $item->id) }}">
+                                            <p class="card-text">{{ $lang == 'ar' ? $item->name_ar : $item->name_en }}</p>
+                                        </a>
+                                    </div>
+                                </div>
+                            @endforeach
+
+
+
+                        </div>
+
+
+                    </div>
+
+
+            </section>
     @endif
 @endsection
 @section('script')

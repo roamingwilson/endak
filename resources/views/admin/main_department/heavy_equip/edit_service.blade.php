@@ -57,7 +57,21 @@
 
                     <input type="hidden" name="user_id" value="{{ $user->id }}">
                     <input type="hidden" name="department_id" value="{{ $service->departments->id }}">
-                    <input type="hidden" name="type" value="{{ $main->name_en }}">
+                    <input type="hidden" name="type" value="{{ $service->type }}">
+                    <div class="form-group mt-2">
+                        <label>{{ $lang == 'ar' ? ' نوع المعدة' : 'Heavy equipment' }}</label>
+                        <select name="equip_type" class="form-control" required
+                            aria-placeholder="{{ $lang == 'ar' ? 'اختر نوع المعدة' : 'Choose heavy equipment' }}">
+                            <option value="">{{ $lang == 'ar' ? 'اختر نوع المعدة' : 'Choose heavy equipment' }}
+                            </option>
+
+                            @foreach ($mains as $main)
+                                <option value="{{ $main->id }}"
+                                    {{ $main->id == old('Equip_type', $service->equip_type) ? 'selected' : '' }}>
+                                    {{ $lang == 'ar' ? $main->name_ar : $main->name_en }}</option>
+                            @endforeach
+                        </select>
+                    </div>
 
 
                     <div class="form-group">
@@ -104,12 +118,16 @@
                     </div>
                     <div class="voice-note-container">
                         <div id="recordingStatus" style="margin-bottom: 8px; color: #d9534f; display: none;"></div>
-                        <button id="startRecord" class="btn btn-primary">{{ $lang == 'ar' ? 'بدء التسجيل' : 'Start Recording' }}</button>
-                        <button id="stopRecord" class="btn btn-danger" disabled>{{ $lang == 'ar' ? 'ايقاف التسجيل' : 'Stop Recording' }}</button>
-                        <button id="resetRecord" class="btn btn-secondary" style="display:none;">{{ $lang == 'ar' ? 'إعادة التسجيل' : 'Reset Recording' }}</button>
+                        <button id="startRecord"
+                            class="btn btn-primary">{{ $lang == 'ar' ? 'بدء التسجيل' : 'Start Recording' }}</button>
+                        <button id="stopRecord" class="btn btn-danger"
+                            disabled>{{ $lang == 'ar' ? 'ايقاف التسجيل' : 'Stop Recording' }}</button>
+                        <button id="resetRecord" class="btn btn-secondary"
+                            style="display:none;">{{ $lang == 'ar' ? 'إعادة التسجيل' : 'Reset Recording' }}</button>
                         <span id="recordingTimer" style="margin-left: 10px; font-weight: bold; display:none;">00:00</span>
                         <audio id="audioPlayback" controls style="display: none; margin-top: 10px;"></audio>
-                        <a id="downloadLink" style="display: none; margin-top: 10px;" class="btn btn-success">{{ $lang == 'ar' ? 'تنزيل التسجيل' : 'Download Recording' }}</a>
+                        <a id="downloadLink" style="display: none; margin-top: 10px;"
+                            class="btn btn-success">{{ $lang == 'ar' ? 'تنزيل التسجيل' : 'Download Recording' }}</a>
                     </div>
 
                     <hr>

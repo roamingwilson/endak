@@ -104,25 +104,22 @@
                     <input type="hidden" name="type" value="{{ $service->departments->name_en }}">
 
                     <div class="form-group">
+                        <label for="" class="mb-1">{{ $lang == 'ar' ? ' نوع الشاحنة ' : 'truck type' }}
+                            :</label>
+                        @if (isset($service->equip_type))
+                            <p>{{ $lang == 'ar' ? $service->equip_type : $service->equip_type }}</p>
+                        @endif
+
+                    </div>
+
+
+
+                    <div class="form-group">
                         <label class="mb-2">{{ $lang == 'ar' ? 'ملاحظة عن العمل المطلوب' : 'Note About Work' }}</label>
                         <textarea class="form-control" name="notes" rows="4">{{ old('notes', $service->notes) }}</textarea>
                     </div>
 
-                    <div class="form-group mt-3">
-                        <label class="mb-2">{{ $lang == 'ar' ? 'ارفاق صور' : 'Share Photos' }}</label>
-                        <input type="file" name="images[]" class="form-control" multiple>
-                        @if ($service->images)
-                            <div class="mt-2">
-                                <label class="fw-bold">{{ $lang == 'ar' ? 'الصور الحالية:' : 'Current Images:' }}</label>
-                                <div class="d-flex flex-wrap gap-2 mt-1">
-                                    @foreach ($service->images as $image)
-                                        <img src="{{ asset($image->image_url) }}" width="80" height="80"
-                                            class="rounded border" />
-                                    @endforeach
-                                </div>
-                            </div>
-                        @endif
-                    </div>
+
 
                     <div class="form-group mt-3">
                         <label class="mb-2">{{ $lang == 'ar' ? 'الى المدينة' : 'To City' }}</label>
@@ -168,12 +165,16 @@
                     </div>
                     <div class="voice-note-container">
                         <div id="recordingStatus" style="margin-bottom: 8px; color: #d9534f; display: none;"></div>
-                        <button id="startRecord" class="btn btn-primary">{{ $lang == 'ar' ? 'بدء التسجيل' : 'Start Recording' }}</button>
-                        <button id="stopRecord" class="btn btn-danger" disabled>{{ $lang == 'ar' ? 'ايقاف التسجيل' : 'Stop Recording' }}</button>
-                        <button id="resetRecord" class="btn btn-secondary" style="display:none;">{{ $lang == 'ar' ? 'إعادة التسجيل' : 'Reset Recording' }}</button>
+                        <button id="startRecord"
+                            class="btn btn-primary">{{ $lang == 'ar' ? 'بدء التسجيل' : 'Start Recording' }}</button>
+                        <button id="stopRecord" class="btn btn-danger"
+                            disabled>{{ $lang == 'ar' ? 'ايقاف التسجيل' : 'Stop Recording' }}</button>
+                        <button id="resetRecord" class="btn btn-secondary"
+                            style="display:none;">{{ $lang == 'ar' ? 'إعادة التسجيل' : 'Reset Recording' }}</button>
                         <span id="recordingTimer" style="margin-left: 10px; font-weight: bold; display:none;">00:00</span>
                         <audio id="audioPlayback" controls style="display: none; margin-top: 10px;"></audio>
-                        <a id="downloadLink" style="display: none; margin-top: 10px;" class="btn btn-success">{{ $lang == 'ar' ? 'تنزيل التسجيل' : 'Download Recording' }}</a>
+                        <a id="downloadLink" style="display: none; margin-top: 10px;"
+                            class="btn btn-success">{{ $lang == 'ar' ? 'تنزيل التسجيل' : 'Download Recording' }}</a>
                     </div>
 
                     <hr>

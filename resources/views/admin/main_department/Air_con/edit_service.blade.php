@@ -59,98 +59,113 @@
 
 
 
+                    <!-- نوع المكيف -->
                     <div class="mb-3">
-                        <label class="form-label">{{ $lang == 'ar' ? ' نوع المكيف' : 'Aircon name' }} </label>
-                        <div class="radio-group" role="group" aria-label="Aircon Type">
-                            <input type="radio" class="radio-groupk" name="split" id="split" value="1"
-                                autocomplete="off">
-                            <label for="split">{{ $lang == 'ar' ? 'سبليت' : 'Split' }}</label>
-
-                            <input type="radio" class="radio-groupk" name="window" id="window" value="1"
-                                autocomplete="off">
-                            <label for="window">{{ $lang == 'ar' ? 'شباك' : 'Window' }}</label>
+                        <label class="form-label">{{ $lang == 'ar' ? 'نوع المكيف' : 'Aircon Type' }}</label>
+                        <div class="d-flex gap-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="split" id="split" value="1"
+                                    {{ $service->split == 1 ? 'checked' : '' }}>
+                                <label class="form-check-label"
+                                    for="split">{{ $lang == 'ar' ? 'سبليت' : 'Split' }}</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="split" id="window" value="0"
+                                    {{ $service->split == 0 ? 'checked' : '' }}>
+                                <label class="form-check-label"
+                                    for="window">{{ $lang == 'ar' ? 'شباك' : 'Window' }}</label>
+                            </div>
                         </div>
                     </div>
 
                     <!-- نوع الخدمة -->
                     <div class="mb-3">
-                        <label class="form-label"> {{ $lang == 'ar' ? ' نوع الخدمة المطلوبة' : 'service' }}</label>
+                        <label class="form-label">{{ $lang == 'ar' ? 'نوع الخدمة المطلوبة' : 'Service' }}</label>
                         <div class="d-flex flex-wrap gap-3 checkbox-group">
                             <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="clean" name="clean"
-                                    value="1">
+                                <input class="form-check-input" type="checkbox" id="clean" name="clean" value="1"
+                                    {{ $service->clean ? 'checked' : '' }}>
                                 <label class="form-check-label"
-                                    for="clean">{{ $lang == 'ar' ? '  تنظيف' : 'clean' }}</label>
+                                    for="clean">{{ $lang == 'ar' ? 'تنظيف' : 'Clean' }}</label>
                             </div>
                             <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="freon" name="feryoun"
-                                    value="1">
-                                <label class="form-check-label" for="freon">
-                                    {{ $lang == 'ar' ? '  فريون' : 'feryoun' }}</label>
+                                <input class="form-check-input" type="checkbox" id="freon" name="feryoun" value="1"
+                                    {{ $service->feryoun ? 'checked' : '' }}>
+                                <label class="form-check-label"
+                                    for="freon">{{ $lang == 'ar' ? 'فريون' : 'Freon' }}</label>
                             </div>
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" id="repair" name="maintance"
-                                    value="1">
-                                <label class="form-check-label" for="repair">
-                                    {{ $lang == 'ar' ? '  اصلاح عطل' : 'maintance' }}</label>
+                                    value="1" {{ $service->maintance ? 'checked' : '' }}>
+                                <label class="form-check-label"
+                                    for="repair">{{ $lang == 'ar' ? 'اصلاح عطل' : 'Repair' }}</label>
                             </div>
-
                         </div>
                     </div>
-                    <div class="form-group">
 
-                        <label for="name" class="mb-1">{{ $lang == 'ar' ? 'الماركة' : 'model' }}: </label>
-                        <input type="text" class="form-control" name="model">
+                    <!-- الماركة -->
+                    <div class="form-group">
+                        <label class="mb-1">{{ $lang == 'ar' ? 'الماركة' : 'Model' }}:</label>
+                        <input type="text" class="form-control" name="model" value="{{ $service->model }}">
                     </div>
 
-
+                    <!-- العدد -->
                     <div class="mb-3">
-                        <label class="form-label">{{ $lang == 'ar' ? 'العدد' : 'quantity' }}</label>
+                        <label class="form-label">{{ $lang == 'ar' ? 'العدد' : 'Quantity' }}</label>
                         <div class="input-group" style="width: 140px;">
                             <button class="btn btn-outline-secondary" type="button" onclick="decreaseQty()">-</button>
                             <input type="number" id="quantity" name="quantity" class="form-control text-center"
-                                value="1" min="1" max="50" readonly>
+                                value="{{ $service->quantity }}" min="1" max="50" readonly>
                             <button class="btn btn-outline-secondary" type="button" onclick="increaseQty()">+</button>
                         </div>
                     </div>
 
-
+                    <!-- صور -->
                     <div class="form-group mt-2">
-                        <label for="" class="mb-1">{{ $lang == 'ar' ? 'ارفاق صور' : 'Share Photos' }}
-                            :</label>
+                        <label class="mb-1">{{ $lang == 'ar' ? 'ارفاق صور' : 'Share Photos' }}:</label>
                         <input class="form-control" name="images[]" type="file" multiple>
+                        <small class="text-muted">{{ __('اتركه فارغ إذا لا تريد تغييره') }}</small>
                     </div>
 
+                    <!-- المدينة والحي -->
                     <div class="form-group mt-2">
-                        <label for="name" class="mb-1">{{ $lang == 'ar' ? 'المدينة' : 'City' }} : </label>
+                        <label class="mb-1">{{ $lang == 'ar' ? 'المدينة' : 'City' }}:</label>
                         <select name="from_city" class="form-control js-select2-custom">
-                            <option value="">{{ __('اختر المدينة') }}</option>
                             @foreach ($cities as $city)
-                                <option value="{{ $city->id }}">
+                                <option value="{{ $city->id }}"
+                                    {{ $service->from_city == $city->id ? 'selected' : '' }}>
                                     {{ $lang == 'ar' ? $city->name_ar : $city->name_en }}
                                 </option>
                             @endforeach
                         </select>
-                        <label for="name" class="mb-1">{{ $lang == 'ar' ? 'الحي' : 'Neighborhood' }} : </label>
-                        <input type="text" class="form-control" name="neighborhood">
 
+                        <label class="mb-1 mt-2">{{ $lang == 'ar' ? 'الحي' : 'Neighborhood' }}:</label>
+                        <input type="text" class="form-control" name="neighborhood"
+                            value="{{ $service->neighborhood }}">
+                    </div>
+
+                    <!-- الوقت والتاريخ -->
+                    <div class="form-group mt-2">
+                        <label class="mb-1">{{ $lang == 'ar' ? 'الوقت' : 'Time' }}:</label>
+                        <input type="time" class="form-control" name="time" value="{{ $service->time }}">
                     </div>
                     <div class="form-group mt-2">
-                        <label for="name" class="mb-1">{{ $lang == 'ar' ? 'الوقت' : 'Time' }} : </label>
-                        <input type="time" class="form-control" name="time">
+                        <label class="mb-1">{{ $lang == 'ar' ? 'التاريخ' : 'Date' }}:</label>
+                        <input type="date" class="form-control" name="date" value="{{ $service->date }}">
                     </div>
-                    <div class="form-group mt-2">
-                        <label for="name" class="mb-1">{{ $lang == 'ar' ? 'التاريخ' : 'date' }} : </label>
-                        <input type="date" class="form-control" name="date">
-                    </div>
+                    <hr>
                     <div class="voice-note-container">
                         <div id="recordingStatus" style="margin-bottom: 8px; color: #d9534f; display: none;"></div>
-                        <button id="startRecord" class="btn btn-primary">{{ $lang == 'ar' ? 'بدء التسجيل' : 'Start Recording' }}</button>
-                        <button id="stopRecord" class="btn btn-danger" disabled>{{ $lang == 'ar' ? 'ايقاف التسجيل' : 'Stop Recording' }}</button>
-                        <button id="resetRecord" class="btn btn-secondary" style="display:none;">{{ $lang == 'ar' ? 'إعادة التسجيل' : 'Reset Recording' }}</button>
+                        <button id="startRecord"
+                            class="btn btn-primary">{{ $lang == 'ar' ? 'بدء التسجيل' : 'Start Recording' }}</button>
+                        <button id="stopRecord" class="btn btn-danger"
+                            disabled>{{ $lang == 'ar' ? 'ايقاف التسجيل' : 'Stop Recording' }}</button>
+                        <button id="resetRecord" class="btn btn-secondary"
+                            style="display:none;">{{ $lang == 'ar' ? 'إعادة التسجيل' : 'Reset Recording' }}</button>
                         <span id="recordingTimer" style="margin-left: 10px; font-weight: bold; display:none;">00:00</span>
                         <audio id="audioPlayback" controls style="display: none; margin-top: 10px;"></audio>
-                        <a id="downloadLink" style="display: none; margin-top: 10px;" class="btn btn-success">{{ $lang == 'ar' ? 'تنزيل التسجيل' : 'Download Recording' }}</a>
+                        <a id="downloadLink" style="display: none; margin-top: 10px;"
+                            class="btn btn-success">{{ $lang == 'ar' ? 'تنزيل التسجيل' : 'Download Recording' }}</a>
                     </div>
 
 

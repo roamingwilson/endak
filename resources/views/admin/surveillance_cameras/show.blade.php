@@ -108,7 +108,7 @@
                         <input type="hidden" name="user_id" value="{{ $user->id }}">
                         <input type="hidden" name="department_id" value="{{ $departments->id }}">
                         <input type="hidden" name="type" value="{{ $departments->name_en }}">
-                        <label for="">
+                        <div class="form-group mt-2">
 
                             <label>
                                 <input type="checkbox" name="finger" value="1" class="m-2">
@@ -139,38 +139,44 @@
                                 <input type="checkbox" name="security_system" value="1" class="m-2">
                                 {{ $lang == 'ar' ? 'أنظمة أمنية' : 'Security Systems' }}
                             </label>
+                        </div>
 
-
-                            <br>
-                            <div class="form-group mt-2">
-                                <label for="name" class="mb-1 mt-2">{{ $lang == 'ar' ? 'المدينة' : 'City' }} : </label>
-                                <select name="from_city" class="form-control js-select2-custom">
-                                    <option value="">{{ __('اختر المدينة') }}</option>
-                                    @foreach ($cities as $city)
-                                        <option value="{{ $city->id }}">
-                                            {{ $lang == 'ar' ? $city->name_ar : $city->name_en }}
-                                        </option>
-                                    @endforeach
-                                </select>
-
-                                <label for=""
-                                    class="mb-1">{{ $lang == 'ar' ? 'ملاحظة عن العمل المطلوب' : 'Note About Work' }}
-                                    :</label>
-                                <textarea class="form-control" name="notes" cols="30" rows="5"></textarea>
-                            </div>
-                            <div class="voice-note-container">
-                                <div id="recordingStatus" style="margin-bottom: 8px; color: #d9534f; display: none;"></div>
-                                <button id="startRecord" class="btn btn-primary">{{ $lang == 'ar' ? 'بدء التسجيل' : 'Start Recording' }}</button>
-                                <button id="stopRecord" class="btn btn-danger" disabled>{{ $lang == 'ar' ? 'ايقاف التسجيل' : 'Stop Recording' }}</button>
-                                <button id="resetRecord" class="btn btn-secondary" style="display:none;">{{ $lang == 'ar' ? 'إعادة التسجيل' : 'Reset Recording' }}</button>
-                                <span id="recordingTimer" style="margin-left: 10px; font-weight: bold; display:none;">00:00</span>
-                                <audio id="audioPlayback" controls style="display: none; margin-top: 10px;"></audio>
-                                <a id="downloadLink" style="display: none; margin-top: 10px;" class="btn btn-success">{{ $lang == 'ar' ? 'تنزيل التسجيل' : 'Download Recording' }}</a>
-                            </div>
-                            <div class="form-group mt-2" style="text-align: right;margin-right:10px">
-                                <button class="btn mt-2 form-control"
-                                    style="background-color: #fdca3d">{{ $lang == 'ar' ? 'ارسال' : 'Send' }}</button>
-                            </div>
+                        <br>
+                        <div class="form-group mt-2">
+                            <label for="name" class="mb-1 mt-2">{{ $lang == 'ar' ? 'المدينة' : 'City' }} : </label>
+                            <select name="from_city" class="form-control js-select2-custom">
+                                <option value="">{{ __('اختر المدينة') }}</option>
+                                @foreach ($cities as $city)
+                                    <option value="{{ $city->id }}">
+                                        {{ $lang == 'ar' ? $city->name_ar : $city->name_en }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="form-group mt-2">
+                            <label for=""
+                                class="mb-1">{{ $lang == 'ar' ? 'ملاحظة عن العمل المطلوب' : 'Note About Work' }}
+                                :</label>
+                            <textarea class="form-control" name="notes" cols="30" rows="5"></textarea>
+                        </div>
+                        <div class="voice-note-container">
+                            <div id="recordingStatus" style="margin-bottom: 8px; color: #d9534f; display: none;"></div>
+                            <button id="startRecord"
+                                class="btn btn-primary">{{ $lang == 'ar' ? 'بدء التسجيل' : 'Start Recording' }}</button>
+                            <button id="stopRecord" class="btn btn-danger"
+                                disabled>{{ $lang == 'ar' ? 'ايقاف التسجيل' : 'Stop Recording' }}</button>
+                            <button id="resetRecord" class="btn btn-secondary"
+                                style="display:none;">{{ $lang == 'ar' ? 'إعادة التسجيل' : 'Reset Recording' }}</button>
+                            <span id="recordingTimer"
+                                style="margin-left: 10px; font-weight: bold; display:none;">00:00</span>
+                            <audio id="audioPlayback" controls style="display: none; margin-top: 10px;"></audio>
+                            <a id="downloadLink" style="display: none; margin-top: 10px;"
+                                class="btn btn-success">{{ $lang == 'ar' ? 'تنزيل التسجيل' : 'Download Recording' }}</a>
+                        </div>
+                        <div class="form-group mt-2" style="text-align: right;margin-right:10px">
+                            <button class="btn mt-2 form-control"
+                                style="background-color: #fdca3d">{{ $lang == 'ar' ? 'ارسال' : 'Send' }}</button>
+                        </div>
                     </form>
 
 
@@ -226,12 +232,14 @@
                 <div class="container position-relative d-flex justify-content-center ">
                     <?php $user = auth()->user(); ?>
                     <form action="{{ route('register-page') }}" method="POST" enctype="multipart/form-data"
-                        style="width:100%;margin-top:10px" class="profile-card rounded-lg shadow-xs bg-white p-15 p-md-30">
+                        style="width:100%;margin-top:10px"
+                        class="profile-card rounded-lg shadow-xs bg-white p-15 p-md-30">
                         @csrf
                         {{-- <input type="hidden" name="user_id" value="{{ $user->id }}"> --}}
                         <input type="hidden" name="department_id" value="{{ $departments->id }}">
                         <input type="hidden" name="type" value="{{ $departments->name_en }}">
-                        <label for="">
+
+                        <div class="form-group mt-2">
 
                             <label>
                                 <input type="checkbox" name="finger" value="1" class="m-2">
@@ -262,12 +270,13 @@
                                 <input type="checkbox" name="security_system" value="1" class="m-2">
                                 {{ $lang == 'ar' ? 'أنظمة أمنية' : 'Security Systems' }}
                             </label>
+                        </div>
 
-
-                            <br>
-                            <div class="form-group mt-2">
-                                <label for="name" class="mb-1 mt-2">{{ $lang == 'ar' ? 'المدينة' : 'City' }} :
-                                </label>
+                        <br>
+                        <div class="form-group mt-2">
+                            <label for="name" class="mb-1 mt-2">{{ $lang == 'ar' ? 'المدينة' : 'City' }} :
+                            </label>
+                            <div class="form-group">
                                 <select name="from_city" class="form-control js-select2-custom">
                                     <option value="">{{ __('اختر المدينة') }}</option>
                                     @foreach ($cities as $city)
@@ -276,25 +285,31 @@
                                         </option>
                                     @endforeach
                                 </select>
-                                <br>
-                                <label for=""
-                                    class="mb-1">{{ $lang == 'ar' ? 'ملاحظة عن العمل المطلوب' : 'Note About Work' }}
-                                    :</label>
-                                <textarea class="form-control" name="notes" cols="30" rows="5"></textarea>
                             </div>
-                            <div class="voice-note-container">
-                                <div id="recordingStatus" style="margin-bottom: 8px; color: #d9534f; display: none;"></div>
-                                <button id="startRecord" class="btn btn-primary">{{ $lang == 'ar' ? 'بدء التسجيل' : 'Start Recording' }}</button>
-                                <button id="stopRecord" class="btn btn-danger" disabled>{{ $lang == 'ar' ? 'ايقاف التسجيل' : 'Stop Recording' }}</button>
-                                <button id="resetRecord" class="btn btn-secondary" style="display:none;">{{ $lang == 'ar' ? 'إعادة التسجيل' : 'Reset Recording' }}</button>
-                                <span id="recordingTimer" style="margin-left: 10px; font-weight: bold; display:none;">00:00</span>
-                                <audio id="audioPlayback" controls style="display: none; margin-top: 10px;"></audio>
-                                <a id="downloadLink" style="display: none; margin-top: 10px;" class="btn btn-success">{{ $lang == 'ar' ? 'تنزيل التسجيل' : 'Download Recording' }}</a>
-                            </div>
-                            <div class="form-group mt-2" style="text-align: right;margin-right:10px">
-                                <button class="btn mt-2 form-control"
-                                    style="background-color: #fdca3d">{{ $lang == 'ar' ? 'ارسال' : 'Send' }}</button>
-                            </div>
+                            <br>
+                            <label for=""
+                                class="mb-1">{{ $lang == 'ar' ? 'ملاحظة عن العمل المطلوب' : 'Note About Work' }}
+                                :</label>
+                            <textarea class="form-control" name="notes" cols="30" rows="5"></textarea>
+                        </div>
+                        <div class="voice-note-container">
+                            <div id="recordingStatus" style="margin-bottom: 8px; color: #d9534f; display: none;"></div>
+                            <button id="startRecord"
+                                class="btn btn-primary">{{ $lang == 'ar' ? 'بدء التسجيل' : 'Start Recording' }}</button>
+                            <button id="stopRecord" class="btn btn-danger"
+                                disabled>{{ $lang == 'ar' ? 'ايقاف التسجيل' : 'Stop Recording' }}</button>
+                            <button id="resetRecord" class="btn btn-secondary"
+                                style="display:none;">{{ $lang == 'ar' ? 'إعادة التسجيل' : 'Reset Recording' }}</button>
+                            <span id="recordingTimer"
+                                style="margin-left: 10px; font-weight: bold; display:none;">00:00</span>
+                            <audio id="audioPlayback" controls style="display: none; margin-top: 10px;"></audio>
+                            <a id="downloadLink" style="display: none; margin-top: 10px;"
+                                class="btn btn-success">{{ $lang == 'ar' ? 'تنزيل التسجيل' : 'Download Recording' }}</a>
+                        </div>
+                        <div class="form-group mt-2" style="text-align: right;margin-right:10px">
+                            <button class="btn mt-2 form-control"
+                                style="background-color: #fdca3d">{{ $lang == 'ar' ? 'ارسال' : 'Send' }}</button>
+                        </div>
                     </form>
 
 

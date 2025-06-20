@@ -6,15 +6,13 @@
 
 @php
 
+    use App\Models\Services;
+    use App\Models\Department;
 
+    $services = Services::where('type', 'maintenance')->latest()->paginate(5);
 
+    // dd($departments)
 
-use App\Models\Services;
-use App\Models\Department;
-
-$services = Services::where('type', 'maintenance')->latest()->paginate(5);
-
-// dd($departments)
 @endphp
 @section('content')
     <?php
@@ -64,28 +62,31 @@ $services = Services::where('type', 'maintenance')->latest()->paginate(5);
 
 
                                 <div class="form-group">
-                                    <label for="" class="mb-1">{{ $lang == 'ar' ? 'نوع السيارة'  : 'car type' }}
+                                    <label for="" class="mb-1">{{ $lang == 'ar' ? 'نوع السيارة' : 'car type' }}
                                         :</label>
-                                        @if (isset($service->equip_type))
-                                        <p>{{ $lang == 'ar' ? $service->equip_type: $service->equip_type }}</p>
+                                    @if (isset($service->equip_type))
+                                        <p>{{ $lang == 'ar' ? $service->equip_type : $service->equip_type }}</p>
                                     @endif
 
                                 </div>
                                 <div class="form-group">
-                                    <label for="" class="mb-1">{{ $lang == 'ar' ? 'شرح عن الخلل' : 'Note About Issues' }} :</label>
-                                        :</label>
+                                    <label for=""
+                                        class="mb-1">{{ $lang == 'ar' ? 'شرح عن الخلل' : 'Note About Issues' }} :</label>
+                                    :</label>
                                     @if (isset($service->notes))
                                         <p>{{ $service->notes }}</p>
                                     @endif
                                 </div>
                                 <div class="form-group">
-                                    <label for="name" class="mb-1">{{ $lang == 'ar' ? 'الموديل' : 'Model' }} : </label>
+                                    <label for="name" class="mb-1">{{ $lang == 'ar' ? 'الموديل' : 'Model' }} :
+                                    </label>
                                     @if (isset($service->model))
                                         <p>{{ $service->model }}</p>
                                     @endif
                                 </div>
                                 <div class="form-group">
-                                    <label for="name" class="mb-1">{{ $lang == 'ar' ? 'سنه الصنع' : 'Facility Year' }} : </label>
+                                    <label for="name" class="mb-1">{{ $lang == 'ar' ? 'سنه الصنع' : 'Facility Year' }}
+                                        : </label>
                                     @if (isset($service->year))
                                         <p>{{ $service->year }} sadasd</p>
                                     @endif
@@ -94,7 +95,7 @@ $services = Services::where('type', 'maintenance')->latest()->paginate(5);
                                     <label for="" class="mb-1">{{ $lang == 'ar' ? 'المدينة' : 'City' }}
                                         :</label>
 
-                                        <p>{{$lang == 'ar'? $form_city->name_ar : $form_city->name_en}}</p>
+                                    <p>{{ $lang == 'ar' ? $form_city->name_ar : $form_city->name_en }}</p>
 
                                 </div>
                                 <div class="form-group">
@@ -115,16 +116,17 @@ $services = Services::where('type', 'maintenance')->latest()->paginate(5);
                                     @endif
                                 </div>
                                 @if (!empty($service->notes_voice))
-                                <div class="form-group">
-                                    <label class="mb-1">{{ $lang == 'ar' ? 'ملاحظة صوتية' : 'Voice Note' }} :</label>
-                                    <audio controls style="width:100%">
-                                        <source src="{{ asset('storage/' . $service->notes_voice) }}" type="audio/wav">
-                                        <source src="{{ asset('storage/' . $service->notes_voice) }}" type="audio/mpeg">
-                                        <source src="{{ asset('storage/' . $service->notes_voice) }}" type="audio/ogg">
-                                        {{ $lang == 'ar' ? 'متصفحك لا يدعم تشغيل الصوت' : 'Your browser does not support the audio element.' }}
-                                    </audio>
-                                </div>
-                            @endif
+                                    <div class="form-group">
+                                        <label class="mb-1">{{ $lang == 'ar' ? 'ملاحظة صوتية' : 'Voice Note' }} :</label>
+                                        <audio controls style="width:100%">
+                                            <source src="{{ asset('storage/' . $service->notes_voice) }}" type="audio/wav">
+                                            <source src="{{ asset('storage/' . $service->notes_voice) }}"
+                                                type="audio/mpeg">
+                                            <source src="{{ asset('storage/' . $service->notes_voice) }}" type="audio/ogg">
+                                            {{ $lang == 'ar' ? 'متصفحك لا يدعم تشغيل الصوت' : 'Your browser does not support the audio element.' }}
+                                        </audio>
+                                    </div>
+                                @endif
                                 <div class="form-group">
                                     <label for="" class="mb-1">{{ $lang == 'ar' ? 'صاحب العمل' : 'Customer' }}
                                         :</label>
@@ -136,16 +138,18 @@ $services = Services::where('type', 'maintenance')->latest()->paginate(5);
                                 </div>
                                 <div class="mt-4">
                                     @if (auth()->id() === $service->user_id)
-                                    <a class="btn btn-success btn-sm" href="{{route('services.edit',$service->id)}}">
-                                        <i class="fe fe-check-circle"></i> {{ $lang == 'ar' ? 'تعديل' : 'Edit' }}
-                                    </a>
-                                    <form action="{{ route('services.destroy', $service->id) }}" method="POST" style="display:inline-block;">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button class="btn btn-danger btn-sm" type="submit" onclick="return confirm('{{ $lang == 'ar' ? 'هل أنت متأكد من الحذف؟' : 'Are you sure you want to delete?' }}')">
-                                            <i class="fe fe-trash-2"></i> {{ $lang == 'ar' ? 'حذف' : 'Delete' }}
-                                        </button>
-                                    </form>
+                                        <a class="btn btn-success btn-sm" href="{{ route('services.edit', $service->id) }}">
+                                            <i class="fe fe-check-circle"></i> {{ $lang == 'ar' ? 'تعديل' : 'Edit' }}
+                                        </a>
+                                        <form action="{{ route('services.destroy', $service->id) }}" method="POST"
+                                            style="display:inline-block;">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button class="btn btn-danger btn-sm" type="submit"
+                                                onclick="return confirm('{{ $lang == 'ar' ? 'هل أنت متأكد من الحذف؟' : 'Are you sure you want to delete?' }}')">
+                                                <i class="fe fe-trash-2"></i> {{ $lang == 'ar' ? 'حذف' : 'Delete' }}
+                                            </button>
+                                        </form>
                                     @endif
                                 </div>
                             </div>
@@ -246,12 +250,9 @@ $services = Services::where('type', 'maintenance')->latest()->paginate(5);
                         <?php
                         $user = auth()->user();
                         if ($user) {
-                            $is_add = App\Models\GeneralComments::where('commentable_id', $service->id)
-                                ->where('commentable_type', 'App\Models\MaintenanceService')
-                                ->where('service_provider', $user->id)
-                                ->first();
+                            $is_add = App\Models\GeneralComments::where('commentable_id', $service->id)->where('commentable_type', 'App\Models\MaintenanceService')->where('service_provider', $user->id)->first();
                         }
-
+                        
                         ?>
 
                     </div>
@@ -275,7 +276,8 @@ $services = Services::where('type', 'maintenance')->latest()->paginate(5);
                                         <textarea class="form-control mb-2" cols="5" rows="5" name="notes"></textarea>
                                     </div>
                                     <div class="">
-                                        <button type="submit" class="btn btn-primary">{{ __('general.save') }}</button>
+                                        <button type="submit"
+                                            class="btn btn-primary">{{ $lang == 'ar' ? 'قدم عرض' : 'Add Offer' }}</button>
                                     </div>
                                 </form>
                             </div>

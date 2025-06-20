@@ -44,7 +44,7 @@
 
             <div class="container position-relative d-flex justify-content-center mt-4">
                 <?php $user = auth()->user(); ?>
-                <form action="{{ route('services', $service->id) }}" method="POST" enctype="multipart/form-data"
+                <form action="{{ route('services.update', $service->id) }}" method="POST" enctype="multipart/form-data"
                     style="width: 100%;" class="profile-card rounded-lg shadow-xs bg-white p-4">
                     @csrf
                     @method('PUT')
@@ -89,12 +89,16 @@
                     </div>
                     <div class="voice-note-container">
                         <div id="recordingStatus" style="margin-bottom: 8px; color: #d9534f; display: none;"></div>
-                        <button id="startRecord" class="btn btn-primary">{{ $lang == 'ar' ? 'بدء التسجيل' : 'Start Recording' }}</button>
-                        <button id="stopRecord" class="btn btn-danger" disabled>{{ $lang == 'ar' ? 'ايقاف التسجيل' : 'Stop Recording' }}</button>
-                        <button id="resetRecord" class="btn btn-secondary" style="display:none;">{{ $lang == 'ar' ? 'إعادة التسجيل' : 'Reset Recording' }}</button>
+                        <button id="startRecord"
+                            class="btn btn-primary">{{ $lang == 'ar' ? 'بدء التسجيل' : 'Start Recording' }}</button>
+                        <button id="stopRecord" class="btn btn-danger"
+                            disabled>{{ $lang == 'ar' ? 'ايقاف التسجيل' : 'Stop Recording' }}</button>
+                        <button id="resetRecord" class="btn btn-secondary"
+                            style="display:none;">{{ $lang == 'ar' ? 'إعادة التسجيل' : 'Reset Recording' }}</button>
                         <span id="recordingTimer" style="margin-left: 10px; font-weight: bold; display:none;">00:00</span>
                         <audio id="audioPlayback" controls style="display: none; margin-top: 10px;"></audio>
-                        <a id="downloadLink" style="display: none; margin-top: 10px;" class="btn btn-success">{{ $lang == 'ar' ? 'تنزيل التسجيل' : 'Download Recording' }}</a>
+                        <a id="downloadLink" style="display: none; margin-top: 10px;"
+                            class="btn btn-success">{{ $lang == 'ar' ? 'تنزيل التسجيل' : 'Download Recording' }}</a>
                     </div>
                     <div class="form-group mt-3 text-end">
                         <button type="submit" class="btn btn-info w-100">

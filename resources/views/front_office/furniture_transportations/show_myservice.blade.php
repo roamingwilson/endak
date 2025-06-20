@@ -68,7 +68,7 @@
                             {{ $lang == 'ar' ? $form_city->name_ar : $form_city->name_en }}
                             || {{ $lang == 'ar' ? 'الحي' : 'Neighborhood' }} :
                             {{ $service->from_neighborhood }} || {{ $lang == 'ar' ? 'الدور' : 'Home' }} :
-                            {{ $service->part_number }}</label>
+                            {{ $service->location }}</label>
 
                     </div>
                     <hr>
@@ -78,7 +78,7 @@
                             {{ $lang == 'ar' ? $to_city->name_ar : $to_city->name_en }} ||
                             {{ $lang == 'ar' ? 'الحي' : 'Neighborhood' }} :
                             {{ $service->to_neighborhood }} || {{ $lang == 'ar' ? 'الدور' : 'Home' }} :
-                            {{ $service->location }}</label>
+                            {{ $service->part_number }}</label>
 
                     </div>
                     <div class="form-group">
@@ -317,7 +317,8 @@
                                         <input class="form-control mb-2" type="time" name="time">
                                     </div>
                                     <div class="">
-                                        <button type="submit" class="btn btn-primary">{{ __('general.save') }}</button>
+                                        <button type="submit"
+                                            class="btn btn-primary">{{ $lang == 'ar' ? 'قدم عرض' : 'Add Offer' }}</button>
                                     </div>
                                 </form>
                             </div>

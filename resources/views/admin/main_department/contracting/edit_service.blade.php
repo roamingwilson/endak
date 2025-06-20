@@ -57,54 +57,65 @@
                     <input type="hidden" name="user_id" value="{{ $user->id }}">
                     <input type="hidden" name="department_id" value="{{ $service->departments->id }}">
                     <input type="hidden" name="type" value="{{ $service->departments->name_en }}">
-
-
-
                     <div class="form-group">
-                        <label class="mb-2">{{ $lang == 'ar' ? 'ملاحظة عن العمل المطلوب' : 'Note About Work' }}</label>
-                        <textarea class="form-control" name="notes" rows="4">{{ old('notes', $service->notes) }}</textarea>
-                    </div>
+                        <label for="equip_type" class="mb-1">{{ $lang == 'ar' ? 'اسم الخدمة' : 'Service Name' }} :
+                        </label>
+                        <p>{{ old('equip_type', $service->equip_type) }}</p>
 
-                    <div class="form-group mt-3">
-                        <label class="mb-2">{{ $lang == 'ar' ? 'ارفاق صور' : 'Share Photos' }}</label>
-                        <input type="file" name="images[]" class="form-control" multiple>
-                        <br>
-                        <div class="form-group mt-2">
-                            <label for="name" class="mb-1 mt-2">{{ $lang == 'ar' ? 'المدينة' : 'City' }} : </label>
-                            <select name="from_city" class="form-control js-select2-custom">
-                                <option value="">{{ __('اختر المدينة') }}</option>
-                                @foreach ($cities as $city)
-                                    <option value="{{ $city->id }}">
-                                        {{ $lang == 'ar' ? $city->name_ar : $city->name_en }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            <label for="name" class="mb-1">{{ $lang == 'ar' ? 'الحي' : 'Neighborhood' }} : </label>
-                            <input type="text" class="form-control" name="neighborhood"
-                                value="{{ old('neighborhood', $service->neighborhood) }}">
 
-                        </div>
-                        <div class="voice-note-container">
-                            <div id="recordingStatus" style="margin-bottom: 8px; color: #d9534f; display: none;"></div>
-                            <button id="startRecord" class="btn btn-primary">{{ $lang == 'ar' ? 'بدء التسجيل' : 'Start Recording' }}</button>
-                            <button id="stopRecord" class="btn btn-danger" disabled>{{ $lang == 'ar' ? 'ايقاف التسجيل' : 'Stop Recording' }}</button>
-                            <button id="resetRecord" class="btn btn-secondary" style="display:none;">{{ $lang == 'ar' ? 'إعادة التسجيل' : 'Reset Recording' }}</button>
-                            <span id="recordingTimer" style="margin-left: 10px; font-weight: bold; display:none;">00:00</span>
-                            <audio id="audioPlayback" controls style="display: none; margin-top: 10px;"></audio>
-                            <a id="downloadLink" style="display: none; margin-top: 10px;" class="btn btn-success">{{ $lang == 'ar' ? 'تنزيل التسجيل' : 'Download Recording' }}</a>
+
+                        <div class="form-group">
+                            <label
+                                class="mb-2">{{ $lang == 'ar' ? 'ملاحظة عن العمل المطلوب' : 'Note About Work' }}</label>
+                            <textarea class="form-control" name="notes" rows="4">{{ old('notes', $service->notes) }}</textarea>
                         </div>
 
+                        <div class="form-group mt-3">
+                            <label class="mb-2">{{ $lang == 'ar' ? 'ارفاق صور' : 'Share Photos' }}</label>
+                            <input type="file" name="images[]" class="form-control" multiple>
+                            <br>
+                            <div class="form-group mt-2">
+                                <label for="name" class="mb-1 mt-2">{{ $lang == 'ar' ? 'المدينة' : 'City' }} : </label>
+                                <select name="from_city" class="form-control js-select2-custom">
+                                    <option value="">{{ __('اختر المدينة') }}</option>
+                                    @foreach ($cities as $city)
+                                        <option value="{{ $city->id }}">
+                                            {{ $lang == 'ar' ? $city->name_ar : $city->name_en }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                <label for="name" class="mb-1">{{ $lang == 'ar' ? 'الحي' : 'Neighborhood' }} :
+                                </label>
+                                <input type="text" class="form-control" name="neighborhood"
+                                    value="{{ old('neighborhood', $service->neighborhood) }}">
+
+                            </div>
+                            <div class="voice-note-container">
+                                <div id="recordingStatus" style="margin-bottom: 8px; color: #d9534f; display: none;"></div>
+                                <button id="startRecord"
+                                    class="btn btn-primary">{{ $lang == 'ar' ? 'بدء التسجيل' : 'Start Recording' }}</button>
+                                <button id="stopRecord" class="btn btn-danger"
+                                    disabled>{{ $lang == 'ar' ? 'ايقاف التسجيل' : 'Stop Recording' }}</button>
+                                <button id="resetRecord" class="btn btn-secondary"
+                                    style="display:none;">{{ $lang == 'ar' ? 'إعادة التسجيل' : 'Reset Recording' }}</button>
+                                <span id="recordingTimer"
+                                    style="margin-left: 10px; font-weight: bold; display:none;">00:00</span>
+                                <audio id="audioPlayback" controls style="display: none; margin-top: 10px;"></audio>
+                                <a id="downloadLink" style="display: none; margin-top: 10px;"
+                                    class="btn btn-success">{{ $lang == 'ar' ? 'تنزيل التسجيل' : 'Download Recording' }}</a>
+                            </div>
 
 
 
 
-                        <hr>
 
-                        <div class="form-group mt-3 text-end">
-                            <button type="submit" class="btn btn-warning w-100">
-                                {{ $lang == 'ar' ? 'تحديث' : 'Update' }}
-                            </button>
-                        </div>
+                            <hr>
+
+                            <div class="form-group mt-3 text-end">
+                                <button type="submit" class="btn btn-warning w-100">
+                                    {{ $lang == 'ar' ? 'تحديث' : 'Update' }}
+                                </button>
+                            </div>
                 </form>
             </div>
 

@@ -44,40 +44,45 @@
             <div class="container position-relative d-flex justify-content-center mt-4">
                 <?php $user = auth()->user(); ?>
                 <form action="{{ route('services.update', $service->id) }}" method="POST" enctype="multipart/form-data"
-                    style="width: 100%;" class="profile-card rounded-lg shadow-xs bg-white p-4">
+                    style="width:100%" class="profile-card rounded-lg shadow-xs bg-white p-15 p-md-30">
                     @csrf
                     @method('PUT')
 
                     <input type="hidden" name="user_id" value="{{ $user->id }}">
-                    <input type="hidden" name="department_id" value="{{ $service->departments->id }}">
-                    <input type="hidden" name="type" value="{{ $service->departments->name_en }}">
+                    <input type="hidden" name="department_id" value="{{ $service->department_id }}">
+                    <input type="hidden" name="type" value="{{ $service->type }}">
 
                     @foreach ($products as $product)
+                        @php
+                            $isSelected = in_array($product->id, $selectedProducts ?? []);
+                            $quantity = $quantities[$product->id] ?? null;
+                        @endphp
                         <div class="form-group mt-2 d-flex align-items-center">
                             <input type="checkbox" name="selected_products[]" id="product-{{ $product->id }}"
-                                value="{{ $product->id }}" class="m-2">
+                                value="{{ $product->id }}" class="m-2" {{ $isSelected ? 'checked' : '' }}>
 
                             <div class="d-flex align-items-center justify-content-between m-2">
-                                <label for="product-{{ $product->id }}" class="ml-2 mr-3" style="min-width: 150px;">
+                                <label for="product-{{ $product->id }}" class="ml-2 mr-3">
                                     {{ $lang == 'ar' ? $product->name_ar : $product->name_en }}
                                 </label>
-                                <img src="{{ $product->image_url }}" width="50px" height="50px" alt=""
+                                <img src="{{ $product->image_url }}" width="50" height="50" alt=""
                                     style="margin-right: 15px;">
                                 <input max="10" class="form-control m-2" type="number"
                                     name="quantities[{{ $product->id }}]" placeholder="الكمية"
-                                    style="display: none; width: 100px;" id="quantity-{{ $product->id }}" min="1">
+                                    style="width: 80px; {{ $isSelected ? '' : 'display: none;' }}"
+                                    id="quantity-{{ $product->id }}" min="1" value="{{ $quantity }}">
                             </div>
-                            <div>
-                                <label for="">
-                                    <input type="checkbox" name="disassembly[{{ $product->id }}]"
-                                        id="work_type-{{ $product->id }}" value="1"
-                                        class="m-2">{{ $lang == 'ar' ? 'فك' : 'Disassembly' }}
-                                </label>
-                                <label for="">
 
-                                    <input type="checkbox" name="installation[{{ $product->id }}]"
-                                        id="work_type-installation{{ $product->id }}" value="1"
-                                        class="m-2">{{ $lang == 'ar' ? 'تركيب' : 'Installation' }}
+                            <div>
+                                <label>
+                                    <input type="checkbox" name="disassembly[{{ $product->id }}]" value="1"
+                                        class="m-2" {{ isset($disassembly[$product->id]) ? 'checked' : '' }}>
+                                    {{ $lang == 'ar' ? 'فك' : 'Disassembly' }}
+                                </label>
+                                <label>
+                                    <input type="checkbox" name="installation[{{ $product->id }}]" value="1"
+                                        class="m-2" {{ isset($installation[$product->id]) ? 'checked' : '' }}>
+                                    {{ $lang == 'ar' ? 'تركيب' : 'Installation' }}
                                 </label>
                             </div>
                         </div>
@@ -85,20 +90,28 @@
 
                     <label class="mb-1">{{ $lang == 'ar' ? 'من' : 'From' }} :</label>
                     <div class="form-group mt-2">
+                        <label class="mb-1">{{ $lang == 'ar' ? 'المدينة' : 'City' }} :</label>
                         <select name="from_city" class="form-control js-select2-custom">
                             <option value="">{{ __('اختر المدينة') }}</option>
                             @foreach ($cities as $city)
-                                <option value="{{ $city->id }}">
+                                <option value="{{ $city->id }}"
+                                    {{ $service->from_city == $city->id ? 'selected' : '' }}>
                                     {{ $lang == 'ar' ? $city->name_ar : $city->name_en }}
                                 </option>
                             @endforeach
                         </select>
+
                         <label class="mb-1">{{ $lang == 'ar' ? 'الحي' : 'Neighborhood' }} :</label>
                         <input type="text" class="form-control" name="from_neighborhood"
-                            value="{{ old('from_neighborhood', $service->from_neighborhood) }}">
+                            value="{{ $service->from_neighborhood }}">
+
                         <label class="mb-1">{{ $lang == 'ar' ? 'الدور' : 'Home' }} :</label>
-                        <input type="text" class="form-control" name="from_home"
-                            value="{{ old('from_home', $service->from_home) }}">
+                        <select name="location" class="form-control js-select2-custom">
+                            @for ($i = 1; $i <= 10; $i++)
+                                <option value="{{ $i }}" {{ $service->location == $i ? 'selected' : '' }}>
+                                    {{ $i }}</option>
+                            @endfor
+                        </select>
                     </div>
 
                     <hr>
@@ -109,7 +122,8 @@
                         <select name="to_city" class="form-control js-select2-custom">
                             <option value="">{{ __('اختر المدينة') }}</option>
                             @foreach ($cities as $city)
-                                <option value="{{ $city->id }}">
+                                <option value="{{ $city->id }}"
+                                    {{ $service->to_city == $city->id ? 'selected' : '' }}>
                                     {{ $lang == 'ar' ? $city->name_ar : $city->name_en }}
                                 </option>
                             @endforeach
@@ -117,37 +131,43 @@
 
                         <label class="mb-1">{{ $lang == 'ar' ? 'الحي' : 'Neighborhood' }} :</label>
                         <input type="text" class="form-control" name="to_neighborhood"
-                            value="{{ old('to_neighborhood', $service->to_neighborhood) }}">
+                            value="{{ $service->to_neighborhood }}">
+
                         <label class="mb-1">{{ $lang == 'ar' ? 'الدور' : 'Home' }} :</label>
-                        <input type="text" class="form-control" name="to_home"
-                            value="{{ old('to_home', $service->to_home) }}">
+                        <select name="part_number" class="form-control js-select2-custom">
+                            @for ($i = 1; $i <= 10; $i++)
+                                <option value="{{ $i }}" {{ $service->part_number == $i ? 'selected' : '' }}>
+                                    {{ $i }}</option>
+                            @endfor
+                        </select>
                     </div>
 
                     <div class="form-group">
                         <label class="mb-1">{{ $lang == 'ar' ? 'ملاحظة عن العمل المطلوب' : 'Note About Work' }} :</label>
-                        <textarea class="form-control" name="notes" cols="30" rows="5">{{ old('notes', $service->notes) }}</textarea>
+                        <textarea class="form-control" name="notes" rows="5">{{ $service->notes }}</textarea>
                     </div>
 
                     <div class="voice-note-container">
-                            <div id="recordingStatus" style="margin-bottom: 8px; color: #d9534f; display: none;"></div>
-                            <button id="startRecord" class="btn btn-primary">{{ $lang == 'ar' ? 'بدء التسجيل' : 'Start Recording' }}</button>
-                            <button id="stopRecord" class="btn btn-danger" disabled>{{ $lang == 'ar' ? 'ايقاف التسجيل' : 'Stop Recording' }}</button>
-                            <button id="resetRecord" class="btn btn-secondary" style="display:none;">{{ $lang == 'ar' ? 'إعادة التسجيل' : 'Reset Recording' }}</button>
-                            <span id="recordingTimer" style="margin-left: 10px; font-weight: bold; display:none;">00:00</span>
-                            <audio id="audioPlayback" controls style="display: none; margin-top: 10px;"></audio>
-                            <a id="downloadLink" style="display: none; margin-top: 10px;" class="btn btn-success">{{ $lang == 'ar' ? 'تنزيل التسجيل' : 'Download Recording' }}</a>
-                        </div>
-
-                    <hr>
+                        <div id="recordingStatus" style="margin-bottom: 8px; color: #d9534f; display: none;"></div>
+                        <button id="startRecord"
+                            class="btn btn-primary">{{ $lang == 'ar' ? 'بدء التسجيل' : 'Start Recording' }}</button>
+                        <button id="stopRecord" class="btn btn-danger"
+                            disabled>{{ $lang == 'ar' ? 'ايقاف التسجيل' : 'Stop Recording' }}</button>
+                        <button id="resetRecord" class="btn btn-secondary"
+                            style="display:none;">{{ $lang == 'ar' ? 'إعادة التسجيل' : 'Reset Recording' }}</button>
+                        <span id="recordingTimer" style="margin-left: 10px; font-weight: bold; display:none;">00:00</span>
+                        <audio id="audioPlayback" controls style="display: none; margin-top: 10px;"></audio>
+                        <a id="downloadLink" style="display: none; margin-top: 10px;"
+                            class="btn btn-success">{{ $lang == 'ar' ? 'تنزيل التسجيل' : 'Download Recording' }}</a>
+                    </div>
 
                     <div class="form-group mt-3 text-end">
                         <button type="submit" class="btn btn-warning w-100">
                             {{ $lang == 'ar' ? 'تحديث' : 'Update' }}
                         </button>
                     </div>
-
-
                 </form>
+
             </div>
 
 
