@@ -248,7 +248,8 @@
                                         <textarea class="form-control mb-2" cols="5" rows="5" name="notes"></textarea>
                                     </div>
                                     <div class="">
-                                        <button type="submit" class="btn btn-primary">{{ __('general.save') }}</button>
+                                        <button type="submit"
+                                            class="btn btn-primary">{{ $lang == 'ar' ? 'قدم عرض' : 'Add Offer' }}</button>
                                     </div>
                                 </form>
                             </div>

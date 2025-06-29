@@ -1,7 +1,7 @@
 @extends('layouts.home')
 @section('title')
     <?php $lang = config('app.locale'); ?>
-    {{ $lang == 'ar' ? 'معدات ثقيلة' : "Heavy equipment" }}
+    {{ $lang == 'ar' ? 'معدات ثقيلة' : 'Heavy equipment' }}
 @endsection
 
 @section('content')
@@ -58,8 +58,8 @@
                                 <div class="form-group">
                                     <label for="" class="mb-1">{{ $lang == 'ar' ? ' نوع المعدة ' : 'equip type' }}
                                         :</label>
-                                        @if (isset($service->equip_type))
-                                        <p>{{ $lang == 'ar' ? $service->equip_type: $service->equip_type}}</p>
+                                    @if (isset($service->equip_type))
+                                        <p>{{ $lang == 'ar' ? $service->equip_type : $service->equip_type }}</p>
                                     @endif
 
                                 </div>
@@ -67,7 +67,7 @@
                                     <label for="" class="mb-1">{{ $lang == 'ar' ? 'الموقع' : 'location' }}
                                         :</label>
                                     @if (isset($service->from_city))
-                                     <p>{{$lang == 'ar'? $form_city->name_ar:$form_city->name_en}}</p>
+                                        <p>{{ $lang == 'ar' ? $form_city->name_ar : $form_city->name_en }}</p>
                                     @endif
                                 </div>
 
@@ -82,16 +82,17 @@
                                     @endif
                                 </div>
                                 @if (!empty($service->notes_voice))
-                                <div class="form-group">
-                                    <label class="mb-1">{{ $lang == 'ar' ? 'ملاحظة صوتية' : 'Voice Note' }} :</label>
-                                    <audio controls style="width:100%">
-                                        <source src="{{ asset('storage/' . $service->notes_voice) }}" type="audio/wav">
-                                        <source src="{{ asset('storage/' . $service->notes_voice) }}" type="audio/mpeg">
-                                        <source src="{{ asset('storage/' . $service->notes_voice) }}" type="audio/ogg">
-                                        {{ $lang == 'ar' ? 'متصفحك لا يدعم تشغيل الصوت' : 'Your browser does not support the audio element.' }}
-                                    </audio>
-                                </div>
-                            @endif
+                                    <div class="form-group">
+                                        <label class="mb-1">{{ $lang == 'ar' ? 'ملاحظة صوتية' : 'Voice Note' }} :</label>
+                                        <audio controls style="width:100%">
+                                            <source src="{{ asset('storage/' . $service->notes_voice) }}" type="audio/wav">
+                                            <source src="{{ asset('storage/' . $service->notes_voice) }}"
+                                                type="audio/mpeg">
+                                            <source src="{{ asset('storage/' . $service->notes_voice) }}" type="audio/ogg">
+                                            {{ $lang == 'ar' ? 'متصفحك لا يدعم تشغيل الصوت' : 'Your browser does not support the audio element.' }}
+                                        </audio>
+                                    </div>
+                                @endif
                                 <div class="form-group">
                                     <label for="" class="mb-1">{{ $lang == 'ar' ? 'صاحب العمل' : 'Customer' }}
                                         :</label>
@@ -99,20 +100,22 @@
                                     @if (isset($service->user->image))
                                         <img width="250px" height="250px" src="{{ asset($service->user->image_url) }}"
                                             alt="user">
-
                                     @endif
                                     <div class="mt-4">
                                         @if (auth()->id() === $service->user_id)
-                                        <a class="btn btn-success btn-sm" href="{{route('services.edit',$service->id)}}">
-                                            <i class="fe fe-check-circle"></i>{{ $lang == 'ar' ? 'تعديل' : 'Edit' }}
-                                        </a>
-                                        <form action="{{ route('services.destroy', $service->id) }}" method="POST" style="display:inline-block;">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button class="btn btn-danger btn-sm" type="submit" onclick="return confirm('{{ $lang == 'ar' ? 'هل أنت متأكد من الحذف؟' : 'Are you sure you want to delete?' }}')">
-                                                <i class="fe fe-trash-2"></i> {{ $lang == 'ar' ? 'حذف' : 'Delete' }}
-                                            </button>
-                                        </form>
+                                            <a class="btn btn-success btn-sm"
+                                                href="{{ route('services.edit', $service->id) }}">
+                                                <i class="fe fe-check-circle"></i>{{ $lang == 'ar' ? 'تعديل' : 'Edit' }}
+                                            </a>
+                                            <form action="{{ route('services.destroy', $service->id) }}" method="POST"
+                                                style="display:inline-block;">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button class="btn btn-danger btn-sm" type="submit"
+                                                    onclick="return confirm('{{ $lang == 'ar' ? 'هل أنت متأكد من الحذف؟' : 'Are you sure you want to delete?' }}')">
+                                                    <i class="fe fe-trash-2"></i> {{ $lang == 'ar' ? 'حذف' : 'Delete' }}
+                                                </button>
+                                            </form>
                                         @endif
                                     </div>
                                     </form>
@@ -140,7 +143,7 @@
                                 <div class="container">
 
                                     @forelse ($service->comments as $comment)
-                                    {{-- @dd($comment) --}}
+                                        {{-- @dd($comment) --}}
                                         <div class="col-12 border mb-4 p-4 br-5">
                                             <div class="d-flex align-items-center">
                                                 <h5 class="mt-0 mr-3">
@@ -159,10 +162,12 @@
                                                         <input type="hidden" name="service_provider_id"
                                                             value="{{ $comment->user->id }}">
                                                         <input type="hidden" name="customer_id"
-                                                            value="{{  $comment->customer->id  }}">
-                                                            <input type="hidden" name="status" value="pending">
-                                                            <input type="hidden" name="orderable_id" value="{{ $service->id }}">
-                                                            <input type="hidden" name="orderable_type" value="{{ get_class($service) }}">
+                                                            value="{{ $comment->customer->id }}">
+                                                        <input type="hidden" name="status" value="pending">
+                                                        <input type="hidden" name="orderable_id"
+                                                            value="{{ $service->id }}">
+                                                        <input type="hidden" name="orderable_type"
+                                                            value="{{ get_class($service) }}">
                                                         <button class="btn btn-primary" type="submit">
 
                                                             {{ $lang == 'ar' ? 'قبول العرض' : 'Accept Offer' }}
@@ -222,12 +227,9 @@
                         <?php
                         $user = auth()->user();
                         if ($user) {
-                            $is_add = App\Models\GeneralComments::where('commentable_id', $service->id)
-                                ->where('commentable_type', 'App\Models\ContractingService')
-                                ->where('service_provider', $user->id)
-                                ->first();
+                            $is_add = App\Models\GeneralComments::where('commentable_id', $service->id)->where('commentable_type', 'App\Models\ContractingService')->where('service_provider', $user->id)->first();
                         }
-
+                        
                         ?>
 
                     </div>
@@ -239,7 +241,7 @@
                                     method="POST" enctype="multipart/form-data">
                                     @csrf
                                     <input type="hidden" value="{{ $service->id }}" name="service_id">
-                                    <input type="hidden" value="{{$service->equip_type}}" name="body">
+                                    <input type="hidden" value="{{ $service->equip_type }}" name="body">
 
 
 
@@ -255,7 +257,8 @@
                                         <textarea class="form-control mb-2" cols="5" rows="5" name="notes"></textarea>
                                     </div>
                                     <div class="">
-                                        <button type="submit" class="btn btn-primary">{{ __('general.save') }}</button>
+                                        <button type="submit"
+                                            class="btn btn-primary">{{ $lang == 'ar' ? 'قدم عرض' : 'Add Offer' }}</button>
                                     </div>
                                 </form>
                             </div>

@@ -16,7 +16,7 @@ return [
     'first_name'                    => 'First Name',
     'last_name'                     => 'Last Name',
     'phone'                         => 'Phone',
-    'email'                         => 'Email', 
+    'email'                         => 'Email',
     'password'                      => 'Password',
     'confirm_password'              => 'Confirm Password',
     'Do_You_Have_Account'           => 'Do you have an account?',
@@ -25,10 +25,13 @@ return [
     'login'                         => 'Login',
     'Phone_Number'                  => 'Phone Number',
     'Send_OTP'                       => 'Send OTP',
-    
+
     'required'          => "This field is required",
 'typy_email'        => "The field must be an email address",
 'confirmed'         => "Password confirmation is required",
-'min'               => "The field must not be less than: "
-
+'min'               => "The field must not be less than: ",
+'Password_Reset_Success' => 'Your password has been reset successfully ',
+'auth.OTP'=>'OTP',
+'auth.Go_to_Login'=>'Back to Login',
+'New_Password'=>'New password',
 ];

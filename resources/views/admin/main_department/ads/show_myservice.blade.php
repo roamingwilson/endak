@@ -1,8 +1,7 @@
 @extends('layouts.home')
 @section('title')
     <?php $lang = config('app.locale'); ?>
-    {{ ($lang == 'ar')? 'دعاية واعلان' : "Advertising" }}
-
+    {{ $lang == 'ar' ? 'دعاية واعلان' : 'Advertising' }}
 @endsection
 
 @section('content')
@@ -17,7 +16,7 @@
                         <div class="col-md-12 text-center">
                             <div class="">
                                 <p class="mb-3 content-1 h5 text-white">
-                                    {{ ($lang == 'ar')? 'دعاية واعلان' : "Advertising" }}
+                                    {{ $lang == 'ar' ? 'دعاية واعلان' : 'Advertising' }}
                                 </p>
                             </div>
                         </div>
@@ -47,8 +46,8 @@
                     <div class="form-group">
                         <label for="" class="mb-1">{{ $lang == 'ar' ? 'المدينة' : 'City' }}
                             :</label>
-                          @if (isset($service->from_city))
-                            <p>{{$lang == 'ar'? $form_city->name_ar:$form_city->name_en}}</p>
+                        @if (isset($service->from_city))
+                            <p>{{ $lang == 'ar' ? $form_city->name_ar : $form_city->name_en }}</p>
                         @endif
                     </div>
                     <div class="form-group">
@@ -69,16 +68,16 @@
                         @endif
                     </div>
                     @if (!empty($service->notes_voice))
-                    <div class="form-group">
-                        <label class="mb-1">{{ $lang == 'ar' ? 'ملاحظة صوتية' : 'Voice Note' }} :</label>
-                        <audio controls style="width:100%">
-                            <source src="{{ asset('storage/' . $service->notes_voice) }}" type="audio/wav">
-                            <source src="{{ asset('storage/' . $service->notes_voice) }}" type="audio/mpeg">
-                            <source src="{{ asset('storage/' . $service->notes_voice) }}" type="audio/ogg">
-                            {{ $lang == 'ar' ? 'متصفحك لا يدعم تشغيل الصوت' : 'Your browser does not support the audio element.' }}
-                        </audio>
-                    </div>
-                @endif
+                        <div class="form-group">
+                            <label class="mb-1">{{ $lang == 'ar' ? 'ملاحظة صوتية' : 'Voice Note' }} :</label>
+                            <audio controls style="width:100%">
+                                <source src="{{ asset('storage/' . $service->notes_voice) }}" type="audio/wav">
+                                <source src="{{ asset('storage/' . $service->notes_voice) }}" type="audio/mpeg">
+                                <source src="{{ asset('storage/' . $service->notes_voice) }}" type="audio/ogg">
+                                {{ $lang == 'ar' ? 'متصفحك لا يدعم تشغيل الصوت' : 'Your browser does not support the audio element.' }}
+                            </audio>
+                        </div>
+                    @endif
                     <div class="form-group">
                         <label for="" class="mb-1">{{ $lang == 'ar' ? 'صاحب العمل' : 'Customer' }}
                             :</label>
@@ -89,16 +88,18 @@
                     </div>
                     <div class="mt-4">
                         @if (auth()->id() === $service->user_id)
-                        <a class="btn btn-success btn-sm" href="{{route('services.edit',$service->id)}}">
-                            <i class="fe fe-check-circle"></i> {{ $lang == 'ar' ? 'تعديل' : 'Edit' }}
-                        </a>
-                        <form action="{{ route('services.destroy', $service->id) }}" method="POST" style="display:inline-block;">
-                            @csrf
-                            @method('DELETE')
-                            <button class="btn btn-danger btn-sm" type="submit" onclick="return confirm('{{ $lang == 'ar' ? 'هل أنت متأكد من الحذف؟' : 'Are you sure you want to delete?' }}')">
-                                <i class="fe fe-trash-2"></i> {{ $lang == 'ar' ? 'حذف' : 'Delete' }}
-                            </button>
-                        </form>
+                            <a class="btn btn-success btn-sm" href="{{ route('services.edit', $service->id) }}">
+                                <i class="fe fe-check-circle"></i> {{ $lang == 'ar' ? 'تعديل' : 'Edit' }}
+                            </a>
+                            <form action="{{ route('services.destroy', $service->id) }}" method="POST"
+                                style="display:inline-block;">
+                                @csrf
+                                @method('DELETE')
+                                <button class="btn btn-danger btn-sm" type="submit"
+                                    onclick="return confirm('{{ $lang == 'ar' ? 'هل أنت متأكد من الحذف؟' : 'Are you sure you want to delete?' }}')">
+                                    <i class="fe fe-trash-2"></i> {{ $lang == 'ar' ? 'حذف' : 'Delete' }}
+                                </button>
+                            </form>
                         @endif
                     </div>
                 </div>
@@ -110,72 +111,81 @@
     </section>
     <section class="section d-flex align-items-center justify-content-center">
         <div class="container">
-            <div class="row justify-content-center" >
-                <div class="col-xl-8" >
-                    <div class="card" >
-                        <div class="card-body pb-0 align-items-center" style="height: 100%;" >
+            <div class="row justify-content-center">
+                <div class="col-xl-8">
+                    <div class="card">
+                        <div class="card-body pb-0 align-items-center" style="height: 100%;">
                             <h5 class="mb-4 d-flex align-items-center justify-content-center">
                                 {{ $lang == 'ar' ? 'العروض' : 'Offers' }}</h5>
                             <div class="d-block mb-4 overflow-visible d-block d-sm-flex">
-                                {{-- <div class="row">--}}
-                                    <div class="container">
-                                        @forelse ($service->comments as $comment)
-                                            <div class="col-12 border mb-4 p-4 br-5">
-                                                <div class="d-flex align-items-center">
-                                                    <h5 class="mt-0 mr-3">
-                                                        {{ $comment->user->first_name . ' ' . $comment->user->last_name }}
-                                                    </h5>
-                                                    @if(auth()->check() && auth()->id() == $service->user_id)
-                                                        <a class="dropdown-item mb-2" href="{{ route('web.send_message', $comment->user->id) }}">
-                                                            <i class="fe fe-mail mx-1"></i> {{ __('messages.send_message') }}
-                                                        </a>
-                                                        <form action="{{ route('general_orders.store') }}" method="post">
-                                                            @csrf
-                                                            <input type="hidden" name="service_id" value="{{ $service->id }}">
-                                                            <input type="hidden" name="service_provider_id" value="{{ $comment->user->id }}">
-                                                            <input type="hidden" name="customer_id" value="{{ $service->user_id }}">
-                                                            <button class="btn btn-primary" type="submit">
-                                                                {{ ($lang == 'ar') ? 'قبول العرض' : "Accept Offer" }}
-                                                            </button>
-                                                        </form>
-                                                    @endif
-                                                </div>
-
-                                                @if (isset($comment->price))
-                                                    <p>{{ __('general.price') . ' : ' . $comment->price }}</p>
-                                                @endif
-                                                @if (isset($comment->body))
-                                                    <p>{{ 'Body : ' . $comment->body }}</p>
-                                                @endif
-                                                @if (isset($comment->date))
-                                                    <p>{{ __('general.date') . ' : ' . $comment->date }}</p>
-                                                @endif
-                                                @if (isset($comment->time))
-                                                    <p>{{ __('general.time') . ' : ' . \Carbon\Carbon::parse($comment->time)->format('h:i A') }}</p>
-                                                @endif
-                                                @if (isset($comment->city))
-                                                    <p>{{ ($lang == 'ar' ? 'المدينة' : 'City') . ' : ' . $comment->city }}</p>
-                                                @endif
-                                                @if (isset($comment->neighborhood))
-                                                    <p>{{ ($lang == 'ar' ? 'الحي' : 'Neighborhood') . ' : ' . $comment->neighborhood }}</p>
-                                                @endif
-                                                @if (isset($comment->location))
-                                                    <p>{{ ($lang == 'ar' ? 'الموقع' : 'Location') . ' : ' . $comment->location }}</p>
-                                                @endif
-                                                @if (isset($comment->day))
-                                                    <p>{{ __('general.day') . ' : ' . $comment->day }}</p>
-                                                @endif
-                                                @if (isset($comment->number_of_days_of_warranty))
-                                                    <p>{{ ($lang == 'ar' ? 'عدد ايام الضمان' : 'Number of Days of Warranty') . ' : ' . $comment->number_of_days_of_warranty }}</p>
-                                                @endif
-                                                @if (isset($comment->notes))
-                                                    <p>{{ ($lang == 'ar' ? 'ملاحظات عن العمل المطلوب' : 'Notes') . ' : ' . $comment->notes }}</p>
+                                {{-- <div class="row"> --}}
+                                <div class="container">
+                                    @forelse ($service->comments as $comment)
+                                        <div class="col-12 border mb-4 p-4 br-5">
+                                            <div class="d-flex align-items-center">
+                                                <h5 class="mt-0 mr-3">
+                                                    {{ $comment->user->first_name . ' ' . $comment->user->last_name }}
+                                                </h5>
+                                                @if (auth()->check() && auth()->id() == $service->user_id)
+                                                    <a class="dropdown-item mb-2"
+                                                        href="{{ route('web.send_message', $comment->user->id) }}">
+                                                        <i class="fe fe-mail mx-1"></i> {{ __('messages.send_message') }}
+                                                    </a>
+                                                    <form action="{{ route('general_orders.store') }}" method="post">
+                                                        @csrf
+                                                        <input type="hidden" name="service_id"
+                                                            value="{{ $service->id }}">
+                                                        <input type="hidden" name="service_provider_id"
+                                                            value="{{ $comment->user->id }}">
+                                                        <input type="hidden" name="customer_id"
+                                                            value="{{ $service->user_id }}">
+                                                        <button class="btn btn-primary" type="submit">
+                                                            {{ $lang == 'ar' ? 'قبول العرض' : 'Accept Offer' }}
+                                                        </button>
+                                                    </form>
                                                 @endif
                                             </div>
-                                        @empty
-                                            {!! no_data() !!}
-                                        @endforelse
-                                     </div>
+
+                                            @if (isset($comment->price))
+                                                <p>{{ __('general.price') . ' : ' . $comment->price }}</p>
+                                            @endif
+                                            @if (isset($comment->body))
+                                                <p>{{ 'Body : ' . $comment->body }}</p>
+                                            @endif
+                                            @if (isset($comment->date))
+                                                <p>{{ __('general.date') . ' : ' . $comment->date }}</p>
+                                            @endif
+                                            @if (isset($comment->time))
+                                                <p>{{ __('general.time') . ' : ' . \Carbon\Carbon::parse($comment->time)->format('h:i A') }}
+                                                </p>
+                                            @endif
+                                            @if (isset($comment->city))
+                                                <p>{{ ($lang == 'ar' ? 'المدينة' : 'City') . ' : ' . $comment->city }}</p>
+                                            @endif
+                                            @if (isset($comment->neighborhood))
+                                                <p>{{ ($lang == 'ar' ? 'الحي' : 'Neighborhood') . ' : ' . $comment->neighborhood }}
+                                                </p>
+                                            @endif
+                                            @if (isset($comment->location))
+                                                <p>{{ ($lang == 'ar' ? 'الموقع' : 'Location') . ' : ' . $comment->location }}
+                                                </p>
+                                            @endif
+                                            @if (isset($comment->day))
+                                                <p>{{ __('general.day') . ' : ' . $comment->day }}</p>
+                                            @endif
+                                            @if (isset($comment->number_of_days_of_warranty))
+                                                <p>{{ ($lang == 'ar' ? 'عدد ايام الضمان' : 'Number of Days of Warranty') . ' : ' . $comment->number_of_days_of_warranty }}
+                                                </p>
+                                            @endif
+                                            @if (isset($comment->notes))
+                                                <p>{{ ($lang == 'ar' ? 'ملاحظات عن العمل المطلوب' : 'Notes') . ' : ' . $comment->notes }}
+                                                </p>
+                                            @endif
+                                        </div>
+                                    @empty
+                                        {!! no_data() !!}
+                                    @endforelse
+                                </div>
                             </div>
 
 
@@ -185,42 +195,40 @@
 
                         <?php
                         $user = auth()->user();
-                        if($user){
-                            $is_add = App\Models\GeneralComments::where('commentable_id', $service->id)
-                            ->where('commentable_type', 'App\Models\AdsService')
-                            ->where('service_provider', $user->id)
-                            ->first();
+                        if ($user) {
+                            $is_add = App\Models\GeneralComments::where('commentable_id', $service->id)->where('commentable_type', 'App\Models\AdsService')->where('service_provider', $user->id)->first();
                         }
-
+                        
                         ?>
 
                     </div>
                     @if ($user && $user->id != $service->user_id && $service->status == 'open' && $is_add == null)
-                    <div class="card">
-                        <div class="card-body">
-                            <p class="h5 mb-4">{{ $lang == 'ar' ? 'اضافة عرض' : 'Add Offer' }}</p>
-                            <form class="form-horizontal  m-t-20" action="{{ route('general_comments.store') }}"
-                                method="POST" enctype="multipart/form-data">
-                                @csrf
-                                <input type="hidden" value="{{ $service->id }}" name="service_id">
+                        <div class="card">
+                            <div class="card-body">
+                                <p class="h5 mb-4">{{ $lang == 'ar' ? 'اضافة عرض' : 'Add Offer' }}</p>
+                                <form class="form-horizontal  m-t-20" action="{{ route('general_comments.store') }}"
+                                    method="POST" enctype="multipart/form-data">
+                                    @csrf
+                                    <input type="hidden" value="{{ $service->id }}" name="service_id">
 
-                                <div>
-                                    <label class="mb-2" for="">{{ __('general.price') }}</label>
-                                    <input class="form-control mb-2" type="number" name="price">
-                                </div>
+                                    <div>
+                                        <label class="mb-2" for="">{{ __('general.price') }}</label>
+                                        <input class="form-control mb-2" type="number" name="price">
+                                    </div>
 
-                                <div>
-                                    <label class="mb-2"
-                                        for="">{{ ($lang == 'ar' ? 'ملاحظات عن العمل المطلوب' : 'Notes') . ' : ' }}</label>
-                                    <textarea class="form-control mb-2" cols="5" rows="5" name="notes"></textarea>
-                                </div>
-                                <div class="">
-                                    <button type="submit" class="btn btn-primary">{{ __('general.save') }}</button>
-                                </div>
-                            </form>
+                                    <div>
+                                        <label class="mb-2"
+                                            for="">{{ ($lang == 'ar' ? 'ملاحظات عن العمل المطلوب' : 'Notes') . ' : ' }}</label>
+                                        <textarea class="form-control mb-2" cols="5" rows="5" name="notes"></textarea>
+                                    </div>
+                                    <div class="">
+                                        <button type="submit"
+                                            class="btn btn-primary">{{ $lang == 'ar' ? 'قدم عرض' : 'Add Offer' }}</button>
+                                    </div>
+                                </form>
+                            </div>
                         </div>
-                    </div>
-                @endif
+                    @endif
                 </div>
             </div>
         </div>

@@ -236,7 +236,7 @@
                                         <input class="form-control mb-2" type="time" name="time">
                                     </div>
                                     <div class="">
-                                        <button type="submit" class="btn btn-primary">{{ __('general.save') }}</button>
+                                        <button type="submit" class="btn btn-primary">{{ $lang == 'ar' ? 'قدم عرض' : 'Add Offer' }}</button>
                                     </div>
                                 </form>
                             </div>

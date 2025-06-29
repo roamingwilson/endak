@@ -33,7 +33,7 @@
             <div class="alert alert-success">
                 {{ __('auth.Password_Reset_Success') }}
             </div>
-            <a href="{{ route('login') }}" class="btn btn-primary">{{ __('auth.Go_to_Login') }}</a>
+            <a href="{{ route('login-page') }}" class="btn btn-primary">{{ __('auth.Go_to_Login') }}</a>
         @endif
 
         @if (session()->has('error'))
