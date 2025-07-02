@@ -239,12 +239,21 @@
                                                 </div>
 
                                                 <div class="media-body m-2">
-                                                    <p class="text-sm mt-3">
-                                                        {{ implode(' ', array_slice(explode(' ', $message->message), 0, 5)) }}
-                                                        @if (strlen($message->message) > 5)
-                                                            ...
+                                                    <div class="media-body m-2">
+                                                        @if ($message)
+                                                            <p class="text-sm mt-3">
+                                                                {{ implode(' ', array_slice(explode(' ', $message->message), 0, 5)) }}
+                                                                @if (strlen($message->message) > 5)
+                                                                    ...
+                                                                @endif
+                                                            </p>
+                                                        @else
+                                                            <p class="text-sm mt-3 text-muted">
+                                                                لا توجد رسائل بعد.
+                                                            </p>
                                                         @endif
-                                                    </p>
+                                                    </div>
+
                                                 </div>
                                             </div>
                                             <!-- Message End -->
