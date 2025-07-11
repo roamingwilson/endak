@@ -10,6 +10,9 @@ class Services extends Model
 {
     use HasFactory;
     protected $guarded = [];
+    protected $casts = [
+        'custom_fields' => 'array',
+    ];
     // protected static function booted(){
 
     //     static::addGlobalScope('status' , function(Builder $builder){
@@ -17,11 +20,13 @@ class Services extends Model
     //     });
     // }
 
-    public function user(){
-        return $this->belongsTo(User::class , 'user_id');
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
     }
-    public function provider(){
-        return $this->belongsTo(User::class , 'provider_id');
+    public function provider()
+    {
+        return $this->belongsTo(User::class, 'provider_id');
     }
 
     public function departments()
@@ -43,11 +48,11 @@ class Services extends Model
     public function productss()
     {
         return $this->belongsToMany(Product::class, 'furniture_transportation_service_products')
-                    ->withPivot('quantity', 'installation', 'disassembly')
-                    ->withTimestamps();
+            ->withPivot('quantity', 'installation', 'disassembly')
+            ->withTimestamps();
     }
-    public function products(){
-        return $this->hasMany(FurnitureTransportationServiceProducts::class ,'service_id', 'id');
+    public function products()
+    {
+        return $this->hasMany(FurnitureTransportationServiceProducts::class, 'service_id', 'id');
     }
-
 }

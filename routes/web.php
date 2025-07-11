@@ -60,10 +60,11 @@ use Illuminate\Support\Facades\Auth;
 // Route::get('/', function () {
 //     return view('front_office.home');
 // })->name('home');
-Route::get('/', function () {
+Route::get(
+    '/',
+    function () {
 
-            return view('front_office.home');
-
+        return view('front_office.home');
     }
 
 )->name('home');
@@ -71,17 +72,16 @@ Route::middleware('auth')->group(function () {
     // مسار لتعيين النوتيفيكاشن كـ "مقروء"
     Route::get('/notification/{notificationId}/read', [NotificationController::class, 'markAsRead'])->name('notification.read');
     Route::get('/notifications', [notificationController::class, 'index'])->name('notifications.index');
-
 });
 
-Route::get('/page/{slug}', [PageController::class , 'pageSingle'])->name('page');
+Route::get('/page/{slug}', [PageController::class, 'pageSingle'])->name('page');
 Route::get('/search', [SearchController::class, 'index'])->name('search');
 
 // // Translation
 
 Route::get('lang/{locale}', function ($locale) {
     if (in_array($locale, ['en', 'ar'])) {
-    session()->put('locale', $locale);
+        session()->put('locale', $locale);
     }
     return redirect()->back();
 })->name('lang');
@@ -89,80 +89,80 @@ Route::get('lang/{locale}', function ($locale) {
 
 // login & register & logout
 
-Route::get('/login-page' , [AuthController::class , 'loginPage'])->middleware('guest')->name('login-page');
-Route::get('/register-page' , [AuthController::class , 'registerPage'])->middleware('guest')->name('register-page');
-Route::post('/login' , [AuthController::class , 'login'])->middleware('guest')->name('login');
-Route::post('/register' , [AuthController::class , 'register'])->middleware('guest')->name('register');
-Route::get('logout' , [AuthController::class , 'logout'])->middleware('auth')->name('logout');
-Route::get('/forgot-password', [AuthController::class , 'forgotPassword'])->name('forgot-password');
+Route::get('/login-page', [AuthController::class, 'loginPage'])->middleware('guest')->name('login-page');
+Route::get('/register-page', [AuthController::class, 'registerPage'])->middleware('guest')->name('register-page');
+Route::post('/login', [AuthController::class, 'login'])->middleware('guest')->name('login');
+Route::post('/register', [AuthController::class, 'register'])->middleware('guest')->name('register');
+Route::get('logout', [AuthController::class, 'logout'])->middleware('auth')->name('logout');
+Route::get('/forgot-password', [AuthController::class, 'forgotPassword'])->name('forgot-password');
 
 
 // // Departments
-Route::get('/departments', [DepartmentsController::class , 'index'])->name('departments');
-Route::get('/departments/{id}', [DepartmentsController::class , 'show'])->name('departments.show');
+Route::get('/departments', [DepartmentsController::class, 'index'])->name('departments');
+Route::get('/departments/{id}', [DepartmentsController::class, 'show'])->name('departments.show');
 
 
 // Posts
 
-Route::get('posts/{id}', [PostController::class , 'index' ])->name('web.posts');
-Route::get('posts/show/{id}', [PostController::class , 'show' ])->name('web.posts.show');
-Route::get('posts/{id}/create', [PostController::class , 'create' ])->name('web.posts.create');
-Route::get('posts/upload_video', [PostController::class , 'uploadLargeFiles' ])->name('web.files.upload.large');
-Route::post('posts/store', [PostController::class , 'store' ])->name('web.posts.store');
-Route::get('posts/my_posts/{id}', [PostController::class , 'my_posts' ])->name('web.posts.my_posts');
+Route::get('posts/{id}', [PostController::class, 'index'])->name('web.posts');
+Route::get('posts/show/{id}', [PostController::class, 'show'])->name('web.posts.show');
+Route::get('posts/{id}/create', [PostController::class, 'create'])->name('web.posts.create');
+Route::get('posts/upload_video', [PostController::class, 'uploadLargeFiles'])->name('web.files.upload.large');
+Route::post('posts/store', [PostController::class, 'store'])->name('web.posts.store');
+Route::get('posts/my_posts/{id}', [PostController::class, 'my_posts'])->name('web.posts.my_posts');
 
 // Comments
 
-Route::post('/comments/create' , [CommentController::class , 'store'])->name('comments.store');
-Route::get('comments/my_comments/{id}', [CommentController::class , 'comments' ])->name('web.comments.my_comments');
+Route::post('/comments/create', [CommentController::class, 'store'])->name('comments.store');
+Route::get('comments/my_comments/{id}', [CommentController::class, 'comments'])->name('web.comments.my_comments');
 
 // Orders  my_orders
-Route::get('order/my_orders/{id}' , [OrderUserController::class , 'my_orders'])->name('web.order.my_orders');
-Route::post('/order/create' , [OrderUserController::class , 'store'])->name('web.order.save');
-Route::get('/order/{id}' , [OrderUserController::class , 'show_order'])->name('web.order.view');
-Route::post('/order/complete' , [OrderUserController::class , 'finish'])->name('web.order.finish');
+Route::get('order/my_orders/{id}', [OrderUserController::class, 'my_orders'])->name('web.order.my_orders');
+Route::post('/order/create', [OrderUserController::class, 'store'])->name('web.order.save');
+Route::get('/order/{id}', [OrderUserController::class, 'show_order'])->name('web.order.view');
+Route::post('/order/complete', [OrderUserController::class, 'finish'])->name('web.order.finish');
 // Rating
-Route::get('/profile/{id}' ,[ProfileController::class , 'show'] )->name('web.profile');
-Route::get('/profile/edit/{id}' ,[ProfileController::class , 'edit'] )->name('web.profile.edit');
-Route::get('/feedback' ,[ProfileController::class , 'user_note'] )->name('feedback');
-Route::get('/FAQ' ,[ProfileController::class , 'FAQ'] )->name('faq');
-Route::get('/privcy' ,[ProfileController::class , 'privcy'] )->name('privcy');
-Route::get('/terms' ,[ProfileController::class , 'terms'] )->name('terms');
-Route::post('/profile/update' ,[ProfileController::class , 'updateProfile'] )->name('web.profile.update');
+Route::get('/profile/{id}', [ProfileController::class, 'show'])->name('web.profile');
+Route::get('/profile/edit/{id}', [ProfileController::class, 'edit'])->name('web.profile.edit');
+Route::get('/feedback', [ProfileController::class, 'user_note'])->name('feedback');
+Route::get('/FAQ', [ProfileController::class, 'FAQ'])->name('faq');
+Route::get('/privcy', [ProfileController::class, 'privcy'])->name('privcy');
+Route::get('/terms', [ProfileController::class, 'terms'])->name('terms');
+Route::post('/profile/update', [ProfileController::class, 'updateProfile'])->name('web.profile.update');
 
 // Users
 
-Route::get('/service_provider' , [ProfileController::class , 'users'])->name('web.user.service_provider');
+Route::get('/service_provider', [ProfileController::class, 'users'])->name('web.user.service_provider');
 
 // Order Rating
 
-Route::get('/add_rate/{id}' , [RatingUserController::class , 'add_rate'])->name('web.add_rate');
-Route::post('/web-rate/store/{id}' , [RatingUserController::class , 'store'])->name('web.add_rate.store');
+Route::get('/add_rate/{id}', [RatingUserController::class, 'add_rate'])->name('web.add_rate');
+Route::post('/web-rate/store/{id}', [RatingUserController::class, 'store'])->name('web.add_rate.store');
 
 // Messages web.send_message
 
-Route::get('/send_message/{id}' , [MessageUserController::class , 'send'])->name('web.send_message');
-Route::post('/send' , [MessageUserController::class , 'store'])->name('messages.store')->middleware('auth');
+Route::get('/send_message/{id}', [MessageUserController::class, 'send'])->name('web.send_message');
+Route::post('/send', [MessageUserController::class, 'store'])->name('messages.store')->middleware('auth');
 // order item
 
-Route::post('/order/items' , [OrderUserController::class , 'product_order'])->name('order_item');
+Route::post('/order/items', [OrderUserController::class, 'product_order'])->name('order_item');
 
 // furniture_transportations
-Route::group(['prefix' => "furniture_transportations"], function(){
-    Route::get('/show' , [FurnitureTransportationsController::class , 'show'])->name('furniture_transportations_show');
+Route::group(['prefix' => "furniture_transportations"], function () {
+    Route::get('/show', [FurnitureTransportationsController::class, 'show'])->name('furniture_transportations_show');
     // Route::post('/add_service' , [FurnitureTransportationsController::class , 'store_service'])->name('furniture_transportations_store_service');
     // Route::get('/',[FurnitureTransportationsController::class , 'index'])->name('main_furniture_transportations');
-    Route::get('/service/{id}',[FurnitureTransportationsController::class , 'show_my_service'])->name('main_furniture_transportations_show_my_service');
+    Route::get('/service/{id}', [FurnitureTransportationsController::class, 'show_my_service'])->name('main_furniture_transportations_show_my_service');
     // Route::get('/edit/{id}',[FurnitureTransportationsController::class , 'edit'])->name('main_furniture_transportations.edit');
     // Route::patch('/update/{id}',[FurnitureTransportationsController::class , 'update'])->name('main_furniture_transportations.update');
-    Route::post('/accept_offer' , [OrderFurnitureTransportationsController::class , 'store'])->name('accept_offer_furniture');
-    Route::get('/order' , [OrderFurnitureTransportationsController::class , 'show_orders'])->name('show_orders_furniture');
-    Route::get('/order/{id}' , [OrderFurnitureTransportationsController::class , 'show'])->name('show_order_furniture');
-    Route::get('/accept_project_furniture_transportation/{id}' , function($id) {
+    Route::post('/accept_offer', [OrderFurnitureTransportationsController::class, 'store'])->name('accept_offer_furniture');
+    Route::get('/order', [OrderFurnitureTransportationsController::class, 'show_orders'])->name('show_orders_furniture');
+    Route::get('/order/{id}', [OrderFurnitureTransportationsController::class, 'show'])->name('show_order_furniture');
+    Route::get('/accept_project_furniture_transportation/{id}', function ($id) {
         FurnitureTransportationOrder::find($id)->update(['status' => "completed"]);
     })->name('accept_project_furniture_transportation');
-    Route::get('service/edit/{id}',[FurnitureTransportationsController::class , 'edit_service'])->name('service_furniture_transportations.edit');
-    Route::put('service/update/{id}',[FurnitureTransportationsController::class , 'update_service'])->name('service_furniture_transportations.update');
+    Route::get('service/edit/{id}', [FurnitureTransportationsController::class, 'edit_service'])->name('service_furniture_transportations.edit');
+    Route::put('service/update/{id}', [FurnitureTransportationsController::class, 'update_service'])->name('service_furniture_transportations.update');
     Route::delete('/van-truck-services/{id}', [FurnitureTransportationsController::class, 'destroy_service'])->name('service_furniture_transportations.destroy');
 });
 
@@ -433,45 +433,40 @@ Route::group(['prefix' => "furniture_transportations"], function(){
 
 
 // Contractings
-Route::group(['prefix' => "contracting"], function(){
+Route::group(['prefix' => "contracting"], function () {
 
-    Route::get('/contracting_sub_show/{id}' , [ContractingController::class , 'contracting_sub_show'])->name('contracting_sub_show');
-
+    Route::get('/contracting_sub_show/{id}', [ContractingController::class, 'contracting_sub_show'])->name('contracting_sub_show');
 });
 
 // Car Maintenance
-Route::group(['prefix' => "maintenance"], function(){
+Route::group(['prefix' => "maintenance"], function () {
 
-    Route::get('/maintenance_sub_show/{id}' , [MaintenanceController::class , 'maintenance_sub_show'])->name('maintenance_sub_show');
-
+    Route::get('/maintenance_sub_show/{id}', [MaintenanceController::class, 'maintenance_sub_show'])->name('maintenance_sub_show');
 });
 
-Route::group(['prefix' => "spare_part"], function(){
+Route::group(['prefix' => "spare_part"], function () {
 
-    Route::get('/spare_part_sub_show/{id}' , [SparePartController::class , 'spare_part_sub_show'])->name('spare_part_sub_show');
-
+    Route::get('/spare_part_sub_show/{id}', [SparePartController::class, 'spare_part_sub_show'])->name('spare_part_sub_show');
 });
 
 // Vans
-Route::group(['prefix' => "van_truck"], function(){
+Route::group(['prefix' => "van_truck"], function () {
 
-    Route::get('/van_truck_sub_show/{id}' , [VanTruckController::class , 'van_truck_sub_show'])->name('van_truck_sub_show');
-
+    Route::get('/van_truck_sub_show/{id}', [VanTruckController::class, 'van_truck_sub_show'])->name('van_truck_sub_show');
 });
 // heavy equip
-Route::group(['prefix' => "heavy_equip"], function(){
+Route::group(['prefix' => "heavy_equip"], function () {
 
-    Route::get('/heavy_equip_sub_show/{id}' , [HeavyEquipmentController::class , 'heavy_equip_sub_show'])->name('heavy_equip_sub_show');
-
+    Route::get('/heavy_equip_sub_show/{id}', [HeavyEquipmentController::class, 'heavy_equip_sub_show'])->name('heavy_equip_sub_show');
 });
 //industry
-Route::group(['prefix' => "plastic"], function(){
+Route::group(['prefix' => "plastic"], function () {
     Route::get('/products', [indsProductController::class, 'index'])->name('indsproducts.index');
     Route::get('/products/{id}', [indsProductController::class, 'show'])->name('indsproducts.show');
     Route::get('/Viewproducts', [indsProductController::class, 'viewProduct'])->name('indsproducts.products');
 
 
-    Route::get('/accept_project_plastic/{id}' , function($id) {
+    Route::get('/accept_project_plastic/{id}', function ($id) {
         VanTruckOrder::find($id)->update(['status' => "completed"]);
         return redirect()->back();
     })->name('accept_project_plastic');
@@ -492,7 +487,8 @@ Route::middleware('auth')->group(function () {
 
 
 
-});Route::prefix('orders/{orderId}/items')->middleware('auth')->group(function () {
+});
+Route::prefix('orders/{orderId}/items')->middleware('auth')->group(function () {
     Route::get('/', [ProductOrderitemsController::class, 'index'])->name('pro_order_items.index');
     Route::get('/create', [ProductOrderitemsController::class, 'create'])->name('pro_order_items.create');
     Route::post('/', [ProductOrderitemsController::class, 'store'])->name('pro_order_items.store');
@@ -509,8 +505,8 @@ Route::prefix('order-items')->middleware('auth')->group(function () {
 
 
 // general_comments
-Route::post('/comments/create' , [GeneralCommentsController::class , 'store'])->name('general_comments.store');
-Route::get('/comments/show/{id}' , [GeneralCommentsController::class , 'index'])->name('general_comments.show');
+Route::post('/comments/create', [GeneralCommentsController::class, 'store'])->name('general_comments.store');
+Route::get('/comments/show/{id}', [GeneralCommentsController::class, 'index'])->name('general_comments.show');
 Route::get('general_comments/{id}/edit', [GeneralCommentsController::class, 'edit'])->name('general_comments.edit');
 
 Route::put('general_comments/{id}', [GeneralCommentsController::class, 'update'])->name('general_comments.update');
@@ -520,39 +516,51 @@ Route::delete('general_comments/{id}', [GeneralCommentsController::class, 'destr
 
 
 
-    Route::post('orders', [GeneralOrderController::class, 'store'])->name('general_orders.store');
+Route::post('orders', [GeneralOrderController::class, 'store'])->name('general_orders.store');
 
-    // Optionally, you can have a route to view a specific order
-    Route::get('orders/{order}', [GeneralOrderController::class, 'show'])->name('general_orders.show');
-    Route::delete('/orders/{id}', [GeneralOrderController::class, 'destroy'])->name('general_orders.destroy');
-    // List orders for a customer (optional)
-    Route::get('orders', [GeneralOrderController::class, 'index'])->name('general_orders.customer.index');
-    Route::get('pre/order', [GeneralOrderController::class, 'previous'])->name('pre_order.customer');
-    Route::get('/accept_project/{id}' , function($id) {
-        GeneralOrder::find($id)->update(['status' => "completed"]);
-        return redirect()->back();
-    })->name('accept_project');
+// Optionally, you can have a route to view a specific order
+Route::get('orders/{order}', [GeneralOrderController::class, 'show'])->name('general_orders.show');
+Route::delete('/orders/{id}', [GeneralOrderController::class, 'destroy'])->name('general_orders.destroy');
+// List orders for a customer (optional)
+Route::get('orders', [GeneralOrderController::class, 'index'])->name('general_orders.customer.index');
+Route::get('pre/order', [GeneralOrderController::class, 'previous'])->name('pre_order.customer');
+Route::get('/accept_project/{id}', function ($id) {
+    GeneralOrder::find($id)->update(['status' => "completed"]);
+    return redirect()->back();
+})->name('accept_project');
 
-    route::resource('services', ServiceController::class);
+route::resource('services', ServiceController::class);
 
-    route::get('show/myservices/{id}', [ServiceController::class,'show_services'])->name('show_myservice');
-    // route::get('sub_show/myservices/{id}', [ServiceController::class,'sub_show'])->name('service_sub_show');
+route::get('show/myservices/{id}', [ServiceController::class, 'show_services'])->name('show_myservice');
+// route::get('sub_show/myservices/{id}', [ServiceController::class,'sub_show'])->name('service_sub_show');
 
-    route::get('add/country', [CountryController::class, 'create'])->name('add_country');
-    route::post('country', [CountryController::class, 'store'])->name('store_country');
+route::get('add/country', [CountryController::class, 'create'])->name('add_country');
+route::post('country', [CountryController::class, 'store'])->name('store_country');
 
 
 
-    route::get('add/gover', [GovernementsController::class, 'create'])->name('add_gover');
-    route::post('gover', [GovernementsController::class, 'store'])->name('store_gover');
+route::get('add/gover', [GovernementsController::class, 'create'])->name('add_gover');
+route::post('gover', [GovernementsController::class, 'store'])->name('store_gover');
 
-    Route::get('/products', [IndustryController::class, 'index'])->name('indsustry.index');
-    Route::get('/category', [IndustryController::class, 'show_cat'])->name('indsustry.cat');
-    Route::get('/subcat', [IndustryController::class, 'show_sub_cat'])->name('indsustry.subcat');
-    Route::get('/showproduct', [IndustryController::class, 'show_product'])->name('indsustry.pro');
-    Route::get('/get-countries', [LocationController::class, 'getCountriesWithGovernements']);
+Route::get('/products', [IndustryController::class, 'index'])->name('indsustry.index');
+Route::get('/category', [IndustryController::class, 'show_cat'])->name('indsustry.cat');
+Route::get('/subcat', [IndustryController::class, 'show_sub_cat'])->name('indsustry.subcat');
+Route::get('/showproduct', [IndustryController::class, 'show_product'])->name('indsustry.pro');
+Route::get('/get-countries', [LocationController::class, 'getCountriesWithGovernements']);
 
-    Route::middleware('auth')->group(function () {
-        Route::get('/favorites', [FavoriteController::class, 'index'])->name('favorites.index');
-        Route::post('/favorites/toggle/{departmentId}', [FavoriteController::class, 'toggle'])->name('favorites.toggle');
-    });
+Route::middleware('auth')->group(function () {
+    Route::get('/favorites', [FavoriteController::class, 'index'])->name('favorites.index');
+    Route::post('/favorites/toggle/{departmentId}', [FavoriteController::class, 'toggle'])->name('favorites.toggle');
+});
+
+use App\Http\Controllers\Admin\DepartmentFieldController;
+
+Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::resource('departments.fields', DepartmentFieldController::class)->shallow();
+});
+
+use App\Http\Controllers\Admin\DepartmentController;
+
+Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::resource('departments', DepartmentController::class);
+});

@@ -1,10 +1,8 @@
 <div class="head_menu_container">
-    <?php $settings = App\Models\Settings::first();
-    $lang = config('app.locale');
-    if (auth()->check()) {
+    @php
+        $lang = config('app.locale');
         $user = auth()->user();
-    }
-    ?>
+    @endphp
     <header class="main-header" id="stickyHeader">
 
         <!-- Start::main-brand-header -->
@@ -181,82 +179,51 @@
                     </style>
                     @if (auth()->check())
                         <li class="d-flex align-items-center position-relative me-md-4 me-2 dropdown">
-                            <?php
-                            // جلب آخر رسالة للمستقبل للمستخدم
-                            $message = App\Models\Message::where('recipient_id', auth()->user()->id)
-                                ->latest()
-                                ->first();
-                            ?>
                             <span data-bs-toggle="dropdown" aria-expanded="false" style="color: #1a4388"
                                 class="dropdown-toggle avatar bg-white-1 border rounded-circle tx-15 border-white-2 me-2"
                                 style="border: none; margin: 0;">
                                 <i class="bi bi-chat">
-                                    @if (isset($message) && $message->created_at >= Carbon\Carbon::now()->subMinutes(10))
-                                        <span style="color:red">1</span> <!-- إشعار بوجود رسالة جديدة -->
+                                    @if (
+                                        $conversations->isNotEmpty() &&
+                                            $conversations->first()->latestMessage &&
+                                            $conversations->first()->latestMessage->created_at->gt(now()->subMinutes(10)))
+                                        <span style="color:red">1</span>
                                     @endif
                                 </i>
                             </span>
-
-                            <?php
-                            // جلب جميع المحادثات
-                            $sender = auth()->user();
-                            $conversations = App\Models\Conversation::where(function ($query) use ($sender) {
-                                $query->where('sender_id', $sender->id);
-                            })
-                                ->orWhere(function ($query) use ($sender) {
-                                    $query->where('recipient_id', $sender->id);
-                                })
-                                ->orderBy('created_at', 'desc')
-                                ->get(); // جلب جميع المحادثات بترتيب تنازلي
-                            ?>
-
                             <ul class="dropdown-menu dropdown-menu-end">
                                 @forelse ($conversations as $conversation)
-                                    <?php
-                                    // تحديد المرسل أو المستقبل
-                                    $id = auth()->user()->id == $conversation->sender_id ? $conversation->recipient->id : $conversation->sender->id;
-                                    $sender_me = App\Models\User::find($id);
-                                    $message = App\Models\Message::where('conversation_id', $conversation->id)->latest()->first();
-                                    ?>
-
+                                    @php
+                                        $otherUser =
+                                            $user->id == $conversation->sender_id
+                                                ? $conversation->recipient
+                                                : $conversation->sender;
+                                        $message = $conversation->latestMessage;
+                                    @endphp
                                     <li>
-                                        <a href="{{ route('web.send_message', $id) }}" class="dropdown-item">
-                                            <!-- Message Start -->
+                                        <a href="{{ route('web.send_message', $otherUser->id) }}"
+                                            class="dropdown-item">
                                             <div class="media d-flex align-items-center justify-content-between">
                                                 <div class="d-flex align-items-center">
-                                                    @if ($sender_me->image)
-                                                        <img src="{{ $sender_me->image_url }}" alt="User Avatar"
-                                                            width="auto" height="40px"
-                                                            class="img-size-50 mr-3 img-circle">
-                                                    @else
-                                                        <img src="{{ asset('storage/users/default_avatar.png') }}"
-                                                            alt="User Avatar" width="auto" height="40px"
-                                                            class="img-size-50 mr-3 img-circle">
-                                                    @endif
+                                                    <img src="{{ $otherUser->image_url ?? asset('storage/users/default_avatar.png') }}"
+                                                        alt="User Avatar" width="auto" height="40px"
+                                                        class="img-size-50 mr-3 img-circle">
                                                     <h6 class="dropdown-item-title mb-0">
-                                                        {{ $sender_me->first_name }}
+                                                        {{ $otherUser->first_name }}
                                                     </h6>
                                                 </div>
-
                                                 <div class="media-body m-2">
-                                                    <div class="media-body m-2">
-                                                        @if ($message)
-                                                            <p class="text-sm mt-3">
-                                                                {{ implode(' ', array_slice(explode(' ', $message->message), 0, 5)) }}
-                                                                @if (strlen($message->message) > 5)
-                                                                    ...
-                                                                @endif
-                                                            </p>
-                                                        @else
-                                                            <p class="text-sm mt-3 text-muted">
-                                                                لا توجد رسائل بعد.
-                                                            </p>
-                                                        @endif
-                                                    </div>
-
+                                                    @if ($message)
+                                                        <p class="text-sm mt-3">
+                                                            {{ Str::limit($message->message, 30) }}
+                                                        </p>
+                                                    @else
+                                                        <p class="text-sm mt-3 text-muted">
+                                                            لا توجد رسائل بعد.
+                                                        </p>
+                                                    @endif
                                                 </div>
                                             </div>
-                                            <!-- Message End -->
                                         </a>
                                     </li>
                                 @empty
@@ -271,15 +238,15 @@
 
                     @if (auth()->check())
                         <li class="d-flex align-items-center position-relative me-md-4 me-2 dropdown">
-                            <?php $notifications = auth()->user()->unreadNotifications; ?>
-
                             <span data-bs-toggle="dropdown" aria-expanded="false"
                                 class="dropdown-toggle avatar bg-white-1 border rounded-circle tx-15 border-white-2 me-2"
                                 style="border: none; margin: 0;">
-                                <i class="bi bi-alarm"><span
-                                        style="color:red">{{ $notifications->count() == 0 ? '' : $notifications->count() }}</span></i>
+                                <i class="bi bi-alarm">
+                                    @if ($notifications->count() > 0)
+                                        <span style="color:red">{{ $notifications->count() }}</span>
+                                    @endif
+                                </i>
                             </span>
-
                             <ul class="dropdown-menu dropdown-menu-end">
                                 @forelse ($notifications as $notification)
                                     <li>

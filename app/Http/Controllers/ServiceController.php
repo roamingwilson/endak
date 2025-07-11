@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\ProcessServiceImage;
+use App\Jobs\SendCommentNotification;
 use App\Models\Contracting;
 use App\Models\Department;
 use App\Models\FurnitureTransportationProduct;
@@ -144,16 +146,9 @@ class ServiceController extends Controller
             }
 
             foreach ($files as $file) {
-                $path = $file->store('services', [
-                    'disk' => 'public',
-                ]);
-
-                $image = new GeneralImage([
-                    'path' => $path,
-                ]);
-
-                // ✅ حفظ الصورة داخل الحلقة
-                $service->images()->save($image);
+                // Store the file temporarily and dispatch a job to process it.
+                $tempPath = $file->store('temp', 'public');
+                ProcessServiceImage::dispatch($service, $tempPath);
             }
         }
 
@@ -190,7 +185,8 @@ class ServiceController extends Controller
             case 'maintenance':
                 $user = auth()->user();
 
-                $maintenancess = Cache::remember('maintenance', 60, function () {
+                $page = request()->get('page', 1);
+                $maintenancess = Cache::remember('maintenance.page.' . $page, 3600, function () {
                     return Maintenance::where('maintenance_id', '!=', 0)->paginate();
                 });
                 return view('admin.main_department.maintenance.front_show', compact('departments', 'cities', 'maintenancess'));
@@ -198,7 +194,8 @@ class ServiceController extends Controller
             case 'spare parts':
                 $user = auth()->user();
 
-                $spare_parts = Cache::remember('spare_part', 60, function () {
+                $page = request()->get('page', 1);
+                $spare_parts = Cache::remember('spare_part.page.' . $page, 3600, function () {
                     return SpareParts::where('spare_part_id', '!=', 0)->paginate();
                 });
                 return view('admin.main_department.spare_part.front_show', compact('departments', 'cities', 'spare_parts'));
@@ -206,7 +203,8 @@ class ServiceController extends Controller
             case 'truks':
                 $user = auth()->user();
 
-                $van_truck = Cache::remember('van_truck', 60, function () {
+                $page = request()->get('page', 1);
+                $van_truck = Cache::remember('van_truck.page.' . $page, 3600, function () {
                     return VanTruck::where('vantruck_id', '!=', 0)->paginate();
                 });
 
@@ -233,7 +231,8 @@ class ServiceController extends Controller
             case 'contracting': //
                 $user = auth()->user();
 
-                $contractingss = Cache::remember('contracting', 60, function () {
+                $page = request()->get('page', 1);
+                $contractingss = Cache::remember('contracting.page.' . $page, 3600, function () {
                     return Contracting::where('contracting_id', '!=', 0)->paginate();
                 });
                 return view('admin.main_department.contracting.front_show', compact('departments', 'cities', 'contractingss'));
@@ -254,7 +253,8 @@ class ServiceController extends Controller
             case 'heavy equipment':
                 $user = auth()->user();
 
-                $heavy_equips = Cache::remember('heavy_equip', 60, function () {
+                $page = request()->get('page', 1);
+                $heavy_equips = Cache::remember('heavy_equip.page.' . $page, 3600, function () {
                     return HeavyEquipment::where('heavy_equip_id', '!=', 0)->paginate();
                 });
                 // dd($heavy_equips);
@@ -278,7 +278,7 @@ class ServiceController extends Controller
             $cities = Governements::where('country_id', 178)->get();
         }
 
-        $service = Services::where('id', $id)->latest()->first();
+        $service = Services::findOrFail($id);
 
         $date = [
             'service' => $service,
@@ -289,9 +289,6 @@ class ServiceController extends Controller
         }
         $user = auth()->user();
 
-        if (!$service) {
-            abort(404); // لو القسم مش موجود
-        }
 
         switch (strtolower($service->type)) { // نحول كل حاجة small letter عشان مفيش مشاكل كابتل وسمول
 
@@ -303,7 +300,8 @@ class ServiceController extends Controller
             case 'maintenance':
                 $user = auth()->user();
                 $departments = Department::where('type', 'maintenance');
-                $maintenancess = Cache::remember('maintenance', 60, function () {
+                $page = request()->get('page', 1);
+                $maintenancess = Cache::remember('maintenance.page.' . $page, 3600, function () {
                     return Maintenance::where('maintenance_id', '!=', 0)->paginate();
                 });
                 return view('admin.main_department.maintenance.edit_service', compact('service', 'cities', 'departments', 'maintenancess'));
@@ -311,7 +309,8 @@ class ServiceController extends Controller
             case 'spare parts':
                 $user = auth()->user();
 
-                $spare_parts = Cache::remember('spare_part', 60, function () {
+                $page = request()->get('page', 1);
+                $spare_parts = Cache::remember('spare_part.page.' . $page, 3600, function () {
                     return SpareParts::where('spare_part_id', '!=', 0)->paginate();
                 });
                 return view('admin.main_department.spare_part.edit_service', compact('service', 'cities', 'spare_parts'));
@@ -319,7 +318,8 @@ class ServiceController extends Controller
             case 'truks':
                 $user = auth()->user();
 
-                $van_truck = Cache::remember('van_truck', 60, function () {
+                $page = request()->get('page', 1);
+                $van_truck = Cache::remember('van_truck.page.' . $page, 3600, function () {
                     return VanTruck::where('vantruck_id', '!=', 0)->paginate();
                 });
 
@@ -346,7 +346,8 @@ class ServiceController extends Controller
             case 'contracting': //
                 $user = auth()->user();
 
-                $contractingss = Cache::remember('contracting', 60, function () {
+                $page = request()->get('page', 1);
+                $contractingss = Cache::remember('contracting.page.' . $page, 3600, function () {
                     return Contracting::where('contracting_id', '!=', 0)->paginate();
                 });
                 return view('admin.main_department.contracting.edit_service', compact('service', 'cities', 'contractingss'));
@@ -367,7 +368,8 @@ class ServiceController extends Controller
             case 'heavy equipment':
                 $user = auth()->user();
 
-                $heavy_equips = Cache::remember('heavy_equip', 60, function () {
+                $page = request()->get('page', 1);
+                $heavy_equips = Cache::remember('heavy_equip.page.' . $page, 3600, function () {
                     return HeavyEquipment::where('heavy_equip_id', '!=', 0)->paginate();
                 });
                 return view('admin.main_department.heavy_equip.edit_service', compact('service', 'cities', 'heavy_equips'));
@@ -386,7 +388,7 @@ class ServiceController extends Controller
 
         if (auth()->user()) {
 
-            $service = Services::where('id', $id)->latest()->first();
+            $service = Services::findOrFail($id);
             // dd($service);
             $form_city = Governements::where('id', $service->from_city)->first();
             $to_city = Governements::where('id', $service->to_city)->first();
@@ -399,9 +401,6 @@ class ServiceController extends Controller
 
         ];
 
-        if (!$service) {
-            abort(404); // لو القسم مش موجود
-        }
 
 
         switch (strtolower($service->type)) { // نحول كل حاجة small letter عشان مفيش مشاكل كابتل وسمول
@@ -415,7 +414,8 @@ class ServiceController extends Controller
             case 'maintenance':
                 $user = auth()->user();
                 $departments = Department::where('type', 'maintenance');
-                $maintenancess = Cache::remember('maintenance', 60, function () {
+                $page = request()->get('page', 1);
+                $maintenancess = Cache::remember('maintenance.page.' . $page, 3600, function () {
                     return Maintenance::where('maintenance_id', '!=', 0)->paginate();
                 });
                 return view('admin.main_department.maintenance.show_myservice', compact('service', 'form_city', 'to_city', 'departments', 'maintenancess'));
@@ -423,7 +423,8 @@ class ServiceController extends Controller
             case 'spare parts':
                 $user = auth()->user();
 
-                $spare_parts = Cache::remember('spare_part', 60, function () {
+                $page = request()->get('page', 1);
+                $spare_parts = Cache::remember('spare_part.page.' . $page, 3600, function () {
                     return SpareParts::where('spare_part_id', '!=', 0)->paginate();
                 });
 
@@ -432,7 +433,8 @@ class ServiceController extends Controller
             case 'truks':
                 $user = auth()->user();
 
-                $van_truck = Cache::remember('van_truck', 60, function () {
+                $page = request()->get('page', 1);
+                $van_truck = Cache::remember('van_truck.page.' . $page, 3600, function () {
                     return VanTruck::where('vantruck_id', '!=', 0)->paginate();
                 });
 
@@ -459,7 +461,8 @@ class ServiceController extends Controller
             case 'contracting': //
                 $user = auth()->user();
 
-                $contractingss = Cache::remember('contracting', 60, function () {
+                $page = request()->get('page', 1);
+                $contractingss = Cache::remember('contracting.page.' . $page, 3600, function () {
                     return Contracting::where('contracting_id', '!=', 0)->paginate();
                 });
                 return view('admin.main_department.contracting.show_myservice', compact('service', 'form_city', 'to_city', 'contractingss'));
@@ -480,7 +483,8 @@ class ServiceController extends Controller
             case 'heavy equipment':
                 $user = auth()->user();
 
-                $heavy_equips = Cache::remember('heavy_equip', 60, function () {
+                $page = request()->get('page', 1);
+                $heavy_equips = Cache::remember('heavy_equip.page.' . $page, 3600, function () {
                     return HeavyEquipment::where('heavy_equip_id', '!=', 0)->paginate();
                 });
 
@@ -617,22 +621,28 @@ class ServiceController extends Controller
             }
         }
 
-        if ($service->comments == true) {
-            $comments = $service->comments;
+        // Fix N+1 query issue by eager loading relationships.
+        // Also, delete comments in a more efficient way.
+        if ($service->comments()->exists()) {
+            $comments = $service->comments()->with('user', 'customer')->get();
 
             foreach ($comments as $comment) {
                 $provider = $comment->user;
                 $customer = $comment->customer;
 
-                $provider->notify(new CommentNotification([
-                    'id' => $comment->id,
-                    'title' => "قام $customer->fullname بتعديل أو حذف الخدمة",
-                    'body' => "قدم عرض جديد",
-                    'url' => route('notifications.index'),
-                ]));
-
-                $comment->delete(); // حذف التعليق هنا أيضاً
+                if ($provider && $customer) {
+                    $notificationData = [
+                        'id' => $comment->id,
+                        'title' => "قام $customer->fullname بتعديل أو حذف الخدمة",
+                        'body' => "قدم عرض جديد",
+                        'url' => route('notifications.index'),
+                    ];
+                    SendCommentNotification::dispatch($provider, $notificationData);
+                }
             }
+
+            // Delete all comments for the service in a single query after notifying.
+            $service->comments()->delete();
         }
 
         if ($service && $request->hasFile('images')) {
@@ -643,13 +653,9 @@ class ServiceController extends Controller
             }
 
             foreach ($files as $file) {
-                $path = $file->store('services', ['disk' => 'public']);
-
-                $image = new GeneralImage([
-                    'path' => $path,
-                ]);
-
-                $service->images()->save($image);
+                // Store the file temporarily and dispatch a job to process it.
+                $tempPath = $file->store('temp', 'public');
+                ProcessServiceImage::dispatch($service, $tempPath);
             }
         }
 

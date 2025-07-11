@@ -59,7 +59,12 @@ class GeneralCommentsController extends Controller
 
         // مزود الخدمة (المستخدم الحالي)
         $user = auth()->user();
-
+        $existingComment = GeneralComments::where('commentable_id', $validated['service_id'])
+            ->where('service_provider', $user->id)
+            ->first();
+        if ($existingComment) {
+            return redirect()->back()->with('error', 'لقد قمت بالفعل بتقديم عرض/تعليق على هذه الخدمة.');
+        }
         // إنشاء العرض
         $comment = new GeneralComments([
             'service_provider' => $user->id,
@@ -90,7 +95,8 @@ class GeneralCommentsController extends Controller
 
         return redirect()->route('home')->with('success', 'تم تقديم العرض بنجاح');
     }
-    public function index($id){
+    public function index($id)
+    {
         $comments = GeneralComments::where('customer_id', $id)
             ->with('commentable')->latest()->paginate(10);
         // ->paginate(5);
@@ -98,47 +104,43 @@ class GeneralCommentsController extends Controller
 
         $service = $comments->map(function ($comment) {
             return $comment->commentable;
-
         });
 
-return view('front_office.comments.my_offers', compact('comments' ,'service'));
+        return view('front_office.comments.my_offers', compact('comments', 'service'));
     }
     public function edit($id)
-{
-    $comment = GeneralComments::findOrFail($id);
+    {
+        $comment = GeneralComments::findOrFail($id);
 
-    // تحقق من أن المستخدم الحالي هو صاحب التعليق
-    if (auth()->id() !== $comment->service_provider) {
-        abort(403, 'Unauthorized action.');
+        // تحقق من أن المستخدم الحالي هو صاحب التعليق
+        if (auth()->id() !== $comment->service_provider) {
+            abort(403, 'Unauthorized action.');
+        }
+
+        return view('front_office.general_comments.edit', compact('comment'));
     }
-
-    return view('front_office.general_comments.edit', compact('comment'));
-}
-public function update(Request $request, $id)
-{
-    $comment = GeneralComments::findOrFail($id);
-    $comment->update([
-        'price' => $request->price,
-        'notes' => $request->notes,
-    ]);
-    return redirect()->route('home')->with('success', 'تم التحديث بنجاح');
-}
-public function destroy($id)
-{
-    $comment = GeneralComments::findOrFail($id);
-
-    // تحقق من أن المستخدم هو نفس الشخص الذي قام بإنشاء التعليق
-    if (auth()->id() !== $comment->service_provider) {
-        abort(403, 'Unauthorized action.');
+    public function update(Request $request, $id)
+    {
+        $comment = GeneralComments::findOrFail($id);
+        $comment->update([
+            'price' => $request->price,
+            'notes' => $request->notes,
+        ]);
+        return redirect()->route('home')->with('success', 'تم التحديث بنجاح');
     }
+    public function destroy($id)
+    {
+        $comment = GeneralComments::findOrFail($id);
 
-    // حذف التعليق
-    $comment->delete();
+        // تحقق من أن المستخدم هو نفس الشخص الذي قام بإنشاء التعليق
+        if (auth()->id() !== $comment->service_provider) {
+            abort(403, 'Unauthorized action.');
+        }
 
-    // إرجاع المستخدم إلى الصفحة السابقة مع رسالة نجاح
-    return redirect()->route('home')->with('success', 'Comment deleted successfully.');
-}
+        // حذف التعليق
+        $comment->delete();
 
-
-
+        // إرجاع المستخدم إلى الصفحة السابقة مع رسالة نجاح
+        return redirect()->route('home')->with('success', 'Comment deleted successfully.');
+    }
 }

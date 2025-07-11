@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\DB;
 
 class Department extends Model
 {
-    use HasFactory ;
+    use HasFactory;
 
     protected $guarded = ['id'];
 
@@ -30,9 +30,9 @@ class Department extends Model
         return $this->morphMany(UserDepartment::class, 'commentable');
     }
     public function favoriteDepartments()
-{
-    return $this->belongsToMany(User::class, 'favorites')->withTimestamps();
-}
+    {
+        return $this->belongsToMany(User::class, 'favorites')->withTimestamps();
+    }
     // public function departmentNameParent()
     // {
     //     $parent_id = $this->id;
@@ -59,7 +59,7 @@ class Department extends Model
 
     public function getImageUrlAttribute()
     {
-        return asset( 'storage/' . $this->image);
+        return asset('storage/' . $this->image);
     }
     public function topics()
     {
@@ -69,18 +69,26 @@ class Department extends Model
     {
         return $this->belongsTo(Category::class, 'second_category_id');
     }
-    public function inputs(){
-        return $this->belongsToMany(Inputs::class , 'inputs_departments');
+    public function inputs()
+    {
+        return $this->belongsToMany(Inputs::class, 'inputs_departments');
     }
-    public function posts(){
-        return $this->hasMany(Post::class , 'department_id', 'id' );
+    public function posts()
+    {
+        return $this->hasMany(Post::class, 'department_id', 'id');
     }
 
-    public function products(){
-        return $this->belongsToMany(Product::class , 'products_departments' );
+    public function products()
+    {
+        return $this->belongsToMany(Product::class, 'products_departments');
     }
-    public function serv_depart(){
+    public function serv_depart()
+    {
         return $this->belongsTo(Services::class, 'department_id');
     }
 
+    public function fields()
+    {
+        return $this->hasMany(DepartmentField::class);
+    }
 }

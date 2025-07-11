@@ -16,7 +16,7 @@ return [
     */
 
     'name' => env('APP_NAME', 'Laravel'),
-    
+
     'developer_name' => env('DEVELOPER_NAME', 'Eslam Badawy'),
     'developer_link' => env('DEVELOPER_LINK', 'https://mostaql.com/u/Eslamba106'),
 
@@ -172,6 +172,7 @@ return [
         Illuminate\Encryption\EncryptionServiceProvider::class,
         Illuminate\Filesystem\FilesystemServiceProvider::class,
         Illuminate\Foundation\Providers\FoundationServiceProvider::class,
+        App\Providers\ViewServiceProvider::class,
         Illuminate\Hashing\HashServiceProvider::class,
         Illuminate\Mail\MailServiceProvider::class,
         Illuminate\Notifications\NotificationServiceProvider::class,
