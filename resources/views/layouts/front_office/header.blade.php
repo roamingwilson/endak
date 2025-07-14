@@ -147,7 +147,30 @@
                             <span class="avatar bg-white-1 border rounded-circle tx-15 border-white-2 me-2">
                                 <a href="{{ route('logout') }}" style="color: black;"><i
                                         class="bi bi-box-arrow-in-right"></i>
-                                </a>
+            @if (auth()->check())
+    <li class="d-flex align-items-center position-relative me-md-4 me-2 dropdown">
+        <span data-bs-toggle="dropdown" aria-expanded="false" style="color: #1a4388"
+            class="dropdown-toggle avatar bg-white-1 border rounded-circle tx-15 border-white-2 me-2"
+            style="border: none; margin: 0;">
+            <i class="bi bi-chat">
+                @if (
+                    $conversations->isNotEmpty() &&
+                        $conversations->first()->latestMessage &&
+                        $conversations->first()->latestMessage->created_at->gt(now()->subMinutes(10)))
+                    <span style="color:red">1</span>
+                @endif
+            </i>
+        </span>
+        <ul class="dropdown-menu dropdown-menu-end">
+            @forelse ($conversations as $conversation)
+                ...
+            @empty
+                <li>لا توجد رسائل</li>
+            @endforelse
+            ...
+        </ul>
+    </li>
+@endif                    </a>
 
                             </span>
                             <div class="d-none d-md-block">

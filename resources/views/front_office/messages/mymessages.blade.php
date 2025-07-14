@@ -919,12 +919,12 @@
 @endsection
 
 @section('content')
-@php
-    $current_url = url()->current();
-    $urlParts = explode('/', $current_url);
-    $recipientId = (int) end($urlParts);
-    $recipient = App\Models\User::find($recipientId);
-@endphp
+        @php
+            $current_url = url()->current();
+            $urlParts = explode('/', $current_url);
+            $recipientId = (int) end($urlParts);
+            $recipient = App\Models\User::find($recipientId);
+        @endphp
 
 <div class="chat-container">
     <div class="chat-layout">
@@ -985,25 +985,25 @@
 
         <!-- Chat Area -->
         <div class="chat-area">
-            <div class="chat-header">
+        <div class="chat-header">
                 <button class="mobile-sidebar-toggle" id="mobileSidebarToggle" onclick="toggleSidebar()">
                     <i class="fas fa-bars"></i>
                 </button>
-                <img src="{{ asset('storage/' . ($recipient->image ?? 'user.png')) }}"
+                    <img src="{{ asset('storage/' . ($recipient->image ?? 'user.png')) }}"
                      alt="{{ $recipient->first_name }}"
-                     class="message-avatar"
-                     onerror="this.onerror=null;this.src='{{ asset('storage/users/user.png') }}';">
+                         class="message-avatar"
+                         onerror="this.onerror=null;this.src='{{ asset('storage/users/user.png') }}';">
 
                 <div class="chat-header-info">
                     <h5 style="margin: 0;">{{ $recipient->first_name }} {{ $recipient->last_name }}</h5>
                     <small class="text-muted">
                         @if($recipient->isOnline())
                             <span class="badge badge-success">Online</span>
-                        @else
+            @else
                             <span class="badge badge-secondary">Offline</span>
-                        @endif
+            @endif
                     </small>
-                </div>
+        </div>
 
                 <div class="chat-header-actions">
                     <button class="btn btn-sm btn-outline-secondary">
@@ -1017,11 +1017,11 @@
 
             <div class="chat-content" id="chatContent">
                 <ul class="messages-list" id="messagesList">
-                    @foreach ($messages as $message)
-                        @php
-                            $isCurrentUser = $message->sender_id == auth()->id();
+                @foreach ($messages as $message)
+                    @php
+                        $isCurrentUser = $message->sender_id == auth()->id();
                             $sender = $message->sender;
-                        @endphp
+                    @endphp
                         <li class="message-item {{ $isCurrentUser ? 'sent' : 'received' }}" data-message-id="{{ $message->id }}">
                             <div class="message-content">
                                 @if($isCurrentUser)
@@ -1064,16 +1064,16 @@
                                             <i class="fas fa-check" title="Sent"></i>
                                         @endif
                                     @endif
-                                </div>
                             </div>
-                        </li>
-                    @endforeach
-                </ul>
-            </div>
+                        </div>
+                    </li>
+                @endforeach
+            </ul>
+        </div>
 
             <form action="{{ route('messages.store') }}" method="post" class="chat-form" enctype="multipart/form-data" id="messageForm">
-                @csrf
-                <input type="hidden" name="recipient_id" value="{{ $recipientId }}">
+            @csrf
+            <input type="hidden" name="recipient_id" value="{{ $recipientId }}">
                 <input type="hidden" name="voice_note_data" id="voiceNoteInput">
 
                 <div class="message-input-container">
@@ -1123,8 +1123,8 @@
                     <button type="submit" id="sendBtn" class="btn btn-primary" style="border-radius: 50%; width: 50px; height: 50px;">
                         <i class="fas fa-paper-plane"></i>
                     </button>
-                </div>
-            </form>
+            </div>
+        </form>
         </div>
     </div>
 </div>

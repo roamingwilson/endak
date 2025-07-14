@@ -69,7 +69,7 @@ if (!function_exists('unique_slug')) {
         }
         return $newSlug;
     }
-    
+
 }
 
 if (!function_exists('no_data')) {
@@ -120,6 +120,45 @@ if (!function_exists('__checked_selected_helper')) {
             echo $result;
 
         return $result;
+    }
+}
+
+if (!function_exists('sendWhatsAppMessage')) {
+    function sendWhatsAppMessage($to, $body)
+    {
+        $params = [
+            'token' => '0wu52jmdvqamtsiq',
+            'to' => '+201065686522',
+            'body' => $body
+        ];
+        $curl = curl_init();
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => "https://api.ultramsg.com/instance132007/messages/chat",
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => "",
+            CURLOPT_MAXREDIRS => 10,
+            CURLOPT_TIMEOUT => 30,
+            CURLOPT_SSL_VERIFYHOST => 0,
+            CURLOPT_SSL_VERIFYPEER => 0,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => "POST",
+            CURLOPT_POSTFIELDS => http_build_query($params),
+            CURLOPT_HTTPHEADER => array(
+                "content-type: application/x-www-form-urlencoded"
+            ),
+        ));
+
+        $response = curl_exec($curl);
+        $err = curl_error($curl);
+
+        curl_close($curl);
+
+        if ($err) {
+            // يمكنك تسجيل الخطأ أو التعامل معه حسب الحاجة
+            return false;
+        } else {
+            return $response;
+        }
     }
 }
 

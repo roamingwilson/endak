@@ -15,14 +15,14 @@
             <form wire:submit.prevent="verifyOtp">
                 <div class="form-group">
                     <label for="otp">{{ __('auth.OTP') }}</label>
-                    <input type="text" class="form-control" wire:model.lazy="otp">
+                    <input type="text" class="form-control" wire:model.lazy="">
                     @error('otp')
                         <span class="error text-danger">{{ $message }}</span>
                     @enderror
                 </div>
                 <div class="form-group">
                     <label for="newPassword">{{ __('auth.New_Password') }}</label>
-                    <input type="password" class="form-control" wire:model.lazy="newPassword">
+                    <input name="newPassword" type="password" class="form-control" wire:model.lazy="newPassword">
                     @error('newPassword')
                         <span class="error text-danger">{{ $message }}</span>
                     @enderror

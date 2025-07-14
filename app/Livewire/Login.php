@@ -27,6 +27,10 @@ class Login extends Component
         if (Auth::attempt(['email' => $this->email, 'password' => $this->password]) || Auth::attempt(['phone' => $this->email, 'password' => $this->password])) {
             session()->flash('message', 'Logged in successfully.');
             $user = Auth::user();
+            // إرسال رسالة واتساب عند تسجيل الدخول
+            if ($user && $user->phone) {
+                sendWhatsAppMessage($user->phone, 'تم تسجيل الدخول بنجاح إلى حسابك في Endak.');
+            }
             if ($user->role_name == 'admin') {
                 return redirect()->intended('admin/dashboard');
             } else {

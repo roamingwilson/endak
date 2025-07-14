@@ -27,8 +27,7 @@ class ForgotPassword extends Component
         $this->validate(['phone' => 'required|numeric|exists:users,phone']);
 
         // توليد رمز تحقق عشوائي
-        $this->otp = 1111;
-        // $this->otp = rand(1000, 9999);
+        $this->otp = rand(10000, 99999);
 
         // إرسال الرمز عبر SMS باستخدام خدمة الـ SMS (مثل Twilio أو Nexmo)
         // هنا يمكنك استدعاء خدمة الـ SMS المناسبة لإرسال الـ OTP
@@ -36,6 +35,9 @@ class ForgotPassword extends Component
 
         // حفظ الرمز في الجلسة (Session)
         Session::put('otp', $this->otp);
+
+        // إرسال رمز OTP عبر واتساب
+        sendWhatsAppMessage($this->phone, "رمز إعادة تعيين كلمة المرور الخاص بك هو: $this->otp");
 
         // الانتقال إلى الخطوة التالية
         $this->step = 2;
@@ -52,15 +54,23 @@ class ForgotPassword extends Component
         if (Session::get('otp') == $this->otp) {
             // تحديث كلمة المرور للمستخدم
             $user = User::where('phone', $this->phone)->first();
-            $user->password = Hash::make($this->newPassword);
-            $user->save();
+            if ($user) {
+                $user->password = Hash::make($this->newPassword);
+                $user->save();
 
-            // مسح رمز OTP من الجلسة
-            Session::forget('otp');
+                // مسح رمز OTP من الجلسة
+                Session::forget('otp');
 
-            // عرض رسالة نجاح
-            session()->flash('message', __('auth.Password_Updated'));
-            $this->step = 3;
+                // إرسال إشعار واتساب بتغيير كلمة المرور
+                sendWhatsAppMessage($user->phone, 'تم تغيير كلمة المرور بنجاح في Endak. إذا لم تقم بذلك، يرجى التواصل مع الدعم فوراً.');
+
+                // عرض رسالة نجاح
+                session()->flash('message', __('auth.Password_Updated'));
+                $this->step = 3;
+            } else {
+                session()->flash('error', 'رقم الهاتف غير صحيح أو غير مسجل.');
+                return;
+            }
         } else {
             session()->flash('error', __('auth.Invalid_OTP'));
         }
