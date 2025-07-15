@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 if (!function_exists('clean_html')) {
@@ -124,41 +125,43 @@ if (!function_exists('__checked_selected_helper')) {
 }
 
 if (!function_exists('sendWhatsAppMessage')) {
-    function sendWhatsAppMessage($to, $body)
+    function sendWhatsAppMessage($to, $body, $fromNumber = null, $token = null, $instance_id = null)
     {
+        // dd($instance_id);
+        $token = trim($token ?? '0wu52jmdvqamtsiq');
+        $instance = trim($instance_id ?? '132007');
         $params = [
-            'token' => '0wu52jmdvqamtsiq',
-            'to' => '+201065686522',
+            'token' => $token,
+            'to' => $to,
             'body' => $body
         ];
+        if ($fromNumber) {
+            $params['from'] = $fromNumber;
+        }
+        $url = "https://api.ultramsg.com/instance{$instance}/messages/chat";
+        Log::info('WhatsApp Params: ' . json_encode(['url' => $url, 'params' => $params]));
         $curl = curl_init();
         curl_setopt_array($curl, array(
-            CURLOPT_URL => "https://api.ultramsg.com/instance132007/messages/chat",
+            CURLOPT_URL => $url,
             CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_ENCODING => "",
-            CURLOPT_MAXREDIRS => 10,
-            CURLOPT_TIMEOUT => 30,
+            CURLOPT_POST => true,
+            CURLOPT_POSTFIELDS => http_build_query($params),
+            CURLOPT_HTTPHEADER => array("content-type: application/x-www-form-urlencoded"),
             CURLOPT_SSL_VERIFYHOST => 0,
             CURLOPT_SSL_VERIFYPEER => 0,
-            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-            CURLOPT_CUSTOMREQUEST => "POST",
-            CURLOPT_POSTFIELDS => http_build_query($params),
-            CURLOPT_HTTPHEADER => array(
-                "content-type: application/x-www-form-urlencoded"
-            ),
+            CURLOPT_TIMEOUT => 30,
         ));
-
         $response = curl_exec($curl);
         $err = curl_error($curl);
-
         curl_close($curl);
-
+        Log::info('WhatsApp API response: ' . $response);
         if ($err) {
-            // يمكنك تسجيل الخطأ أو التعامل معه حسب الحاجة
+            Log::error('WhatsApp CURL error: ' . $err);
             return false;
-        } else {
-            return $response;
         }
+        return $response;
     }
 }
+
+
 

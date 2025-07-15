@@ -29,7 +29,10 @@ class Login extends Component
             $user = Auth::user();
             // إرسال رسالة واتساب عند تسجيل الدخول
             if ($user && $user->phone) {
-                sendWhatsAppMessage($user->phone, 'تم تسجيل الدخول بنجاح إلى حسابك في Endak.');
+                $sender = \App\Models\WhatsappSender::first();
+                if ($sender) {
+                    sendWhatsAppMessage($user->phone, 'تم تسجيل الدخول بنجاح إلى حسابك في Endak.', $sender->number, $sender->token, $sender->instance_id);
+                }
             }
             if ($user->role_name == 'admin') {
                 return redirect()->intended('admin/dashboard');

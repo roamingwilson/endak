@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Jobs\ProcessServiceImage;
 use App\Jobs\SendCommentNotification;
+use App\Jobs\SendWhatsappMessageJob;
 use App\Models\Contracting;
 use App\Models\Department;
 use App\Models\FurnitureTransportationProduct;
@@ -117,6 +118,36 @@ class ServiceController extends Controller
 
 
         $service = Services::create($data);
+
+        // إرسال رسالة واتساب تلقائياً لكل أرقام الاستقبال الخاصة بنفس القسم
+        if ($service) {
+            $department = Department::find($service->department_id);
+            $departmentName = $department ? $department->name_ar : '';
+            // جلب اسم المدينة
+            $cityName = 'مكة'; // افتراضي
+            if ($service->city) {
+                $cityName = $service->city;
+            } elseif ($service->from_city) {
+                $city = \App\Models\Governements::find($service->from_city);
+                $cityName = $city ? $city->name_ar : 'مكة';
+            }
+            $message = "مرحبا يوجد عميل يحتاج خدمة خاصة بقسم ($departmentName) علي موقع endak.net في مدينة $cityName , قدم عرض الان";
+            // جلب أرقام الإرسال المرتبطة بالقسم عبر الجدول الوسيط
+            $senders = \App\Models\WhatsappSender::whereHas('departments', function($q) use ($service) {
+                $q->where('departments.id', $service->department_id);
+            })->get();
+            $recipients = \App\Models\WhatsappRecipients::where('department_id', $service->department_id)->pluck('number')->toArray();
+            $senderCount = $senders->count();
+            $i = 0;
+            foreach ($recipients as $number) {
+                if ($senderCount > 0) {
+                    $sender = $senders[$i % $senderCount];
+                    SendWhatsappMessageJob::dispatch($number, $message, $sender->number, $sender->token, $sender->instance_id)
+                        ->delay(now()->addSeconds(rand(1, 10)));
+                    $i++;
+                }
+            }
+        }
 
         if (strtolower($service->type) == 'furniture transport' && $request->has('selected_products')) {
             $quantities = $request->quantities;

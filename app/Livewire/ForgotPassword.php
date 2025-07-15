@@ -37,7 +37,10 @@ class ForgotPassword extends Component
         Session::put('otp', $this->otp);
 
         // إرسال رمز OTP عبر واتساب
-        sendWhatsAppMessage($this->phone, "رمز إعادة تعيين كلمة المرور الخاص بك هو: $this->otp");
+        $sender = \App\Models\WhatsappSender::first();
+        if ($sender) {
+            sendWhatsAppMessage($this->phone, "رمز إعادة تعيين كلمة المرور الخاص بك هو: $this->otp", $sender->number, $sender->token, $sender->instance_id);
+        }
 
         // الانتقال إلى الخطوة التالية
         $this->step = 2;
@@ -62,7 +65,10 @@ class ForgotPassword extends Component
                 Session::forget('otp');
 
                 // إرسال إشعار واتساب بتغيير كلمة المرور
-                sendWhatsAppMessage($user->phone, 'تم تغيير كلمة المرور بنجاح في Endak. إذا لم تقم بذلك، يرجى التواصل مع الدعم فوراً.');
+                $sender = \App\Models\WhatsappSender::first();
+                if ($sender) {
+                    sendWhatsAppMessage($user->phone, 'تم تغيير كلمة المرور بنجاح في Endak. إذا لم تقم بذلك، يرجى التواصل مع الدعم فوراً.', $sender->number, $sender->token, $sender->instance_id);
+                }
 
                 // عرض رسالة نجاح
                 session()->flash('message', __('auth.Password_Updated'));

@@ -357,3 +357,22 @@ Route::post('orders/bulk-action', [ProductOrderController::class, 'bulkAction'])
 
 
 Route::get('/admin/service/orders', [PostController::class, 'showOrdersForservice'])->name('admin.service.order');
+
+// Whatsapp Senders
+Route::group(['prefix' => 'whatsapp-senders'], function () {
+    Route::get('/create', [\App\Http\Controllers\Admin\WhatsappSenderController::class, 'create'])->name('admin.whatsapp_senders.create');
+    Route::post('/store', [\App\Http\Controllers\Admin\WhatsappSenderController::class, 'store'])->name('admin.whatsapp_senders.store');
+    Route::get('/edit/{id}', [\App\Http\Controllers\Admin\WhatsappSenderController::class, 'edit'])->name('admin.whatsapp_senders.edit');
+    Route::post('/update/{id}', [\App\Http\Controllers\Admin\WhatsappSenderController::class, 'update'])->name('admin.whatsapp_senders.update');
+    Route::post('/delete/{id}', [\App\Http\Controllers\Admin\WhatsappSenderController::class, 'destroy'])->name('admin.whatsapp_senders.delete');
+});
+
+// Whatsapp Recipients
+Route::group(['prefix' => 'whatsapp-recipients'], function () {
+    Route::get('/create', [\App\Http\Controllers\Admin\WhatsappRecipientController::class, 'create'])->name('admin.whatsapp_recipients.create');
+    Route::post('/store', [\App\Http\Controllers\Admin\WhatsappRecipientController::class, 'store'])->name('admin.whatsapp_recipients.store');
+    Route::get('/edit/{id}', [\App\Http\Controllers\Admin\WhatsappRecipientController::class, 'edit'])->name('admin.whatsapp_recipients.edit');
+    Route::post('/update/{id}', [\App\Http\Controllers\Admin\WhatsappRecipientController::class, 'update'])->name('admin.whatsapp_recipients.update');
+    Route::post('/delete/{id}', [\App\Http\Controllers\Admin\WhatsappRecipientController::class, 'destroy'])->name('admin.whatsapp_recipients.delete');
+});
+Route::post('/whatsapp-recipients/send-messages', [\App\Http\Controllers\Admin\WhatsappRecipientController::class, 'sendMessages'])->name('admin.whatsapp_recipients.send_messages');

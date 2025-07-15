@@ -942,6 +942,29 @@ $lang = config('app.locale');
 
 
                     </li>
+                    <li class="nav-item has-treeview">
+                        <a href="#" class="nav-link {{ request()->is('admin/whatsapp-senders*') || request()->is('admin/whatsapp-recipients*') ? 'active' : '' }}">
+                            <i class="nav-icon fab fa-whatsapp"></i>
+                            <p>
+                                إدارة أرقام الواتساب
+                                <i class="right fas fa-angle-left"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a href="{{ route('admin.whatsapp_senders.create') }}" class="nav-link {{ request()->is('admin/whatsapp-senders*') ? 'active' : '' }}">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>أرقام الإرسال</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('admin.whatsapp_recipients.create') }}" class="nav-link {{ request()->is('admin/whatsapp-recipients*') ? 'active' : '' }}">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>أرقام الاستقبال</p>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
 
                 @can('Admin_Pages')
                     <li class="nav-item has-treeview">
@@ -1121,3 +1144,4 @@ $lang = config('app.locale');
     </div>
     <!-- /.sidebar -->
 </aside>
+
