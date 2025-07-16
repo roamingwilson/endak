@@ -108,12 +108,5 @@ class UserManagementController extends Controller
         return view('admin.users.message' , compact('conversations'));
     }
 
-    public function showAlt($id){
-        $userAlt = User::with(['countryObj', 'governementObj'])->findOrFail($id);
-        $conversations =[];
-        $sentConversations = Conversation::where('sender_id', $id)->get();
-        $receivedConversations = Conversation::where('recipient_id', $id)->get();
-        $conversations = $sentConversations->merge($receivedConversations);
-        return view('admin.users.show_alt', compact('userAlt', 'conversations'));
-    }
+
 }

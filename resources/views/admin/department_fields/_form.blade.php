@@ -20,6 +20,7 @@
         <option value="time" @selected(old('name', $field->name ?? '') == 'time')>time</option>
         <option value="date" @selected(old('name', $field->name ?? '') == 'date')>date</option>
         <option value="day" @selected(old('name', $field->name ?? '') == 'day')>day</option>
+        <option value="smart" @selected(old('name', $field->name ?? '') == 'smart')>smartcheckBox</option>
         <option value="notes" @selected(old('name', $field->name ?? '') == 'notes')>notes</option>
         <option value="quantity" @selected(old('name', $field->name ?? '') == 'quantity')>quantity</option>
     </select>
