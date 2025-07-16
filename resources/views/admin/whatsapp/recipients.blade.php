@@ -21,6 +21,14 @@
             </button>
         @endif
     </form>
+    <form action="{{ route('admin.whatsapp_recipients.import') }}" method="POST" enctype="multipart/form-data" class="mb-3">
+        @csrf
+        <div class="form-group">
+            <label>رفع ملف إكسل للأرقام المستلمة</label>
+            <input type="file" name="excel_file" class="form-control" accept=".xlsx,.xls" required>
+        </div>
+        <button type="submit" class="btn btn-success">استيراد الأرقام</button>
+    </form>
     <form method="POST" action="{{ route('admin.whatsapp_recipients.store') }}">
         @csrf
         <div class="form-group">

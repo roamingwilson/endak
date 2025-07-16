@@ -30,6 +30,8 @@
     </style>
 @endsection
 @section('content')
+
+
     <?php $lang = config('app.locale'); ?>
     <div class="blog-post-page-header bg-dark-blue  py-5">
         <div class="container py-3">
@@ -48,27 +50,27 @@
                 <thead>
                     <tr>
                         <td class="width30">{{ __("user.first_name") }}</td>
-                        <td>{{ $user->first_name ?? '#' }}</td>
+                        <td>{{ $userAlt->first_name ?? '#' }}</td>
                     </tr>
                     <tr>
                         <td class="width30">{{ __('user.last_name') }}</td>
-                        <td>{{ $user->last_name ?? '#' }}</td>
+                        <td>{{ $userAlt->last_name ?? '#' }}</td>
                     </tr>
                     <tr>
                         <td class="width30">{{ __('user.email') }}</td>
-                        <td>{{ $user->email ?? '#' }}</td>
+                        <td>{{ $userAlt->email ?? '#' }}</td>
                     </tr>
                     <tr>
                         <td class="width30">{{ __("user.phone") }}</td>
-                        <td>{{ $user->phone ?? '#' }}</td>
+                        <td>{{ $userAlt->phone ?? '#' }}</td>
                     </tr>
                     <tr>
                         <td class="width30">{{ __("user.role_name") }}</td>
-                        <td>{{ $user->role_name ?? '#' }}</td>
+                        <td>{{ $userAlt->role_name ?? '#' }}</td>
                     </tr>
                     <tr>
                         <td class="width30">{{ __("user.status") }}</td>
-                        <td>{{ ($user->status == 1) ? 'active' : "inactive" }}</td>
+                        <td>{{ ($userAlt->status == 1) ? 'active' : "inactive" }}</td>
                     </tr>
 
                     <tr>
@@ -77,13 +79,13 @@
                             <div class="stars-card d-flex align-items-center ">
                                 @php
                                     $i = 5;
-    
-                                    $rate = $user->rates();
+
+                                    $rate = $userAlt->rates();
                                 @endphp
-                                @if ($user->role_id == 3)
+                                @if ($userAlt->role_id == 3)
                                     <div class="stars-card d-flex align-items-center ">
-    
-    
+
+
                                         @while (--$i >= 5 - $rate)
                                             <i data-feather="star" width="20" height="20"
                                                 class="active"></i>
@@ -94,21 +96,29 @@
                                         @endwhile
                                         <span
                                             class="badge badge-primary ml-10 bg-primary">{{ $rate }}</span>
-    
+
                                     </div>
                                 @endif
                             </div>
-    
+
                         </div></td>
                     </tr>
-                
-                 
+
+                    <tr>
+                        <td class="width30">{{ __('user.country') }}</td>
+                        <td>{{ $userAlt->countryObj?->name_ar ?? '-' }}</td>
+                    </tr>
+                    <tr>
+                        <td class="width30">{{ __('user.governement') }}</td>
+                        <td>{{ $userAlt->governementObj?->name_ar ?? '-' }}</td>
+                    </tr>
+
                     <tr>
                         <td class="width30">{{ __("user.image") }}</td>
                         <td>
                             <div class="image" >
-                                <img width="100" height="100" src="{{ $user->image_url ?? "" }}" alt="Not" class="custom_img">
-                                
+                                <img width="100" height="100" src="{{ $userAlt->image_url ?? "" }}" alt="Not" class="custom_img">
+
                             </div>
                         </td>
                     </tr>
@@ -116,17 +126,17 @@
                         <td class="width30">{{ __("user.conversations") }}</td>
                         <td>
                         @forelse ($conversations as $conversation)
-                            <a href="{{ route('show_user_conversation' , $user->id) }}">
-                                {{ ($conversation->sender_id == $user->id) ? __("user.conversations_with"). $conversation->recipient->first_name . ' ' .$conversation->recipient->last_name
+                            <a href="{{ route('show_user_conversation' , $userAlt->id) }}">
+                                {{ ($conversation->sender_id == $userAlt->id) ? __("user.conversations_with"). $conversation->recipient->first_name . ' ' .$conversation->recipient->last_name
                             :  __("user.conversations_with") . $conversation->sender->first_name . ' ' .$conversation->sender->last_name
                             }}
                             </a><br>
                         @empty
-                            
+
                         @endforelse
                     </td>
                     </tr>
-              
+
 
                 </thead>
             </table>

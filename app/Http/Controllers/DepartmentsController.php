@@ -18,10 +18,55 @@ class DepartmentsController extends Controller
     public function show($id)
     {
         $user = auth()->user();
-        $department = Department::findOrFail($id);
-        $services = \App\Models\Post::where('department_id', $department->id)->paginate();
-        // أرسل دومًا المتغيرات department و services
-        return view('front_office.departments.show', compact('department', 'services'));
+        $department =  Department::findOrFail($id);
+        if ($department->department_id == 0) {
+            $main = $department;
+            $services = Post::where('department_id', $main->id)->paginate();
+            $sub_departments = $main->sub_Departments;
+            $products = $main->products;
+            $inputs = $main->inputs;
+            if(isset($products) && isset($inputs) && $products->count() > 0 && $inputs->count() > 0) {
+                return view('front_office.departments.show', compact('main', 'services' , 'products' , 'inputs'));
+                // return view('front_office.main_departments.show_products_inputs', compact('main', 'services' , 'products' , 'inputs'));
+            }
+            // if (count($services) > 0) {
+            //     return view('admin.main_department.general.show', compact('main', 'services'));
+            // } elseif (count($sub_departments) > 0) {
+            //     return view('admin.main_department.general.show_sub_departments', compact('main', 'sub_departments'));
+            // } elseif (count($products) > 0) {
+            // }
+        }
+        if ($department->department_id != 0) {
+            $sub = $department;
+            $main = Department::findOrFail($department->department_id);
+            $services = Post::where('department_id', $sub->id)->paginate();
+            $sub_departments = $sub->sub_Departments;
+            $products = $sub->products;
+            $inputs = $sub->inputs;
+            if (count($sub_departments) > 0) {
+                return view('admin.main_department.general.show_sub_departments', compact('main', 'sub_departments'));
+            }
+            // elseif (count($services) > 0) {
+            //     return view('admin.main_department.general.show', compact('main', 'services'));
+            // }
+
+            elseif ((count($products) > 0 && count($inputs) > 0)  ) {
+                return view('admin.main_department.general.show_products_inputs', compact('main', 'products' ,'inputs', 'sub' ,'services' ));
+            } elseif (count($products) > 0 && count($inputs) == 0) {
+                return view('admin.main_department.general.show_products', compact('main', 'products' , 'sub'));
+            } elseif (count($products) == 0 && count($inputs) > 0) {
+
+            }
+        }
+        // if (isset($user) && $user->role_id == 1) {
+        //     return view('admin.main_department.ads.show', compact('main', 'services'));
+        // } elseif (isset($user) && $user->role_id == 3) {
+        //     $main = Ads::first();
+        //     $services = AdsService::paginate();
+        //     return view('admin.main_department.ads.show', compact('main', 'services'));
+        // } else {
+        //     return view('admin.main_department.ads.show', compact('main', 'services'));
+        // }
     }
     // public function show($id, Request $request)
     // {

@@ -8,6 +8,8 @@ use App\Models\WhatsappRecipients;
 use Illuminate\Http\Request;
 use App\Jobs\SendWhatsappMessageJob;
 use App\Models\MessageTemplate;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\WhatsappRecipientsImport;
 
 class WhatsappRecipientController extends Controller
 {
@@ -97,5 +99,16 @@ class WhatsappRecipientController extends Controller
         }
 
         return redirect()->back()->with('success', 'تم إرسال الرسائل بنجاح');
+    }
+
+    public function import(Request $request)
+    {
+        $request->validate([
+            'excel_file' => 'required|file|mimes:xlsx,xls'
+        ]);
+
+        Excel::import(new \App\Imports\WhatsappRecipientsImport, $request->file('excel_file'));
+
+        return redirect()->back()->with('success', 'تم استيراد الأرقام بنجاح');
     }
 }

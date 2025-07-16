@@ -28,7 +28,7 @@ class UserManagementController extends Controller
             $data = ['role_id' => $request->role];
             ($request->role == 1) ? $data['role_name'] = "user" : $data['role_name'] = 'مزود خدمة' ;
             $is_update = User::whereIn('id', $ids)->update($data);
-            
+
             return back()->with('success', __('general.updated_successfully'));
         }
         if ($request->bulk_action_btn === 'update_role' && $request->role_id && is_array($ids) && count($ids)) {
@@ -57,7 +57,7 @@ class UserManagementController extends Controller
         // if ($request->bulk_action_btn === 'update_status' && $request->status && is_array($ids) && count($ids)) {
         //     $data = ['status' => $request->status];
 
-          
+
         //     User::whereIn('id', $ids)->update($data);
         //     return back()->with('success', __('general.updated_successfully'));
         // }
@@ -66,7 +66,7 @@ class UserManagementController extends Controller
         //     $data = ['role_id' => $request->role];
         //     ($request->role == 1) ? $data['role_name'] = "user" : $data['role_name'] = 'مزود خدمة' ;
         //     $is_update = User::whereIn('id', $ids)->update($data);
-            
+
         //     return back()->with('success', __('general.updated_successfully'));
         // }
         // if ($request->bulk_action_btn === 'update_role' && $request->role_id && is_array($ids) && count($ids)) {
@@ -83,9 +83,11 @@ class UserManagementController extends Controller
         $inputs = Inputs::orderBy("created_at","desc")->paginate(10);
         return view("admin.users.inputs", compact("inputs"));
     }
-    
+
     public function show($id){
-        $user = User::find($id);
+        // dd($id);
+        $userAlt = User::with(['countryObj', 'governementObj'])->findOrFail($id);
+        // dd($user);
         $conversations =[];
         $sentConversations = Conversation::where('sender_id', $id)->get();
 
@@ -93,7 +95,7 @@ class UserManagementController extends Controller
 
         $conversations = $sentConversations->merge($receivedConversations);
         // dd($conversations);
-        return view('admin.users.show' , compact('user' , 'conversations'));
+        return view('admin.users.show' , compact('userAlt' , 'conversations'));
     }
     public function show_user_conversation($id){
         $sentConversations = Conversation::where('sender_id', $id)->get();
@@ -104,5 +106,14 @@ class UserManagementController extends Controller
         // return $conversations;
         // dd($conversations[0]->messages);
         return view('admin.users.message' , compact('conversations'));
+    }
+
+    public function showAlt($id){
+        $userAlt = User::with(['countryObj', 'governementObj'])->findOrFail($id);
+        $conversations =[];
+        $sentConversations = Conversation::where('sender_id', $id)->get();
+        $receivedConversations = Conversation::where('recipient_id', $id)->get();
+        $conversations = $sentConversations->merge($receivedConversations);
+        return view('admin.users.show_alt', compact('userAlt', 'conversations'));
     }
 }

@@ -171,4 +171,12 @@ public function getOnlineStatusColorAttribute()
     return $this->isOnline() ? 'text-success' : 'text-muted';
 }
 
+    public function governementObj()
+    {
+        return $this->belongsTo(\App\Models\Governements::class, 'governement');
+    }
+    public function countryObj()
+    {
+        return $this->belongsTo(\App\Models\Country::class, 'country');
+    }
 }

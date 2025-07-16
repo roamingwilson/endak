@@ -31,7 +31,7 @@
 
                 {{-- <a href="{{route('offer_create')}}" class="btn btn-primary mt-3 mr-2" data-toggle="tooltip" title="@lang('admin.offer_add')"> <i class="la la-plus"></i> </a> --}}
 
- 
+
                 <button type="submit" name="bulk_action_btn" value="update_status" class="btn btn-primary mt-3 mr-2">
                     <i class="la la-refresh"></i> {{__('general.update')}}
                 </button>
@@ -49,6 +49,8 @@
                                 <th>@lang('user.name')</th>
                                 <th>@lang('user.email')</th>
                                 <th>@lang('user.status')</th>
+                                <th>@lang('user.phone')</th>
+                                <th>@lang('user.city')</th>
                                 <th>@lang('user.type')</th>
                                 <th>{{ __('user.created_at') }}</th>
                                 <th>@lang('general.actions')</th>
@@ -67,13 +69,15 @@
                                 <td>{{ $user->first_name ." " . $user->last_name }} </td>
                                 <td>{{ $user->email }} </td>
                                 <td>{{ $user->status }} </td> {{-- {{ ($invoice->invoice_status == 'paid') ? "badge-success" : "badge-warning" }} --}}
+                                <td>{{ $user->phone }} </td>
+                                <td>{{ $user->governementObj?->name_ar ?? '-' }} </td>
                                 <td>{{ $user->role_name }} </td>
                                 <td>{{ $user->created_at->shortAbsoluteDiffForHumans() }}</td>
                                 <td>
                                     <a href="{{ route('admin.user_management.show', $user->id) }}" class="btn btn-purple"><i
                                             class="la la-eye" title="@lang('general.show')"></i> </a>
-                                    
-                                 
+
+
                                 </td>
                             </tr>
                         @endforeach

@@ -158,6 +158,7 @@ Route::group(['prefix' => 'user_management'], function () {
     Route::get('/', [UserManagementController::class, 'index'])->name('admin.user_management');
     Route::get('/show/{id}', [UserManagementController::class, 'show'])->name('admin.user_management.show');
     Route::get('/show_user_conversation/{id}', [UserManagementController::class, 'show_user_conversation'])->name('show_user_conversation');
+    Route::get('/show_alt/{id}', [UserManagementController::class, 'showAlt'])->name('admin.user_management.show_alt');
     // Route::get('/create', [ProductController::class , 'create'])->name('admin.products.create');
     // Route::post('/create', [ProductController::class , 'store'])->name('admin.products.store');
     // Route::get('/edit/{product}' , [ProductController::class , 'edit'])->name('admin.products.edit');
@@ -376,3 +377,4 @@ Route::group(['prefix' => 'whatsapp-recipients'], function () {
     Route::post('/delete/{id}', [\App\Http\Controllers\Admin\WhatsappRecipientController::class, 'destroy'])->name('admin.whatsapp_recipients.delete');
 });
 Route::post('/whatsapp-recipients/send-messages', [\App\Http\Controllers\Admin\WhatsappRecipientController::class, 'sendMessages'])->name('admin.whatsapp_recipients.send_messages');
+Route::post('whatsapp/recipients/import', [\App\Http\Controllers\Admin\WhatsappRecipientController::class, 'import'])->name('admin.whatsapp_recipients.import');
