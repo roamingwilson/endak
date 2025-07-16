@@ -68,6 +68,12 @@
                 </table>
             </div>
         </div>
+        <!-- زر طلب خدمة -->
+        {{--  <div class="mt-4 text-center">
+            <a href="{{ route('admin.orders.create', ['department_id' => $department->id]) }}" class="btn btn-success btn-lg">
+                طلب خدمة من هذا القسم
+            </a>
+        </div>  --}}
     </div>
 @endsection
 

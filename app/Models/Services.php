@@ -31,7 +31,7 @@ class Services extends Model
 
     public function departments()
     {
-        return $this->belongsTo(Department::class, 'department_id');
+        return $this->belongsTo(\App\Models\Department::class, 'department_id');
     }
     public function comments()
     {
@@ -55,4 +55,8 @@ class Services extends Model
     {
         return $this->hasMany(FurnitureTransportationServiceProducts::class, 'service_id', 'id');
     }
+    public function department()
+   {
+       return $this->belongsTo(\App\Models\Department::class, 'department_id');
+   }
 }

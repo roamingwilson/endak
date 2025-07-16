@@ -17,9 +17,9 @@ class Department extends Model
     {
         return $query->where('department_id', 0)->orWhere('department_id', null);
     }
-    public function sub_Departments()
+    public function sub_departments()
     {
-        return $this->hasMany(Department::class, 'department_id', 'id');
+        return $this->hasMany(Department::class, 'department_id');
     }
     public function parent_Department()
     {
@@ -69,10 +69,7 @@ class Department extends Model
     {
         return $this->belongsTo(Category::class, 'second_category_id');
     }
-    public function inputs()
-    {
-        return $this->belongsToMany(Inputs::class, 'inputs_departments');
-    }
+
     public function posts()
     {
         return $this->hasMany(Post::class, 'department_id', 'id');
@@ -91,4 +88,8 @@ class Department extends Model
     {
         return $this->hasMany(DepartmentField::class);
     }
+    public function inputs()
+{
+    return $this->belongsToMany(Inputs::class, 'department_inputs', 'department_id', 'input_id');
+}
 }

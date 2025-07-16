@@ -68,9 +68,13 @@
                                 <td>
                                     <div class="image" >
                                         <img width="100" height="100" src="{{ $settings->image_url ?? "" }}" alt="Not" class="custom_img">
-                                        
+
                                     </div>
                                 </td>
+                            </tr>
+                            <tr>
+                                <td class="width30">رسالة الواتساب للعروض</td>
+                                <td>{{ $settings->whatsapp_offer_template ?? '-' }}</td>
                             </tr>
 
                             <tr>

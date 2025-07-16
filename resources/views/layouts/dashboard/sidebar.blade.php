@@ -357,7 +357,7 @@ $lang = config('app.locale');
 
                             <ul class="nav nav-treeview">
                                 <li class="nav-item">
-                                    <a href="{{ route('admin.department.show', $department->id) }}"
+                                    <a href="{{ route('admin.departments.show', $department->id) }}"
                                     class="nav-link {{ request()->is('admin/categories/' . $department->id) ? 'active' : '' }}">
                                         <i class=" far fa-circle nav-icon"></i>
                                         <p>{{ ($lang == 'ar')? $department->name_ar :$department->name_en }}</p>
@@ -827,9 +827,7 @@ $lang = config('app.locale');
                 @can('Admin_Departments')
                     <li class="nav-item has-treeview">
                         <a href="" class="nav-link {{ request()->is('admin/departments*') ? 'active' : '' }}">
-                            {{-- <i class="nav-icon fas fa-cog"></i> --}}
                             <i class="fas fa-layer-group nav-icon"></i>
-
                             <p>
                                 {{ __('department.departments') }}
                                 <i class="right fas fa-angle-left"></i>
@@ -855,6 +853,20 @@ $lang = config('app.locale');
                                         <p> {{ __('department.edit_department') }} </p>
                                     </a>
                                 </li> --}}
+                                <ul class="nav nav-treeview">
+                                    <li class="nav-item">
+                                        <a href="{{ route('admin.departments') }}" class="nav-link {{ request()->is('admin/departments') ? 'active' : '' }}">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p> {{ __('department.departments') }} </p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="{{ route('admin.departments.create') }}" class="nav-link {{ request()->is('admin/departments/create') ? 'active' : '' }}">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p> {{ __('department.create_department') }} </p>
+                                        </a>
+                                    </li>
+                                </ul>
 
                             </ul>
                         {{-- @endcan --}}

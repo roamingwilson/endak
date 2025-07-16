@@ -88,12 +88,14 @@
             <div class="modal-body">
               <div class="alert alert-info">
                 سيتم إرسال الرسالة التالية تلقائياً لكل الأرقام:
-                <br>
-                <strong>
-                  مرحبا يوجد عميل يحتاج خدمة خاصة بقسم (<span id="modal_department_name_preview"></span>) علي موقع endak.net في مدينة مكة , قدم عرض الان
-                </strong>
               </div>
-              <!-- <textarea name="message" class="form-control" rows="4" placeholder="اكتب الرسالة هنا..." required></textarea> -->
+              <div class="form-group">
+                <label for="custom_message">نص الرسالة</label>
+                <textarea name="custom_message" id="custom_message" class="form-control" rows="3">{{ old('custom_message', $settings->whatsapp_offer_template ?? 'مرحبا يوجد عميل يحتاج خدمة خاصة بقسم {department} علي موقع endak.net في مدينة {city} , قدم عرض الان') }}</textarea>
+                <small class="form-text text-muted">
+                  يمكنك استخدام المتغيرات: <code>{department}</code> لاسم القسم و <code>{city}</code> لاسم المدينة.
+                </small>
+              </div>
             </div>
             <div class="modal-footer">
               <button type="submit" class="btn btn-primary">إرسال</button>

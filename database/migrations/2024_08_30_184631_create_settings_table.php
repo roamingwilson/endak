@@ -24,6 +24,7 @@ return new class extends Migration
             $table->string('web_name_ar')->nullable();
             $table->string('web_name_en')->nullable();
             $table->string('logo')->nullable();
+            $table->text('whatsapp_offer_template')->nullable();
             $table->timestamps();
         });
     }

@@ -12,6 +12,8 @@ class DepartmentField extends Model
     protected $fillable = [
         'department_id',
         'name',
+        'name_ar',
+        'name_en',
         'type',
         'options',
         'is_required',

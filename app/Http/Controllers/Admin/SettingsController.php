@@ -15,41 +15,21 @@ class SettingsController extends Controller
         return view('admin.settings.index' , compact('settings'));
     }
 
-    public function edit(Settings $setting)
+    public function edit($setting)
     {
-        return view('admin.settings.edit', compact('setting'));
+        $settings = Settings::findOrFail($setting);
+        return view('admin.settings.edit', compact('settings'));
     }
-    public function update(Request $request)
+    public function update(Request $request, $setting)
     {
-        // dd($request->all());
-        $setting = Settings::first();
-        $old_image = $setting->logo;
-        $data = $request->except('logo');
-        $new_image = $this->uploadImage($request);
-
-        if ($new_image) {
-            $data['image'] = $new_image;
+        $settings = Settings::findOrFail($setting);
+        $data = $request->except(['_token']);
+        // Update the WhatsApp offer template
+        if ($request->filled('whatsapp_offer_template')) {
+            $data['whatsapp_offer_template'] = $request->whatsapp_offer_template;
         }
-        $setting->update([
-            "web_name" => $request->web_name,
-            "logo" => $new_image ?? $old_image,
-            "email" => $request->email,
-            "phone" => $request->phone,
-            "facebook" => $request->facebook,
-            "twitter" => $request->twitter,
-            "instagram" => $request->instagram,
-            "linkedin" => $request->linkedin,
-            "address_ar" => $request->address_ar,
-            "address_en" => $request->address_en,
-            "web_name_ar" => $request->web_name_ar,
-            "web_name_en" => $request->web_name_en, 
-            "about_us" => $request->about_us, 
-        ]);
-        if ($old_image && $new_image) {
-            Storage::disk('public')->delete($old_image);
-        }
-
-        return redirect()->route('admin.settings')->with('success','تم التعديل');
+        $settings->update($data);
+        return redirect()->back()->with('success', 'تم تحديث الإعدادات بنجاح');
     }
 
     public function uploadImage(Request $request)

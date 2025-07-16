@@ -38,7 +38,7 @@
                                 {{ selected(isset($department) && $department->department_id, $parent->id) }}>
                                 {{ $lang == 'ar' ? $parent->name_ar : $parent->name_en }}
                             </option>
-                
+
                             @if ($parent->sub_Departments->count() > 0)
                                 @foreach ($parent->sub_Departments as $subDepartment)
                                     <option value="{{ $subDepartment->id }}"
@@ -93,7 +93,7 @@
             </div>
 
             {{-- <div class="form-group row {{ $errors->has('title')? 'has-error':'' }} ">
-                    <label class="col-sm-3 control-label" for="title">@lang('admin.title') 
+                    <label class="col-sm-3 control-label" for="title">@lang('admin.title')
                         <br /><span><small class="help-text text-muted">{{ __('max_100_chars') }}</small></span>
                     </label>
                     <div class="col-sm-7">
@@ -126,7 +126,7 @@
                             <option value="">{{ __('category.select_category') }}</option>
                             @foreach ($categories as $category)
                                 <option value="{{ $category->id }}" {{ ($department->topics) ? selected($department->topics->contains($category->id))  : '' }}>{{ $category->category_name_ar }}</option>
-                 
+
                             @endforeach
                         </select>
                     @endif
@@ -146,7 +146,7 @@
                             <option value="">{{ __('department.select_input') }}</option>
                             @foreach ($all_inputs as $input)
                                 <option value="{{ $input->id }}" {{ ($department->inputs) ? selected($department->inputs->contains($input->id))  : '' }}>{{ $input->title_ar }}</option>
-                 
+
                             @endforeach
                         </select>
                     @endif
@@ -155,7 +155,7 @@
                     @endif
                 </div>
             </div>
- 
+
             <div class="form-group row {{ $errors->has('products') ? ' has-error' : '' }}">
                 <label class="mb-3 col-sm-3 control-label">{{ __('products.products') }} <span style="color:red;">*</span></label>
                 <div class="col-sm-7">
@@ -167,7 +167,7 @@
                             @foreach ($all_products as $product)
                                 <option value="{{ $product->id }}" {{ ($department->products) ? selected($department->products->contains($product->id))  : '' }}>
                                     {{ ($lang == 'ar') ? $product->name_ar : $product->name_en }}</option>
-                 
+
                             @endforeach
                         </select>
                     @endif
@@ -175,7 +175,7 @@
                         <span class="invalid-feedback"><strong>{{ $errors->first('products') }}</strong></span>
                     @endif
                 </div>
-            </div> 
+            </div>
 
                     {{-- @if ($categories->count())
                         <select name="topics[]" id="topics" class="form-control topics" multiple="multiple">
@@ -192,7 +192,7 @@
                                                     {{ $sub_category->category_name }}
                                                 </option>
                                                 {{ $sub_category->category_name }}
-                                         
+
                                             @if ($sub_category->sub_categories->count())
                                                 @foreach ($sub_category->sub_categories as $inner_sub_category)
                                                     <option value="{{ $inner_sub_category->id }}">
@@ -241,7 +241,7 @@
                             @endforeach
                         </select>
                     @endif
-                    
+
                     @if ($errors->has('category_id'))
                         <span class="invalid-feedback"><strong>{{ $errors->first('category_id') }}</strong></span>
                     @endif
@@ -318,7 +318,7 @@
         })
     </script>
 
-@endsection 
+@endsection
             <!--    {{-- <optgroup">
                                     @if ($category->sub_categories->count())
                                         @foreach ($category->sub_categories as $sub_category)
@@ -336,7 +336,7 @@
 
                                             {{-- <option value="{{ $sub_category->id }}">
                                             {{ $sub_category->category_name }}
-                                        </option>  
+                                        </option>
                                         @endforeach
                                     @endif
                                     </optgroup> --}} -->

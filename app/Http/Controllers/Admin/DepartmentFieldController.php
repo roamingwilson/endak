@@ -53,9 +53,12 @@ class DepartmentFieldController extends Controller
 
     protected function validateRequest(Request $request)
     {
+        // dd($request->all());
         $data = $request->validate([
             'name' => 'required|string|max:255',
-            'type' => 'required|in:text,number,select,checkbox,textarea',
+            'name_ar' => 'required|string|max:255',
+            'name_en' => 'required|string|max:255',
+            'type' => 'required|in:text,number,select,checkbox,textarea,image,date,time',
             'options' => 'nullable|string',
             'is_required' => 'nullable|boolean',
         ]);

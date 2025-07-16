@@ -17,6 +17,8 @@ use App\Models\Maintenance;
 use App\Models\Services;
 use App\Models\SpareParts;
 use App\Models\VanTruck;
+use App\Models\Settings;
+use App\Models\MessageTemplate;
 use App\Notifications\CommentNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -51,21 +53,18 @@ class ServiceController extends Controller
     public function store(Request $request)
     {
 
-        // dd($request);
-        $data = $request->validate([
+        // dd($request->all());
+        $validationRules = [
             'user_id' => 'required|exists:users,id',
             'department_id' => 'required|exists:departments,id',
             'provider_id' => 'nullable|exists:users,id',
             'type' => 'required|string',
-
-
             'city' => 'nullable|string',
             'neighborhood' => 'nullable|string',
-            'from_city' => 'nullable|string',
+            'from_city' => 'required|string',
             'from_neighborhood' => 'nullable|string',
             'to_city' => 'nullable|string',
             'to_neighborhood' => 'nullable|string',
-
             'model' => 'nullable|string',
             'year' => 'nullable|string',
             'brand' => 'nullable|string',
@@ -74,11 +73,9 @@ class ServiceController extends Controller
             'car_type' => 'nullable|string',
             'location' => 'nullable|string',
             'gender' => 'nullable|in:male,female',
-
             'time' => 'nullable',
             'date' => 'nullable|date',
             'day' => 'nullable|string',
-
             'quantity' => 'nullable|integer',
             'price' => 'nullable|numeric',
             'drink_width' => 'nullable|string',
@@ -94,11 +91,19 @@ class ServiceController extends Controller
             'fire_system' => 'nullable|boolean',
             'security_system' => 'nullable|boolean',
             'network' => 'nullable|boolean',
-
             'notes' => 'nullable|string',
             'notes_voice' => 'nullable|file|mimes:audio/wav,audio/mpeg,audio/ogg|max:5120',
             'status' => 'nullable|in:open,close,pending,confirm',
-        ]);
+        ];
+        // تمرير أي حقل من custom_fields إلى الجذر إذا كان مطلوبًا في الفاليديشن
+        foreach (array_keys($validationRules) as $field) {
+            if (!$request->has($field) && $request->has("custom_fields.$field")) {
+                $request->merge([
+                    $field => $request->input("custom_fields.$field")
+                ]);
+            }
+        }
+        $data = $request->validate($validationRules);
 
         // Enhanced note_voice handling
         if ($request->filled('voice_note_data')) {
@@ -116,6 +121,36 @@ class ServiceController extends Controller
             $data['notes_voice'] = $fileName;
         }
 
+        // معالجة الحقول المخصصة (بما فيها الصور)
+        $department = Department::with('fields')->find($request->department_id);
+        $customFields = [];
+        if ($department && $department->fields) {
+            foreach ($department->fields as $field) {
+                $fieldName = $field->name;
+                if ($field->type === 'image' || $field->type === 'images[]') {
+                    $files = $request->file("custom_fields.$fieldName");
+                    if ($files) {
+                        if (is_array($files)) {
+                            // رفع عدة صور
+                            $paths = [];
+                            foreach ($files as $file) {
+                                $paths[] = $file->store('services/images', 'public');
+                            }
+                            $customFields[$fieldName] = $paths;
+                        } else {
+                            // صورة واحدة
+                            $customFields[$fieldName] = $files->store('services/images', 'public');
+                        }
+                    }
+                } elseif ($field->type === 'checkbox') {
+                    $customFields[$fieldName] = $request->has("custom_fields.$fieldName") ? 1 : 0;
+                } else {
+                    $customFields[$fieldName] = $request->input("custom_fields.$fieldName");
+                }
+            }
+        }
+        $data['custom_fields'] = $customFields;
+
 
         $service = Services::create($data);
 
@@ -131,7 +166,13 @@ class ServiceController extends Controller
                 $city = \App\Models\Governements::find($service->from_city);
                 $cityName = $city ? $city->name_ar : 'مكة';
             }
-            $message = "مرحبا يوجد عميل يحتاج خدمة خاصة بقسم ($departmentName) علي موقع endak.net في مدينة $cityName , قدم عرض الان";
+            $settings = Settings::first();
+            $template = $settings->whatsapp_offer_template ?? 'مرحبا يوجد عميل يحتاج خدمة خاصة بقسم {department} علي موقع endak.net في مدينة {city} , قدم عرض الان';
+            $message = str_replace(
+                ['{department}', '{city}'],
+                [$departmentName, $cityName],
+                $template
+            );
             // جلب أرقام الإرسال المرتبطة بالقسم عبر الجدول الوسيط
             $senders = \App\Models\WhatsappSender::whereHas('departments', function($q) use ($service) {
                 $q->where('departments.id', $service->department_id);
@@ -290,9 +331,13 @@ class ServiceController extends Controller
                 });
                 // dd($heavy_equips);
                 return view('admin.main_department.heavy_equip.front_show', compact('departments', 'cities', 'heavy_equips'));
-
             default:
-                abort(404); // لو الاسم مش من ضمن اللي فوق
+                // عرض صفحة عرض عامة لأي قسم جديد مع الحقول المخصصة
+                return view('front_office.departments.show', [
+                    'department' => $departments,
+                    'cities' => $cities,
+                    'services' => \App\Models\Services::where('department_id', $departments->id)->latest()->paginate(9),
+                ]);
         }
     }
 
@@ -406,7 +451,8 @@ class ServiceController extends Controller
                 return view('admin.main_department.heavy_equip.edit_service', compact('service', 'cities', 'heavy_equips'));
 
             default:
-                abort(404); // لو الاسم مش من ضمن اللي فوق
+
+                return view('front_office.services.edit', compact('service'));
         }
     }
 
@@ -522,11 +568,26 @@ class ServiceController extends Controller
                 return view('admin.main_department.heavy_equip.show_myservice', compact('service', 'form_city', 'to_city', 'heavy_equips'));
 
             default:
-                abort(404); // لو الاسم مش من ضمن اللي فوق
+            $service = \App\Models\Services::with(['department.fields'])->findOrFail($id);
+            // dd($service);
+            return view('front_office.services.show', compact('service')); // لو الاسم مش من ضمن اللي فوق
         }
     }
 
-
+    /**
+     * عرض تفاصيل خدمة مع جميع الحقول المخصصة والصور
+     */
+    public function showService($id)
+    {
+        $service = \App\Models\Services::with(['department.sub_departments', 'department.fields'])->findOrFail($id);
+        $hasSubDepartments = $service->department && $service->department->sub_departments && $service->department->sub_departments->count() > 0;
+        $user = auth()->user();
+        $is_add = null;
+        if ($user) {
+            $is_add = $service->comments()->where('user_id', $user->id)->exists();
+        }
+        return view('front_office.services.show', compact('service', 'is_add', 'hasSubDepartments'));
+    }
 
 
     /**
@@ -535,23 +596,19 @@ class ServiceController extends Controller
     public function update(Request $request, string $id)
     {
 
+// dd($request->all());
 
-
-        $data = $request->validate([
+        $validationRules = [
             'user_id' => 'required|exists:users,id',
             'department_id' => 'required|exists:departments,id',
             'provider_id' => 'nullable|exists:users,id',
             'type' => 'required|string',
-
-
-
             'city' => 'nullable|string',
             'neighborhood' => 'nullable|string',
             'from_city' => 'required|string',
             'from_neighborhood' => 'nullable|string',
             'to_city' => 'nullable|string',
             'to_neighborhood' => 'nullable|string',
-
             'model' => 'nullable|string',
             'year' => 'nullable|string',
             'brand' => 'nullable|string',
@@ -560,11 +617,9 @@ class ServiceController extends Controller
             'car_type' => 'nullable|string',
             'location' => 'nullable|string',
             'gender' => 'nullable|in:male,female',
-
             'time' => 'nullable',
             'date' => 'nullable|date',
             'day' => 'nullable|string',
-
             'quantity' => 'nullable|integer',
             'price' => 'nullable|numeric',
             'drink_width' => 'nullable|string',
@@ -580,11 +635,28 @@ class ServiceController extends Controller
             'fire_system' => 'nullable|boolean',
             'security_system' => 'nullable|boolean',
             'network' => 'nullable|boolean',
-
             'notes' => 'nullable|string',
             'notes_voice' => 'nullable|file|mimes:audio/wav,audio/mpeg,audio/ogg|max:5120',
             'status' => 'nullable|in:open,close,pending,confirm',
-        ]);
+        ];
+        // تمرير أي حقل من custom_fields إلى الجذر إذا كان مطلوبًا في الفاليديشن
+        foreach (array_keys($validationRules) as $field) {
+            if (!$request->has($field) && $request->has("custom_fields.$field")) {
+                $request->merge([
+                    $field => $request->input("custom_fields.$field")
+                ]);
+            }
+        }
+        $data = $request->validate($validationRules);
+
+        // تمرير الحقول المطلوبة من custom_fields إلى الطلب الرئيسي
+        foreach (array_keys($data) as $field) {
+            if (!$request->has($field) && $request->has('custom_fields.' . $field)) {
+                $request->merge([
+                    $field => $request->input('custom_fields.' . $field)
+                ]);
+            }
+        }
 
         $data['clean'] = $request->has('clean') ?? false;
         $data['feryoun'] = $request->has('feryoun') ?? false;
@@ -615,7 +687,32 @@ class ServiceController extends Controller
         $service = Services::findOrFail($id);
 
         // update furniture transportation products
-
+        $department = $service->department()->with('fields')->first();
+        $customFields = $service->custom_fields ?? [];
+        if ($department && $department->fields) {
+            foreach ($department->fields as $field) {
+                $fieldName = $field->name;
+                if ($field->type === 'image' || $field->type === 'images[]') {
+                    $files = $request->file("custom_fields.$fieldName");
+                    if ($files) {
+                        if (is_array($files)) {
+                            $paths = [];
+                            foreach ($files as $file) {
+                                $paths[] = $file->store('services/images', 'public');
+                            }
+                            $customFields[$fieldName] = $paths;
+                        } else {
+                            $customFields[$fieldName] = $files->store('services/images', 'public');
+                        }
+                    }
+                } elseif ($field->type === 'checkbox') {
+                    $customFields[$fieldName] = $request->has("custom_fields.$fieldName") ? 1 : 0;
+                } else {
+                    $customFields[$fieldName] = $request->input("custom_fields.$fieldName");
+                }
+            }
+        }
+        $data['custom_fields'] = $customFields;
 
         $service->update($data);
 
@@ -690,7 +787,7 @@ class ServiceController extends Controller
             }
         }
 
-        return redirect()->route('home')->with('success', 'تم نحديث الطلب بنجاح');
+        return redirect()->route('home')->with('success', 'تم تحديث الخدمة بنجاح');
     }
 
     /**

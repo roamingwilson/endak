@@ -7,6 +7,7 @@ use App\Models\Department;
 use App\Models\WhatsappRecipients;
 use Illuminate\Http\Request;
 use App\Jobs\SendWhatsappMessageJob;
+use App\Models\MessageTemplate;
 
 class WhatsappRecipientController extends Controller
 {
@@ -64,7 +65,19 @@ class WhatsappRecipientController extends Controller
 
         $department = \App\Models\Department::find($request->department_id);
         $departmentName = $department ? $department->name_ar : '';
-        $message = "مرحبا يوجد عميل يحتاج خدمة خاصة بقسم ($departmentName) علي موقع endak.net في مدينة مكة , قدم عرض الان";
+        $cityName = 'مكة';
+        // استخدم الرسالة المخصصة إذا تم إدخالها، وإلا استخدم القالب الافتراضي
+        if ($request->filled('custom_message')) {
+            $template = $request->custom_message;
+        } else {
+            $settings = \App\Models\Settings::first();
+            $template = $settings->whatsapp_offer_template ?? 'مرحبا يوجد عميل يحتاج خدمة خاصة بقسم {department} علي موقع endak.net في مدينة {city} , قدم عرض الان';
+        }
+        $message = str_replace(
+            ['{department}', '{city}'],
+            [$departmentName, $cityName],
+            $template
+        );
 
         // جلب أرقام الإرسال المرتبطة بالقسم عبر الجدول الوسيط
         $senders = \App\Models\WhatsappSender::whereHas('departments', function($q) use ($request) {

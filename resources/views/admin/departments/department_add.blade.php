@@ -111,7 +111,7 @@
                             <option value="">{{ __('category.select_category') }}</option>
                             @foreach ($categories as $category)
                                 <option value="{{ $category->id }}">{{ ($lang == 'ar') ? $category->category_name_ar : $category->category_name_en }}</option>
-                 
+
                             @endforeach
                         </select>
                     @endif
@@ -172,7 +172,7 @@
                             @endforeach
                         </select>
                     @endif
-                
+
                 </div>
             </div>
 

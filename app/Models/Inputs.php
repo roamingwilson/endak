@@ -10,7 +10,8 @@ class Inputs extends Model
     use HasFactory;
     protected $guarded = [];
 
-    public function departments(){
-        return $this->belongsToMany(Department::class , 'inputs_departments');
+    public function departments()
+    {
+        return $this->belongsToMany(Department::class, 'department_inputs', 'input_id', 'department_id');
     }
 }

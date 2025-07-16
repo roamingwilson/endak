@@ -15,8 +15,14 @@
                     <tr>
                         <td>{{ $department->name_en }}</td>
                         <td>
-                            <a href="{{ route('admin.departments.fields.index', $department->id) }}"
-                                class="btn btn-sm btn-info">Manage Fields</a>
+                            <a href="{{ route('admin.departments.show', $department->id) }}" class="btn btn-sm btn-primary">عرض</a>
+                            <a href="{{ route('admin.departments.edit', $department->id) }}" class="btn btn-sm btn-warning">تعديل</a>
+                            <form action="{{ route('admin.departments.destroy', $department->id) }}" method="POST" style="display:inline-block" onsubmit="return confirm('هل أنت متأكد من الحذف؟');">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-sm btn-danger">حذف</button>
+                            </form>
+                            <a href="{{ route('admin.departments.fields.index', $department->id) }}" class="btn btn-sm btn-info">إدارة الحقول</a>
                         </td>
                     </tr>
                 @endforeach

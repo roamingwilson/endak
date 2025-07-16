@@ -9,7 +9,6 @@
 @endsection
 
 @section('content')
-<?php $settings = $setting ; ?>
     <div class="container">
         @if ($errors->any())
             <div class="alert alert-danger">
@@ -75,6 +74,17 @@
                 <textarea name="about_us" class="form-control mt-2" cols="10" rows="5">{{ old('address', $settings->about_us) }}</textarea>
                 {{-- <input type="text" name="about_us" class="form-control mt-2"
                     value="{{ old('address', $settings->about_us) }}" /> --}}
+            </div>
+            <div class="form-group">
+                <label class="" for="message_template">نص رسالة إشعار الطلب (متغيرات: {department}، {city})</label>
+                <textarea name="message_template" class="form-control mt-2" cols="10" rows="3">{{ old('message_template', $settings->message_template) }}</textarea>
+            </div>
+            <div class="form-group">
+                <label for="whatsapp_offer_template">نص رسالة الواتساب للعروض</label>
+                <textarea name="whatsapp_offer_template" id="whatsapp_offer_template" class="form-control" rows="3">{{ old('whatsapp_offer_template', $settings->whatsapp_offer_template) }}</textarea>
+                <small class="form-text text-muted">
+                    يمكنك استخدام المتغيرات: <code>{department}</code> لاسم القسم و <code>{city}</code> لاسم المدينة.
+                </small>
             </div>
             <div class="form-group">
                 <lable class="" for="">{{ __("settings.logo") }}</lable>

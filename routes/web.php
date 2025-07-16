@@ -89,13 +89,17 @@ Route::get('lang/{locale}', function ($locale) {
 
 // login & register & logout
 
-Route::get('/login-page', [AuthController::class, 'loginPage'])->middleware('guest')->name('login-page');
-Route::get('/register-page', [AuthController::class, 'registerPage'])->middleware('guest')->name('register-page');
-Route::post('/login', [AuthController::class, 'login'])->middleware('guest')->name('login');
-Route::post('/register', [AuthController::class, 'register'])->middleware('guest')->name('register');
-Route::get('logout', [AuthController::class, 'logout'])->middleware('auth')->name('logout');
-Route::get('/forgot-password', [AuthController::class, 'forgotPassword'])->name('forgot-password');
+Route::middleware('guest')->group(function () {
+    Route::get('/login-page', [AuthController::class, 'loginPage'])->name('login-page');
+    Route::get('/register-page', [AuthController::class, 'registerPage'])->name('register-page');
+    Route::post('/login', [AuthController::class, 'login'])->name('login');
+    Route::post('/register', [AuthController::class, 'register'])->name('register');
+    Route::get('/forgot-password', [AuthController::class, 'forgotPassword'])->name('forgot-password');
+});
 
+Route::middleware('auth')->group(function () {
+    Route::get('logout', [AuthController::class, 'logout'])->name('logout');
+});
 
 // // Departments
 Route::get('/departments', [DepartmentsController::class, 'index'])->name('departments');
@@ -564,3 +568,5 @@ use App\Http\Controllers\Admin\DepartmentController;
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::resource('departments', DepartmentController::class);
 });
+
+Route::get('/services/{id}', [App\Http\Controllers\ServiceController::class, 'showService'])->name('services.show');
