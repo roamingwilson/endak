@@ -65,6 +65,33 @@ class MessageUserController extends Controller
         ]);
     }
 
+    /**
+     * تحقق هل هناك محادثة بين المستخدم الحالي ومستخدم آخر
+     */
+    public function hasConversationWith($otherUserId)
+    {
+        $currentUserId = auth()->id();
+        return \App\Models\Conversation::where(function ($query) use ($currentUserId, $otherUserId) {
+            $query->where('sender_id', $currentUserId)
+                  ->where('recipient_id', $otherUserId);
+        })->orWhere(function ($query) use ($currentUserId, $otherUserId) {
+            $query->where('sender_id', $otherUserId)
+                  ->where('recipient_id', $currentUserId);
+        })->exists();
+    }
+
+    /**
+     * تحقق من وجود محادثة بين المستخدم الحالي ومستخدم آخر وأعد رسالة مناسبة
+     */
+    public function showConversation($otherUserId)
+    {
+        if ($this->hasConversationWith($otherUserId)) {
+            return response()->json(['message' => 'هناك محادثة بالفعل بين المستخدمين.']);
+        } else {
+            return response()->json(['message' => 'لا توجد محادثة بين المستخدمين.']);
+        }
+    }
+
 
     public function store(Request $request)
     {

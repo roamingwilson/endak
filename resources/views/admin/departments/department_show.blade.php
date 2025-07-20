@@ -68,6 +68,35 @@
                 </table>
             </div>
         </div>
+        <!-- عرض الأقسام الفرعية -->
+        @if($department->sub_departments && $department->sub_departments->count())
+        <div class="card mt-4">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">الأقسام الفرعية</h4>
+            </div>
+            <div class="card-body">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>اسم القسم الفرعي</th>
+                            <th>العمليات</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($department->sub_departments as $sub)
+                        <tr>
+                            <td>{{ $sub->name_ar }} <span class="text-muted">({{ $sub->name_en }})</span></td>
+                            <td>
+                                <a href="{{ route('admin.department.show', $sub->id) }}" class="btn btn-info btn-sm">عرض</a>
+                                <a href="{{ route('admin.orders.create', ['department_id' => $sub->id]) }}" class="btn btn-success btn-sm">إضافة خدمة</a>
+                            </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        @endif
         <!-- زر طلب خدمة -->
         {{--  <div class="mt-4 text-center">
             <a href="{{ route('admin.orders.create', ['department_id' => $department->id]) }}" class="btn btn-success btn-lg">

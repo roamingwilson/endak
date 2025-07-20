@@ -19,7 +19,7 @@ class Department extends Model
     }
     public function sub_departments()
     {
-        return $this->hasMany(Department::class, 'department_id');
+        return $this->hasMany(\App\Models\SubDepartment::class, 'department_id');
     }
     public function parent_Department()
     {

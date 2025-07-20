@@ -126,6 +126,12 @@ class GeneralCommentsController extends Controller
             'price' => $request->price,
             'notes' => $request->notes,
         ]);
+
+        // إرسال إشعار لصاحب الطلب (العميل)
+        if ($comment->customer) {
+            $comment->customer->notify(new \App\Notifications\CommentNotification($comment));
+        }
+
         return redirect()->route('home')->with('success', 'تم التحديث بنجاح');
     }
     public function destroy($id)

@@ -49,7 +49,8 @@ class CommentNotification extends Notification
             'title' => $this->data['title'],
             'id' => $this->data['id'],
             'body' => $this->data['body'],
-            'url' => $this->data['url']
+            'url' => $this->data['url'],
+            'message' => $this->data['body'] ?? '', // إضافة مفتاح message
         ];
     }
     /**
@@ -65,4 +66,3 @@ class CommentNotification extends Notification
     }
 }
 
-   

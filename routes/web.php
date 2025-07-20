@@ -45,6 +45,9 @@ use App\Models\ProductOrder;
 use App\Models\ProductOrderitems;
 use App\Models\VanTruckOrder;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\departments\PartyPreparationController;
+use App\Http\Controllers\departments\OrderPartyPreparationController;
+use App\Models\PartyPreparationOrder;
 
 /*
 |--------------------------------------------------------------------------
@@ -92,9 +95,14 @@ Route::get('lang/{locale}', function ($locale) {
 Route::middleware('guest')->group(function () {
     Route::get('/login-page', [AuthController::class, 'loginPage'])->name('login-page');
     Route::get('/register-page', [AuthController::class, 'registerPage'])->name('register-page');
+    Route::get('/register', [AuthController::class, 'showRegistrationForm'])->name('register');
     Route::post('/login', [AuthController::class, 'login'])->name('login');
     Route::post('/register', [AuthController::class, 'register'])->name('register');
     Route::get('/forgot-password', [AuthController::class, 'forgotPassword'])->name('forgot-password');
+
+    // OTP Routes
+    Route::post('/otp/verify', [AuthController::class, 'verifyOtp'])->name('otp.verify');
+    Route::post('/register/resend-otp', [AuthController::class, 'resendOtp'])->name('register.resend_otp');
 });
 
 Route::middleware('auth')->group(function () {
@@ -104,6 +112,9 @@ Route::middleware('auth')->group(function () {
 // // Departments
 Route::get('/departments', [DepartmentsController::class, 'index'])->name('departments');
 Route::get('/departments/{id}', [DepartmentsController::class, 'show'])->name('departments.show');
+
+// Get governorates by country
+Route::get('/get-governorates', [GovernementsController::class, 'getByCountry'])->name('get.governorates');
 
 
 // Posts
@@ -192,24 +203,24 @@ Route::group(['prefix' => "furniture_transportations"], function () {
 
 
 // Party Preparation
-// Route::group(['prefix' => "party_preparation"], function(){
-//     Route::get('/show' , [PartyPreparationController::class , 'show'])->name('party_preparation_show');
-//     Route::post('/add_service' , [PartyPreparationController::class , 'store_service'])->name('party_preparation_store_service');
-//     Route::get('/',[PartyPreparationController::class , 'index'])->name('main_party_preparation');
-//     Route::get('/service/{id}',[PartyPreparationController::class , 'show_my_service'])->name('main_party_preparation_show_my_service');
-//     Route::get('/edit/{id}',[PartyPreparationController::class , 'edit'])->name('main_party_preparation.edit');
-//     Route::patch('/update/{id}',[PartyPreparationController::class , 'update'])->name('main_party_preparation.update');
-//     Route::post('/accept_offer' , [OrderPartyPreparationController::class , 'store'])->name('accept_offer_party_preparation');
-//     Route::get('/order' , [OrderPartyPreparationController::class , 'show_orders'])->name('show_orders_party_preparation');
-//     Route::get('/order/{id}' , [OrderPartyPreparationController::class , 'show'])->name('show_order_party_preparation');
-//     Route::get('/accept_project_party_preparation/{id}' , function($id) {
-//         PartyPreparationOrder::find($id)->update(['status' => "completed"]);
-//         return redirect()->back();
-//     })->name('accept_project_party_preparation');
-//     Route::get('service/edit/{id}',[PartyPreparationController::class , 'edit_service'])->name('service_party_preparation.edit');
-//     Route::put('service/update/{id}',[PartyPreparationController::class , 'update_service'])->name('service_party_preparation.update');
-//     Route::delete('/van-truck-services/{id}', [PartyPreparationController::class, 'destroy_service'])->name('service_party_preparation.destroy');
-// });
+Route::group(['prefix' => "party_preparation"], function(){
+    Route::get('/show' , [PartyPreparationController::class , 'show'])->name('party_preparation_show');
+    Route::post('/add_service' , [PartyPreparationController::class , 'store_service'])->name('party_preparation_store_service');
+    Route::get('/',[PartyPreparationController::class , 'index'])->name('main_party_preparation');
+    Route::get('/service/{id}',[PartyPreparationController::class , 'show_my_service'])->name('main_party_preparation_show_my_service');
+    Route::get('/edit/{id}',[PartyPreparationController::class , 'edit'])->name('main_party_preparation.edit');
+    Route::patch('/update/{id}',[PartyPreparationController::class , 'update'])->name('main_party_preparation.update');
+    Route::post('/accept_offer' , [OrderPartyPreparationController::class , 'store'])->name('accept_offer_party_preparation');
+    Route::get('/order' , [OrderPartyPreparationController::class , 'show_orders'])->name('show_orders_party_preparation');
+    Route::get('/order/{id}' , [OrderPartyPreparationController::class , 'show'])->name('show_order_party_preparation');
+    Route::get('/accept_project_party_preparation/{id}' , function($id) {
+        PartyPreparationOrder::find($id)->update(['status' => "completed"]);
+        return redirect()->back();
+    })->name('accept_project_party_preparation');
+    Route::get('service/edit/{id}',[PartyPreparationController::class , 'edit_service'])->name('service_party_preparation.edit');
+    Route::put('service/update/{id}',[PartyPreparationController::class , 'update_service'])->name('service_party_preparation.update');
+    Route::delete('/van-truck-services/{id}', [PartyPreparationController::class, 'destroy_service'])->name('service_party_preparation.destroy');
+});
 
 
 // Garden
@@ -533,9 +544,8 @@ Route::get('/accept_project/{id}', function ($id) {
     return redirect()->back();
 })->name('accept_project');
 
-route::resource('services', ServiceController::class);
-
-route::get('show/myservices/{id}', [ServiceController::class, 'show_services'])->name('show_myservice');
+// route::resource('services', ServiceController::class); // تم التعليق حتى لا يتعارض مع روت العرض اليدوي
+route::get('show/myservices/{id}', [ServiceController::class, 'show_services'])->name('show_myservice')->where('id', '[0-9]+');
 // route::get('sub_show/myservices/{id}', [ServiceController::class,'sub_show'])->name('service_sub_show');
 
 route::get('add/country', [CountryController::class, 'create'])->name('add_country');
@@ -545,6 +555,7 @@ route::post('country', [CountryController::class, 'store'])->name('store_country
 
 route::get('add/gover', [GovernementsController::class, 'create'])->name('add_gover');
 route::post('gover', [GovernementsController::class, 'store'])->name('store_gover');
+route::get('get/governorates', [GovernementsController::class, 'getGovernorates'])->name('get.governorates');
 
 Route::get('/products', [IndustryController::class, 'index'])->name('indsustry.index');
 Route::get('/category', [IndustryController::class, 'show_cat'])->name('indsustry.cat');
@@ -569,4 +580,39 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::resource('departments', DepartmentController::class);
 });
 
-Route::get('/services/{id}', [App\Http\Controllers\ServiceController::class, 'showService'])->name('services.show');
+// روت عرض الخدمة مع دعم المعاملات الإضافية
+Route::get('/services/{id}', [App\Http\Controllers\ServiceController::class, 'showService'])
+    ->name('services.show')
+    ->where('id', '[0-9]+');
+
+// روت عرض الخدمة مع قسم فرعي محدد (يدعم query parameters)
+Route::get('/services/{id}/sub-department/{subDepartmentId}', [App\Http\Controllers\ServiceController::class, 'showService'])
+    ->name('services.show.subdepartment')
+    ->where(['id' => '[0-9]+', 'subDepartmentId' => '[0-9]+']);
+
+// Registration multi-step
+// Route::get('/register', [\App\Http\Controllers\Auth\RegisterController::class, 'showRegistrationForm'])->name('register');
+// Route::post('/register', [\App\Http\Controllers\Auth\RegisterController::class, 'register']);
+// Route::post('/register/resend-otp', [\App\Http\Controllers\Auth\RegisterController::class, 'resendOtp'])->name('register.resend_otp');
+
+// Route::get('/otp', [\App\Http\Controllers\Auth\RegisterController::class, 'showOtpForm'])->name('otp.form');
+// Route::post('/otp', [\App\Http\Controllers\Auth\RegisterController::class, 'verifyOtp'])->name('otp.verify');
+
+// Route::get('/choose-role', [\App\Http\Controllers\Auth\RegisterController::class, 'showRoleForm'])->name('choose.role');
+// Route::post('/choose-role', [\App\Http\Controllers\Auth\RegisterController::class, 'saveRole'])->name('choose.role.save');
+
+Route::get('/all-service-requests', [App\Http\Controllers\OrderUserController::class, 'allServiceRequests'])->name('services.requests.all');
+
+Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::resource('sub_departments', App\Http\Controllers\Admin\SubDepartmentController::class);
+});
+
+Route::get('/services', [App\Http\Controllers\ServiceController::class, 'index'])->name('services.index');
+Route::get('/services/create', [App\Http\Controllers\ServiceController::class, 'create'])->name('services.create');
+Route::post('/services', [App\Http\Controllers\ServiceController::class, 'store'])->name('services.store');
+Route::get('/services/{id}', [App\Http\Controllers\ServiceController::class, 'show'])->name('services.show')->where('id', '[0-9]+');
+// Route::get('/services/{id}', [App\Http\Controllers\ServiceController::class, 'show'])->name('services.show')->where('id', '[0-9]+');
+Route::get('/services/{id}/edit', [App\Http\Controllers\ServiceController::class, 'edit'])->name('services.edit')->where('id', '[0-9]+');
+Route::put('/services/{id}', [App\Http\Controllers\ServiceController::class, 'update'])->name('services.update')->where('id', '[0-9]+');
+Route::delete('/services/{id}', [App\Http\Controllers\ServiceController::class, 'destroy'])->name('services.destroy')->where('id', '[0-9]+');
+Route::get('show/myservices/{id}', [App\Http\Controllers\ServiceController::class, 'show_services'])->name('show_myservice')->where('id', '[0-9]+');

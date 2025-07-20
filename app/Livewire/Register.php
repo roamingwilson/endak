@@ -22,9 +22,9 @@ class Register extends Component
     protected $rules = [
         "first_name"        => "required|min:3",
         "last_name"         => "required|min:3",
-        'email'             => "email", 
-        'password'          => "required|min:6", 
-        'phone'             => "required",                    
+        'email'             => "email",
+        'password'          => "required|digits:5",
+        'phone'             => "required",
     ];
 
     public function updated($propertyName)
@@ -36,7 +36,7 @@ class Register extends Component
         $this->validate();
 
         if($this->image){
-            
+
             $new_image = uploadImageLivewire($this->image , "users");
         }
 

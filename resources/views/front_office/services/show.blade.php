@@ -2,6 +2,9 @@
 @section('title', 'تفاصيل الخدمة')
 <?php $lang = config('app.locale'); ?>
 @php $user = auth()->user(); @endphp
+@php
+    $groupedFields = $service->department && $service->department->fields ? $service->department->fields->groupBy('input_group') : collect();
+@endphp
 @section('content')
 <div class="container mt-4">
     @if(auth()->check() && auth()->id() == $service->user_id)
@@ -30,55 +33,213 @@
     @endif  --}}
     <h2>تفاصيل الخدمة</h2>
     <div class="card p-4">
-        {{--  <h4>بيانات الخدمة الأساسية</h4>
-        <ul class="list-group mt-3">
-            <li class="list-group-item"><strong>نوع الخدمة:</strong> {{ $service->type }}</li>
-            <li class="list-group-item"><strong>من المدينة:</strong> {{ $service->from_city }}</li>
-            <li class="list-group-item"><strong>إلى المدينة:</strong> {{ $service->to_city }}</li>
-            <li class="list-group-item"><strong>الحي:</strong> {{ $service->neighborhood }}</li>
-            <li class="list-group-item"><strong>إلى الحي:</strong> {{ $service->to_neighborhood }}</li>
-            <li class="list-group-item"><strong>الموديل:</strong> {{ $service->model }}</li>
-            <li class="list-group-item"><strong>التاريخ:</strong> {{ $service->date }}</li>
-            <li class="list-group-item"><strong>الوقت:</strong> {{ $service->time }}</li>
-            <li class="list-group-item"><strong>الجنس:</strong> {{ $service->gender }}</li>
-            <li class="list-group-item"><strong>ملاحظات:</strong> {{ $service->notes }}</li>
-        </ul>  --}}
+        {{-- بيانات الخدمة الأساسية --}}
+        <div class="mb-4">
+            <h4 class="text-center mb-3" style="color:#1976d2; font-weight:bold;">
+                <i class="fas fa-info-circle"></i> {{ app()->getLocale() == 'ar' ? 'بيانات الخدمة الأساسية' : 'Basic Service Information' }}
+            </h4>
+            <div class="row g-3">
+                @if($service->department)
+                    <div class="col-md-6">
+                        <div class="d-flex align-items-center gap-2" style="background: #fff; border-radius: 8px; padding: 12px; box-shadow: 0 1px 4px #e3e8ef;">
+                            <span style="font-weight:bold; color:#1976d2; min-width: 100px;">
+                                <i class="fas fa-folder me-1"></i> {{ app()->getLocale() == 'ar' ? 'القسم' : 'Department' }}
+                            </span>
+                            <span style="flex:1; font-size:1.08em; color:#333;">{{ app()->getLocale() == 'ar' ? $service->department->name_ar : $service->department->name_en }}</span>
+                        </div>
+                    </div>
+                @endif
+
+                @if($service->selected_sub_department_id && $service->department && $service->department->sub_departments)
+                    @php
+                        $selectedSubDepartment = $service->department->sub_departments->where('id', $service->selected_sub_department_id)->first();
+                    @endphp
+                    @if($selectedSubDepartment)
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-center gap-2" style="background: #fff; border-radius: 8px; padding: 12px; box-shadow: 0 1px 4px #e3e8ef;">
+                                <span style="font-weight:bold; color:#1976d2; min-width: 100px;">
+                                    <i class="fas fa-layer-group me-1"></i> {{ app()->getLocale() == 'ar' ? 'القسم الفرعي' : 'Sub Department' }}
+                                </span>
+                                <span style="flex:1; font-size:1.08em; color:#333;">{{ app()->getLocale() == 'ar' ? $selectedSubDepartment->name_ar : $selectedSubDepartment->name_en }}</span>
+                            </div>
+                        </div>
+
+                        @endif
+
+                        @endif
+
+                @if($service->from_city)
+                    <div class="col-md-6">
+                        <div class="d-flex align-items-center gap-2" style="background: #fff; border-radius: 8px; padding: 12px; box-shadow: 0 1px 4px #e3e8ef;">
+                            <span style="font-weight:bold; color:#1976d2; min-width: 100px;">
+                                <i class="fas fa-map-marker-alt me-1"></i> {{ app()->getLocale() == 'ar' ? 'من المدينة' : 'From City' }}
+                            </span>
+                            <span style="flex:1; font-size:1.08em; color:#333; word-break:break-word; max-width:180px; display:inline-block;">
+                                {{ $service->from_city }}
+                            </span>
+                        </div>
+                    </div>
+                @endif
+
+
+
+            </div>
+        </div>
         <hr>
-        <h4>الحقول المخصصة</h4>
-        <ul class="list-group mt-3">
-            @if($service->department && $service->department->fields)
-                @foreach($service->department->fields as $field)
-                    <li class="list-group-item">
-                        <strong>{{ $field->name_ar }} ({{ $field->name_en }}) :</strong>
-                        @php
-                            $value = $service->custom_fields[$field->name] ?? null;
+        {{--  <h4>الحقول المخصصة</h4>  --}}
+        @if($groupedFields->count())
+            <div class="mb-4">
+                <h4 class="text-center mb-3" style="color:#1976d2; font-weight:bold;"><i class="fas fa-object-group"></i> {{ app()->getLocale() == 'ar' ? 'الخدمات المطلوبة' : 'Ordered Serivces' }}</h4>
+            </div>
+            @foreach($groupedFields as $group => $fields)
+                @php
+                    $repeatable = $fields->first()->is_repeatable ?? false;
+                    $groupValues = $service->custom_fields[$group] ?? [];
                         @endphp
-                        {{--  @if (isset($service->images))
-                        @foreach ($service->images as $item)
-                            <img width="80px" height="80px" src="{{ asset('storage/' . $item->path) }}"
-                                alt="">
+                @if($group)
+                    <div class="card mb-4 shadow-sm border-0" style="background: #f8fafc;">
+                        <div class="card-header bg-info text-white text-center" style="font-size:1.1rem; font-weight:bold; border-radius: 8px 8px 0 0;">
+                            <i class="fas fa-layer-group"></i>
+                            @if($repeatable && is_array($groupValues))
+                                <span class="badge bg-success ms-2">مجموعة مكررة</span>
+                            @endif
+                        </div>
+                        <div class="card-body py-3">
+                            @if($repeatable && is_array($groupValues) && count($groupValues))
+                                @foreach($groupValues as $idx => $groupInstance)
+                                    <div class="row g-3 align-items-center mb-3" style="border-bottom:1px dashed #b3e5fc;">
+                                        <div class="col-12 mb-2">
+                                            <span class="badge bg-primary">مجموعة رقم {{ $idx+1 }}</span>
+                                        </div>
+                                        @foreach($fields as $field)
+                                            @php $value = $groupInstance[$field->name] ?? null; @endphp
+                                            @if($field->type === 'checkbox' && !$value)
+                                                @continue
+                                            @endif
+                                            <div class="col-md-3 mb-2 d-flex align-items-center gap-2" style="background: #fff; border-radius: 8px; padding: 10px 12px; box-shadow: 0 1px 4px #e3e8ef;">
+                                                <span style="font-weight:bold; color:#1976d2; min-width: 90px; display: flex; align-items: center;">
+                                                    <i class="fas fa-tag me-1"></i> {{ app()->getLocale() == 'ar' ? $field->name_ar : $field->name_en }}
+                                                </span>
+                                                <span style="flex:1; font-size:1.08em; color:#333;">
+                                                    @if($field->type === 'image' || $field->type === 'images[]')
+                                                        @if(is_array($value))
+                                                            @foreach($value as $img)
+                                                                <img src="{{ asset('storage/' . (is_object($img) && isset($img->path) ? $img->path : $img)) }}" alt="صورة" style="max-width:80px; margin:3px; border-radius:6px;">
+                                                            @endforeach
+                                                        @elseif($value)
+                                                            <img src="{{ asset('storage/' . (is_object($value) && isset($value->path) ? $value->path : $value)) }}" alt="صورة" style="max-width:80px; border-radius:6px;">
+                                                        @else
+                                                            <span class="text-muted">{{ app()->getLocale() == 'ar' ? 'لا يوجد صورة' : 'No image' }}</span>
+                                                        @endif
+                                                    @elseif($field->type === 'checkbox')
+                                                        <span>{!! $value ? '<i class="fas fa-check-circle text-success"></i> ' . (app()->getLocale() == 'ar' ? 'نعم' : 'Yes') : '<i class="fas fa-times-circle text-danger"></i> ' . (app()->getLocale() == 'ar' ? 'لا' : 'No') !!}</span>
+                                                    @elseif($field->type === 'select' && is_array($field->options))
+                                                        <span>{{ $value ?? '-' }}</span>
+                                                    @elseif($field->type === 'date')
+                                                        <span>{{ $value ? \Carbon\Carbon::parse($value)->format('Y-m-d') : '-' }}</span>
+                                                    @elseif($field->type === 'time')
+                                                        <span>{{ $value ? \Carbon\Carbon::parse($value)->format('H:i') : '-' }}</span>
+                                                    @elseif($field->type === 'textarea')
+                                                        <div style="white-space: pre-line; color:#444;">{{ $value ?? '-' }}</div>
+                                                    @else
+                                                        <span>{{ $value ?? '-' }}</span>
+                                                    @endif
+                                                </span>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                @endforeach
+                            @elseif($repeatable)
+                                <div class="alert alert-info text-center">لا توجد مجموعات مكررة مدخلة.</div>
+                            @else
+                                <div class="row g-3 align-items-center">
+                                    @foreach($fields as $field)
+                                        @php $value = $service->custom_fields[$field->name] ?? null; @endphp
+                                        @if($field->type === 'checkbox' && !$value)
+                                            @continue
+                                        @endif
+                                        <div class="col-md-3 mb-2 d-flex align-items-center gap-2" style="background: #fff; border-radius: 8px; padding: 10px 12px; box-shadow: 0 1px 4px #e3e8ef;">
+                                            <span style="font-weight:bold; color:#1976d2; min-width: 90px; display: flex; align-items: center;">
+                                                <i class="fas fa-tag me-1"></i> {{ app()->getLocale() == 'ar' ? $field->name_ar : $field->name_en }}
+                                            </span>
+                                            <span style="flex:1; font-size:1.08em; color:#333;">
+                                                @if($field->type === 'image' || $field->type === 'images[]')
+                                                    @if(is_array($value))
+                                                        @foreach($value as $img)
+                                                            <img src="{{ asset('storage/' . (is_object($img) && isset($img->path) ? $img->path : $img)) }}" alt="صورة" style="max-width:80px; margin:3px; border-radius:6px;">
+                                                        @endforeach
+                                                    @elseif($value)
+                                                        <img src="{{ asset('storage/' . (is_object($value) && isset($value->path) ? $value->path : $value)) }}" alt="صورة" style="max-width:80px; border-radius:6px;">
+                                                    @else
+                                                        <span class="text-muted">{{ app()->getLocale() == 'ar' ? 'لا يوجد صورة' : 'No image' }}</span>
+                                                    @endif
+                                                @elseif($field->type === 'checkbox')
+                                                    <span>{!! $value ? '<i class="fas fa-check-circle text-success"></i> ' . (app()->getLocale() == 'ar' ? 'نعم' : 'Yes') : '<i class="fas fa-times-circle text-danger"></i> ' . (app()->getLocale() == 'ar' ? 'لا' : 'No') !!}</span>
+                                                @elseif($field->type === 'select' && is_array($field->options))
+                                                    <span>{{ $value ?? '-' }}</span>
+                                                @elseif($field->type === 'date')
+                                                    <span>{{ $value ? \Carbon\Carbon::parse($value)->format('Y-m-d') : '-' }}</span>
+                                                @elseif($field->type === 'time')
+                                                    <span>{{ $value ? \Carbon\Carbon::parse($value)->format('H:i') : '-' }}</span>
+                                                @elseif($field->type === 'textarea')
+                                                    <div style="white-space: pre-line; color:#444;">{{ $value ?? '-' }}</div>
+                                                @else
+                                                    <span>{{ $value ?? '-' }}</span>
+                                                @endif
+                                            </span>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+                @endif
                         @endforeach
-                        <hr>
-                    @endif  --}}
+            @if($groupedFields->has(null))
+                <div class="card mb-4 shadow-sm border-0" style="background: #f8fafc;">
+                    <div class="card-header bg-secondary text-white text-center" style="font-size:1.1rem; font-weight:bold; border-radius: 8px 8px 0 0;">
+                        <i class="fas fa-list"></i>
+                    </div>
+                    <div class="card-body py-3">
+                        <div class="row g-3 align-items-center">
+                            @foreach($groupedFields[null] as $field)
+                                <div class="col-12 mb-2 d-flex align-items-center gap-2" style="background: #fff; border-radius: 8px; padding: 10px 12px; box-shadow: 0 1px 4px #e3e8ef;">
+                                    <span style="font-weight:bold; color:#1976d2; min-width: 90px; display: flex; align-items: center;">
+                                        <i class="fas fa-tag me-1"></i> {{ app()->getLocale() == 'ar' ? $field->name_ar : $field->name_en }}
+                                    </span>
+                                    <span style="flex:1; font-size:1.08em; color:#333;">
+                                        @php $value = $service->custom_fields[$field->name] ?? null; @endphp
                         @if($field->type === 'image' || $field->type === 'images[]')
                             @if(is_array($value))
                                 @foreach($value as $img)
-                                    <img src="{{ asset('storage/' . (is_object($img) && isset($img->path) ? $img->path : $img)) }}" alt="صورة" style="max-width:120px; margin:5px;">
+                                                    <img src="{{ asset('storage/' . (is_object($img) && isset($img->path) ? $img->path : $img)) }}" alt="صورة" style="max-width:80px; margin:3px; border-radius:6px;">
                                 @endforeach
                             @elseif($value)
-                                <img src="{{ asset('storage/' . (is_object($value) && isset($value->path) ? $value->path : $value)) }}" alt="صورة" style="max-width:120px;">
+                                                <img src="{{ asset('storage/' . (is_object($value) && isset($value->path) ? $value->path : $value)) }}" alt="صورة" style="max-width:80px; border-radius:6px;">
                             @else
-                                <span>لا يوجد صورة</span>
+                                                <span class="text-muted">{{ app()->getLocale() == 'ar' ? 'لا يوجد صورة' : 'No image' }}</span>
                             @endif
+                                        @elseif($field->type === 'checkbox')
+                                            <span>{!! $value ? '<i class="fas fa-check-circle text-success"></i> ' . (app()->getLocale() == 'ar' ? 'نعم' : 'Yes') : '<i class="fas fa-times-circle text-danger"></i> ' . (app()->getLocale() == 'ar' ? 'لا' : 'No') !!}</span>
+                                        @elseif($field->type === 'select' && is_array($field->options))
+                                            <span>{{ $value ?? '-' }}</span>
+                                        @elseif($field->type === 'date')
+                                            <span>{{ $value ? \Carbon\Carbon::parse($value)->format('Y-m-d') : '-' }}</span>
+                                        @elseif($field->type === 'time')
+                                            <span>{{ $value ? \Carbon\Carbon::parse($value)->format('H:i') : '-' }}</span>
+                                        @elseif($field->type === 'textarea')
+                                            <div style="white-space: pre-line; color:#444;">{{ $value ?? '-' }}</div>
                         @else
-                            {{ $value ?? '-' }}
+                                            <span>{{ $value ?? '-' }}</span>
                         @endif
-                    </li>
+                                    </span>
+                                </div>
                 @endforeach
-            @else
-                <li class="list-group-item text-danger">لا توجد حقول مخصصة أو القسم غير مرتبط بالخدمة.</li>
+                        </div>
+                    </div>
+                </div>
             @endif
-        </ul>
+        @endif
         @if($service->notes_voice)
             <div class="mb-3">
                 <label><i class="fas fa-microphone"></i> {{ __('ملاحظة صوتية') }}</label>

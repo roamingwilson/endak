@@ -35,10 +35,10 @@
                 </div>
             </div>
 
-            <div class="form-group row {{ $errors->has('parent') ? 'has-error' : '' }} ">
-                <label class="col-sm-3 control-label" for="parent">@lang('department.parent') </label>
+            <div class="form-group row {{ $errors->has('department_id') ? 'has-error' : '' }} ">
+                <label class="col-sm-3 control-label" for="department_id">@lang('department.parent') </label>
                 <div class="col-sm-7">
-                    <select name="parent" id="parent" class="form-control select2">
+                    <select name="department_id" id="department_id" class="form-control select2">
                         <option value="0">@lang('department.main')</option>
                         @if ($departments->count() > 0)
                             @foreach ($departments as $department)
@@ -50,8 +50,7 @@
                             @endforeach
                         @endif
                     </select>
-
-                    {!! $errors->has('parent') ? '<p class="help-block">' . $errors->first('parent') . '</p>' : '' !!}
+                    {!! $errors->has('department_id') ? '<p class="help-block">' . $errors->first('department_id') . '</p>' : '' !!}
                 </div>
             </div>
 

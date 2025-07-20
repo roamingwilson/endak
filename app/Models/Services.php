@@ -59,4 +59,9 @@ class Services extends Model
    {
        return $this->belongsTo(\App\Models\Department::class, 'department_id');
    }
+
+    public function subDepartment()
+    {
+        return $this->belongsTo(SubDepartment::class, 'sub_department_id');
+    }
 }

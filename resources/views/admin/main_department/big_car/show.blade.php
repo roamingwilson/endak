@@ -125,6 +125,15 @@
                             </label>
                             <input type="text" class="form-control" name="car_type">
                         </div>
+                        <div class="form-group mt-2">
+                            <label for="sub_department_id">القسم الفرعي (اختياري)</label>
+                            <select name="sub_department_id" id="sub_department_id" class="form-control">
+                                <option value="">اختر القسم الفرعي</option>
+                                @foreach($subDepartments as $sub)
+                                    <option value="{{ $sub->id }}">{{ $sub->name_ar }}</option>
+                                @endforeach
+                            </select>
+                        </div>
 
                         <div class="form-group mt-2">
                             <label for="" class="mb-1">{{ $lang == 'ar' ? 'ارفاق صور' : 'Share Photos' }}

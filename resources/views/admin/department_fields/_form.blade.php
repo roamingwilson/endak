@@ -46,28 +46,70 @@
         <option value="time" @selected(old('type', $field->type ?? '') == 'time')>Time</option>
     </select>
 </div>
+<div class="mb-3" id="field-value-input"></div>
 <div class="mb-3" id="options-container" style="display: none;">
-    <label for="options" class="form-label">Options (comma-separated)</label>
-    <input type="text" class="form-control" id="options" name="options"
-        value="{{ old('options', isset($field) && is_array($field->options) ? implode(',', $field->options) : '') }}">
+    <label for="options" class="form-label">خيارات القائمة (كل خيار في سطر منفصل)</label>
+    <textarea class="form-control" id="options" name="options" rows="3">{{ old('options', isset($field) && is_array($field->options) ? implode("\n", $field->options) : '') }}</textarea>
 </div>
+<div class="mb-3">
+    <label for="input_group" class="form-label">مجموعة الإدخال (لدمج الحقول في صف واحد)</label>
+    <input type="text" class="form-control" id="input_group" name="input_group" value="{{ old('input_group', $field->input_group ?? '') }}" list="input_group_list">
+    <datalist id="input_group_list">
+        @if(isset($inputGroups))
+            @foreach($inputGroups as $group)
+                <option value="{{ $group }}">
+            @endforeach
+        @endif
+    </datalist>
+    <small class="text-muted">ضع نفس القيمة للحقول التي تريد دمجها في صف واحد (مثلاً: group1)</small>
+</div>
+@if(old('input_group', $field->input_group ?? ''))
 <div class="mb-3 form-check">
-    <input type="checkbox" class="form-check-input" id="is_required" name="is_required" value="1"
-        @checked(old('is_required', $field->is_required ?? false))>
-    <label class="form-check-label" for="is_required">Is Required?</label>
+    <input type="checkbox" class="form-check-input" id="is_repeatable" name="is_repeatable" value="1" @checked(old('is_repeatable', $field->is_repeatable ?? false))>
+    <label class="form-check-label" for="is_repeatable">قابل للتكرار (يمكن للمستخدم إضافة أكثر من مجموعة)</label>
 </div>
+@endif
+
+
 <button type="submit" class="btn btn-primary">Submit</button>
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const typeSelect = document.getElementById('type');
         const optionsContainer = document.getElementById('options-container');
+        let lastOptionsValue = '';
+        let lastType = typeSelect.value;
 
         function toggleOptions() {
             optionsContainer.style.display = typeSelect.value === 'select' ? 'block' : 'none';
         }
 
+        function saveOptionsValue() {
+            const optionsTextarea = document.getElementById('options');
+            if (optionsTextarea) {
+                lastOptionsValue = optionsTextarea.value;
+            }
+        }
+
+        function restoreOptionsValue() {
+            const optionsTextarea = document.getElementById('options');
+            if (optionsTextarea && lastOptionsValue !== undefined) {
+                optionsTextarea.value = lastOptionsValue;
+                optionsTextarea.focus();
+                optionsTextarea.selectionStart = optionsTextarea.selectionEnd = optionsTextarea.value.length;
+            }
+        }
+
         toggleOptions();
-        typeSelect.addEventListener('change', toggleOptions);
+        // عند تحميل الصفحة، احفظ القيمة الأولية
+        saveOptionsValue();
+
+        // فقط عند تغيير النوع
+        typeSelect.addEventListener('change', function() {
+            saveOptionsValue();
+            toggleOptions();
+            setTimeout(restoreOptionsValue, 0);
+            lastType = typeSelect.value;
+        });
     });
 </script>

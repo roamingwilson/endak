@@ -119,7 +119,7 @@
         @include('layouts.front_office.header')
 
 
-        @yield('header')
+
         {{-- <section>
                 <div class="section banner-4 banner-section">
                     <div class="container">

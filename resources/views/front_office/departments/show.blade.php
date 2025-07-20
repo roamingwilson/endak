@@ -179,6 +179,16 @@
                 <div class="row justify-content-center">
                     <div class="col-md-8">
                         <div class="department-card text-center mb-4">
+                            <div class="text-start mb-3">
+                                <a href="{{ route('departments') }}" class="btn btn-outline-primary">
+                                    <i class="fas fa-arrow-left"></i> العودة للأقسام
+                                </a>
+                                @if(isset($selectedSubDepartmentId) && $selectedSubDepartmentId)
+                                    <a href="{{ route('departments.show', $department->id) }}" class="btn btn-outline-secondary ms-2">
+                                        <i class="fas fa-arrow-left"></i> العودة للأقسام الفرعية
+                                    </a>
+                                @endif
+                            </div>
                             @php
                                 $img = (!empty($department->image) && file_exists(public_path('storage/' . $department->image)))
                                     ? asset('storage/' . $department->image)
@@ -187,17 +197,103 @@
                             <img src="{{ $img }}" alt="img" width="160" height="160" class="mb-3">
                             <h2 class="mb-2" style="color:#1976d2">{{ $lang == 'ar' ? $department->name_ar : $department->name_en }}</h2>
                             <p class="text-muted">{{ $lang == 'ar' ? $department->description_ar : $department->description_en }}</p>
+                                                                @if(isset($selectedSubDepartmentId) && $selectedSubDepartmentId)
+                                        @php
+                                            $selectedSubDepartment = $department->sub_departments->where('id', $selectedSubDepartmentId)->first();
+                                        @endphp
+                                        @if($selectedSubDepartment)
+                                            <div class="alert alert-info mt-3">
+                                                <i class="fas fa-check-circle"></i>
+                                                <strong>القسم الفرعي المحدد:</strong> {{ $selectedSubDepartment->name_ar ?? $selectedSubDepartment->name_en }}
+                                            </div>
+                                        @endif
+                                    @endif
+
+                                    <!-- عنوان الحقول الأساسية -->
+                                    <div class="mb-4">
+                                        <h5 class="text-center mb-3" style="color:#28a745; font-weight:bold; border-bottom: 2px solid #28a745; padding-bottom: 10px;">
+                                            <i class="fas fa-info-circle"></i> {{ $lang == 'ar' ? 'المعلومات الأساسية' : 'Basic Information' }}
+                                        </h5>
+                                    </div>
                         </div>
+                        <form action="{{ route('services.store') }}" method="POST" enctype="multipart/form-data">
+                            @csrf
+                        @php
+                            // اجمع الحقول حسب input_group
+                            $groupedFields = $department->fields->groupBy('input_group');
+                            // استبعد الحقول التي ليس لها مجموعة (null أو فارغ)
+                            $groupedFields = $groupedFields->filter(function($fields, $group) { return $group; });
+                        @endphp
+                        @if($groupedFields->filter(function($fields, $group){ return $group; })->count())
+                            <div class="mb-4">
+                                <h4 class="text-center mb-3" style="color:#1976d2; font-weight:bold;"><i class="fas fa-object-group"></i> عناصر مجمعة (Group Controls)</h4>
+                                </div>
+                        @endif
+                                    @foreach($groupedFields as $group => $fields)
+                                        @php
+                                            $repeatable = $fields->first()->is_repeatable ?? false;
+                                        @endphp
+                                        @if($group)
+                                            <div class="card mb-3 border-0 group-block" data-group="{{ $group }}" style="background: #fcfcfd; border-radius: 14px; box-shadow: 0 1px 6px #e3e8ef;">
+                                                <div class="card-body group-fields-list position-relative" data-group="{{ $group }}">
+                                                    @php $groupValues = old('custom_fields.' . $group, [[]]); @endphp
+                                                    @foreach($groupValues as $idx => $groupInstance)
+                                                        <div class="group-fields-instance mb-3 p-3 position-relative" data-index="{{ $idx }}" style="background: #fff; border-radius: 10px; border: 1px solid #e3e8ef;">
+                                                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                                                <span style="font-size:1rem; font-weight:500; color:#1976d2;">  </span>
+                                                                <button type="button" class="btn btn-outline-danger btn-sm remove-group-btn" style="{{ count($groupValues) == 1 ? 'display:none;' : '' }}; border-radius:50%; min-width:32px; min-height:32px; display:flex; align-items:center; justify-content:center;" title="حذف المجموعة">
+                                                                    <i class="fas fa-times"></i>
+                                                                </button>
+                                                            </div>
+                                                            <div class="row g-2 align-items-end">
+                                                                @foreach($fields as $field)
+                                                                    <div class="col-md-3 col-sm-6 mb-2">
+                                                                        <label for="custom_fields_{{ $group }}_{{ $idx }}_{{ $field->name }}" style="font-weight:500; color:#333; font-size:0.98rem; margin-bottom:4px; display:block;">
+                                                                            {{ app()->getLocale() == 'ar' ? $field->name_ar : $field->name_en }}
+                                                                        </label>
+                                                                        @if($field->type === 'select' && is_array($field->options))
+                                                                            <select name="custom_fields[{{ $group }}][{{ $idx }}][{{ $field->name }}]" class="form-control form-control-sm">
+                                                                                @foreach($field->options as $option)
+                                                                                    <option value="{{ $option }}" {{ (isset($groupInstance[$field->name]) && $groupInstance[$field->name] == $option) ? 'selected' : '' }}>{{ $option }}</option>
+                                                                                @endforeach
+                                                                            </select>
+                                                                        @elseif($field->type === 'checkbox')
+                                                                            <div class="form-check m-0">
+                                                                                <input type="checkbox" name="custom_fields[{{ $group }}][{{ $idx }}][{{ $field->name }}]" value="1" class="form-check-input" {{ (isset($groupInstance[$field->name]) && $groupInstance[$field->name]) ? 'checked' : '' }}>
+                                                                            </div>
+                                                                        @elseif($field->type === 'image')
+                                                                            <input type="file" name="custom_fields[{{ $group }}][{{ $idx }}][{{ $field->name }}]" accept="image/*" class="form-control form-control-sm">
+                                                                        @elseif($field->type === 'date')
+                                                                            <input type="date" name="custom_fields[{{ $group }}][{{ $idx }}][{{ $field->name }}]" class="form-control form-control-sm" value="{{ $groupInstance[$field->name] ?? '' }}">
+                                                                        @elseif($field->type === 'time')
+                                                                            <input type="time" name="custom_fields[{{ $group }}][{{ $idx }}][{{ $field->name }}]" class="form-control form-control-sm" value="{{ $groupInstance[$field->name] ?? '' }}">
+                                                                        @elseif($field->type === 'textarea')
+                                                                            <textarea name="custom_fields[{{ $group }}][{{ $idx }}][{{ $field->name }}]" class="form-control form-control-sm" rows="2">{{ $groupInstance[$field->name] ?? '' }}</textarea>
+                                                                        @else
+                                                                            <input type="{{ $field->type }}" name="custom_fields[{{ $group }}][{{ $idx }}][{{ $field->name }}]" class="form-control form-control-sm" value="{{ $groupInstance[$field->name] ?? '' }}">
+                                                                        @endif
+                                                                    </div>
+                                                                @endforeach
+                                                            </div>
+                                                        </div>
+                                                    @endforeach
+                                                    {{-- زر الإضافة الديناميكي بالجافاسكريبت فقط --}}
+                                                </div>
+                                            </div>
+                                        @endif
+                                    @endforeach
                                         <div class="card">
                             <div class="card-header text-center bg-primary text-white" style="font-size:1.2rem; font-weight:bold;">
                                 <i class="fas fa-concierge-bell"></i> {{ __('طلب خدمة من هذا القسم') }}
                             </div>
                             <div class="card-body">
-                                <form action="{{ route('services.store') }}" method="POST" enctype="multipart/form-data">
-                                    @csrf
+
                                     <input type="hidden" name="department_id" value="{{ $department->id }}">
                                     <input type="hidden" name="user_id" value="{{ auth()->id() }}">
                                     <input type="hidden" name="type" value="{{ $department->name_en }}">
+                                    @if(isset($selectedSubDepartmentId) && $selectedSubDepartmentId)
+                                        <input type="hidden" name="sub_department_id" value="{{ $selectedSubDepartmentId }}">
+                                    @endif
                                     @if ($errors->any())
                                         <div class="alert alert-danger">
                                             <ul>
@@ -207,7 +303,80 @@
                                             </ul>
                                         </div>
                                     @endif
-                                    @foreach($department->fields as $field)
+                                    <!-- حقل اختيار المدينة -->
+                                    <div class="field-card" style="border-left: 4px solid #28a745;">
+                                        <div class="field-label">
+                                            <i class="fas fa-map-marker-alt" style="color: #28a745;"></i>
+                                            <label for="from_city" style="margin-bottom:0; font-weight:bold; color: #28a745;">
+                                                {{ $lang == 'ar' ? 'اختر المدينة *' : 'Select City *' }}
+                                            </label>
+                                        </div>
+                                        <div style="flex:2;">
+                                            <select name="from_city" id="from_city" class="form-control js-select2-custom" required>
+                                                <option value="">{{ $lang == 'ar' ? 'اختر المدينة' : 'Select City' }}</option>
+                                                @foreach ($cities as $city)
+                                                    <option value="{{ app()->getLocale() == 'ar' ? $city->name_ar : $city->name_en }}">
+                                                        {{ app()->getLocale() == 'ar' ? $city->name_ar : $city->name_en }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <!-- حقل اختيار الحي (اختياري) -->
+                                    {{--  <div class="field-card">
+                                        <div class="field-label">
+                                            <i class="fas fa-home"></i>
+                                            <label for="neighborhood" style="margin-bottom:0; font-weight:bold;">
+                                                {{ $lang == 'ar' ? 'الحي (اختياري)' : 'Neighborhood (Optional)' }}
+                                            </label>
+                                        </div>
+                                        <div style="flex:2;">
+                                            <input type="text" name="neighborhood" id="neighborhood" class="form-control" value="{{ old('neighborhood') }}" placeholder="{{ $lang == 'ar' ? 'أدخل اسم الحي' : 'Enter neighborhood name' }}">
+                                        </div>
+                                    </div>
+
+                                    <!-- حقل اختيار المدينة الهدف (اختياري) -->
+                                    <div class="field-card" style="border-left: 4px solid #ffc107;">
+                                        <div class="field-label">
+                                            <i class="fas fa-map-marker-alt" style="color: #ffc107;"></i>
+                                            <label for="to_city" style="margin-bottom:0; font-weight:bold; color: #ffc107;">
+                                                {{ $lang == 'ar' ? 'إلى المدينة (اختياري)' : 'To City (Optional)' }}
+                                            </label>
+                                        </div>
+                                        <div style="flex:2;">
+                                            <select name="to_city" id="to_city" class="form-control js-select2-custom">
+                                                <option value="">{{ $lang == 'ar' ? 'اختر المدينة الهدف' : 'Select Destination City' }}</option>
+                                                @foreach ($cities as $city)
+                                                    <option value="{{ $city->id }}" {{ old('to_city') == $city->id ? 'selected' : '' }}>
+                                                        {{ $lang == 'ar' ? $city->name_ar : $city->name_en }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <!-- حقل اختيار الحي الهدف (اختياري) -->
+                                    <div class="field-card">
+                                        <div class="field-label">
+                                            <i class="fas fa-home"></i>
+                                            <label for="to_neighborhood" style="margin-bottom:0; font-weight:bold;">
+                                                {{ $lang == 'ar' ? 'إلى الحي (اختياري)' : 'To Neighborhood (Optional)' }}
+                                            </label>
+                                        </div>
+                                        <div style="flex:2;">
+                                            <input type="text" name="to_neighborhood" id="to_neighborhood" class="form-control" value="{{ old('to_neighborhood') }}" placeholder="{{ $lang == 'ar' ? 'أدخل اسم الحي الهدف' : 'Enter destination neighborhood' }}">
+                                        </div>
+                                    </div>  --}}
+
+                                    <!-- عنوان الحقول المخصصة -->
+                                    <div class="mb-4 mt-5">
+                                        <h5 class="text-center mb-3" style="color:#1976d2; font-weight:bold; border-bottom: 2px solid #1976d2; padding-bottom: 10px;">
+                                            <i class="fas fa-cogs"></i> {{ $lang == 'ar' ? 'الحقول المخصصة للقسم' : 'Department Custom Fields' }}
+                                        </h5>
+                                    </div>
+
+                                    @foreach($department->fields->where('input_group', null) as $field)
                                         <div class="field-card">
                                             <div class="field-label">
                                                 <i class="fas fa-{{
@@ -217,31 +386,32 @@
                                                     ($field->type === 'checkbox' ? 'check-square' :
                                                     ($field->type === 'image' ? 'image' :
                                                     ($field->type === 'date' ? 'calendar-alt' :
-                                                    ($field->type === 'time' ? 'clock' : 'edit'))))))
-                                                }}"></i>
+                                                    ($field->type === 'time' ? 'clock' :
+                                                    ($field->type === 'textarea' ? 'align-left' : 'edit'))))))) }}"></i>
                                                 <label for="custom_fields_{{ $field->name }}" style="margin-bottom:0; font-weight:bold;">
                                                     {{ $lang == 'ar' ? $field->name_ar : $field->name_en }}
-                                                    {{--  {{ $lang == 'ar' ? 'ملاحظة صوتية' : 'Voice Note' }}  --}}
                                                 </label>
                                             </div>
                                             <div style="flex:2;">
-                                            @if($field->type === 'select' && is_array($field->options))
-                                                <select name="custom_fields[{{ $field->name }}]" id="custom_fields_{{ $field->name }}" class="form-control">
-                                                    @foreach($field->options as $option)
-                                                        <option value="{{ $option }}" {{ old('custom_fields.' . $field->name) == $option ? 'selected' : '' }}>{{ $option }}</option>
-                                                    @endforeach
-                                                </select>
-                                            @elseif($field->type === 'checkbox')
-                                                <input type="checkbox" name="custom_fields[{{ $field->name }}]" id="custom_fields_{{ $field->name }}" value="1" class="form-check-input" {{ old('custom_fields.' . $field->name) ? 'checked' : '' }}>
-                                            @elseif($field->type === 'image')
-                                                <input type="file" name="custom_fields[{{ $field->name }}]" id="custom_fields_{{ $field->name }}" accept="image/*" class="form-control">
-                                            @elseif($field->type === 'date')
-                                                <input type="date" name="custom_fields[{{ $field->name }}]" id="custom_fields_{{ $field->name }}" class="form-control" value="{{ old('custom_fields.' . $field->name) }}">
-                                            @elseif($field->type === 'time')
-                                                <input type="time" name="custom_fields[{{ $field->name }}]" id="custom_fields_{{ $field->name }}" class="form-control" value="{{ old('custom_fields.' . $field->name) }}">
-                                                        @else
-                                                <input type="{{ $field->type }}" name="custom_fields[{{ $field->name }}]" id="custom_fields_{{ $field->name }}" class="form-control" value="{{ old('custom_fields.' . $field->name) }}">
-                                                        @endif
+                                                @if($field->type === 'select' && is_array($field->options))
+                                                    <select name="custom_fields[{{ $field->name }}]" id="custom_fields_{{ $field->name }}" class="form-control">
+                                                        @foreach($field->options as $option)
+                                                            <option value="{{ $option }}" {{ old('custom_fields.' . $field->name) == $option ? 'selected' : '' }}>{{ $option }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                @elseif($field->type === 'checkbox')
+                                                    <input type="checkbox" name="custom_fields[{{ $field->name }}]" id="custom_fields_{{ $field->name }}" value="1" class="form-check-input" {{ old('custom_fields.' . $field->name) ? 'checked' : '' }}>
+                                                @elseif($field->type === 'image')
+                                                    <input type="file" name="custom_fields[{{ $field->name }}]" id="custom_fields_{{ $field->name }}" accept="image/*" class="form-control">
+                                                @elseif($field->type === 'date')
+                                                    <input type="date" name="custom_fields[{{ $field->name }}]" id="custom_fields_{{ $field->name }}" class="form-control" value="{{ old('custom_fields.' . $field->name) }}">
+                                                @elseif($field->type === 'time')
+                                                    <input type="time" name="custom_fields[{{ $field->name }}]" id="custom_fields_{{ $field->name }}" class="form-control" value="{{ old('custom_fields.' . $field->name) }}">
+                                                @elseif($field->type === 'textarea')
+                                                    <textarea name="custom_fields[{{ $field->name }}]" id="custom_fields_{{ $field->name }}" class="form-control">{{ old('custom_fields.' . $field->name) }}</textarea>
+                                                @else
+                                                    <input type="{{ $field->type }}" name="custom_fields[{{ $field->name }}]" id="custom_fields_{{ $field->name }}" class="form-control" value="{{ old('custom_fields.' . $field->name) }}">
+                                                @endif
                                             </div>
                                         </div>
                                     @endforeach
@@ -316,97 +486,116 @@
 
 @section('script')
 <script>
-document.querySelectorAll('.voice-note-container').forEach(function(container) {
-    let mediaRecorder;
-    let audioChunks = [];
-    let timerInterval;
-    let seconds = 0;
-    const startBtn = container.querySelector('.startRecord');
-    const stopBtn = container.querySelector('.stopRecord');
-    const resetBtn = container.querySelector('.resetRecord');
-    const statusDiv = container.querySelector('.recordingStatus');
-    const timerSpan = container.querySelector('.recordingTimer');
-    const audioPlayback = container.querySelector('.audioPlayback');
-    const downloadLink = container.querySelector('.downloadLink');
-    const voiceInput = container.querySelector('.voiceNoteData');
-
-    function updateTimer() {
-        seconds++;
-        const min = String(Math.floor(seconds / 60)).padStart(2, '0');
-        const sec = String(seconds % 60).padStart(2, '0');
-        timerSpan.textContent = `${min}:${sec}`;
+document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('click', function(e) {
+        // إضافة مجموعة جديدة
+        if(e.target.classList.contains('add-group-btn')) {
+            var btn = e.target;
+            var group = btn.getAttribute('data-group');
+            var groupList = document.querySelector('.group-fields-list[data-group="' + group + '"]');
+            var instances = groupList.querySelectorAll('.group-fields-instance');
+            if(instances.length >= 10) return;
+            var newIndex = instances.length;
+            var template = instances[0].cloneNode(true);
+            template.setAttribute('data-index', newIndex);
+            template.querySelectorAll('input, select, textarea').forEach(function(input) {
+                if(input.type === 'checkbox' || input.type === 'radio') {
+                    input.checked = false;
+                } else {
+                    input.value = '';
+                }
+                var name = input.getAttribute('name');
+                if(name) {
+                    name = name.replace(/custom_fields\[[^\]]+\]\[\d+\]/, 'custom_fields['+group+']['+newIndex+']');
+                    input.setAttribute('name', name);
+                }
+                var id = input.getAttribute('id');
+                if(id) {
+                    id = id.replace(/_\d+_/, '_' + newIndex + '_');
+                    input.setAttribute('id', id);
+                }
+            });
+            groupList.appendChild(template);
+            moveAddBtnToBottom(groupList, group);
+            updateRemoveBtns(groupList);
+        }
+        // حذف مجموعة
+        if(e.target.closest('.remove-group-btn')) {
+            var instance = e.target.closest('.group-fields-instance');
+            var groupList = instance.parentElement;
+            var group = groupList.getAttribute('data-group');
+            instance.remove();
+            moveAddBtnToBottom(groupList, group);
+            updateRemoveBtns(groupList);
+        }
+    });
+    // دالة لنقل زر الإضافة دائماً لأسفل آخر مجموعة
+    function moveAddBtnToBottom(groupList, group) {
+        // احذف كل أزرار الإضافة داخل المجموعة
+        groupList.querySelectorAll('.add-group-btn-wrapper').forEach(function(w){w.remove();});
+        var instances = groupList.querySelectorAll('.group-fields-instance');
+        if(instances.length < 10) {
+            // أنشئ زر جديد دائري صغير مع نص
+            var addBtn = document.createElement('button');
+            addBtn.type = 'button';
+            addBtn.className = 'btn btn-primary btn-circle add-group-btn d-flex align-items-center';
+            addBtn.setAttribute('data-group', group);
+            addBtn.style.width = 'auto';
+            addBtn.style.height = '38px';
+            addBtn.style.borderRadius = '19px';
+            addBtn.style.display = 'flex';
+            addBtn.style.alignItems = 'center';
+            addBtn.style.justifyContent = 'center';
+            addBtn.style.fontSize = '1.1rem';
+            addBtn.style.boxShadow = '0 2px 8px #1976d233';
+            addBtn.style.background = 'linear-gradient(135deg, #1976d2 60%, #43e97b 100%)';
+            addBtn.style.border = 'none';
+            addBtn.style.color = '#fff';
+            addBtn.innerHTML = '<i class="fas fa-plus me-1"></i> إضافة حقل';
+            var wrapper = document.createElement('div');
+            wrapper.className = 'd-flex justify-content-center mt-3 add-group-btn-wrapper';
+            wrapper.appendChild(addBtn);
+            groupList.appendChild(wrapper);
+        }
     }
-
-    startBtn.onclick = async function() {
-        audioChunks = [];
-        seconds = 0;
-        statusDiv.style.display = 'block';
-        statusDiv.textContent = 'يتم التسجيل...';
-        timerSpan.style.display = 'inline';
-        timerSpan.textContent = '00:00';
-        stopBtn.disabled = false;
-        startBtn.disabled = true;
-        resetBtn.style.display = 'none';
-        audioPlayback.style.display = 'none';
-        downloadLink.style.display = 'none';
-        timerInterval = setInterval(updateTimer, 1000);
-        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-            mediaRecorder = new MediaRecorder(stream);
-            mediaRecorder.start();
-            mediaRecorder.ondataavailable = function(e) {
-                audioChunks.push(e.data);
-            };
-            mediaRecorder.onstop = function() {
-                clearInterval(timerInterval);
-                statusDiv.style.display = 'none';
-                timerSpan.style.display = 'none';
-                const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
-                const audioUrl = URL.createObjectURL(audioBlob);
-                audioPlayback.src = audioUrl;
-                audioPlayback.style.display = 'block';
-                downloadLink.href = audioUrl;
-                downloadLink.download = 'voice_note.wav';
-                downloadLink.style.display = 'inline-block';
-                // تحويل الصوت إلى base64
-                const reader = new FileReader();
-                reader.onloadend = function() {
-                    voiceInput.value = reader.result;
-                };
-                reader.readAsDataURL(audioBlob);
-                resetBtn.style.display = 'inline-block';
-                startBtn.disabled = false;
-                stopBtn.disabled = true;
-            };
-        }
-    };
-    stopBtn.onclick = function() {
-        if (mediaRecorder && mediaRecorder.state === 'recording') {
-            mediaRecorder.stop();
-        }
-    };
-    resetBtn.onclick = function() {
-        audioPlayback.style.display = 'none';
-        downloadLink.style.display = 'none';
-        voiceInput.value = '';
-        resetBtn.style.display = 'none';
-        startBtn.disabled = false;
-        stopBtn.disabled = true;
-        seconds = 0;
-        timerSpan.textContent = '00:00';
-    };
+    // دالة لإظهار/إخفاء زر الحذف حسب عدد المجموعات
+    function updateRemoveBtns(groupList) {
+        var instances = groupList.querySelectorAll('.group-fields-instance');
+        instances.forEach(function(inst) {
+            var removeBtn = inst.querySelector('.remove-group-btn');
+            if(removeBtn) removeBtn.style.display = (instances.length > 1 ? '' : 'none');
+        });
+    }
+    // عند التحميل: ضبط أزرار الحذف وزر الإضافة
+    document.querySelectorAll('.group-fields-list').forEach(function(groupList) {
+        var group = groupList.getAttribute('data-group');
+        moveAddBtnToBottom(groupList, group);
+        updateRemoveBtns(groupList);
+    });
 });
-// فحص قبل الإرسال
-const form = document.querySelector('form');
-if(form) {
-    form.onsubmit = function() {
-        const voiceInput = form.querySelector('.voiceNoteData');
-        if (voiceInput && !voiceInput.value) {
-            // يمكنك منع الإرسال إذا كان التسجيل مطلوبًا:
-            // alert('يرجى تسجيل ملاحظة صوتية أو التأكد من الضغط على إيقاف التسجيل قبل الحفظ.');
-            // return false;
-        }
-    };
-}
 </script>
+<style>
+.btn-circle.add-group-btn {
+    min-width: 38px !important;
+    height: 38px !important;
+    border-radius: 19px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 1.1rem !important;
+    box-shadow: 0 2px 8px #1976d233 !important;
+    background: linear-gradient(135deg, #1976d2 60%, #43e97b 100%) !important;
+    border: none !important;
+    color: #fff !important;
+    transition: background 0.2s, box-shadow 0.2s;
+    padding: 0 16px !important;
+    font-weight: bold;
+    gap: 6px;
+}
+.btn-circle.add-group-btn:hover {
+    background: linear-gradient(135deg, #43e97b 60%, #1976d2 100%) !important;
+    color: #fff !important;
+    box-shadow: 0 4px 16px #43e97b33 !important;
+}
+</style>
 @endsection

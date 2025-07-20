@@ -84,7 +84,7 @@ Route::group(['prefix' => 'categories'], function () {
     Route::get('/edit/{id}', [CategoryController::class, 'edit'])->name('admin.department.edit');
     Route::get('/show/{id}', [DepartmentController::class, 'show'])->name('admin.department.show');
     Route::post('/edit/{category}', [CategoryController::class, 'update'])->name('admin.categories.update');
-    Route::post('update_top_categories', 'CategoriesController@update_top_categories')->name('update_top_categories');
+    Route::post('update_top_categories', [CategoryController::class, 'update_top_categories'])->name('update_top_categories');
     Route::get('/delete/{slug}', [CategoryController::class, 'destroy'])->name('admin.categories.delete');
 });
 

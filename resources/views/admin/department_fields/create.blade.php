@@ -3,8 +3,21 @@
 @section('content')
     <div class="container">
         <h1>Add Field to {{ $department->name_en }}</h1>
-        <form action="{{ route('admin.departments.fields.store', $department->id) }}" method="POST">
-            @include('admin.department_fields._form', ['field' => null])
+        <form action="{{ route('admin.departments.fields.store', $department->id) }}" method="POST" enctype="multipart/form-data">
+            @csrf
+            <div class="mb-3">
+                <a href="{{ route('admin.sub_departments.create') }}" class="btn btn-primary">إضافة قسم فرعي جديد</a>
+            </div>
+            <div class="mb-3">
+                <label for="sub_department_id">القسم الفرعي (اختياري)</label>
+                    <select name="sub_department_id" id="sub_department_id" class="form-control">
+        <option value="">اختر القسم الفرعي</option>
+        @foreach($subDepartments as $sub)
+            <option value="{{ $sub->id }}" {{ $selectedSubDepartmentId == $sub->id ? 'selected' : '' }}>{{ $sub->name_ar }}</option>
+        @endforeach
+    </select>
+            </div>
+            @include('admin.department_fields._dynamic_field_form', ['field' => null])
         </form>
     </div>
     // fileds name stratege

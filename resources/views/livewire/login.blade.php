@@ -30,7 +30,7 @@
             </p>
         </div>
     </form>
-    
+
         {{-- <div>
             <label for="email">Email</label>
             <input type="email" id="email" wire:model.lazy="email">

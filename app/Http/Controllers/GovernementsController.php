@@ -21,4 +21,18 @@ class GovernementsController extends Controller
         Governements::create($felids);
         return redirect()->back()->with('success', 'تم اضافة المحافظة');
     }
+
+    public function getGovernorates(Request $request)
+    {
+        $countryId = $request->country_id;
+        $governorates = Governements::where('country_id', $countryId)->get();
+        return response()->json($governorates);
+    }
+
+    public function getByCountry(Request $request)
+    {
+        $countryId = $request->country_id;
+        $governorates = Governements::where('country_id', $countryId)->get();
+        return response()->json($governorates);
+    }
 }

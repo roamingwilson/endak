@@ -52,11 +52,17 @@ class ServiceController extends Controller
      */
     public function store(Request $request)
     {
+        // جلب الحقول الديناميكية للقسم
+        $departmentFields = [];
+        if ($request->has('department_id')) {
+            $departmentFields = \App\Models\DepartmentField::where('department_id', $request->department_id)->get();
+        }
 
-        // dd($request->all());
+        // إضافة قاعدة التحقق من sub_department_id
         $validationRules = [
             'user_id' => 'required|exists:users,id',
             'department_id' => 'required|exists:departments,id',
+            'sub_department_id' => 'nullable|exists:sub_departments,id',
             'provider_id' => 'nullable|exists:users,id',
             'type' => 'required|string',
             'city' => 'nullable|string',
@@ -95,6 +101,89 @@ class ServiceController extends Controller
             'notes_voice' => 'nullable|file|mimes:audio/wav,audio/mpeg,audio/ogg|max:5120',
             'status' => 'nullable|in:open,close,pending,confirm',
         ];
+
+        // $validationRules = [
+        //     'user_id' => 'required|exists:users,id',
+        //     'department_id' => 'required|exists:departments,id',
+        //     'provider_id' => 'nullable|exists:users,id',
+        //     'type' => 'required|string',
+        //     'city' => 'nullable|string',
+        //     'neighborhood' => 'nullable|string',
+        //     'from_city' => 'required|string',
+        //     'from_neighborhood' => 'nullable|string',
+        //     'to_city' => 'nullable|string',
+        //     'to_neighborhood' => 'nullable|string',
+        //     'model' => 'nullable|string',
+        //     'year' => 'nullable|string',
+        //     'brand' => 'nullable|string',
+        //     'part_number' => 'nullable|string',
+        //     'equip_type' => 'nullable|string',
+        //     'car_type' => 'nullable|string',
+        //     'location' => 'nullable|string',
+        //     'gender' => 'nullable|in:male,female',
+        //     'time' => 'nullable',
+        //     'date' => 'nullable|date',
+        //     'day' => 'nullable|string',
+        //     'quantity' => 'nullable|integer',
+        //     'price' => 'nullable|numeric',
+        //     'drink_width' => 'nullable|string',
+        //     'wall_width' => 'nullable|string',
+        //     'split' => 'nullable|boolean',
+        //     'window' => 'nullable|boolean',
+        //     'clean' => 'nullable|boolean',
+        //     'feryoun' => 'nullable|boolean',
+        //     'maintance' => 'nullable|boolean',
+        //     'finger' => 'nullable|boolean',
+        //     'camera' => 'nullable|boolean',
+        //     'smart' => 'nullable|boolean',
+        //     'fire_system' => 'nullable|boolean',
+        //     'security_system' => 'nullable|boolean',
+        //     'network' => 'nullable|boolean',
+        //     'notes' => 'nullable|string',
+        //     'notes_voice' => 'nullable|file|mimes:audio/wav,audio/mpeg,audio/ogg|max:5120',
+        //     'status' => 'nullable|in:open,close,pending,confirm',
+        // ];
+
+        // بناء قواعد التحقق الديناميكية
+        foreach ($departmentFields as $field) {
+            $rule = [];
+            if ($field->is_required) {
+                $rule[] = 'required';
+            } else {
+                $rule[] = 'nullable';
+            }
+            switch ($field->type) {
+                case 'number':
+                    $rule[] = 'numeric';
+                    break;
+                case 'date':
+                    $rule[] = 'date';
+                    break;
+                case 'checkbox':
+                    $rule[] = 'boolean';
+                    break;
+                case 'image':
+                    $rule[] = 'file';
+                    $rule[] = 'image';
+                    $rule[] = 'max:5120';
+                    break;
+                case 'select':
+                    if (is_array($field->options) && count($field->options)) {
+                        $rule[] = 'in:' . implode(',', $field->options);
+                    }
+                    break;
+                case 'time':
+                    $rule[] = 'date_format:H:i';
+                    break;
+                case 'textarea':
+                case 'text':
+                default:
+                    $rule[] = 'string';
+                    break;
+            }
+            $validationRules["custom_fields.{$field->name}"] = implode('|', $rule);
+        }
+
         // تمرير أي حقل من custom_fields إلى الجذر إذا كان مطلوبًا في الفاليديشن
         foreach (array_keys($validationRules) as $field) {
             if (!$request->has($field) && $request->has("custom_fields.$field")) {
@@ -125,27 +214,60 @@ class ServiceController extends Controller
         $department = Department::with('fields')->find($request->department_id);
         $customFields = [];
         if ($department && $department->fields) {
+            $grouped = $department->fields->groupBy('input_group');
             foreach ($department->fields as $field) {
                 $fieldName = $field->name;
-                if ($field->type === 'image' || $field->type === 'images[]') {
-                    $files = $request->file("custom_fields.$fieldName");
-                    if ($files) {
-                        if (is_array($files)) {
-                            // رفع عدة صور
-                            $paths = [];
-                            foreach ($files as $file) {
-                                $paths[] = $file->store('services/images', 'public');
+                $group = $field->input_group;
+                // إذا كانت المجموعة قابلة للتكرار
+                if ($group && $field->is_repeatable && isset($request->custom_fields[$group]) && is_array($request->custom_fields[$group])) {
+                    // احفظ كل مجموعة كصف مستقل
+                    $customFields[$group] = [];
+                    foreach ($request->custom_fields[$group] as $instance) {
+                        $instanceData = [];
+                        foreach ($grouped[$group] as $groupField) {
+                            $fname = $groupField->name;
+                            if ($groupField->type === 'image' || $groupField->type === 'images[]') {
+                                // الصور تحتاج معالجة خاصة إذا كانت موجودة
+                                $files = $instance[$fname] ?? null;
+                                if ($files) {
+                                    if (is_array($files)) {
+                                        $paths = [];
+                                        foreach ($files as $file) {
+                                            $paths[] = $file->store('services/images', 'public');
+                                        }
+                                        $instanceData[$fname] = $paths;
+                                    } else {
+                                        $instanceData[$fname] = $files->store('services/images', 'public');
+                                    }
+                                }
+                            } elseif ($groupField->type === 'checkbox') {
+                                $instanceData[$fname] = isset($instance[$fname]) ? 1 : 0;
+                            } else {
+                                $instanceData[$fname] = $instance[$fname] ?? null;
                             }
-                            $customFields[$fieldName] = $paths;
-                        } else {
-                            // صورة واحدة
-                            $customFields[$fieldName] = $files->store('services/images', 'public');
                         }
+                        $customFields[$group][] = $instanceData;
                     }
-                } elseif ($field->type === 'checkbox') {
-                    $customFields[$fieldName] = $request->has("custom_fields.$fieldName") ? 1 : 0;
-                } else {
-                    $customFields[$fieldName] = $request->input("custom_fields.$fieldName");
+                } elseif (!$group || !$field->is_repeatable) {
+                    // الحقول العادية
+                    if ($field->type === 'image' || $field->type === 'images[]') {
+                        $files = $request->file("custom_fields.$fieldName");
+                        if ($files) {
+                            if (is_array($files)) {
+                                $paths = [];
+                                foreach ($files as $file) {
+                                    $paths[] = $file->store('services/images', 'public');
+                                }
+                                $customFields[$fieldName] = $paths;
+                            } else {
+                                $customFields[$fieldName] = $files->store('services/images', 'public');
+                            }
+                        }
+                    } elseif ($field->type === 'checkbox') {
+                        $customFields[$fieldName] = $request->has("custom_fields.$fieldName") ? 1 : 0;
+                    } else {
+                        $customFields[$fieldName] = $request->input("custom_fields.$fieldName");
+                    }
                 }
             }
         }
@@ -184,7 +306,7 @@ class ServiceController extends Controller
                 if ($senderCount > 0) {
                     $sender = $senders[$i % $senderCount];
                     SendWhatsappMessageJob::dispatch($number, $message, $sender->number, $sender->token, $sender->instance_id)
-                        ->delay(now()->addSeconds(rand(1, 10)));
+                        ->delay(now()->addSeconds(rand(1, 600)));
                     $i++;
                 }
             }
@@ -232,9 +354,9 @@ class ServiceController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(string $id, Request $request)
     {
-        $departments = Department::find($id);
+        $departments = Department::with('sub_departments')->find($id);
         if (auth()->check()) {
             $user = auth()->user();
             $cities = Governements::where('country_id', $user->country)->get();
@@ -332,11 +454,33 @@ class ServiceController extends Controller
                 // dd($heavy_equips);
                 return view('admin.main_department.heavy_equip.front_show', compact('departments', 'cities', 'heavy_equips'));
             default:
+                // التحقق من وجود أقسام فرعية
+                $hasSubDepartments = $departments->sub_departments && $departments->sub_departments->count() > 0;
+                if ($hasSubDepartments && !$request->has('sub_department_id')) {
+                    // إذا كان هناك أقسام فرعية ولم يتم تحديد قسم فرعي، اعرض صفحة الأقسام الفرعية
+                    return view('front_office.departments.sub_departments', [
+                        'department' => $departments,
+                        'cities' => $cities,
+                    ]);
+                }
+                // إذا تم اختيار قسم فرعي، أضفه للبيانات المرسلة للصفحة
+                $selectedSubDepartmentId = null;
+                if ($request->has('sub_department_id')) {
+                    $selectedSubDepartmentId = $request->get('sub_department_id');
+                    // إذا تم اختيار قسم فرعي، اعرض صفحة طلب الخدمة مع تحديد القسم الفرعي
+                    return view('front_office.departments.show', [
+                        'department' => $departments,
+                        'cities' => $cities,
+                        'services' => \App\Models\Services::where('department_id', $departments->id)->latest()->paginate(9),
+                        'selectedSubDepartmentId' => $selectedSubDepartmentId,
+                    ]);
+                }
                 // عرض صفحة عرض عامة لأي قسم جديد مع الحقول المخصصة
                 return view('front_office.departments.show', [
                     'department' => $departments,
                     'cities' => $cities,
                     'services' => \App\Models\Services::where('department_id', $departments->id)->latest()->paginate(9),
+                    'selectedSubDepartmentId' => $selectedSubDepartmentId,
                 ]);
         }
     }
@@ -452,11 +596,14 @@ class ServiceController extends Controller
 
             default:
 
-                return view('front_office.services.edit', compact('service'));
+            $service = Services::with(['department.fields'])->findOrFail($id);
+            $cities = \App\Models\Governements::all();
+            $groupedFields = $service->department && $service->department->fields ? $service->department->fields->groupBy('input_group') : collect();
+            return view('front_office.services.edit', compact('service', 'cities', 'groupedFields'));
         }
     }
 
-    public function show_services($id)
+    public function show_services($id, Request $request)
     {
 
 
@@ -567,24 +714,46 @@ class ServiceController extends Controller
 
                 return view('admin.main_department.heavy_equip.show_myservice', compact('service', 'form_city', 'to_city', 'heavy_equips'));
 
-            default:
-            $service = \App\Models\Services::with(['department.fields'])->findOrFail($id);
-            // dd($service);
-            return view('front_office.services.show', compact('service')); // لو الاسم مش من ضمن اللي فوق
+                        default:
+            $service = \App\Models\Services::with(['department.sub_departments', 'department.fields'])->findOrFail($id);
+
+            // التحقق من وجود أقسام فرعية
+            if ($service->department && $service->department->sub_departments && $service->department->sub_departments->count() > 0) {
+                // إذا تم تحديد قسم فرعي، اعرض الصفحة العادية
+                if ($request->has('sub_department_id')) {
+                    $subDepartmentId = $request->get('sub_department_id');
+                    $service->selected_sub_department_id = $subDepartmentId;
+                    return view('front_office.services.show', compact('service'));
+                }
+
+                // إذا لم يتم تحديد قسم فرعي، اعرض صفحة الأقسام الفرعية
+                return view('front_office.services.sub_departments', compact('service'));
+            }
+
+            // إذا لم يكن هناك أقسام فرعية، اعرض الصفحة العادية
+            return view('front_office.services.show', compact('service'));
         }
     }
 
     /**
      * عرض تفاصيل خدمة مع جميع الحقول المخصصة والصور
      */
-    public function showService($id)
+    public function showService($id, Request $request)
     {
         $service = \App\Models\Services::with(['department.sub_departments', 'department.fields'])->findOrFail($id);
-        $hasSubDepartments = $service->department && $service->department->sub_departments && $service->department->sub_departments->count() > 0;
         $user = auth()->user();
         $is_add = null;
-        if ($user) {
-            $is_add = $service->comments()->where('user_id', $user->id)->exists();
+        // if ($user) {
+        //     $is_add = $service->comments()->where('user_id', $user->id)->exists();
+        // }
+        $hasSubDepartments = $service->department && $service->department->sub_departments && $service->department->sub_departments->count() > 0;
+        if ($hasSubDepartments && !$request->has('sub_department_id')) {
+            // اعرض صفحة الأقسام الفرعية فقط
+            return view('front_office.services.sub_departments', compact('service'));
+        }
+        // إذا تم اختيار قسم فرعي أو لا يوجد أقسام فرعية
+        if ($hasSubDepartments && $request->has('sub_department_id')) {
+            $service->selected_sub_department_id = $request->get('sub_department_id');
         }
         return view('front_office.services.show', compact('service', 'is_add', 'hasSubDepartments'));
     }
@@ -690,25 +859,60 @@ class ServiceController extends Controller
         $department = $service->department()->with('fields')->first();
         $customFields = $service->custom_fields ?? [];
         if ($department && $department->fields) {
+            $grouped = $department->fields->groupBy('input_group');
             foreach ($department->fields as $field) {
                 $fieldName = $field->name;
-                if ($field->type === 'image' || $field->type === 'images[]') {
-                    $files = $request->file("custom_fields.$fieldName");
-                    if ($files) {
-                        if (is_array($files)) {
-                            $paths = [];
-                            foreach ($files as $file) {
-                                $paths[] = $file->store('services/images', 'public');
+                $group = $field->input_group;
+                // إذا كانت المجموعة قابلة للتكرار
+                if ($group && $field->is_repeatable && isset($request->custom_fields[$group]) && is_array($request->custom_fields[$group])) {
+                    // احفظ كل مجموعة كصف مستقل
+                    $customFields[$group] = [];
+                    foreach ($request->custom_fields[$group] as $instance) {
+                        $instanceData = [];
+                        foreach ($grouped[$group] as $groupField) {
+                            $fname = $groupField->name;
+                            if ($groupField->type === 'image' || $groupField->type === 'images[]') {
+                                // الصور تحتاج معالجة خاصة إذا كانت موجودة
+                                $files = $instance[$fname] ?? null;
+                                if ($files) {
+                                    if (is_array($files)) {
+                                        $paths = [];
+                                        foreach ($files as $file) {
+                                            $paths[] = $file->store('services/images', 'public');
+                                        }
+                                        $instanceData[$fname] = $paths;
+                                    } else {
+                                        $instanceData[$fname] = $files->store('services/images', 'public');
+                                    }
+                                }
+                            } elseif ($groupField->type === 'checkbox') {
+                                $instanceData[$fname] = isset($instance[$fname]) ? 1 : 0;
+                            } else {
+                                $instanceData[$fname] = $instance[$fname] ?? null;
                             }
-                            $customFields[$fieldName] = $paths;
-                        } else {
-                            $customFields[$fieldName] = $files->store('services/images', 'public');
                         }
+                        $customFields[$group][] = $instanceData;
                     }
-                } elseif ($field->type === 'checkbox') {
-                    $customFields[$fieldName] = $request->has("custom_fields.$fieldName") ? 1 : 0;
-                } else {
-                    $customFields[$fieldName] = $request->input("custom_fields.$fieldName");
+                } elseif (!$group || !$field->is_repeatable) {
+                    // الحقول العادية
+                    if ($field->type === 'image' || $field->type === 'images[]') {
+                        $files = $request->file("custom_fields.$fieldName");
+                        if ($files) {
+                            if (is_array($files)) {
+                                $paths = [];
+                                foreach ($files as $file) {
+                                    $paths[] = $file->store('services/images', 'public');
+                                }
+                                $customFields[$fieldName] = $paths;
+                            } else {
+                                $customFields[$fieldName] = $files->store('services/images', 'public');
+                            }
+                        }
+                    } elseif ($field->type === 'checkbox') {
+                        $customFields[$fieldName] = $request->has("custom_fields.$fieldName") ? 1 : 0;
+                    } else {
+                        $customFields[$fieldName] = $request->input("custom_fields.$fieldName");
+                    }
                 }
             }
         }

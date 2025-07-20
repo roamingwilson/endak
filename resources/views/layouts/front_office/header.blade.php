@@ -3,546 +3,370 @@
         $lang = config('app.locale');
         $user = auth()->user();
     @endphp
-    <header class="main-header" id="stickyHeader">
 
-        <!-- Start::main-brand-header -->
-        <div class="main-brand-header">
-            <div class="container brand-header-container">
+    <header class="main-header bg-white shadow-sm sticky-top py-2">
+        <div class="container">
+            <div class="d-flex align-items-center justify-content-between">
+                <!-- Left Side - Logo and Menu Toggle -->
                 <div class="d-flex align-items-center">
-                    <!-- Start::header-element -->
-                    <div class="header-element me-1">
-                        <!-- Start::header-link -->
-                        <a href="javascript:void(0);" class="sidemenu-toggle1 header-link" data-bs-toggle="sidebar">
-                            <span class="open-toggle">
-                                <i class="bi bi-text-indent-left header-link-icon"></i>
-                            </span>
-                        </a>
-                        <!-- End::header-link -->
-                    </div>
-                    <!-- End::header-element -->
-                    @auth
+                    <!-- Mobile Menu Toggle -->
+                    <button class="btn btn-link p-0 me-3 d-lg-none" data-bs-toggle="offcanvas" data-bs-target="#mobileMenu">
+                        <i class="bi bi-list fs-4"></i>
+                    </button>
 
-                        <a href="#" class="brand-main">
-                            <img src="{{ asset('storage/' . $user->image ?? 'users/user.png') }}" width="50"
-                                height="50" alt="img" class="desktop-logo logo-dark">
-                            {{-- <img src="../assets/images/brand/toggle-dark.png" alt="img"
-                            class="mobile-logo mobile-dark mx-3">
-                        <img src="../assets/images/brand/logo-color.png" alt="img" class="desktop-logo logo-color">
-                        <img src="../assets/images/brand/toggle-color.png" alt="img"
-                            class="mobile-logo mobile-color"> --}}
-                        </a>
-
-                    @endauth
-                    {{-- <ul class="categories-dropdowns">
-                        <li class="category-dropdown px-2 py-3">
-                            <a href="javascript:void(0);" class="avatar bg-white-1 border rounded-circle tx-15 border-white-2 categorydropdown" onclick="toggleDropdown(this)">
-                                <i class="bi bi-grid"></i>
-                            </a>
-                            <ul class="main-dropdown" id="dropdown-toggle">
-                                <li>
-                                    <div class="categories-dropdowns__item">
-                                        <span class="me-1"><i class="bi bi-cast tx-17"></i></span>
-                                        Web Hosting
-                                        <span class="float-end"><i class="bi bi-chevron-right tx-11"></i></span>
-                                    </div>
-                                    <ul class="category-menu">
-                                        <li><a href="linux-shared-hosting.html" class="category-item">Linux Shared Hosting</a></li>
-                                        <li><a href="windows-shared-hosting.html" class="category-item">Windows Shared Hosting</a></li>
-                                        <li><a href="wordpress-shared-hosting.html" class="category-item">Wordpress Shared Hosting</a></li>
-                                    </ul>
-                                </li>
-                                <li>
-                                    <div class="categories-dropdowns__item">
-                                        <span class="me-1"><i class="bi bi-globe tx-17"></i></span>
-                                        Domains
-                                        <span class="float-end"><i class="bi bi-chevron-right tx-11"></i></span>
-                                    </div>
-                                    <ul class="category-menu">
-                                        <li><a href="register-domain.html" class="category-item">Register Domain</a></li>
-                                        <li><a href="domain-transfer.html" class="category-item">Transfer Domain</a></li>
-                                        <li><a href="premium-domains.html" class="category-item">Premium Domains</a></li>
-                                    </ul>
-                                </li>
-                                <li>
-                                    <div class="categories-dropdowns__item">
-                                        <span class="me-1"><i class="bi bi-layers tx-17"></i></span>
-                                        Reseller Hosting
-                                        <span class="float-end"><i class="bi bi-chevron-right tx-11"></i></span>
-                                    </div>
-                                    <ul class="category-menu">
-                                        <li><a href="linux-reseller-hosting.html" class="category-item">Linux Reseller Hosting</a></li>
-                                        <li><a href="windows-reseller-hosting.html" class="category-item">Windows Reseller Hosting</a></li>
-                                    </ul>
-                                </li>
-                                <li>
-                                    <div class="categories-dropdowns__item">
-                                        <span class="me-1"><i class="bi bi-clouds tx-17"></i></span>
-                                        Cloud Hosting
-                                        <span class="float-end"><i class="bi bi-chevron-right tx-11"></i></span>
-                                    </div>
-                                    <ul class="category-menu">
-                                        <li><a href="cloud.html" class="category-item">Cloud Hosting</a></li>
-                                        <li><a href="professional-cloud.html" class="category-item">Professional Cloud Hosting</a></li>
-                                    </ul>
-                                </li>
-                                <li>
-                                    <div class="categories-dropdowns__item">
-                                        <span class="me-1"><i class="bi bi-hdd-network tx-17"></i></span>
-                                        Servers
-                                        <span class="float-end"><i class="bi bi-chevron-right tx-11"></i></span>
-                                    </div>
-                                    <ul class="category-menu">
-                                        <li><a href="virtualserver-linux-hosting.html" class="category-item">Linux KVM VPS</a></li>
-                                        <li><a href="dedicated-server.html" class="category-item">Dedicated Servers</a></li>
-                                        <li><a href="windows-dedicated-server.html" class="category-item">Windows Dedicated Servers</a></li>
-                                    </ul>
-                                </li>
-                                <li>
-                                    <div class="categories-dropdowns__item">
-                                        <span class="me-1"><i class="bi bi-envelope-plus tx-17"></i></span>
-                                        Email & Productivity
-                                        <span class="float-end"><i class="bi bi-chevron-right tx-11"></i></span>
-                                    </div>
-                                    <ul class="category-menu">
-                                        <li><a href="business-email.html" class="category-item">Business Email</a></li>
-                                        <li><a href="enterprise-email.html" class="category-item">Enterprise Email</a></li>
-                                        <li><a href="google-workspace.html" class="category-item">Google Workspace</a></li>
-                                    </ul>
-                                </li>
-                                <li>
-                                    <div class="categories-dropdowns__item">
-                                        <span class="me-1"><i class="bi bi-shield-check tx-17"></i></span>
-                                        Security
-                                        <span class="float-end"><i class="bi bi-chevron-right tx-11"></i></span>
-                                    </div>
-                                    <ul class="category-menu">
-                                        <li><a href="ssl-certificates.html" class="category-item">SSL Certificate</a></li>
-                                        <li><a href="codeguard-backup.html" class="category-item">CodeGuard Website Backup</a></li>
-                                        <li><a href="sitelock.html" class="category-item">SiteLock</a></li>
-                                    </ul>
-                                </li>
-                            </ul>
-                        </li>
-                    </ul> --}}
-                </div>
-
-                <ul class="nav list-unstyled align-items-center">
-                    <li class="d-flex align-items-center position-relative me-md-4 me-2">
-                        <a href="tel:+1236789657" class="stretched-link"></a>
-                        <span class="avatar bg-white-1 border rounded-circle tx-15 border-white-2 me-2"><i
-                                class="bi bi-telephone"></i></span>
-                        <div class="d-none d-md-block">
-                            <a href="javascript:void(0);" class="nav-link tx-15 p-0"
-                                style="color: black;">{{ __('general.call_to_us') }}</a>
-                            <a href="tel:{{ $settings->phone ?? '01150099801' }}"
-                                class="mb-0 nav-link p-0 tx-13 op-8 lh-sm"
-                                style="color: black;">{{ $settings->phone ?? '01150099801' }}</a>
-                        </div>
-                    </li>
-
-
-                    <li class="d-flex align-items-center position-relative">
-
-                        @if (auth()->check())
-                            <span class="avatar bg-white-1 border rounded-circle tx-15 border-white-2 me-2">
-                                <a href="{{ route('logout') }}" style="color: black;"><i
-                                        class="bi bi-box-arrow-in-right"></i>
-            @if (auth()->check())
-    <li class="d-flex align-items-center position-relative me-md-4 me-2 dropdown">
-        <span data-bs-toggle="dropdown" aria-expanded="false" style="color: #1a4388"
-            class="dropdown-toggle avatar bg-white-1 border rounded-circle tx-15 border-white-2 me-2"
-            style="border: none; margin: 0;">
-            <i class="bi bi-chat">
-                @if (
-                    $conversations->isNotEmpty() &&
-                        $conversations->first()->latestMessage &&
-                        $conversations->first()->latestMessage->created_at->gt(now()->subMinutes(10)))
-                    <span style="color:red">1</span>
-                @endif
-            </i>
-        </span>
-        <ul class="dropdown-menu dropdown-menu-end">
-            @forelse ($conversations as $conversation)
-                ...
-            @empty
-                <li>لا توجد رسائل</li>
-            @endforelse
-            ...
-        </ul>
-    </li>
-@endif                    </a>
-
-                            </span>
-                            <div class="d-none d-md-block">
-                                <a href="{{ route('web.profile', $user->id) }}" class="nav-link tx-15 p-0"
-                                    style="color: black;">{{ $user->first_name }}</a>
-                            </div>
-                            @if ($user->role_name == 'admin')
-                                <a style="{{ $lang == 'ar' ? 'margin-right: 10px;' : 'margin-left: 10px;' }} color:white"
-                                    href="{{ route('admin.dashboard') }}">{{ __('general.dashboard') }}</a>
-                            @endif
-                        @else
-                            <a id="live-chat" href="{{ route('login-page') }}" class="stretched-link"></a>
-                            <span class="avatar bg-white-1 border rounded-circle tx-15 border-white-2 me-2">
-                                <i class="bi bi-box-arrow-in-right"></i>
-
-                            </span>
-                            <div class="d-none d-md-block">
-                                <a href="{{ route('login-page') }}" class="nav-link tx-15 p-0"
-                                    style="color: black;">{{ __('auth.login') }}</a>
-                            </div>
-                        @endif
-
-                    </li>
-                    <style>
-                        .dropdown-menu {
-                            max-height: 300px;
-                            overflow-y: auto;
-                        }
-                    </style>
-                    @if (auth()->check())
-                        <li class="d-flex align-items-center position-relative me-md-4 me-2 dropdown">
-                            <span data-bs-toggle="dropdown" aria-expanded="false" style="color: #1a4388"
-                                class="dropdown-toggle avatar bg-white-1 border rounded-circle tx-15 border-white-2 me-2"
-                                style="border: none; margin: 0;">
-                                <i class="bi bi-chat">
-                                    @if (
-                                        $conversations->isNotEmpty() &&
-                                            $conversations->first()->latestMessage &&
-                                            $conversations->first()->latestMessage->created_at->gt(now()->subMinutes(10)))
-                                        <span style="color:red">1</span>
-                                    @endif
-                                </i>
-                            </span>
-                            <ul class="dropdown-menu dropdown-menu-end">
-                                @forelse ($conversations as $conversation)
-                                    @php
-                                        $otherUser =
-                                            $user->id == $conversation->sender_id
-                                                ? $conversation->recipient
-                                                : $conversation->sender;
-                                        $message = $conversation->latestMessage;
-                                    @endphp
-                                    <li>
-                                        <a href="{{ route('web.send_message', $otherUser->id) }}"
-                                            class="dropdown-item">
-                                            <div class="media d-flex align-items-center justify-content-between">
-                                                <div class="d-flex align-items-center">
-                                                    <img src="{{ $otherUser->image_url ?? asset('storage/users/default_avatar.png') }}"
-                                                        alt="User Avatar" width="auto" height="40px"
-                                                        class="img-size-50 mr-3 img-circle">
-                                                    <h6 class="dropdown-item-title mb-0">
-                                                        {{ $otherUser->first_name }}
-                                                    </h6>
-                                                </div>
-                                                <div class="media-body m-2">
-                                                    @if ($message)
-                                                        <p class="text-sm mt-3">
-                                                            {{ Str::limit($message->message, 30) }}
-                                                        </p>
-                                                    @else
-                                                        <p class="text-sm mt-3 text-muted">
-                                                            لا توجد رسائل بعد.
-                                                        </p>
-                                                    @endif
-                                                </div>
-                                            </div>
-                                        </a>
-                                    </li>
-                                @empty
-                                    <li>لا توجد رسائل</li>
-                                @endforelse
-                                <li>
-                                    <hr class="dropdown-divider">
-                                </li>
-                            </ul>
-                        </li>
-                    @endif
-
-                    @if (auth()->check())
-                        <li class="d-flex align-items-center position-relative me-md-4 me-2 dropdown">
-                            <span data-bs-toggle="dropdown" aria-expanded="false"
-                                class="dropdown-toggle avatar bg-white-1 border rounded-circle tx-15 border-white-2 me-2"
-                                style="border: none; margin: 0;">
-                                <i class="bi bi-alarm">
-                                    @if ($notifications->count() > 0)
-                                        <span style="color:red">{{ $notifications->count() }}</span>
-                                    @endif
-                                </i>
-                            </span>
-                            <ul class="dropdown-menu dropdown-menu-end">
-                                @forelse ($notifications as $notification)
-                                    <li>
-                                        <a href="{{ route('notification.read', $notification->id) }}"
-                                            class="dropdown-item">
-                                            <!-- Display notification title -->
-                                            <div class="media">
-                                                <div class="d-flex align-items-center">
-                                                    <p>{{ $notification->data['title'] }}</p>
-                                                </div>
-                                            </div>
-                                        </a>
-                                    </li>
-                                @empty
-                                    <li class="dropdown-item">لا توجد اشعارات</li>
-                                @endforelse
-                                <li>
-                                    <hr class="dropdown-divider">
-                                </li>
-                            </ul>
-                        </li>
-                    @endif
-
-
-                </ul>
-            </div>
-        </div>
-        <!-- End::main-brand-header -->
-
-    </header>
-    <div class="sticky">
-        <!-- Start::app-sidebar -->
-        <aside class="app-sidebar" id="sidebar">
-
-            <div class="app-toggle-header">
-                <div class="header-element">
-                    <!-- Start::header-link -->
-                    <a href="javascript:void(0);" class="sidemenu-toggle header-link" data-bs-toggle="sidebar">
-                        <span class="close-toggle">
-                            <i class="bi bi-x header-link-icon"></i>
-                        </span>
+                    <!-- Logo -->
+                    <a href="{{ route('home') }}" class="navbar-brand">
+                        <img src="{{ asset('images/logo2.jpg') }}" alt="Logo" height="40">
                     </a>
-                    <!-- End::header-link -->
-                </div>
-                <!-- End::header-element -->
-                {{-- <a href="index.html" class="brand-main">
-                    <img src="../assets/images/brand/logo-white.png" alt="img" class="desktop-logo logo-dark">
-                    <img src="../assets/images/brand/logo-color.png" alt="img" class="desktop-logo logo-color">
-                </a> --}}
             </div>
 
-            <!-- Start::main-sidebar -->
-            <div class="main-sidebar container" id="sidebar-scroll">
-
-                <!-- Start::nav -->
-                <nav class="main-menu-container nav nav-pills sub-open">
-                    <ul class="main-menu">
-
-                        <!-- Start::slide -->
-                        <li class="slide">
-                            <a href="{{ route('home') }}" class="side-menu__item">
-                                <span class="side-menu__label" style="color: black;">{{ __('general.home') }}</span>
-                                {{-- <i class="fe fe-chevron-down side-menu__angle"></i> --}}
-                            </a>
+                <!-- Center - Navigation (Desktop) -->
+                <nav class="d-none d-lg-flex mx-auto">
+                    <ul class="nav">
+                        <li class="nav-item mx-2">
+                            <a href="{{ route('home') }}" class="nav-link fw-medium">{{ __('general.home') }}</a>
                         </li>
-                        <!-- End::slide -->
-
-                        <!-- Start::slide -->
-                        <li class="slide">
-                            <a href="{{ route('departments') }}" class="side-menu__item">
-                                <span class="side-menu__label"
-                                    style="color: black;">{{ __('department.departments') }}</span>
-                                {{-- <i class="fe fe-chevron-down side-menu__angle"></i> --}}
-                            </a>
+                        <li class="nav-item mx-2">
+                            <a href="{{ route('departments') }}" class="nav-link fw-medium">{{ __('department.departments') }}</a>
                         </li>
-                        <!--<li class="slide has-sub">-->
-                        <!--    <a href="{{ route('departments') }}" class="side-menu__item">-->
-                        <!--        <span class="side-menu__label">{{ __('department.departments') }}</span>-->
-                        <!--        <i class="fe fe-chevron-down side-menu__angle"></i>-->
-                        <!--    </a>-->
-                        <!--    <?php $departments = App\Models\Department::paginate(5); ?>-->
-                        <!--    <ul class="slide-menu child1 mega-slide-menu-onefr without-icon">-->
-                        <!--        <li class="mega-menu">-->
-                        <!--            @forelse ($departments as $department)
--->
-                        <!--                <div class="">-->
-                        <!--                    <ul>-->
-                        <!--                        <li>-->
-                        <!--                            <p class="mb-3 d-flex align-items-center menu-label">-->
-                        <!--                                <span class="category-loop-icon">-->
-
-                        <!--                                    <i class="la {{ $department->icon_class }}"-->
-                        <!--                                        data-toggle="tooltip" title="Category"></i>-->
-
-                        <!--                                </span> <span-->
-                        <!--                                    class="tx-14 tx-primary">{{ $lang == 'ar' ? $department->name_ar : $department->name_en }}</span>-->
-                        <!--                            </p>-->
-                        <!--                        </li>-->
-                        <!--                        @forelse ($department->sub_Departments as $sub_Department)
--->
-                        <!--                            <li class="slide">-->
-                        <!--                                <a href="{{ route('web.posts', $sub_Department->id) }}"-->
-                        <!--                                    class="side-menu__item">-->
-                        <!--                                    <div class="d-lg-flex align-items-start">-->
-                        <!--                                        <div class="me-3">-->
-                        <!--                                            <span-->
-                        <!--                                                class="avatar header__dropavatar mb-2 bg-secondary-transparent rounded-circle">-->
-                        <!--                                                <i-->
-                        <!--                                                    class="bi bi-hdd-stack me-0 tx-secondary"></i>-->
-                        <!--                                            </span>-->
-                        <!--                                        </div>-->
-                        <!--                                        <div class="flex-grow-1">-->
-                        <!--                                            <h6 class="d-block mb-1">-->
-                        <!--                                                {{ $lang == 'ar' ? $sub_Department->name_ar : $sub_Department->name_en }}-->
-                        <!--                                            </h6>-->
-                        <!--                                            <span-->
-                        <!--                                                class="tx-default tx-14">{{ $lang == 'ar' ? $sub_Department->description_ar : $sub_Department->description_en }}</span>-->
-                        <!--                                        </div>-->
-                        <!--                                    </div>-->
-                        <!--                                </a>-->
-                        <!--                            </li>-->
-                    <!--                        @empty-->
-                        <!--
-@endforelse-->
-
-
-                        <!--                    </ul>-->
-                        <!--                </div>-->
-                    <!--            @empty-->
-                        <!--
-@endforelse-->
-
-
-                        <!--        </li>-->
-                        <!--    </ul>-->
-                        <!--</li>-->
-                        <!-- End::slide -->
-
-
-                        <!-- Start::slide -->
-
-
-
+                        {{--  <li class="nav-item mx-2">
+                            <a href="{{ route('orders.all') }}" class="nav-link fw-medium">
+                                {{ $lang == 'ar' ? 'كل الطلبات' : 'All Orders' }}
+                            </a>
+                        </li>  --}}
                         @if (auth()->check() && auth()->user()->role_id == 1)
-                            <li class="slide">
-                                <a href="{{ route('services.index') }}" class="side-menu__item">
-                                    <span class="side-menu__label"
-                                        style="color: black;">{{ $lang == 'ar' ? 'طلباتي' : 'Services' }}</span>
-                                    <i class="fe fe-chevron-down side-menu__angle"></i>
+                            <li class="nav-item mx-2">
+                                <a href="{{ route('services.index') }}" class="nav-link fw-medium">
+                                    {{ $lang == 'ar' ? 'طلباتي' : 'Services' }}
                                 </a>
-
                             </li>
                         @endif
                         @if (auth()->check())
-                            <li class="slide">
-                                <a href="{{ route('web.user.service_provider') }}" class="side-menu__item">
-                                    <span class="side-menu__label"
-                                        style="color: black;">{{ __('user.service_provider') }}</span>
-                                    <i class="fe fe-chevron-down side-menu__angle"></i>
+                            <li class="nav-item mx-2">
+                                <a href="{{ route('web.user.service_provider') }}" class="nav-link fw-medium">
+                                    {{ __('user.service_provider') }}
                                 </a>
-
                             </li>
                         @endif
-
                         @if (auth()->check() && auth()->user()->role_id == 1)
-                            <li class="slide">
-                                <a href="{{ route('general_orders.customer.index') }}" class="side-menu__item">
-                                    <span class="side-menu__label" style="color: black;">
+                            <li class="nav-item mx-2">
+                                <a href="{{ route('general_orders.customer.index') }}" class="nav-link fw-medium">
                                         {{ $lang == 'ar' ? 'العروض المقبولة' : 'Accepted Orders' }}
-
-                                    </span>
-
                                 </a>
+                            </li>
                         @endif
-                        @if (auth()->check())
                             @if (auth()->check() && auth()->user()->role_id == 1)
-                                <li class="slide">
-                                    <a href="{{ route('general_comments.show', $user->id) }}"
-                                        class="side-menu__item">
-                                        <span class="side-menu__label" style="color: black;">
+                            <li class="nav-item mx-2">
+                                <a href="{{ route('general_comments.show', $user->id) }}" class="nav-link fw-medium">
                                             {{ $lang == 'ar' ? 'العروض المقدمة' : 'My offers' }}
-                            @endif
-                            </span>
-
                             </a>
-
-
+                            </li>
                         @endif
                         @if (auth()->check() && auth()->user()->role_id == 3)
-                            <li class="slide">
-                                <a href="{{ route('web.comments.my_comments', $user->id) }}" class="side-menu__item">
-                                    <span class="side-menu__label"
-                                        style="color: black;">{{ $lang == 'ar' ? 'عروضي' : 'My Comments' }}</span>
-                                    <i class="fe fe-chevron-down side-menu__angle"></i>
+                            <li class="nav-item mx-2">
+                                <a href="{{ route('web.comments.my_comments', $user->id) }}" class="nav-link fw-medium">
+                                    {{ $lang == 'ar' ? 'عروضي' : 'My Comments' }}
                                 </a>
-
                             </li>
                         @endif
-                        <!-- End::slide -->
-
-                        <?php $pages = App\Models\Page::paginate(5); ?>
-                        <li class="slide has-sub">
-                            <a href="javascript:void(0);" class="side-menu__item">
-                                <span class="side-menu__label" style="color: black;">{{ __('page.pages') }}</span>
-                                <i class="fe fe-chevron-down side-menu__angle"></i>
+                        @if(auth()->check() && auth()->user()->role_id == 3)
+                            <li class="nav-item mx-2">
+                                <a href="{{ route('services.requests.all') }}" class="nav-link fw-medium">
+                                    {{ $lang == 'ar' ? 'كل الخدمات المطلوبة' : 'All Service Requests' }}
+                                </a>
+                            </li>
+                        @endif
+                        <!-- صفحات الموقع -->
+                        <li class="nav-item mx-2 dropdown">
+                            <a href="#" class="nav-link fw-medium dropdown-toggle" data-bs-toggle="dropdown">
+                                {{ __('page.pages') }}
                             </a>
-                            <ul class="slide-menu child1 mega-slide-menu-onefr without-icon">
+                            <ul class="dropdown-menu">
                                 @forelse ($pages as $page)
-                                    <li class="slide">
-                                        <a href="{{ route('page', $page->slug) }}" class="side-menu__item">
+                                    <li>
+                                        <a href="{{ route('page', $page->slug) }}" class="dropdown-item">
                                             <i class="bi bi-house"></i>
-                                            <span
-                                                class="fw-500 tx-15">{{ $lang == 'ar' ? $page->title_ar : $page->title_en }}</span>
+                                            {{ $lang == 'ar' ? $page->title_ar : $page->title_en }}
                                         </a>
                                     </li>
                                 @empty
+                                    <li class="dropdown-item text-muted small">{{ __('general.no_pages') }}</li>
                                 @endforelse
-
-
-
-                            </ul>
-                        </li>
-
-
-                        <li class="slide has-sub">
-                            <a href="javascript:void(0);" class="side-menu__item">
-                                <span class="side-menu__label" style="color: black;">
-                                    {{ session()->has('locale') && session()->get('locale') == 'en' ? __('general.english') : __('general.arabic') }}
-                                </span>
-                                <span class="float-right text-muted text-sm">
-                                    {{-- <img src="{{ (session()->has('locale') && session()->get('locale') == 'ar') ? URL::asset('images/flags/SA.png') : URL::asset('images/flags/US.png') }}" alt=""> --}}
-                                </span>
-                            </a>
-                            <ul class="slide-menu child1 mega-slide-menu-onefr without-icon">
-                                <li class="slide">
-                                    <a href="{{ route('lang', 'ar') }}" class="dropdown-item" id="rtlBtn">
-                                        {{ __('general.arabic') }}
-                                        <span class="float-right text-muted text-sm">
-                                            <img src="{{ URL::asset('images/flags/SA.png') }}" alt="">
-
-                                        </span>
-                                    </a>
-
-                                </li>
-                                <li class="slide">
-
-                                    <a href="{{ route('lang', 'en') }}" class="dropdown-item" id="ltrBtn">
-                                        {{ __('general.english') }}
-                                        <span class="float-right text-muted text-sm">
-                                            <img src="{{ URL::asset('images/flags/US.png') }}" alt="">
-
-                                        </span>
-                                    </a>
-                                </li>
-
-
-
-
                             </ul>
                         </li>
                     </ul>
-                    {{-- <div class="d-xl-flex d-lg-none d-grid gap-2 text-center">
-                        <a href="register.html" class="btn btn-secondary min-w-fit-content">Register</a>
-                        <a href="login.html" class="btn btn-outline-light login-btn min-w-fit-content">Login</a>
-                    </div> --}}
-
                 </nav>
-                <!-- End::nav -->
 
+                <!-- Right Side - User Actions -->
+                <div class="d-flex align-items-center gap-3">
+                    <!-- Contact -->
+                    <div class="d-none d-md-flex align-items-center me-2">
+                        <a href="tel:{{ $settings->phone ?? '01150099801' }}" class="text-decoration-none">
+                            <div class="d-flex align-items-center">
+                                <span class="avatar bg-primary bg-opacity-10 text-primary rounded-circle p-2 me-2">
+                                    <i class="bi bi-telephone"></i>
+                                </span>
+                                <div>
+                                    <div class="small text-muted">{{ __('general.call_to_us') }}</div>
+                                    <div class="fw-medium">{{ $settings->phone ?? '01150099801' }}</div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+
+                    <!-- Messages Dropdown -->
+                    @auth
+                    <div class="dropdown">
+                        <a href="#" class="position-relative text-decoration-none" data-bs-toggle="dropdown">
+                            <span class="avatar bg-primary bg-opacity-10 text-primary rounded-circle p-2">
+                                <i class="bi bi-chat"></i>
+                                @if($conversations->isNotEmpty() && $conversations->first()->latestMessage && $conversations->first()->latestMessage->created_at->gt(now()->subMinutes(10)))
+                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                    1
+                                </span>
+                                @endif
+                                </span>
+                            </a>
+                        <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2" style="width: 320px;">
+                            <li class="dropdown-header bg-light py-2 px-3 d-flex justify-content-between align-items-center">
+                                <span class="fw-semibold">{{ __('general.messages') }}</span>
+                                <a href="#" class="small text-primary">View All</a>
+                            </li>
+                            <li class="px-2">
+                                <div style="max-height: 300px; overflow-y: auto;">
+                                    @forelse($conversations as $conversation)
+                                    @php
+                                        $otherUser = $user->id == $conversation->sender_id
+                                            ? $conversation->recipient
+                                            : $conversation->sender;
+                                        $message = $conversation->latestMessage;
+                                    @endphp
+                                    <a href="{{ route('web.send_message', $otherUser->id) }}"
+                                       class="dropdown-item d-flex align-items-center py-2 border-bottom">
+                                        <img src="{{ $otherUser->image_url ?? asset('storage/users/default_avatar.png') }}"
+                                             class="rounded-circle me-2" width="40" height="40"
+                                             alt="{{ $otherUser->first_name }}">
+                                        <div class="flex-grow-1">
+                                            <div class="d-flex justify-content-between">
+                                                <h6 class="mb-0">{{ $otherUser->first_name }}</h6>
+                                                <small class="text-muted">{{ $message ? $message->created_at->diffForHumans() : '' }}</small>
+                                            </div>
+                                            <p class="mb-0 text-truncate small" style="max-width: 200px;">
+                                                {{ $message ? Str::limit($message->message, 30) : __('general.no_messages') }}
+                                            </p>
+                                        </div>
+                                    </a>
+                                    @empty
+                                    <div class="text-center py-3 text-muted">
+                                        {{ __('general.no_conversations') }}
+                                    </div>
+                                    @endforelse
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    @endauth
+
+                    <!-- Notifications Dropdown -->
+                    @auth
+                    <div class="dropdown">
+                        <a href="#" class="position-relative text-decoration-none" data-bs-toggle="dropdown">
+                            <span class="avatar bg-primary bg-opacity-10 text-primary rounded-circle p-2">
+                                <i class="bi bi-bell"></i>
+                                @if($notifications->count() > 0)
+                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                    {{ $notifications->count() }}
+                                </span>
+                                @endif
+                            </span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2" style="width: 320px;">
+                            <li class="dropdown-header bg-light py-2 px-3 d-flex justify-content-between align-items-center">
+                                <span class="fw-semibold">{{ __('general.notifications') }}</span>
+                                <a href="#" class="small text-primary">Mark all as read</a>
+                                </li>
+                            <li class="px-2">
+                                <div style="max-height: 300px; overflow-y: auto;">
+                                    @forelse($notifications as $notification)
+                                    <a href="{{ route('notification.read', $notification->id) }}"
+                                       class="dropdown-item d-flex py-2 border-bottom">
+                                        <div class="flex-shrink-0 me-2">
+                                            <span class="avatar bg-info bg-opacity-10 text-info rounded-circle p-2">
+                                                <i class="bi bi-info-circle"></i>
+                                        </span>
+                                        </div>
+                                        <div class="flex-grow-1">
+                                            <h6 class="mb-0">{{ $notification->data['title'] }}</h6>
+                                            <p class="mb-0 small text-muted">
+                                                {{ Str::limit($notification->data['message'] ?? ($notification->data['body'] ?? ''), 50) }}
+                                            </p>
+                                            <small class="text-muted">{{ $notification->created_at->diffForHumans() }}</small>
+                                        </div>
+                                    </a>
+                                    @empty
+                                    <div class="text-center py-3 text-muted">
+                                        {{ __('general.no_notifications') }}
+                                    </div>
+                                    @endforelse
+                                </div>
+                                </li>
+                        </ul>
+                    </div>
+                    @endauth
+
+                    <!-- User Dropdown -->
+                    @auth
+                    <div class="dropdown">
+                        <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle" data-bs-toggle="dropdown">
+                            <img src="{{ asset('storage/' . $user->image ?? 'users/user.png') }}"
+                                 class="rounded-circle me-2" width="40" height="40" alt="Profile">
+                            <span class="d-none d-md-inline">{{ $user->first_name }}</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2">
+                            <li><a class="dropdown-item" href="{{ route('web.profile', $user->id) }}">
+                                <i class="bi bi-person me-2"></i> {{ __('general.profile') }}
+                            </a></li>
+                            @if($user->role_name == 'admin')
+                            <li><a class="dropdown-item" href="{{ route('admin.dashboard') }}">
+                                <i class="bi bi-speedometer2 me-2"></i> {{ __('general.dashboard') }}
+                            </a></li>
+                            @endif
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item text-danger" href="{{ route('logout') }}">
+                                <i class="bi bi-box-arrow-right me-2"></i> {{ __('auth.logout') }}
+                            </a></li>
+                            </ul>
+                    </div>
+                    @else
+                    <a href="{{ route('login-page') }}" class="btn btn-outline-primary">
+                        {{ __('auth.login') }}
+                    </a>
+                    @endauth
+
+                    <!-- Language Selector -->
+                    <div class="dropdown">
+                        <a href="#" class="btn btn-link text-decoration-none dropdown-toggle" data-bs-toggle="dropdown">
+                            <img src="{{ URL::asset('images/flags/' . ($lang == 'ar' ? 'SA' : 'US') . '.png') }}"
+                                 width="20" alt="{{ $lang == 'ar' ? 'Arabic' : 'English' }}">
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2">
+                            <li>
+                                <a href="{{ route('lang', 'ar') }}" class="dropdown-item d-flex align-items-center">
+                                    <img src="{{ URL::asset('images/flags/SA.png') }}" width="20" class="me-2" alt="Arabic">
+                                    {{ __('general.arabic') }}
+                                    @if($lang == 'ar')<i class="bi bi-check2 ms-auto text-primary"></i>@endif
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ route('lang', 'en') }}" class="dropdown-item d-flex align-items-center">
+                                    <img src="{{ URL::asset('images/flags/US.png') }}" width="20" class="me-2" alt="English">
+                                    {{ __('general.english') }}
+                                    @if($lang == 'en')<i class="bi bi-check2 ms-auto text-primary"></i>@endif
+                                </a>
+                        </li>
+                    </ul>
+                    </div>
+                </div>
             </div>
-            <!-- End::main-sidebar -->
+        </div>
+    </header>
 
-        </aside>
-        <!-- End::app-sidebar -->
+    <!-- Mobile Menu -->
+    <div class="offcanvas offcanvas-start" tabindex="-1" id="mobileMenu">
+        <div class="offcanvas-header border-bottom">
+            <h5 class="offcanvas-title">Menu</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+        </div>
+        <div class="offcanvas-body">
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a href="{{ route('home') }}" class="nav-link">{{ __('general.home') }}</a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ route('departments') }}" class="nav-link">{{ __('department.departments') }}</a>
+                </li>
+                {{--  <li class="nav-item">
+                    <a href="{{ route('orders.all') }}" class="nav-link">{{ $lang == 'ar' ? 'كل الطلبات' : 'All Orders' }}</a>
+                </li>  --}}
+                @if (auth()->check() && auth()->user()->role_id == 1)
+                    <li class="nav-item">
+                        <a href="{{ route('services.index') }}" class="nav-link">{{ $lang == 'ar' ? 'طلباتي' : 'Services' }}</a>
+                    </li>
+                @endif
+                @if (auth()->check())
+                    <li class="nav-item">
+                        <a href="{{ route('web.user.service_provider') }}" class="nav-link">{{ __('user.service_provider') }}</a>
+                    </li>
+                @endif
+                @if (auth()->check() && auth()->user()->role_id == 1)
+                    <li class="nav-item">
+                        <a href="{{ route('general_orders.customer.index') }}" class="nav-link">{{ $lang == 'ar' ? 'العروض المقبولة' : 'Accepted Orders' }}</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ route('general_comments.show', $user->id) }}" class="nav-link">{{ $lang == 'ar' ? 'العروض المقدمة' : 'My offers' }}</a>
+                    </li>
+                @endif
+                @if (auth()->check() && auth()->user()->role_id == 3)
+                    <li class="nav-item">
+                        <a href="{{ route('web.comments.my_comments', $user->id) }}" class="nav-link">{{ $lang == 'ar' ? 'عروضي' : 'My Comments' }}</a>
+                    </li>
+                @endif
+                @if(auth()->check() && auth()->user()->role_id == 3)
+                    <li class="nav-item">
+                        <a href="{{ route('services.requests.all') }}" class="nav-link">{{ $lang == 'ar' ? 'كل الخدمات المطلوبة' : 'All Service Requests' }}</a>
+                    </li>
+                @endif
+                <!-- صفحات الموقع -->
+                <li class="nav-item dropdown">
+                    <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">{{ __('page.pages') }}</a>
+                    <ul class="dropdown-menu">
+                        @forelse ($pages as $page)
+                            <li>
+                                <a href="{{ route('page', $page->slug) }}" class="dropdown-item">
+                                    <i class="bi bi-house"></i>
+                                    {{ $lang == 'ar' ? $page->title_ar : $page->title_en }}
+                                </a>
+                            </li>
+                        @empty
+                            <li class="dropdown-item text-muted small">{{ __('general.no_pages') }}</li>
+                        @endforelse
+                    </ul>
+                </li>
+            </ul>
+        </div>
     </div>
 </div>
+
+<style>
+    .main-header {
+        z-index: 1030;
+        transition: all 0.3s ease;
+        background-color: orange !important;
+    }
+
+    .nav-link {
+        color: #495057;
+        transition: all 0.2s;
+    }
+
+    .nav-link:hover, .nav-link:focus {
+        color: var(--bs-primary);
+    }
+
+    .dropdown-menu {
+        border: none;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+
+    .avatar {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    @media (max-width: 991.98px) {
+        .offcanvas {
+            width: 280px;
+        }
+    }
+</style>

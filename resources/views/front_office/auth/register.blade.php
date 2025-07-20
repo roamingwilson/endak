@@ -1,193 +1,738 @@
 @extends('layouts.home')
-<?php $lang = config('app.locale'); ?>
-
-@section('title')
-    {{ __('login') }}
-    <?php $lang = Session::get('locale'); ?>
-@endsection
+@section('title', 'تسجيل جديد - خطوات')
 @section('style')
     <link rel="stylesheet" href="{{ asset('select2-4.0.3/css/select2.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        .steps-progress {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 15px;
+        }
+
+        .step-indicator {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .step-indicator.active {
+            background-color: white;
+            color: #4e73df;
+            transform: scale(1.1);
+        }
+
+        .step-indicator:not(:last-child):after {
+            content: '';
+            position: absolute;
+            width: 25px;
+            height: 3px;
+            background-color: rgba(255, 255, 255, 0.3);
+            left: 100%;
+            top: 50%;
+            transform: translateY(-50%);
+            transition: all 0.3s ease;
+        }
+
+        .step-indicator.active:not(:last-child):after {
+            background-color: white;
+        }
+
+        .role-card {
+            border: 3px solid #e9ecef;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            height: 100%;
+            background: linear-gradient(145deg, #ffffff 0%, #f8f9fa 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .role-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transition: left 0.5s;
+        }
+
+        .role-card:hover::before {
+            left: 100%;
+        }
+
+        .role-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+        }
+
+        .role-card.client-card:hover {
+            border-color: #17a2b8;
+            box-shadow: 0 15px 35px rgba(23, 162, 184, 0.2);
+        }
+
+        .role-card.provider-card:hover {
+            border-color: #ffc107;
+            box-shadow: 0 15px 35px rgba(255, 193, 7, 0.2);
+        }
+
+        .role-card.active {
+            border-color: #4e73df;
+            background: linear-gradient(145deg, rgba(78, 115, 223, 0.1) 0%, rgba(78, 115, 223, 0.05) 100%);
+            box-shadow: 0 10px 25px rgba(78, 115, 223, 0.2);
+        }
+
+        .icon-circle {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(145deg, #f8f9fa 0%, #e9ecef 100%);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 35px;
+            color: #4e73df;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .client-card .icon-circle {
+            background: linear-gradient(145deg, rgba(23, 162, 184, 0.1) 0%, rgba(23, 162, 184, 0.05) 100%);
+            color: #17a2b8;
+        }
+
+        .provider-card .icon-circle {
+            background: linear-gradient(145deg, rgba(255, 193, 7, 0.1) 0%, rgba(255, 193, 7, 0.05) 100%);
+            color: #ffc107;
+        }
+
+        .role-card:hover .icon-circle {
+            transform: scale(1.1);
+        }
+
+        .verification-code {
+            font-size: 28px;
+            font-weight: bold;
+            letter-spacing: 8px;
+        }
+
+        .form-control {
+            border-radius: 10px;
+            border: 2px solid #e9ecef;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: #4e73df;
+            box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.25);
+        }
+
+        .form-control.is-invalid {
+            border-color: #dc3545;
+            background-image: none;
+            padding-right: 12px;
+        }
+
+        .form-control.is-valid {
+            border-color: #28a745;
+            background-image: none;
+            padding-right: 12px;
+        }
+
+        .btn {
+            border-radius: 10px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .card {
+            border-radius: 20px;
+            overflow: hidden;
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, #4e73df 0%, #224abe 100%);
+        }
+
+        .alert {
+            border-radius: 10px;
+            border: none;
+        }
+
+        .input-group-text {
+            border-radius: 10px 0 0 10px;
+            background: linear-gradient(145deg, #f8f9fa 0%, #e9ecef 100%);
+            border: 2px solid #e9ecef;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 8px;
+        }
+
+        .form-label i {
+            margin-left: 8px;
+            color: #4e73df;
+        }
+
+        .text-muted {
+            color: #6c757d !important;
+        }
+
+        .invalid-feedback {
+            font-size: 0.875rem;
+            color: #dc3545;
+        }
+
+        .countdown-timer {
+            background: linear-gradient(145deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 20px;
+            padding: 10px 20px;
+            display: inline-block;
+            margin-top: 10px;
+        }
+
+        .otp-input-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+
+        .otp-input-wrapper::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #4e73df, #224abe);
+            transition: width 0.3s ease;
+        }
+
+        .otp-input-wrapper:focus-within::after {
+            width: 100%;
+        }
+    </style>
 @endsection
+
 @section('content')
-    @php
-        use App\Models\Country;
-        use App\Models\Governements;
-
-        $countries = Country::with('Governements')->get();
-    @endphp
-    <section>
-        <div class="container" style="display: flex; justify-content:center;align-items:center">
-            <div style="width: 400px;margin-bottom:80px;margin-top:60px">
-                <h1 style="text-align: center;margin:30px">{{ __('auth.register') }}</h1>
-                {{-- <livewire:register /> --}}
-                <form action="{{ route('register') }}" method="POST" enctype="multipart/form-data">
-                    @csrf
-                    <div class="form-group">
-                        <label for="" class="m-2">{{ __('auth.first_name') }}</label>
-                        <input class="form-control" name="first_name" type="text"
-                            placeholder="{{ __('auth.first_name') }}" value="{{ old('first_name') }}">
-                        @error('first_name')
-                            <span class="error text-danger">{{ $message }}</span>
-                        @enderror
-
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-7">
+            <div class="card shadow-lg border-0">
+                <div class="card-header text-white text-center py-4">
+                    <h3 class="mb-0">
+                        <i class="fas fa-user-plus me-2"></i>
+                        إنشاء حساب جديد
+                    </h3>
+                    <div class="steps-progress mt-3">
+                        <div class="step-indicator active" data-step="1">1</div>
+                        <div class="step-indicator" data-step="2">2</div>
+                        <div class="step-indicator" data-step="3">3</div>
                     </div>
-                    <div class="form-group">
-                        <label for="" class="m-2">{{ __('auth.last_name') }}</label>
-                        <input class="form-control" name="last_name" type="text" placeholder="{{ __('auth.last_name') }}"
-                            value="{{ old('last_name') }}">
-                        @error('last_name')
-                            <span class="error text-danger">{{ $message }}</span>
-                        @enderror
+                </div>
 
-                    </div>
-                    <div class="form-group">
-                        <label for="phone" class="m-2">{{ __('auth.phone') }}</label>
-                        <input type="tel" name="phone" id="phone" pattern="[0-9]+" class="form-control"
-                            placeholder="{{ __('auth.phone') }}" value="{{ old('phone') }}">
-                        @error('phone')
-                            <span class="error text-danger">{{ $message }}</span>
-                        @enderror
-                    </div>
+                <div class="card-body p-4 p-md-5">
+                    <form id="register-steps-form" method="POST" action="{{ route('register') }}" novalidate>
+                        @csrf
 
-                    {{-- <div class="form-group">
-                        <label for="departments" class="m-2">{{ __('department.departments') }}</label>
-                        <select name="departments[]" id="tags" class="form-control main_departments select2"
-                            multiple="multiple">
-                            <option value="">{{ __('department.select_product') }}</option>
-                            @foreach ($merged_departments as $merged_department_item)
-                                <input class="form-control" name="department_type[]" type="hidden"  value="{{ old('email') }}">
-                                <option value="{{ $merged_department_item->name_en . '-' . $merged_department_item->id }}">
-                                    {{ $lang == 'ar' ? $merged_department_item->name_ar : $merged_department_item->name_en }}
-                                </option>
-                            @endforeach
-                        </select>
-                        @error('departments')
-                            <span class="error text-danger">{{ $message }}</span>
-                        @enderror
+                        <!-- Step 1: Role Selection -->
+                        <div class="step step-1">
+                            <div id="step1-errors" class="alert alert-danger d-none"></div>
+                            <div class="text-center mb-5">
+                                <i class="fas fa-user-tie fa-4x text-primary mb-3"></i>
+                                <h4 class="fw-bold">اختر نوع حسابك</h4>
+                                <p class="text-muted">سيحدد هذا الاختيار الميزات المتاحة لك في المنصة</p>
+                            </div>
+                            <div class="row g-4 mb-4">
+                                <div class="col-md-6">
+                                    <div class="role-card client-card" data-role="1">
+                                        <div class="card-body text-center p-4">
+                                            <div class="icon-circle mb-3">
+                                                <i class="fas fa-user"></i>
+                                            </div>
+                                            <h5 class="fw-bold"> عميل</h5>
+                                            <p class="text-muted">نوع الحساب الأول</p>
+                                            <div class="form-check d-flex justify-content-center">
+                                                <input class="form-check-input" type="radio" name="role" id="role-1" value="1" required>
+                                                <label class="form-check-label ms-2" for="role-1">
+                                                    اختر هذا الدور
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="role-card provider-card" data-role="3">
+                                        <div class="card-body text-center p-4">
+                                            <div class="icon-circle mb-3">
+                                                <i class="fas fa-briefcase"></i>
+                                            </div>
+                                            <h5 class="fw-bold">مزود خدمة</h5>
+                                            <p class="text-muted">نوع الحساب الثاني</p>
+                                            <div class="form-check d-flex justify-content-center">
+                                                <input class="form-check-input" type="radio" name="role" id="role-3" value="3" required>
+                                                <label class="form-check-label ms-2" for="role-3">
+                                                    اختر هذا الدور
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="button" class="btn btn-primary btn-lg w-100 next-step py-3">
+                                التالي <i class="fas fa-arrow-left ms-2"></i>
+                            </button>
+                        </div>
 
-                    </div> --}}
+                        <!-- Step 2: User Information -->
+                        <div class="step step-2 d-none">
+                            <div id="step2-errors" class="alert alert-danger d-none"></div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">
+                                        <i class="fas fa-user"></i> الاسم الأول
+                                    </label>
+                                    <input type="text" name="first_name" class="form-control form-control-lg" required
+                                           placeholder="أدخل اسمك الأول" pattern="[\p{Arabic}\s]+">
+                                    <div class="invalid-feedback">يرجى إدخال اسم أول صحيح (أحرف عربية فقط)</div>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">
+                                        <i class="fas fa-user"></i> الاسم الأخير
+                                    </label>
+                                    <input type="text" name="last_name" class="form-control form-control-lg" required
+                                           placeholder="أدخل اسمك الأخير" pattern="[\p{Arabic}\s]+">
+                                    <div class="invalid-feedback">يرجى إدخال اسم أخير صحيح (أحرف عربية فقط)</div>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">
+                                    <i class="fas fa-phone"></i> رقم الهاتف
+                                </label>
+                                <input type="tel" name="phone" class="form-control form-control-lg" required
+                                       placeholder="مثال: 00201065686522 أو +201065686522 أو 201065686522">
+                                <div class="invalid-feedback">يرجى إدخال رقم هاتف صحيح (7-20 رقم)</div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">
+                                    <i class="fas fa-envelope"></i> البريد الإلكتروني (اختياري)
+                                </label>
+                                <input type="email" name="email" class="form-control form-control-lg"
+                                       placeholder="example@example.com">
+                                <div class="invalid-feedback">يرجى إدخال بريد إلكتروني صحيح</div>
+                            </div>
 
+                            <div class="mb-3">
+                                <label class="form-label">
+                                    <i class="fas fa-globe"></i> البلد
+                                </label>
+                                <select name="country" id="country" class="form-control form-control-lg" required>
+                                    <option value="">اختر البلد</option>
+                                    @foreach (\App\Models\Country::all() as $country)
+                                        <option value="{{ $country->id }}">
+                                            {{ app()->getLocale() == 'ar' ? $country->name_ar : $country->name_en }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                <div class="invalid-feedback">يرجى اختيار البلد</div>
+                            </div>
 
+                            <div class="mb-3">
+                                <label class="form-label">
+                                    <i class="fas fa-map-marker-alt"></i> المحافظة
+                                </label>
+                                <select name="governement" id="governement" class="form-control form-control-lg" required>
+                                    <option value="">اختر المحافظة</option>
+                                </select>
+                                <div class="invalid-feedback">يرجى اختيار المحافظة</div>
+                            </div>
 
-                    <div class="mb-3">
-                        <label for="country">{{ __('department.country') }}</label>
-                        <select id="country" name="country" class="form-control">
-                            <option value="">{{ $lang == 'ar' ? 'اختر الدولة' : 'Select Country' }}</option>
-                            @foreach ($countries as $country)
-                                <option value="{{ $country->id }}">
-                                    {{ $lang == 'ar' ? $country->name_ar : $country->name_en }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
+                            <div class="mb-3">
+                                <label class="form-label">
+                                    <i class="fas fa-lock"></i> كلمة المرور
+                                </label>
+                                <input type="password" name="password" class="form-control form-control-lg" required
+                                       placeholder="أدخل 6 أرقام" pattern="\d{6}" maxlength="6">
+                                <div class="invalid-feedback">يجب أن تكون كلمة المرور مكونة من 6 أرقام فقط</div>
+                            </div>
 
-                    <div class="mb-3">
-                        <label for="governement">{{ __('department.city') }}</label>
-                        <select id="governement" name="governement" class="form-control">
-                            <option value="">{{ $lang == 'ar' ? 'اختر المحافظة' : 'Select Governorate' }}</option>
-                        </select>
-                    </div>
+                            <div class="mb-4">
+                                <label class="form-label">
+                                    <i class="fas fa-lock"></i> تأكيد كلمة المرور
+                                </label>
+                                <input type="password" name="password_confirmation" class="form-control form-control-lg" required
+                                       placeholder="أعد إدخال كلمة المرور" pattern="\d{6}" maxlength="6">
+                                <div class="invalid-feedback">كلمة المرور غير متطابقة</div>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <button type="button" class="btn btn-outline-secondary prev-step">
+                                    <i class="fas fa-arrow-right me-2"></i> السابق
+                                </button>
+                                <button type="button" class="btn btn-primary btn-lg next-step py-3">
+                                    التالي <i class="fas fa-arrow-left ms-2"></i>
+                                </button>
+                            </div>
+                        </div>
 
-
-
-
-
-
-
-                    <div class="form-group">
-                        <label for="" class="m-2">{{ __('auth.password') }}</label>
-                        <input class="form-control" name="password" type="password" placeholder="{{ __('auth.password') }}"
-                            value="{{ old('password') }}">
-                        @error('password')
-                            <span class="error text-danger">{{ $message }}</span>
-                        @enderror
-
-                    </div>
-                    <div class="form-group">
-                        <label for="">
-                            <input type="radio" name="role_id" id="work_type-" value="1" class="m-2"
-                                checked>{{ $lang == 'en' ? 'Customer' : 'عميل' }}
-                        </label>
-                        <label for="">
-                            <input type="radio" name="role_id" id="work_type-" value="3"
-                                class="m-2">{{ $lang == 'en' ? 'Service Provider' : 'مزود خدمة' }}
-                        </label>
-
-                    </div>
-                    {{-- <div class="form-group">
-                        <label for="" class="m-2">{{ __('general.image') }}</label>
-                        <input class="form-control" name="image" type="file" placeholder="{{ __('general.image') }}" value="{{ old('image') }}">
-                        @error('image') <span class="error text-danger">{{ $message }}</span> @enderror
-
-                    </div> --}}
-                    <div class="form-group">
-                        <button type="submit"
-                            class="btn btn-lg w-100 btn-primary mt-2 mb-2">{{ __('auth.register') }}</button>
-
-                        <p class="m-2 d-inline">
-                            <a href="{{ route('login-page') }}">{{ __('auth.Do_You_Have_Account') }}</a>
-                        </p>
-
-                    </div>
-                </form>
+                        <!-- Step 3: OTP Verification -->
+                        <div class="step step-3 d-none">
+                            <div id="step3-errors" class="alert alert-danger d-none"></div>
+                            <div class="text-center mb-4">
+                                <i class="fas fa-mobile-alt fa-4x text-primary mb-3"></i>
+                                <h4 class="fw-bold">تحقق من هاتفك</h4>
+                                <p class="text-muted">لقد أرسلنا رمز التحقق إلى رقم الهاتف
+                                    <span class="fw-bold text-primary" id="phone-display"></span>
+                                </p>
+                                <div class="alert alert-info d-flex align-items-center" id="otp-demo" style="display:none;">
+                                    <i class="fas fa-info-circle me-2"></i>
+                                    <span id="otp-code-display"></span>
+                                </div>
+                            </div>
+                            <div class="mb-4">
+                                <label class="form-label text-center d-block">
+                                    <i class="fas fa-key"></i> رمز التحقق
+                                </label>
+                                <div class="d-flex justify-content-center">
+                                    <div class="otp-input-wrapper">
+                                        <input type="text" name="otp" class="form-control form-control-lg text-center verification-code"
+                                               maxlength="4" pattern="\d{4}" required style="width: 180px;">
+                                    </div>
+                                </div>
+                                <div class="invalid-feedback text-center">يرجى إدخال رمز التحقق المكون من 4 أرقام</div>
+                                <div class="text-center mt-3">
+                                    <a href="#" id="resend-otp" class="text-primary fw-bold">إعادة إرسال الرمز</a>
+                                    <div class="countdown-timer" id="countdown">
+                                        (يمكنك إعادة الإرسال خلال 60 ثانية)
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <button type="button" class="btn btn-outline-secondary prev-step">
+                                    <i class="fas fa-arrow-right me-2"></i> السابق
+                                </button>
+                                <button type="submit" class="btn btn-primary btn-lg">
+                                    إنهاء التسجيل <i class="fas fa-check-circle ms-2"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
             </div>
-
         </div>
-
-    </section>
-
-    @if (isset($message))
-        <script>
-            swal("Message", "{{ $message }}", 'success', {
-                button: true,
-                button: "Ok",
-                timer: 5000,
-            })
-        </script>
-    @endif
+    </div>
+</div>
 @endsection
+
 @section('script')
-    <script src="{{ asset('js/jquery/jquery.min.js') }}"></script>
+<script src="{{ asset('js/jquery/jquery.min.js') }}"></script>
+<script src="{{ asset('select2-4.0.3/js/select2.min.js') }}"></script>
+<script>
+$(document).ready(function() {
+    let currentStep = 1;
+    let resendTimer = null;
+    let secondsLeft = 60;
 
-    <script src="{{ asset('select2-4.0.3/js/select2.min.js') }}"></script>
-
-    <script>
-        $(".main_departments").select2({
-            topics: true,
-            tokenSeparators: [',', ' ']
-        })
-    </script>
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            fetch('/get-countries')
-                .then(response => response.json())
-                .then(data => {
-                    const countrySelect = document.getElementById('country');
-                    const governementSelect = document.getElementById('governement');
-
-                    countrySelect.innerHTML = '<option value="">اختر الدولة</option>';
-
-                    data.forEach(country => {
-                        const option = document.createElement('option');
-                        option.value = country.id;
-                        option.textContent = country.name;
-                        countrySelect.appendChild(option);
-                    });
-
-                    countrySelect.addEventListener('change', function() {
-                        const selected = data.find(c => c.id == this.value);
-                        governementSelect.innerHTML = '<option value="">اختر المحافظة</option>';
-
-                        if (selected && selected.governements.length > 0) {
-                            selected.governements.forEach(gov => {
-                                const option = document.createElement('option');
-                                option.value = gov.id;
-                                option.textContent = gov.name;
-                                governementSelect.appendChild(option);
-                            });
-                        }
-                    });
-                });
+    // Show current step with animation
+    function showStep(step) {
+        $('.step').fadeOut(300).promise().done(function() {
+            $('.step').addClass('d-none');
+            $('.step-' + step).removeClass('d-none').fadeIn(300);
         });
-    </script>
+
+        $('.step-indicator').removeClass('active');
+        $(`.step-indicator[data-step="${step}"]`).addClass('active');
+        currentStep = step;
+
+        $('html, body').animate({
+            scrollTop: $('.card').offset().top - 20
+        }, 500);
+    }
+
+    // Validate step 1 (role selection)
+    function validateStep1() {
+        const selectedRole = $('input[name="role"]:checked').val();
+        if (!selectedRole) {
+            $('#step1-errors').removeClass('d-none').text('الرجاء اختيار نوع الحساب قبل المتابعة');
+            $('.role-card').addClass('is-invalid');
+            return false;
+        }
+        $('#step1-errors').addClass('d-none').empty();
+        $('.role-card').removeClass('is-invalid');
+        return true;
+    }
+
+    // Validate step 2 (user info)
+    function validateStep2() {
+        let isValid = true;
+        const step2Inputs = $('.step-2 input[required]');
+        const step2Selects = $('.step-2 select[required]');
+
+        step2Inputs.each(function() {
+            const input = $(this);
+            if (!input.val()) {
+                input.addClass('is-invalid');
+                isValid = false;
+            } else {
+                input.removeClass('is-invalid');
+                if (input.attr('name') === 'phone') {
+                    // تنظيف رقم الهاتف
+                    let phone = input.val();
+                    // إزالة 00 أو + من البداية إذا وجدت
+                    phone = phone.replace(/^(\+|00)/, '');
+                    // إزالة أي أحرف غير رقمية
+                    phone = phone.replace(/[^0-9]/g, '');
+
+                    if (phone.length < 7 || phone.length > 20) {
+                        input.addClass('is-invalid');
+                        isValid = false;
+                    }
+                }
+                if (input.attr('name') === 'password' && !/^\d{6}$/.test(input.val())) {
+                    input.addClass('is-invalid');
+                    isValid = false;
+                }
+                if (input.attr('name') === 'password_confirmation' && input.val() !== $('input[name="password"]').val()) {
+                    input.addClass('is-invalid');
+                    isValid = false;
+                }
+            }
+        });
+
+        step2Selects.each(function() {
+            const select = $(this);
+            if (!select.val()) {
+                select.addClass('is-invalid');
+                isValid = false;
+            } else {
+                select.removeClass('is-invalid');
+            }
+        });
+
+        return isValid;
+    }
+
+
+
+    // Next step from 1 to 2 (role -> user info)
+    $('.step-1 .next-step').on('click', function() {
+        if (!validateStep1()) return;
+        showStep(2);
+    });
+
+    // Next step from 2 to 3 (user info -> OTP)
+    $('.step-2 .next-step').on('click', function() {
+        if (!validateStep2()) {
+            $('#step2-errors').removeClass('d-none').text('الرجاء تصحيح الأخطاء في النموذج قبل المتابعة');
+            return;
+        }
+        $('#step2-errors').addClass('d-none').empty();
+        const btn = $(this);
+        btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> جاري الإرسال...');
+
+        $.ajax({
+            url: '{{ route('register') }}',
+            method: 'POST',
+            data: $('#register-steps-form').serialize(),
+            headers: {'X-CSRF-TOKEN': $('input[name="_token"]').val()},
+            success: function(response) {
+                $('#phone-display').text($('input[name="phone"]').val());
+                startResendCountdown();
+                showStep(3);
+                btn.prop('disabled', false).html('التالي <i class="fas fa-arrow-left ms-2"></i>');
+            },
+            error: function(xhr) {
+                let msg = 'حدث خطأ أثناء محاولة التسجيل، يرجى المحاولة مرة أخرى.';
+                if (xhr.responseJSON && xhr.responseJSON.errors) {
+                    const errors = xhr.responseJSON.errors;
+                    msg = Object.values(errors).join('\n');
+                    for (const field in errors) {
+                        $(`input[name="${field}"]`).addClass('is-invalid');
+                    }
+                }
+                $('#step2-errors').removeClass('d-none').text(msg);
+                btn.prop('disabled', false).html('التالي <i class="fas fa-arrow-left ms-2"></i>');
+            }
+        });
+    });
+
+    // Role selection with animation
+    $('.role-card').on('click', function() {
+        $('.role-card').removeClass('active');
+        $(this).addClass('active');
+        const role = $(this).data('role');
+        $(`#role-${role}`).prop('checked', true);
+    });
+
+    // Previous step
+    $('.prev-step').on('click', function() {
+        showStep(currentStep - 1);
+    });
+
+    // Form submission (final step)
+    $('#register-steps-form').on('submit', function(e) {
+        e.preventDefault();
+
+        if (!$('input[name="otp"]').val() || $('input[name="otp"]').val().length !== 4) {
+            $('#step3-errors').removeClass('d-none').text('يرجى إدخال رمز التحقق المكون من 4 أرقام');
+            $('input[name="otp"]').addClass('is-invalid');
+            return;
+        }
+
+        $('#step3-errors').addClass('d-none').empty();
+        $('input[name="otp"]').removeClass('is-invalid');
+
+        // إرسال طلب التحقق من OTP
+    // إرسال طلب التحقق من OTP
+const submitBtn = $(this).find('button[type="submit"]');
+submitBtn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> جاري التحقق...');
+
+$.ajax({
+    url: '{{ route("otp.verify") }}',
+    method: 'POST',
+    data: {
+        otp: $('input[name="otp"]').val(),
+        _token: $('input[name="_token"]').val(),
+        phone: $('input[name="phone"]').val() // إضافة رقم الهاتف للتحقق
+    },
+    success: function(response) {
+        console.log(response);
+        if (response.success) {
+            Swal.fire({
+                icon: 'success',
+                title: 'تم التحقق بنجاح!',
+                text: 'تم تفعيل حسابك وسيتم تحويلك للصفحة الرئيسية.',
+                timer: 2000,
+                showConfirmButton: false
+            });
+            setTimeout(function() {
+                window.location.href = response.redirect;
+            }, 2000);
+        }
+    },
+    error: function(xhr) {
+        let msg = 'حدث خطأ أثناء التحقق من الرمز، يرجى المحاولة مرة أخرى.';
+        if (xhr.responseJSON && xhr.responseJSON.error) {
+            msg = xhr.responseJSON.error;
+        }
+        $('#step3-errors').removeClass('d-none').text(msg);
+        $('input[name="otp"]').addClass('is-invalid');
+        submitBtn.prop('disabled', false).html('إنهاء التسجيل <i class="fas fa-check-circle ms-2"></i>');
+    }
+});
+    });
+
+    // Resend OTP
+    $('#resend-otp').on('click', function(e) {
+        e.preventDefault();
+        if (secondsLeft > 0) return;
+
+        $.ajax({
+            url: '{{ route('register.resend_otp') }}',
+            method: 'POST',
+            data: {
+                phone: $('input[name="phone"]').val(),
+                _token: $('input[name="_token"]').val()
+            },
+            success: function(response) {
+                secondsLeft = 60;
+                startResendCountdown();
+
+                const originalText = $('#resend-otp').text();
+                $('#resend-otp').text('تم الإرسال!').addClass('text-success');
+                setTimeout(() => {
+                    $('#resend-otp').text(originalText).removeClass('text-success');
+                }, 2000);
+            },
+            error: function() {
+                alert('حدث خطأ أثناء إعادة إرسال الرمز، يرجى المحاولة مرة أخرى');
+            }
+        });
+    });
+
+    // Start resend countdown
+    function startResendCountdown() {
+        clearInterval(resendTimer);
+        $('#resend-otp').css('pointer-events', 'none').addClass('text-muted');
+        $('#countdown').text(`(يمكنك إعادة الإرسال خلال ${secondsLeft} ثانية)`);
+
+        resendTimer = setInterval(function() {
+            secondsLeft--;
+            if (secondsLeft <= 0) {
+                clearInterval(resendTimer);
+                $('#resend-otp').css('pointer-events', 'auto').removeClass('text-muted');
+                $('#countdown').text('(يمكنك الآن إعادة إرسال الرمز)');
+            } else {
+                $('#countdown').text(`(يمكنك إعادة الإرسال خلال ${secondsLeft} ثانية)`);
+            }
+        }, 1000);
+    }
+
+    // Auto move between OTP digits
+    $('.verification-code').on('input', function() {
+        if ($(this).val().length === 4) {
+            $(this).removeClass('is-invalid');
+            $('#step3-errors').addClass('d-none').empty();
+        }
+    });
+
+    // Real-time validation for step 2
+    $('.step-2 input, .step-2 select').on('input change', function() {
+        $(this).removeClass('is-invalid');
+        $('#step2-errors').addClass('d-none').empty();
+    });
+
+    // Load governorates when country is selected
+    $('#country').on('change', function() {
+        const countryId = $(this).val();
+        const governementSelect = $('#governement');
+
+        if (countryId) {
+            $.ajax({
+                url: '{{ route("get.governorates") }}',
+                method: 'GET',
+                data: { country_id: countryId },
+                success: function(response) {
+                    governementSelect.empty();
+                    governementSelect.append('<option value="">اختر المحافظة</option>');
+
+                    response.forEach(function(governorate) {
+                        const name = '{{ app()->getLocale() }}' === 'ar' ? governorate.name_ar : governorate.name_en;
+                        governementSelect.append(`<option value="${governorate.id}">${name}</option>`);
+                    });
+                },
+                error: function() {
+                    console.error('Error loading governorates');
+                }
+            });
+        } else {
+            governementSelect.empty();
+            governementSelect.append('<option value="">اختر المحافظة</option>');
+        }
+    });
+
+    // Initialize select2 for better UX
+    $('select').select2({
+        theme: 'bootstrap-5',
+        width: '100%'
+    });
+});
+</script>
 @endsection

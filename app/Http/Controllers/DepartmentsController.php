@@ -19,6 +19,9 @@ class DepartmentsController extends Controller
     {
         $user = auth()->user();
         $department =  Department::findOrFail($id);
+        // تجميع الحقول حسب input_group
+        $groupedFields = $department->fields->groupBy('input_group');
+        $cities = \App\Models\Governements::all();
         if ($department->department_id == 0) {
             $main = $department;
             $services = Post::where('department_id', $main->id)->paginate();
@@ -26,7 +29,7 @@ class DepartmentsController extends Controller
             $products = $main->products;
             $inputs = $main->inputs;
             if(isset($products) && isset($inputs) && $products->count() > 0 && $inputs->count() > 0) {
-                return view('front_office.departments.show', compact('main', 'services' , 'products' , 'inputs'));
+                return view('front_office.departments.show', compact('main', 'services', 'products', 'inputs', 'department', 'groupedFields', 'cities'));
                 // return view('front_office.main_departments.show_products_inputs', compact('main', 'services' , 'products' , 'inputs'));
             }
             // if (count($services) > 0) {
@@ -44,16 +47,16 @@ class DepartmentsController extends Controller
             $products = $sub->products;
             $inputs = $sub->inputs;
             if (count($sub_departments) > 0) {
-                return view('admin.main_department.general.show_sub_departments', compact('main', 'sub_departments'));
+                return view('admin.main_department.general.show_sub_departments', compact('main', 'sub_departments', 'cities'));
             }
             // elseif (count($services) > 0) {
             //     return view('admin.main_department.general.show', compact('main', 'services'));
             // }
 
             elseif ((count($products) > 0 && count($inputs) > 0)  ) {
-                return view('admin.main_department.general.show_products_inputs', compact('main', 'products' ,'inputs', 'sub' ,'services' ));
+                return view('admin.main_department.general.show_products_inputs', compact('main', 'products' ,'inputs', 'sub' ,'services', 'cities' ));
             } elseif (count($products) > 0 && count($inputs) == 0) {
-                return view('admin.main_department.general.show_products', compact('main', 'products' , 'sub'));
+                return view('admin.main_department.general.show_products', compact('main', 'products' , 'sub', 'cities'));
             } elseif (count($products) == 0 && count($inputs) > 0) {
 
             }

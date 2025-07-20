@@ -8,6 +8,7 @@ use App\Models\Order;
 use App\Models\OrderItems;
 use Illuminate\Support\Str;
 use App\Models\ProductItems;
+use App\Models\Services;
 use Illuminate\Http\Request;
 use App\Services\OrderServices;
 use Illuminate\Support\Facades\DB;
@@ -28,7 +29,7 @@ class OrderUserController extends Controller
             'service_provider_id' => "required",
             // 'post_data'            => "required",
         ]);
-        
+
         // dd(gettype($request->post_data));
         $data = $request->all();
         $data['slug'] = Str::slug($request->title, '-');
@@ -49,12 +50,12 @@ class OrderUserController extends Controller
             // $post = Post::find($request->post_id);
             $products = ProductItems::where('post_id' , $request->post_id)->get();
             foreach ($products as $product) {
-    
+
                     OrderItems::create([
                         'product_id' => $product->product_id,
                         'quantity' => $product->quantity,
                         'order_id' => $request->post_id,
-                        'price' => 0, 
+                        'price' => 0,
                     ]);
             }
         }
@@ -82,7 +83,7 @@ class OrderUserController extends Controller
 
         if($userUnreadNotification) {
             $userUnreadNotification->markAsRead();
-        }        
+        }
         return view('front_office.orders.show_order', compact('order'));
     }
 
@@ -122,7 +123,7 @@ class OrderUserController extends Controller
                     'product_id' => $productId,
                     'quantity' => $quantity,
                     'order_id' => $order->id,
-                    'price' => 0, 
+                    'price' => 0,
                 ]);
             }
         }
@@ -130,4 +131,53 @@ class OrderUserController extends Controller
         return redirect()->back()->with('success', 'Order saved successfully with selected products.');
     }
 
+    /**
+     * عرض جميع الخدمات المطلوبة مع الفلترة
+     */
+    public function allServiceRequests(Request $request)
+    {
+        if (!auth()->check() || auth()->user()->role_id != 3) {
+            abort(403, 'غير مصرح لك بعرض هذه الصفحة');
+        }
+
+        $query = Services::query();
+
+        // فلترة الطلبات المرتبطة بالخدمات فقط
+        $query->whereNotNull('id');
+
+        // فلترة حسب نوع الخدمة
+        if ($request->filled('id')) {
+            $query->where('id', $request->id);
+        }
+
+        // فلترة حسب الحالة
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        // فلترة حسب المستخدم
+        if ($request->filled('user_id')) {
+            $query->where(function($q) use ($request) {
+                $q->where('user_id', $request->user_id)
+                  ->orWhere('service_provider_id', $request->user_id);
+            });
+        }
+
+        // فلترة حسب التاريخ
+        if ($request->filled('from')) {
+            $query->whereDate('created_at', '>=', $request->from);
+        }
+        if ($request->filled('to')) {
+            $query->whereDate('created_at', '<=', $request->to);
+        }
+
+        // فلترة حسب القسم
+        if ($request->filled('department_id')) {
+            $query->where('department_id', $request->department_id);
+        }
+
+        $orders = $query->latest()->paginate(20);
+
+        return view('services.requests_all', compact('orders'));
+    }
 }
