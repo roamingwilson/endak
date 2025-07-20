@@ -96,9 +96,16 @@ class AuthController extends Controller
 
         Log::info('Login attempt', ['user_id' => $user->id, 'status' => $user->status]);
 
-        // إذا لم يكن مفعل، أرسله لصفحة التحقق
+        // التحقق من كلمة المرور
+        if (!Hash::check($request['password'], $user->password)) {
+            return back()->withErrors([
+                'loginError' => 'كلمة المرور غير صحيحة.'
+            ]);
+        }
+
+        // تسجيل الدخول
+        Auth::login($user);
         if ($user->status !== 'active') {
-            Log::info('User not active, redirecting to verification', ['user_id' => $user->id]);
             // احفظ بيانات المستخدم في الجلسة
             session([
                 'register_user_id' => $user->id,
@@ -114,19 +121,9 @@ class AuthController extends Controller
             if ($sender) {
                 sendWhatsAppMessage($whatsappPhone, $message, $sender->number, $sender->token, $sender->instance_id);
             }
-            // حوله لصفحة التحقق
-            return redirect()->route('register-page')->with('message', 'يجب عليك تفعيل حسابك عبر رمز التحقق المرسل إلى هاتفك.');
+            // حوله لصفحة تفعيل الهاتف
+            return redirect()->route('activatePhone')->with('message', 'يجب عليك تفعيل حسابك عبر رمز التحقق المرسل إلى هاتفك.');
         }
-
-        // التحقق من كلمة المرور
-        if (!Hash::check($request['password'], $user->password)) {
-            return back()->withErrors([
-                'loginError' => 'كلمة المرور غير صحيحة.'
-            ]);
-        }
-
-        // تسجيل الدخول
-        Auth::login($user);
         return redirect()->intended('/');
     }
 
@@ -182,6 +179,32 @@ class AuthController extends Controller
                 'role_name' => 'pending',
                 'role_id' => $request->role,
             ]);
+
+            // ربط الأقسام الرئيسية والفرعية إذا كان مزود خدمة وتم إرسال الأقسام
+            if($request->role == 3) {
+                $mainDepartments = is_array($request->main_departments) ? $request->main_departments : [];
+                $subDepartments = is_array($request->departments) ? $request->departments : [];
+                $addedMain = [];
+                // الأقسام الرئيسية
+                foreach($mainDepartments as $mainId) {
+                    if(!in_array($mainId, $addedMain)) {
+                        UserDepartment::create([
+                            'user_id' => $user->id,
+                            'commentable_id' => $mainId,
+                            'commentable_type' => \App\Models\Department::class,
+                        ]);
+                        $addedMain[] = $mainId;
+                    }
+                }
+                // الأقسام الفرعية
+                foreach($subDepartments as $subId) {
+                    UserDepartment::create([
+                        'user_id' => $user->id,
+                        'commentable_id' => $subId,
+                        'commentable_type' => \App\Models\SubDepartment::class,
+                    ]);
+                }
+            }
 
             // إنشاء رمز OTP جديد
             $otpCode = OtpCode::createOtp($phone, 'registration', 10);
@@ -304,4 +327,38 @@ public function resendOtp(Request $request)
         'message' => 'تم إرسال رمز تحقق جديد إلى هاتفك عبر الواتساب'
     ]);
 }
+
+    public function showActivateForm()
+    {
+        if (!auth()->check()) {
+            return redirect()->route('login-page');
+        }
+        if (auth()->user()->status === 'active') {
+            return redirect()->route('home');
+        }
+        return view('front_office.auth.activate_phone');
+    }
+
+    public function postActivatePhone(Request $request)
+    {
+        $request->validate([
+            'phone' => 'required|string|min:7|max:20',
+        ]);
+        $user = auth()->user();
+        $user->phone = $request->phone;
+        $user->save();
+        // إرسال كود OTP
+        $otpCode = \App\Models\OtpCode::createOtp($user->phone, 'registration', 10);
+        // إرسال الكود عبر الواتساب أو SMS
+        $countryCode = $user->countryObj ? $user->countryObj->code : '+966';
+        $whatsappPhone = $countryCode . $user->phone;
+        $message = "مرحباً {$user->first_name}!\n\nرمز التحقق الخاص بك هو: {$otpCode->code}\n\nاستخدم هذا الرمز لإكمال تفعيل حسابك في Endak.";
+        $sender = \App\Models\WhatsappSender::first();
+        if ($sender) {
+            sendWhatsAppMessage($whatsappPhone, $message, $sender->number, $sender->token, $sender->instance_id);
+        }
+        // حفظ بيانات التفعيل في الجلسة
+        session(['register_user_id' => $user->id, 'country_code' => $countryCode]);
+        return redirect()->route('otp.form')->with('message', 'تم إرسال رمز التحقق إلى هاتفك.');
+    }
 }

@@ -242,8 +242,9 @@
                         <i class="fas fa-user-plus me-2"></i>
                         إنشاء حساب جديد
                     </h3>
-                    <div class="steps-progress mt-3">
+                    <div class="steps-progress mt-3" id="steps-indicator">
                         <div class="step-indicator active" data-step="1">1</div>
+                        <div class="step-indicator d-none" data-step="1.5">1.5</div>
                         <div class="step-indicator" data-step="2">2</div>
                         <div class="step-indicator" data-step="3">3</div>
                     </div>
@@ -300,6 +301,58 @@
                             <button type="button" class="btn btn-primary btn-lg w-100 next-step py-3">
                                 التالي <i class="fas fa-arrow-left ms-2"></i>
                             </button>
+                        </div>
+
+                        <!-- Step 1.5: Department Selection (for provider only) -->
+                        @php
+                            $departments = \App\Models\Department::with(['sub_departments' => function($q){$q->where('status',1);}])->where('department_id',0)->where('status',1)->get(['id','name_ar','name_en']);
+                        @endphp
+                        <div class="step step-1-5 d-none">
+                            <div id="step15-errors" class="alert alert-danger d-none"></div>
+                            <div class="text-center mb-4">
+                                <i class="fas fa-list fa-3x text-primary mb-3"></i>
+                                <h4 class="fw-bold">اختر حتى 3 أقسام تقدم فيها الخدمة</h4>
+                                <p class="text-muted">هذه الخطوة خاصة بمزود الخدمة فقط<br>يمكنك اختيار حتى 3 أقسام فقط</p>
+                            </div>
+                            <div class="row g-3 justify-content-center">
+                                @foreach($departments as $department)
+                                    <div class="col-12 col-md-6 col-lg-4 mb-3">
+                                        <div class="card department-card h-100 p-3">
+                                            <div class="fw-bold mb-2">{{ app()->getLocale() == 'ar' ? $department->name_ar : $department->name_en }}</div>
+                                            @if($department->sub_departments->count())
+                                                <div class="row">
+                                                    @foreach($department->sub_departments as $sub)
+                                                        <div class="col-12">
+                                                            <div class="form-check">
+                                                                <input class="form-check-input department-checkbox" type="checkbox" name="departments[]" value="sub-{{ $sub->id }}-parent-{{ $department->id }}" id="sub-{{ $sub->id }}">
+                                                                <label class="form-check-label" for="sub-{{ $sub->id }}">
+                                                                    {{ app()->getLocale() == 'ar' ? $sub->name_ar : $sub->name_en }}
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                    @endforeach
+                                                </div>
+                                            @else
+                                                <div class="form-check">
+                                                    <input class="form-check-input department-checkbox" type="checkbox" name="departments[]" value="main-{{ $department->id }}" id="main-{{ $department->id }}">
+                                                    <label class="form-check-label" for="main-{{ $department->id }}">
+                                                        {{ app()->getLocale() == 'ar' ? $department->name_ar : $department->name_en }}
+                                                    </label>
+                                                </div>
+                                            @endif
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                            <div class="invalid-feedback d-block text-center" id="departments-error" style="display:none;"></div>
+                            <div class="d-flex justify-content-between mt-4">
+                                <button type="button" class="btn btn-outline-secondary prev-step">
+                                    <i class="fas fa-arrow-right me-2"></i> السابق
+                                </button>
+                                <button type="button" class="btn btn-primary btn-lg next-step py-3">
+                                    التالي <i class="fas fa-arrow-left ms-2"></i>
+                                </button>
+                            </div>
                         </div>
 
                         <!-- Step 2: User Information -->
@@ -449,6 +502,7 @@ $(document).ready(function() {
     let currentStep = 1;
     let resendTimer = null;
     let secondsLeft = 60;
+    let otpCode = null; // Variable to store OTP code
 
     // Show current step with animation
     function showStep(step) {
@@ -529,14 +583,49 @@ $(document).ready(function() {
         return isValid;
     }
 
-
-
-    // Next step from 1 to 2 (role -> user info)
-    $('.step-1 .next-step').on('click', function() {
-        if (!validateStep1()) return;
-        showStep(2);
+    // تحديث شريط الخطوات حسب الدور
+    function updateStepIndicators(role) {
+        if(role == '3') {
+            // مزود خدمة: أظهر خطوة 1.5
+            $('[data-step="1.5"]').removeClass('d-none');
+            $('[data-step="2"]').text('2');
+            $('[data-step="3"]').text('3');
+        } else {
+            // عميل: أخفِ خطوة 1.5
+            $('[data-step="1.5"]').addClass('d-none');
+            $('[data-step="2"]').text('2');
+            $('[data-step="3"]').text('3');
+        }
+    }
+    // عند اختيار الدور
+    $('.role-card').on('click', function() {
+        $('.role-card').removeClass('active');
+        $(this).addClass('active');
+        selectedRole = $(this).data('role');
+        $(`#role-${selectedRole}`).prop('checked', true);
+        updateStepIndicators(selectedRole);
     });
-
+    // Next step from 1 to 1.5 or 2
+    $('.step-1 .next-step').on('click', function() {
+        selectedRole = $('input[name="role"]:checked').val();
+        if (!validateStep1()) return;
+        if(selectedRole == '3') {
+            showStep('1-5');
+            $('[data-step]').removeClass('active');
+            $('[data-step="1.5"]').addClass('active');
+        } else {
+            showStep(2);
+            $('[data-step]').removeClass('active');
+            $('[data-step="2"]').addClass('active');
+        }
+    });
+    // Next step from 1.5 to 2
+    $('.step-1-5 .next-step').on('click', function() {
+        if (!validateDepartmentsStep()) return;
+        showStep(2);
+        $('[data-step]').removeClass('active');
+        $('[data-step="2"]').addClass('active');
+    });
     // Next step from 2 to 3 (user info -> OTP)
     $('.step-2 .next-step').on('click', function() {
         if (!validateStep2()) {
@@ -546,39 +635,90 @@ $(document).ready(function() {
         $('#step2-errors').addClass('d-none').empty();
         const btn = $(this);
         btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> جاري الإرسال...');
-
+        // أرسل الأقسام المختارة (حلل القيم sub-X-parent-Y و main-X)
+        let departments = [];
+        let mainDepartments = [];
+        $('.department-checkbox:checked').each(function(){
+            const val = $(this).val();
+            if(val.startsWith('sub-')) {
+                // مثال: sub-5-parent-2
+                const matches = val.match(/^sub-(\d+)-parent-(\d+)$/);
+                if(matches) {
+                    departments.push(matches[1]); // id الفرعي
+                    mainDepartments.push(matches[2]); // id الرئيسي
+                }
+            } else if(val.startsWith('main-')) {
+                const matches = val.match(/^main-(\d+)$/);
+                if(matches) {
+                    mainDepartments.push(matches[1]);
+                }
+            }
+        });
+        // إزالة التكرار
+        mainDepartments = [...new Set(mainDepartments)];
+        departments = [...new Set(departments)];
+        // أرسلهم مع البيانات
         $.ajax({
             url: '{{ route('register') }}',
             method: 'POST',
-            data: $('#register-steps-form').serialize(),
-            headers: {'X-CSRF-TOKEN': $('input[name="_token"]').val()},
+            data: {
+                first_name: $('input[name="first_name"]').val(),
+                last_name: $('input[name="last_name"]').val(),
+                phone: $('input[name="phone"]').val(),
+                email: $('input[name="email"]').val(),
+                country: $('select[name="country"]').val(),
+                governement: $('select[name="governement"]').val(),
+                password: $('input[name="password"]').val(),
+                password_confirmation: $('input[name="password_confirmation"]').val(),
+                role: $('input[name="role"]:checked').val(),
+                departments: departments,
+                main_departments: mainDepartments,
+                _token: $('input[name="_token"]').val()
+            },
             success: function(response) {
-                $('#phone-display').text($('input[name="phone"]').val());
-                startResendCountdown();
-                showStep(3);
-                btn.prop('disabled', false).html('التالي <i class="fas fa-arrow-left ms-2"></i>');
+                if (response.success) {
+                    otpCode = response.otp;
+                    $('#phone-display').text($('input[name="phone"]').val());
+                    $('#otp-code-display').text('كود التحقق (للعرض فقط): ' + otpCode);
+                    $('#otp-demo').show();
+                    startResendCountdown();
+                    showStep(3);
+                    $('[data-step]').removeClass('active');
+                    $('[data-step="3"]').addClass('active');
+                }
             },
             error: function(xhr) {
-                let msg = 'حدث خطأ أثناء محاولة التسجيل، يرجى المحاولة مرة أخرى.';
-                if (xhr.responseJSON && xhr.responseJSON.errors) {
-                    const errors = xhr.responseJSON.errors;
-                    msg = Object.values(errors).join('\n');
-                    for (const field in errors) {
-                        $(`input[name="${field}"]`).addClass('is-invalid');
-                    }
+                let errors = xhr.responseJSON.errors;
+                for (let field in errors) {
+                    $(`[name="${field}"]`).addClass('is-invalid');
+                    $(`[name="${field}"]`).next('.invalid-feedback').text(errors[field][0]);
                 }
-                $('#step2-errors').removeClass('d-none').text(msg);
-                btn.prop('disabled', false).html('التالي <i class="fas fa-arrow-left ms-2"></i>');
             }
         });
     });
-
-    // Role selection with animation
-    $('.role-card').on('click', function() {
-        $('.role-card').removeClass('active');
-        $(this).addClass('active');
-        const role = $(this).data('role');
-        $(`#role-${role}`).prop('checked', true);
+    // تحقق خطوة الأقسام
+    function validateDepartmentsStep() {
+        const checked = $('.department-checkbox:checked').length;
+        if(checked == 0) {
+            $('#departments-error').text('يرجى اختيار قسم واحد على الأقل').show();
+            return false;
+        }
+        if(checked > 3) {
+            $('#departments-error').text('يمكنك اختيار 3 أقسام فقط').show();
+            return false;
+        }
+        $('#departments-error').hide();
+        return true;
+    }
+    // منع اختيار أكثر من 3 أقسام
+    $(document).on('change', '.department-checkbox', function() {
+        const checkedCount = $('.department-checkbox:checked').length;
+        if(checkedCount > 3) {
+            this.checked = false;
+            $('#departments-error').text('يمكنك اختيار 3 أقسام فقط').show();
+        } else {
+            $('#departments-error').hide();
+        }
     });
 
     // Previous step

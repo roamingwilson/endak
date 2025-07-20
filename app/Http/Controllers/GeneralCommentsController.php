@@ -37,6 +37,10 @@ class GeneralCommentsController extends Controller
 {
     public function store(Request $request)
     {
+        // تحقق من تسجيل الدخول
+        if (!auth()->check()) {
+            return redirect()->route('login-page')->with('error', 'يجب تسجيل الدخول أولاً لتقديم عرض.');
+        }
 
         $validated = $request->validate([
             'service_id' => 'required|exists:services,id',
@@ -54,11 +58,28 @@ class GeneralCommentsController extends Controller
         // جلب الخدمة
         $service = Services::findOrFail($validated['service_id']);
 
+        // تحقق من الاشتراك في القسم أو القسم الفرعي
+        $user = auth()->user();
+        $allowedMain = $user->getAllDepartments()['main']->pluck('id')->toArray();
+        $allowedSub = $user->getAllDepartments()['sub']->pluck('id')->toArray();
+        $serviceDepartmentId = $service->department_id ?? null;
+        $serviceSubDepartmentId = $service->sub_department_id ?? null;
+        if ($serviceSubDepartmentId) {
+            // الخدمة مرتبطة بقسم فرعي: يجب أن يكون مشترك في هذا الفرع تحديدًا
+            if (!in_array($serviceSubDepartmentId, $allowedSub)) {
+                return redirect()->back()->with('error', 'غير مسموح لك بتقديم عرض في هذا القسم الفرعي.');
+            }
+        } else {
+            // الخدمة مرتبطة بقسم رئيسي فقط: يجب أن يكون مشترك في الرئيسي
+            if (!in_array($serviceDepartmentId, $allowedMain)) {
+                return redirect()->back()->with('error', 'غير مسموح لك بتقديم عرض في هذا القسم.');
+            }
+        }
+
         // العميل صاحب الخدمة
         $customer = User::findOrFail($service->user_id);
 
         // مزود الخدمة (المستخدم الحالي)
-        $user = auth()->user();
         $existingComment = GeneralComments::where('commentable_id', $validated['service_id'])
             ->where('service_provider', $user->id)
             ->first();
@@ -110,6 +131,9 @@ class GeneralCommentsController extends Controller
     }
     public function edit($id)
     {
+        if (!auth()->check()) {
+            return redirect()->route('login-page')->with('error', 'يجب تسجيل الدخول أولاً.');
+        }
         $comment = GeneralComments::findOrFail($id);
 
         // تحقق من أن المستخدم الحالي هو صاحب التعليق
@@ -121,6 +145,9 @@ class GeneralCommentsController extends Controller
     }
     public function update(Request $request, $id)
     {
+        if (!auth()->check()) {
+            return redirect()->route('login-page')->with('error', 'يجب تسجيل الدخول أولاً.');
+        }
         $comment = GeneralComments::findOrFail($id);
         $comment->update([
             'price' => $request->price,
@@ -136,6 +163,9 @@ class GeneralCommentsController extends Controller
     }
     public function destroy($id)
     {
+        if (!auth()->check()) {
+            return redirect()->route('login-page')->with('error', 'يجب تسجيل الدخول أولاً.');
+        }
         $comment = GeneralComments::findOrFail($id);
 
         // تحقق من أن المستخدم هو نفس الشخص الذي قام بإنشاء التعليق

@@ -234,7 +234,7 @@
                                             $repeatable = $fields->first()->is_repeatable ?? false;
                                         @endphp
                                         @if($group)
-                                            <div class="card mb-3 border-0 group-block" data-group="{{ $group }}" style="background: #fcfcfd; border-radius: 14px; box-shadow: 0 1px 6px #e3e8ef;">
+                                            <div class="card mb-3 border-0 group-block" data-group="{{ $group }}" data-repeatable="{{ $repeatable ? '1' : '0' }}" style="background: #fcfcfd; border-radius: 14px; box-shadow: 0 1px 6px #e3e8ef;">
                                                 <div class="card-body group-fields-list position-relative" data-group="{{ $group }}">
                                                     @php $groupValues = old('custom_fields.' . $group, [[]]); @endphp
                                                     @foreach($groupValues as $idx => $groupInstance)
@@ -246,7 +246,7 @@
                                                                 </button>
                                                             </div>
                                                             <div class="row g-2 align-items-end">
-                                                                @foreach($fields as $field)
+                                                @foreach($fields as $field)
                                                                     <div class="col-md-3 col-sm-6 mb-2">
                                                                         <label for="custom_fields_{{ $group }}_{{ $idx }}_{{ $field->name }}" style="font-weight:500; color:#333; font-size:0.98rem; margin-bottom:4px; display:block;">
                                                                             {{ app()->getLocale() == 'ar' ? $field->name_ar : $field->name_en }}
@@ -272,15 +272,15 @@
                                                                         @else
                                                                             <input type="{{ $field->type }}" name="custom_fields[{{ $group }}][{{ $idx }}][{{ $field->name }}]" class="form-control form-control-sm" value="{{ $groupInstance[$field->name] ?? '' }}">
                                                                         @endif
-                                                                    </div>
-                                                                @endforeach
-                                                            </div>
-                                                        </div>
-                                                    @endforeach
-                                                    {{-- زر الإضافة الديناميكي بالجافاسكريبت فقط --}}
-                                                </div>
+                                                    </div>
+                                                @endforeach
                                             </div>
-                                        @endif
+                                        </div>
+                                    @endforeach
+                                                    {{-- زر الإضافة الديناميكي بالجافاسكريبت فقط --}}
+                                </div>
+                            </div>
+                        @endif
                                     @endforeach
                                         <div class="card">
                             <div class="card-header text-center bg-primary text-white" style="font-size:1.2rem; font-weight:bold;">
@@ -492,6 +492,8 @@ document.addEventListener('DOMContentLoaded', function() {
         if(e.target.classList.contains('add-group-btn')) {
             var btn = e.target;
             var group = btn.getAttribute('data-group');
+            var groupBlock = document.querySelector('.group-block[data-group="' + group + '"]');
+            if(groupBlock && groupBlock.getAttribute('data-repeatable') !== '1') return;
             var groupList = document.querySelector('.group-fields-list[data-group="' + group + '"]');
             var instances = groupList.querySelectorAll('.group-fields-instance');
             if(instances.length >= 10) return;
@@ -533,6 +535,9 @@ document.addEventListener('DOMContentLoaded', function() {
     function moveAddBtnToBottom(groupList, group) {
         // احذف كل أزرار الإضافة داخل المجموعة
         groupList.querySelectorAll('.add-group-btn-wrapper').forEach(function(w){w.remove();});
+        var groupBlock = document.querySelector('.group-block[data-group="' + group + '"]');
+        var repeatable = groupBlock && groupBlock.getAttribute('data-repeatable') === '1';
+        if(!repeatable) return; // لا تضف الزر إذا لم تكن المجموعة قابلة للتكرار
         var instances = groupList.querySelectorAll('.group-fields-instance');
         if(instances.length < 10) {
             // أنشئ زر جديد دائري صغير مع نص

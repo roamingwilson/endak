@@ -140,6 +140,7 @@
         <nav class="bottom-nav">
 
             <a href="{{ route('home') }}"><i class="fas fa-home"></i> {{ $lang == 'ar' ? 'الرئيسية' : 'Home' }}</a>
+            <a href="{{ route('all_services') }}"><i class="fas fa-list"></i> كل الخدمات المطلوبة</a>
             @auth
                 <a href="{{ route('web.profile', auth()->id()) }}">
                     <i class="fas fa-user"></i> {{ ($lang = 'ar') ? 'الصفحة الشخصية' : 'profile' }}
@@ -163,6 +164,7 @@
     <nav class="bottom-nav">
 
         <a href="{{ route('home') }}"><i class="fas fa-home"></i> {{ $lang == 'ar' ? 'الرئيسية' : 'Home' }}</a>
+        <a href="{{ route('all_services') }}"><i class="fas fa-list"></i> كل الخدمات المطلوبة</a>
         @auth
             <a href="{{ route('web.profile', auth()->id()) }}">
                 <i class="fas fa-user"></i> {{ $lang == 'ar' ? 'الصفحة الشخصية' : 'profile' }}

@@ -116,6 +116,10 @@ class User extends Authenticatable
     {
         return $this->hasMany(UserDepartment::class, 'user_id');
     }
+    public function userDepartments()
+    {
+        return $this->hasMany(\App\Models\UserDepartment::class, 'user_id');
+    }
     public function comments()
 {
     return $this->hasMany(GeneralComments::class, 'service_provider');
@@ -180,5 +184,20 @@ public function getOnlineStatusColorAttribute()
     public function countryObj()
     {
         return $this->belongsTo(\App\Models\Country::class, 'country');
+    }
+
+    /**
+     * Get all departments (main and sub) the user is subscribed to as models.
+     */
+    public function getAllDepartments()
+    {
+        $mainDeps = $this->userDepartments->where('commentable_type', \App\Models\Department::class)->pluck('commentable_id')->unique();
+        $subDeps = $this->userDepartments->where('commentable_type', \App\Models\SubDepartment::class)->pluck('commentable_id')->unique();
+        $mainDepartments = \App\Models\Department::whereIn('id', $mainDeps)->get();
+        $subDepartments = \App\Models\SubDepartment::whereIn('id', $subDeps)->get();
+        return [
+            'main' => $mainDepartments,
+            'sub' => $subDepartments
+        ];
     }
 }

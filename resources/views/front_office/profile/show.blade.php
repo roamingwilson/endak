@@ -250,6 +250,34 @@
     </div>
 </div>
 
+{{-- عرض الأقسام المشترك بها المستخدم --}}
+@if(isset($user))
+    <div class="card mb-4">
+        <div class="card-header fw-bold">الأقسام المشترك بها</div>
+        <div class="card-body">
+            @php
+                $departments = $user->getAllDepartments();
+            @endphp
+            <div>
+                <span class="fw-bold">الأقسام الرئيسية:</span>
+                @forelse($departments['main'] as $dep)
+                    <span class="badge bg-info text-dark">{{ app()->getLocale() == 'ar' ? $dep->name_ar : $dep->name_en }}</span>
+                @empty
+                    <span class="text-muted">لا يوجد</span>
+                @endforelse
+            </div>
+            <div class="mt-2">
+                <span class="fw-bold">الأقسام الفرعية:</span>
+                @forelse($departments['sub'] as $dep)
+                    <span class="badge bg-secondary">{{ app()->getLocale() == 'ar' ? $dep->name_ar : $dep->name_en }}</span>
+                @empty
+                    <span class="text-muted">لا يوجد</span>
+                @endforelse
+            </div>
+        </div>
+    </div>
+@endif
+
 {{-- مودال تأكيد تسجيل الخروج --}}
 <div id="logoutModal" class="fixed inset-0 bg-black bg-opacity-50 hidden justify-center items-center">
     <div class="bg-white p-6 rounded-lg shadow-lg text-center">

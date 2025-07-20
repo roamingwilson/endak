@@ -27,6 +27,11 @@
                             <a href="{{ route('home') }}" class="nav-link fw-medium">{{ __('general.home') }}</a>
                         </li>
                         <li class="nav-item mx-2">
+                            <a href="{{ route('all_services') }}" class="nav-link fw-medium">{{
+                                $lang == 'ar' ? 'الخدمات المطلوبة' : 'All orders' }}</a>
+                        </li>
+
+                        <li class="nav-item mx-2">
                             <a href="{{ route('departments') }}" class="nav-link fw-medium">{{ __('department.departments') }}</a>
                         </li>
                         {{--  <li class="nav-item mx-2">

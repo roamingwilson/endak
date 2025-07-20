@@ -602,6 +602,7 @@ Route::get('/services/{id}/sub-department/{subDepartmentId}', [App\Http\Controll
 // Route::post('/choose-role', [\App\Http\Controllers\Auth\RegisterController::class, 'saveRole'])->name('choose.role.save');
 
 Route::get('/all-service-requests', [App\Http\Controllers\OrderUserController::class, 'allServiceRequests'])->name('services.requests.all');
+Route::get('/all-services', [\App\Http\Controllers\ServiceController::class, 'allServices'])->name('all_services');
 
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::resource('sub_departments', App\Http\Controllers\Admin\SubDepartmentController::class);

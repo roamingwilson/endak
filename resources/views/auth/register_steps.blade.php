@@ -190,6 +190,26 @@
                                     <div class="invalid-feedback">يرجى إدخال اسم أخير صحيح (أحرف عربية فقط)</div>
                                 </div>
                             </div>
+                            <!-- اختيار الأقسام لمزود الخدمة -->
+                            @php
+                                $departments = \App\Models\Department::where('department_id',0)->where('status',1)->get(['id','name_ar','name_en']);
+                            @endphp
+                            <div class="mb-3" id="departments-section" style="display:none;">
+                                <label class="form-label"><i class="fas fa-list"></i> اختر حتى 3 أقسام تقدم فيها الخدمة</label>
+                                <div class="row">
+                                    @foreach($departments as $department)
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-check">
+                                                <input class="form-check-input department-checkbox" type="checkbox" name="departments[]" value="{{ $department->id }}" id="dep-{{ $department->id }}">
+                                                <label class="form-check-label" for="dep-{{ $department->id }}">
+                                                    {{ app()->getLocale() == 'ar' ? $department->name_ar : $department->name_en }}
+                                                </label>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                                <div class="invalid-feedback d-block" id="departments-error" style="display:none;"></div>
+                            </div>
                             <div class="mb-3">
                                 <label class="form-label"><i class="fas fa-phone"></i> رقم الهاتف</label>
                                 <div class="input-group">
@@ -360,6 +380,15 @@ $(document).ready(function() {
             }
         });
 
+        // تحقق من الأقسام إذا كان مزود خدمة
+        if($('input[name="role"]:checked').val() == '3') {
+            if($('.department-checkbox:checked').length == 0) {
+                $('#departments-error').text('يرجى اختيار قسم واحد على الأقل').show();
+                isValid = false;
+            } else {
+                $('#departments-error').hide();
+            }
+        }
         return isValid;
     }
 
@@ -378,6 +407,11 @@ $(document).ready(function() {
         $('#step2-errors').addClass('d-none').empty();
         const btn = $(this);
         btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> جاري الإرسال...');
+        // جمع الأقسام المختارة
+        let departments = [];
+        $('.department-checkbox:checked').each(function(){
+            departments.push($(this).val());
+        });
         $.ajax({
             url: '{{ route('register') }}',
             method: 'POST',
@@ -391,6 +425,7 @@ $(document).ready(function() {
                 password: $('input[name="password"]').val(),
                 password_confirmation: $('input[name="password_confirmation"]').val(),
                 role: $('input[name="role"]:checked').val(),
+                departments: departments,
                 _token: $('input[name="_token"]').val()
             },
             success: function(response) {
@@ -423,7 +458,25 @@ $(document).ready(function() {
         $('.role-card').removeClass('active');
         $(this).addClass('active');
         const role = $(this).data('role');
-        $(`#${role}-role`).prop('checked', true);
+        $(`#role-${role}`).prop('checked', true);
+        // إظهار/إخفاء اختيار الأقسام حسب الدور
+        if(role == 3) {
+            $('#departments-section').show();
+        } else {
+            $('#departments-section').hide();
+            $('.department-checkbox').prop('checked', false);
+            $('#departments-error').hide();
+        }
+    });
+    // منع اختيار أكثر من 3 أقسام
+    $(document).on('change', '.department-checkbox', function() {
+        const checkedCount = $('.department-checkbox:checked').length;
+        if(checkedCount > 3) {
+            this.checked = false;
+            $('#departments-error').text('يمكنك اختيار 3 أقسام فقط').show();
+        } else {
+            $('#departments-error').hide();
+        }
     });
 
     // Previous step

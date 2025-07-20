@@ -52,6 +52,10 @@ class ServiceController extends Controller
      */
     public function store(Request $request)
     {
+        // تحقق من تسجيل الدخول
+        if (!auth()->check()) {
+            return redirect()->route('login-page')->with('error', 'يجب تسجيل الدخول أولاً لطلب خدمة.');
+        }
         // جلب الحقول الديناميكية للقسم
         $departmentFields = [];
         if ($request->has('department_id')) {
@@ -276,18 +280,27 @@ class ServiceController extends Controller
 
         $service = Services::create($data);
 
-        // إرسال رسالة واتساب تلقائياً لكل أرقام الاستقبال الخاصة بنفس القسم
+       // إرسال إشعار لمزودي الخدمة المشتركين في القسم أو القسم الفرعي
         if ($service) {
+            $mainProviders = \App\Models\User::where('role_id', 3)
+                ->where('status', 'active')
+                ->whereHas('userDepartments', function($q) use ($service) {
+                    $q->where('commentable_type', \App\Models\Department::class)
+                      ->where('commentable_id', $service->department_id);
+                })->get();
+            $subProviders = collect();
+            if ($service->sub_department_id) {
+                $subProviders = \App\Models\User::where('role_id', 3)
+                    ->where('status', 'active')
+                    ->whereHas('userDepartments', function($q) use ($service) {
+                        $q->where('commentable_type', \App\Models\SubDepartment::class)
+                          ->where('commentable_id', $service->sub_department_id);
+                    })->get();
+            }
+            $providers = $mainProviders->merge($subProviders)->unique('id');
             $department = Department::find($service->department_id);
             $departmentName = $department ? $department->name_ar : '';
-            // جلب اسم المدينة
-            $cityName = 'مكة'; // افتراضي
-            if ($service->city) {
-                $cityName = $service->city;
-            } elseif ($service->from_city) {
-                $city = \App\Models\Governements::find($service->from_city);
-                $cityName = $city ? $city->name_ar : 'مكة';
-            }
+            $cityName = $service->city ?? ($service->from_city ?? '');
             $settings = Settings::first();
             $template = $settings->whatsapp_offer_template ?? 'مرحبا يوجد عميل يحتاج خدمة خاصة بقسم {department} علي موقع endak.net في مدينة {city} , قدم عرض الان';
             $message = str_replace(
@@ -295,19 +308,54 @@ class ServiceController extends Controller
                 [$departmentName, $cityName],
                 $template
             );
-            // جلب أرقام الإرسال المرتبطة بالقسم عبر الجدول الوسيط
-            $senders = \App\Models\WhatsappSender::whereHas('departments', function($q) use ($service) {
-                $q->where('departments.id', $service->department_id);
-            })->get();
-            $recipients = \App\Models\WhatsappRecipients::where('department_id', $service->department_id)->pluck('number')->toArray();
-            $senderCount = $senders->count();
-            $i = 0;
+            // دالة لتوحيد تنسيق الأرقام
+            function normalizePhone($phone, $defaultCode = '+966') {
+                $phone = preg_replace('/[^0-9]/', '', $phone); // أرقام فقط
+                if (strpos($phone, '966') === 0) {
+                    return '+'.$phone;
+                } elseif (strpos($phone, '05') === 0) {
+                    return $defaultCode . substr($phone, 1);
+                } elseif (strpos($phone, '5') === 0 && strlen($phone) == 9) {
+                    return $defaultCode . $phone;
+                } else {
+                    return $defaultCode . $phone;
+                }
+            }
+            $sentPhones = [];
+            foreach ($providers as $provider) {
+                $provider->notify(new \App\Notifications\CommentNotification([
+                    'id' => $service->id,
+                    'title' => 'طلب خدمة جديدة في قسم ' . $departmentName,
+                    'body' => $message,
+                    'url' => route('services.show', $service->id),
+                ]));
+                if ($provider->phone) {
+                    $countryCode = $provider->countryObj ? $provider->countryObj->code : '+966';
+                    $whatsappPhone = normalizePhone($provider->phone, $countryCode);
+                    if (!in_array($whatsappPhone, $sentPhones)) {
+                        $sender = \App\Models\WhatsappSender::first();
+                        if ($sender) {
+                            SendWhatsappMessageJob::dispatch($whatsappPhone, $message, $sender->number, $sender->token, $sender->instance_id)
+                                ->delay(now()->addSeconds(rand(1, 3600)));
+                        }
+                        $sentPhones[] = $whatsappPhone;
+                    }
+                }
+            }
+            // إرسال رسالة واتساب للأرقام المرتبطة بالجدول WhatsappRecipients بدون تكرار
+            $recipients = [];
+            if ($service->sub_department_id) {
+                $recipients = \App\Models\WhatsappRecipients::where('department_id', $service->sub_department_id)->pluck('number')->toArray();
+            }
+            $mainRecipients = \App\Models\WhatsappRecipients::where('department_id', $service->department_id)->pluck('number')->toArray();
+            $recipients = array_unique(array_merge($recipients, $mainRecipients));
+            $sender = \App\Models\WhatsappSender::first();
             foreach ($recipients as $number) {
-                if ($senderCount > 0) {
-                    $sender = $senders[$i % $senderCount];
-                    SendWhatsappMessageJob::dispatch($number, $message, $sender->number, $sender->token, $sender->instance_id)
-                        ->delay(now()->addSeconds(rand(1, 600)));
-                    $i++;
+                $normalized = normalizePhone($number);
+                if ($sender && !in_array($normalized, $sentPhones)) {
+                    SendWhatsappMessageJob::dispatch($normalized, $message, $sender->number, $sender->token, $sender->instance_id)
+                        ->delay(now()->addSeconds(rand(1, 3600)));
+                    $sentPhones[] = $normalized;
                 }
             }
         }
@@ -605,19 +653,17 @@ class ServiceController extends Controller
 
     public function show_services($id, Request $request)
     {
-
-
-
+        $service = Services::findOrFail($id); // تأكد من التعريف دائمًا
         $user = auth()->user();
 
         if (auth()->user()) {
 
-            $service = Services::findOrFail($id);
-            // dd($service);
             $form_city = Governements::where('id', $service->from_city)->first();
             $to_city = Governements::where('id', $service->to_city)->first();
+        } else {
+            $form_city = null;
+            $to_city = null;
         }
-        // dd($city);
         $date = [
             'service' => $service,
             'form_city' => $form_city,
@@ -764,6 +810,10 @@ class ServiceController extends Controller
      */
     public function update(Request $request, string $id)
     {
+        // تحقق من تسجيل الدخول
+        if (!auth()->check()) {
+            return redirect()->route('login-page')->with('error', 'يجب تسجيل الدخول أولاً لتعديل الخدمة.');
+        }
 
 // dd($request->all());
 
@@ -992,6 +1042,24 @@ class ServiceController extends Controller
         }
 
         return redirect()->route('home')->with('success', 'تم تحديث الخدمة بنجاح');
+    }
+
+    /**
+     * عرض جميع الخدمات المطلوبة للجميع
+     */
+    public function allServices(Request $request)
+    {
+        $departments = \App\Models\Department::where('department_id', 0)->where('status', 1)->get();
+        $cities = \App\Models\Services::whereNotNull('city')->distinct()->pluck('city');
+        $query = \App\Models\Services::where('status', 'open');
+        if ($request->filled('department_id')) {
+            $query->where('department_id', $request->department_id);
+        }
+        if ($request->filled('city')) {
+            $query->where('city', $request->city);
+        }
+        $services = $query->latest()->paginate(12);
+        return view('front_office.services.all_services', compact('services', 'departments', 'cities'));
     }
 
     /**

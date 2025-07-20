@@ -52,6 +52,7 @@
                                 <th>@lang('user.phone')</th>
                                 <th>@lang('user.city')</th>
                                 <th>@lang('user.type')</th>
+                                <th>الأقسام المشترك بها</th>
                                 <th>{{ __('user.created_at') }}</th>
                                 <th>@lang('general.actions')</th>
                             </tr>
@@ -72,6 +73,24 @@
                                 <td>{{ $user->phone }} </td>
                                 <td>{{ $user->governementObj?->name_ar ?? '-' }} </td>
                                 <td>{{ $user->role_name }} </td>
+                                <td>
+                                    @php
+                                        $mainDeps = $user->userDepartments->where('commentable_type', App\Models\Department::class);
+                                        $subDeps = $user->userDepartments->where('commentable_type', App\Models\SubDepartment::class);
+                                    @endphp
+                                    {{-- الأقسام الرئيسية --}}
+                                    @foreach($mainDeps as $dep)
+                                        <span class="badge badge-info">
+                                            {{ optional(App\Models\Department::find($dep->commentable_id))->name_ar ?? '-' }}
+                                        </span>
+                                    @endforeach
+                                    {{-- الأقسام الفرعية --}}
+                                    @foreach($subDeps as $dep)
+                                        <span class="badge badge-secondary">
+                                            {{ optional(App\Models\SubDepartment::find($dep->commentable_id))->name_ar ?? '-' }}
+                                        </span>
+                                    @endforeach
+                                </td>
                                 <td>{{ $user->created_at->shortAbsoluteDiffForHumans() }}</td>
                                 <td>
                                     <a href="{{ route('admin.user_management.show', $user->id) }}" class="btn btn-purple"><i
