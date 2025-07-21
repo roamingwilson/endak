@@ -26,10 +26,11 @@
                         <li class="nav-item mx-2">
                             <a href="{{ route('home') }}" class="nav-link fw-medium">{{ __('general.home') }}</a>
                         </li>
+                        @if(!auth()->check() || (auth()->check() && auth()->user()->role_id == 3))
                         <li class="nav-item mx-2">
-                            <a href="{{ route('all_services') }}" class="nav-link fw-medium">{{
-                                $lang == 'ar' ? 'الخدمات المطلوبة' : 'All orders' }}</a>
+                            <a href="{{ route('all_services') }}" class="nav-link fw-medium">{{ $lang == 'ar' ? 'الخدمات المطلوبة' : 'All orders' }}</a>
                         </li>
+                        @endif
 
                         <li class="nav-item mx-2">
                             <a href="{{ route('departments') }}" class="nav-link fw-medium">{{ __('department.departments') }}</a>

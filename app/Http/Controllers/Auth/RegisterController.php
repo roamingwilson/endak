@@ -97,18 +97,12 @@ class RegisterController extends Controller
         ]);
 
         if ($request->otp != session('otp')) {
-            if ($request->ajax()) {
-                return response()->json(['error' => 'كود التفعيل غير صحيح'], 422);
-            }
-            return back()->withErrors(['otp' => 'كود التفعيل غير صحيح']);
+            return response()->json(['error' => 'كود التفعيل غير صحيح'], 422);
         }
 
         $user = User::findOrFail(Session::get('register_user_id'));
         $user->update(['status' => 'active']);
 
-        if ($request->ajax()) {
-            return response()->json(['success' => true, 'redirect' => route('choose.role')]);
-        }
         return redirect()->route('choose.role');
     }
 
