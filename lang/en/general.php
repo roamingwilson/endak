@@ -63,4 +63,5 @@ return [
     'day'               => 'Day',
     'date'               => 'Date',
     'time'               => "Time",
+    'profile'               => "profile",
 ];

@@ -5,98 +5,160 @@
 @endsection
 
 @section('style')
-    <link rel="stylesheet" href="{{ asset('css/css-stars.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/video-js.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('select2-4.0.3/css/select2.css') }}">
     <style>
-        .profile-cover-container {
+    .profile-edit-bg {
+        background: linear-gradient(to bottom, #f4be2c 0%, #fffbe6 100%);
+        min-height: 100vh;
+        padding: 40px 0;
+    }
+    .profile-edit-card {
+        max-width: 480px;
+        margin: 0 auto;
+        background: #fff;
+        border-radius: 18px;
+        box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+        padding: 32px 24px;
             position: relative;
-            width: 100%;
-            min-height: 400px; /* يمكنك استخدام min-height لضمان وجود ارتفاع أساسي */
-            background-color: #f5f5f5;
         }
-        .profile-img {
-            width: 150px;
-            height: 150px;
+    .profile-edit-avatar {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
             object-fit: cover;
+        border: 3px solid #f4be2c;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        display: block;
+        margin: 0 auto;
+    }
+    .profile-edit-avatar-label {
+        position: absolute;
+        bottom: 0;
+        right: 50%;
+        transform: translateX(50%);
+        background: #f4be2c;
             border-radius: 50%;
-            margin: 0 auto;
+        padding: 6px;
+        border: 2px solid #fff;
+        cursor: pointer;
+    }
+    .profile-edit-form {
+        margin-top: 24px;
+    }
+    .profile-edit-form .form-group {
+        margin-bottom: 18px;
+    }
+    .profile-edit-form label {
+        font-weight: 600;
+        color: #444;
+        margin-bottom: 6px;
             display: block;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    .profile-edit-form input,
+    .profile-edit-form textarea,
+    .profile-edit-form select {
+        width: 100%;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        padding: 10px 12px;
+        font-size: 1rem;
+        background: #fafafa;
+        transition: border 0.2s;
         }
-        .profile-content {
-            padding-top: 20px;
+    .profile-edit-form input:focus,
+    .profile-edit-form textarea:focus,
+    .profile-edit-form select:focus {
+        border-color: #f4be2c;
+        outline: none;
+        background: #fffbe6;
+    }
+    .profile-edit-form .error {
+        color: #e53e3e;
+        font-size: 0.95em;
+        margin-top: 4px;
         }
-        .profile-card {
-            background-color: #fff;
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    .profile-edit-form .btn-save {
+        background: #f4be2c;
+        color: #fff;
+        font-weight: bold;
+        border: none;
+        border-radius: 8px;
+        padding: 12px 0;
+        width: 100%;
+        font-size: 1.1em;
+        transition: background 0.2s;
+        margin-top: 10px;
         }
-        /* مثال على استجابة بعض العناصر باستخدام Media Queries */
-        @media (max-width: 767.98px) {
-            .profile-card {
-                padding: 15px;
+    .profile-edit-form .btn-save:hover {
+        background: #e0a800;
+    }
+    @media (max-width: 600px) {
+        .profile-edit-card {
+            padding: 18px 6px;
+        }
+        .profile-edit-form input,
+        .profile-edit-form textarea,
+        .profile-edit-form select {
+            font-size: 0.98rem;
             }
         }
     </style>
 @endsection
 
 @section('content')
-    <section class="profile-cover-container py-4">
-        <div class="profile-content">
-            <div class="container">
-                <div class="row justify-content-center">
-                    <!-- استخدم أعمدة متجاوبة بدلًا من تعيين عرض ثابت -->
-                    <div class="col-12 col-md-10 col-lg-8">
+<div class="profile-edit-bg">
+    <div class="profile-edit-card">
+        <h2 style="text-align:center; font-weight:bold; color:#444; margin-bottom:18px;">{{ $lang == 'ar' ? 'تعديل الصفحة الشخصية' : 'Edit Profile' }}</h2>
                         <?php $user = auth()->user(); ?>
-                        <form action="{{ route('web.profile.update') }}" method="POST" enctype="multipart/form-data" class="profile-card rounded-lg shadow-xs bg-white p-3 p-md-4">
+        <form action="{{ route('web.profile.update') }}" method="POST" enctype="multipart/form-data" class="profile-edit-form">
                             @csrf
-                            <div class="form-group mt-2">
-                                <label for="first_name">{{ __('user.first_name') }} :</label>
-                                <input type="text" class="form-control" name="first_name" value="{{ old('first_name', $user->first_name) }}">
+            <div style="position:relative; width:fit-content; margin:0 auto 18px auto;">
+                <img src="{{ asset('storage/' . ($user->image ?? 'user.png')) }}" alt="Profile Image" class="profile-edit-avatar">
+                <label for="image" class="profile-edit-avatar-label">
+                    <i class="fas fa-camera text-white text-xs"></i>
+                    <input type="file" id="image" name="image" class="hidden">
+                </label>
+            </div>
+            <div class="form-group">
+                <label for="first_name">{{ __('user.first_name') }}</label>
+                <input type="text" name="first_name" value="{{ old('first_name', $user->first_name) }}">
                             </div>
-                            <div class="form-group mt-2">
-                                <label for="last_name">{{ __('user.last_name') }} :</label>
-                                <input type="text" class="form-control" name="last_name" value="{{ old('last_name', $user->last_name) }}">
+            <div class="form-group">
+                <label for="last_name">{{ __('user.last_name') }}</label>
+                <input type="text" name="last_name" value="{{ old('last_name', $user->last_name) }}">
                             </div>
-                            <div class="form-group mt-2">
-                                <label for="phone">{{ __('user.phone') }} :</label>
-                                <input type="text" class="form-control" name="phone" value="{{ old('phone', $user->phone) }}">
+            <div class="form-group">
+                <label for="phone">{{ __('user.phone') }}</label>
+                <input type="text" name="phone" value="{{ old('phone', $user->phone) }}">
                             </div>
-                            <div class="form-group mt-2">
-                                <label for="email">{{ __('user.email') }} :</label>
-                                <input type="text" class="form-control" name="email" value="{{ old('email', $user->email) }}">
+            <div class="form-group">
+                <label for="email">{{ __('user.email') }}</label>
+                <input type="text" name="email" value="{{ old('email', $user->email) }}">
                             </div>
-                            <div class="form-group mt-2">
-                                <label for="departments"  >{{ __('department.departments') }} : </label>
-                                <select name="departments[]" id="tags" class="form-control main_departments select2" multiple="multiple">
-                                    @foreach ($merged_departments as $merged_department_item)
-                                        <option value="{{ $merged_department_item->name_en . '-' . $merged_department_item->id }}">
-                                            {{ $lang == 'ar' ? $merged_department_item->name_ar : $merged_department_item->name_en }}
-                                        </option>
+            <div class="form-group">
+                <label for="departments">{{ __('department.departments') }}</label>
+                <small style="display:block; color:#888; margin-bottom:6px;">{{ $lang == 'ar' ? 'يمكنك اختيار 3 أقسام رئيسية أو فرعية فقط' : 'You can select up to 3 main or sub departments only' }}</small>
+                <select name="departments[]" id="tags" class="main_departments select2" multiple="multiple">
+                    @foreach ($main_departments as $main)
+                        <option value="main-{{ $main->id }}">{{ $lang == 'ar' ? $main->name_ar : $main->name_en }}</option>
+                        @if($main->sub_departments && $main->sub_departments->count())
+                            <optgroup label="{{ $lang == 'ar' ? $main->name_ar : $main->name_en }} - {{ $lang == 'ar' ? 'الأقسام الفرعية' : 'Sub Departments' }}">
+                                @foreach($main->sub_departments as $sub)
+                                    <option value="sub-{{ $sub->id }}">&nbsp;&nbsp;{{ $lang == 'ar' ? $sub->name_ar : $sub->name_en }}</option>
+                                @endforeach
+                            </optgroup>
+                        @endif
                                     @endforeach
                                 </select>
-                                @error('departments') <span class="error text-danger">{{ $message }}</span> @enderror
+                @error('departments') <span class="error">{{ $message }}</span> @enderror
                             </div>
-                            <div class="form-group mt-2">
-                                <label for="about_me">{{ __('user.about_me') }} :</label>
-                                <textarea class="form-control" name="about_me" cols="30" rows="10">{{ old('about_me', $user->about_me) }}</textarea>
+            <div class="form-group">
+                <label for="about_me">{{ __('user.about_me') }}</label>
+                <textarea name="about_me" cols="30" rows="4">{{ old('about_me', $user->about_me) }}</textarea>
                             </div>
-                            <div class="form-group mt-2">
-                                <label for="image">{{ __('user.image') }} :</label>
-                                <input type="file" class="form-control" name="image" value="{{ old('image', $user->image) }}">
-                            </div>
-                            <div class="form-group mt-2 text-right">
-                                <button type="submit" class="btn btn-primary mt-2">{{ __('general.save') }}</button>
-                            </div>
+            <button type="submit" class="btn-save">{{ __('general.save') }}</button>
                         </form>
                     </div>
                 </div>
-            </div>
-        </div>
-    </section>
-
     @if (Session::has('success'))
         <script>
             swal("Message", "{{ Session::get('success') }}", 'success', {
@@ -128,6 +190,16 @@
         $(".main_departments").select2({
             topics: true,
             tokenSeparators: [',', ' ']
+        });
+        // منع اختيار أكثر من 3 أقسام
+        document.addEventListener('DOMContentLoaded', function() {
+            const select = document.querySelector('.main_departments');
+            select.addEventListener('change', function() {
+                if (select.selectedOptions.length > 3) {
+                    select.options[select.selectedIndex].selected = false;
+                    alert('يمكنك اختيار 3 أقسام فقط');
+                }
+            });
         });
     </script>
 @endsection

@@ -8,6 +8,7 @@
     <meta name='viewport' content='width=device-width, initial-scale=1.0, user-scalable=0'>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="author" content="Eslam Badawy">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
@@ -99,7 +100,11 @@
 </head>
 
 <body class="main-body light-theme">
-    @php  $lang = config('app.locale'); @endphp
+    @php
+        $lang = config('app.locale');
+        $user = auth()->user();
+        $isPlasticStore = request()->routeIs('indsproducts.index') || request()->routeIs('indsproducts.show') || request()->routeIs('indsproducts.products');
+    @endphp
 
     <!-- Back-to-top -->
 
@@ -140,15 +145,17 @@
         <nav class="bottom-nav">
 
             <a href="{{ route('home') }}"><i class="fas fa-home"></i> {{ $lang == 'ar' ? 'الرئيسية' : 'Home' }}</a>
-            <a href="{{ route('all_services') }}"><i class="fas fa-list"></i> كل الخدمات المطلوبة</a>
             @auth
-                <a href="{{ route('web.profile', auth()->id()) }}">
-                    <i class="fas fa-user"></i> {{ ($lang = 'ar') ? 'الصفحة الشخصية' : 'profile' }}
-                </a>
-                <a href="{{ route('orders.index') }}"><i class="fas fa-clipboard-list"></i>
-                    {{ $lang == 'ar' ? 'الطلبات' : 'orders' }}</a>
-                <a href="{{ route('pro_cart.index') }}"><i class="fas fa-shopping-cart"></i>
-                    {{ $lang == 'ar' ? 'السلة' : 'Cart' }}</a>
+                <a href="{{ route('notifications.index') }}"><i class="fas fa-bell"></i> {{ $lang == 'ar' ? 'الإشعارات' : 'Notifications' }}</a>
+                <a href="{{ route('web.send_message', auth()->id()) }}"><i class="fas fa-envelope"></i> {{ $lang == 'ar' ? 'الرسائل' : 'Messages' }}</a>
+                @if($user->role_id == 1)
+                    <a href="{{ route('services.index') }}"><i class="fas fa-clipboard-list"></i> {{ $lang == 'ar' ? 'طلباتي' : 'My Orders' }}</a>
+                @elseif($user->role_id == 3)
+                    <a href="{{ route('web.comments.my_comments', $user->id) }}"><i class="fas fa-comments"></i> {{ $lang == 'ar' ? 'عروضي' : 'My Offers' }}</a>
+                @endif
+                @if($isPlasticStore)
+                    <a href="{{ route('pro_cart.index') }}"><i class="fas fa-shopping-cart"></i> {{ $lang == 'ar' ? 'السلة' : 'Cart' }}</a>
+                @endif
             @endauth
 
             {{-- <a href="#"><i class="fas fa-plus-circle"></i> نشر منتج</a> --}}
@@ -164,17 +171,20 @@
     <nav class="bottom-nav">
 
         <a href="{{ route('home') }}"><i class="fas fa-home"></i> {{ $lang == 'ar' ? 'الرئيسية' : 'Home' }}</a>
-        <a href="{{ route('all_services') }}"><i class="fas fa-list"></i> كل الخدمات المطلوبة</a>
         @auth
-            <a href="{{ route('web.profile', auth()->id()) }}">
-                <i class="fas fa-user"></i> {{ $lang == 'ar' ? 'الصفحة الشخصية' : 'profile' }}
-            </a>
-            <a href="{{ route('orders.index') }}"><i class="fas fa-clipboard-list"></i>
-                {{ $lang == 'ar' ? 'الطلبات' : 'orders' }}</a>
-            <a href="{{ route('pro_cart.index') }}"><i class="fas fa-shopping-cart"></i>
-                {{ $lang == 'ar' ? 'السلة' : 'Cart' }}</a>
-        @endauth
-        {{-- <a href="{{ route('favorites.index') }}"><i >❤️</i>   {{ $lang == 'ar' ? 'المفضلة' : 'Favorites' }}</a> --}}
+        <a href="{{ route('notifications.index') }}"><i class="fas fa-bell"></i> {{ $lang == 'ar' ? 'الإشعارات' : 'Notifications' }}</a>
+        <a href="{{ route('web.send_message', auth()->id()) }}"><i class="fas fa-envelope"></i> {{ $lang == 'ar' ? 'الرسائل' : 'Messages' }}</a>
+        @if($user->role_id == 1)
+            <a href="{{ route('services.index') }}"><i class="fas fa-clipboard-list"></i> {{ $lang == 'ar' ? 'طلباتي' : 'My Orders' }}</a>
+        @elseif($user->role_id == 3)
+            <a href="{{ route('web.comments.my_comments', $user->id) }}"><i class="fas fa-comments"></i> {{ $lang == 'ar' ? 'عروضي' : 'My Offers' }}</a>
+        @endif
+        @if($isPlasticStore)
+        <a href="{{ route('orders.index') }}"><i class="fas fa-clipboard-list"></i> {{ $lang == 'ar' ? 'طلباتي' : 'My Orders' }}</a>
+            <a href="{{ route('pro_cart.index') }}"><i class="fas fa-shopping-cart"></i> {{ $lang == 'ar' ? 'السلة' : 'Cart' }}</a>
+        @endif
+    @endauth
+
         {{-- <a href="#"><i class="fas fa-plus-circle"></i> نشر منتج</a> --}}
     </nav>
 

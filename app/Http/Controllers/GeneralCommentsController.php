@@ -106,11 +106,12 @@ class GeneralCommentsController extends Controller
 
         // إرسال إشعار للعميل إذا تم حفظ العرض
         if ($comment) {
-            $customer->notify(new CommentNotification([
+            $order = $service->order ?? null;
+            $customer->notify(new \App\Notifications\CommentNotification([
                 'id' => $comment->id,
                 'title' => "قدم $user->first_name لك عرضًا",
                 'body' => $comment->notes,
-                'url' => route('notifications.index'),
+                'url' => $order ? route('general_orders.show', $order->id) : route('services.show', $service->id),
             ]));
         }
 

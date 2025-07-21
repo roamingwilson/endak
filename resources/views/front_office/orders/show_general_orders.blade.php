@@ -136,125 +136,113 @@ h2 {
 
 
 @section('content')
+@php
+    $rating = \App\Models\Rating::where('order_id', $order->id)->first();
+@endphp
 <div class="container py-5">
-    <h2 class="text-center mb-4">{{ ($lang == 'ar') ? 'أستلام المشروع' : 'Confirm Project' }}</h2>
-
-    <div class="card shadow border-0 rounded p-4">
-        {{-- <h4>{{ ($lang == 'ar') ? 'معلومات الطلب' : 'Order Info' }}</h4> --}}
-        <ul class="list-group list-group-flush">
-            <h4>{{ $lang == 'ar' ? '  معلومات الطلب  ' : 'Order Info' }}</h4>
-
-            <li class="list-group-item"><strong>{{ ($lang == 'ar') ? 'رقم الطلب' : 'Order  Number' }}:</strong> {{ $order->id }}</li>
-            <li class="list-group-item"><strong>{{ ($lang == 'ar') ? ' الخدمة' : 'Order  Number' }}:</strong> {{ $order->service->type}}</li>
-
-            <li class="list-group-item"><strong>{{ $lang == 'ar' ? '  الحالة  ' : 'status' }}:</strong> {{ ($lang == 'ar') ? 'مكتمل' : $order->status }}</li>
-
-
-
-            <li class="list-group-item"><strong>{{ $lang == 'ar' ? '  المزود  ' : 'Provider' }}:</strong> {{ $order->user->first_name ?? '' }} {{ $order->user->last_name ?? '' }}</li>
-        </ul>
-
-
+    <div class="text-center mb-5">
+        <h2 class="fw-bold mb-2" style="color: #ff9800;"><i class="fas fa-file-alt me-2"></i>{{ $lang == 'ar' ? 'تفاصيل الطلب' : 'Order Details' }}</h2>
     </div>
-</div>
-<?php $offer = $service;
-$rating = App\Models\Rating::where('order_id' , $order->id)->first();
-?>
-<section class="section d-flex align-items-center justify-content-center">
-<div class="container">
-<div class="row justify-content-center">
-    <div class="col-xl-8">
-        <div class="card">
-
-
-            <div class="d-flex flex-wrap justify-content-between">
-                <div class="border mb-4 p-4 br-5" style="flex: 1 1 calc(33.333% - 1rem); margin: 0.5rem;">
-                    <div class="d-flex align-items-center justify-content-between">
-                        <h5 class="mt-0 mr-3">
-                            {{ $order->user->first_name . ' ' . $order->user->last_name }}
-                        </h5>
-                        <div>
-                            @if ($user->id == $order->user_id)
-                            @if ($order->status == 'pending')
-                                <a href="{{ route('accept_project', $order->id) }}"
-                                    class="btn btn-primary">{{ ($lang == 'ar') ? 'أستلام المشروع' : 'Confirm Project' }}</a>
-                            @elseif($order->status == 'completed' && !$rating)
-                                <a href="{{ route('web.add_rate', $order->id) }}" class="btn btn-primary">
-                                    {{ $lang == 'ar' ? 'تقييم العمل' : 'Rate Work' }}
-                                </a>
-                            @elseif($order->status == 'completed' && $rating)
-                                <span class="text-success">{{ $lang == 'ar' ? 'تم التقييم مسبقًا' : 'Already Rated' }}</span>
+    <div class="card shadow border-0 rounded-4 p-4 mb-4">
+        <h4 class="mb-4 text-primary"><i class="fas fa-info-circle me-2"></i>{{ $lang == 'ar' ? 'معلومات الطلب' : 'Order Info' }}</h4>
+        <ul class="list-group list-group-flush mb-3">
+            <li class="list-group-item"><i class="fas fa-hashtag text-secondary me-2"></i><strong>{{ $lang == 'ar' ? 'رقم الطلب' : 'Order Number' }}:</strong> {{ $order->id }}</li>
+            <li class="list-group-item"><i class="fas fa-cogs text-warning me-2"></i><strong>{{ $lang == 'ar' ? 'الخدمة' : 'Service' }}:</strong> {{ $order->service->type }}</li>
+            <li class="list-group-item"><i class="fas fa-clipboard-check text-info me-2"></i><strong>{{ $lang == 'ar' ? 'الحالة' : 'Status' }}:</strong> <span class="badge {{ $order->status == 'completed' ? 'bg-success' : 'bg-warning text-dark' }}">{{ $order->status == 'completed' ? ($lang == 'ar' ? 'مكتمل' : 'Completed') : ($lang == 'ar' ? 'قيد التنفيذ' : ucfirst($order->status)) }}</span></li>
+            <li class="list-group-item"><i class="fas fa-user text-primary me-2"></i><strong>{{ $lang == 'ar' ? 'المزود' : 'Provider' }}:</strong> {{ $order->user->first_name ?? '' }} {{ $order->user->last_name ?? '' }}</li>
+            @if(isset($order->service->departments) && $order->service->departments)
+                <li class="list-group-item"><i class="fas fa-building text-success me-2"></i><strong>{{ $lang == 'ar' ? 'القسم الرئيسي' : 'Main Department' }}:</strong> {{ $lang == 'ar' ? $order->service->departments->name_ar : $order->service->departments->name_en }}</li>
+            @endif
+            @if(isset($order->service->subDepartment) && $order->service->subDepartment)
+                <li class="list-group-item"><i class="fas fa-sitemap text-info me-2"></i><strong>{{ $lang == 'ar' ? 'القسم الفرعي' : 'Sub-Department' }}:</strong> {{ $lang == 'ar' ? $order->service->subDepartment->name_ar : $order->service->subDepartment->name_en }}</li>
                             @endif
+            @if(!empty($order->service->city) || !empty($order->service->from_city))
+                <li class="list-group-item"><i class="fas fa-map-marker-alt text-danger me-2"></i><strong>{{ $lang == 'ar' ? 'المدينة' : 'City' }}:</strong> {{ $order->service->city ?? $order->service->from_city }}</li>
                         @endif
-                        </div>
-                    </div>
-
-                    @if (isset($offer->price))
-                        <p>{{ __('general.price') . ' : ' . $offer->price }}</p>
+            @if(!empty($order->service->neighborhood) || !empty($order->service->from_neighborhood))
+                <li class="list-group-item"><i class="fas fa-map-pin text-danger me-2"></i><strong>{{ $lang == 'ar' ? 'الحي' : 'Neighborhood' }}:</strong> {{ $order->service->neighborhood ?? $order->service->from_neighborhood }}</li>
                     @endif
-                    @if (isset($offer->body))
-                        <p>{{ 'Body : ' . $offer->body }}</p>
+            @if(!empty($order->service->to_city))
+                <li class="list-group-item"><i class="fas fa-map-marker-alt text-secondary me-2"></i><strong>{{ $lang == 'ar' ? 'المدينة (إلى)' : 'To City' }}:</strong> {{ $order->service->to_city }}</li>
                     @endif
-                    @if (isset($offer->date))
-                        <p>{{ __('general.date') . ' : ' . $offer->date }}</p>
+            @if(!empty($order->service->to_neighborhood))
+                <li class="list-group-item"><i class="fas fa-map-pin text-secondary me-2"></i><strong>{{ $lang == 'ar' ? 'الحي (إلى)' : 'To Neighborhood' }}:</strong> {{ $order->service->to_neighborhood }}</li>
                     @endif
-                    @if (isset($offer->time))
-                        <p>{{ __('general.time') . ' : ' . $offer->time }}</p>
+            @if(!empty($order->service->location))
+                <li class="list-group-item"><i class="fas fa-location-arrow text-info me-2"></i><strong>{{ $lang == 'ar' ? 'الموقع' : 'Location' }}:</strong> {{ $order->service->location }}</li>
                     @endif
-                    @if (isset($offer->city))
-                        <p>{{ (($lang == 'ar') ? 'المدينة' : 'City') . ' : ' . $offer->city }}
-                        </p>
+            @if(!empty($order->service->price))
+                <li class="list-group-item"><i class="fas fa-money-bill-wave text-success me-2"></i><strong>{{ $lang == 'ar' ? 'السعر' : 'Price' }}:</strong> {{ $order->service->price }}</li>
                     @endif
-                    @if (isset($offer->neighborhood))
-                        <p>{{ (($lang == 'ar') ? 'الحي' : 'Neighborhood') . ' : ' . $offer->neighborhood }}
-                        </p>
+            @if(!empty($order->service->date))
+                <li class="list-group-item"><i class="fas fa-calendar-alt text-primary me-2"></i><strong>{{ $lang == 'ar' ? 'التاريخ' : 'Date' }}:</strong> {{ $order->service->date }}</li>
                     @endif
-                    @if (isset($offer->to_city))
-                        <p>{{ (($lang == 'ar') ? 'المدينة' : 'City') . ' : ' . $offer->city }}
-                        </p>
+            @if(!empty($order->service->time))
+                <li class="list-group-item"><i class="fas fa-clock text-primary me-2"></i><strong>{{ $lang == 'ar' ? 'الوقت' : 'Time' }}:</strong> {{ $order->service->time }}</li>
                     @endif
-                    @if (isset($offer->to_neighborhood))
-                        <p>{{ (($lang == 'ar') ? 'الحي' : 'Neighborhood') . ' : ' . $offer->neighborhood }}
-                        </p>
+            @if(!empty($order->service->number_of_days_of_warranty))
+                <li class="list-group-item"><i class="fas fa-shield-alt text-success me-2"></i><strong>{{ $lang == 'ar' ? 'عدد أيام الضمان' : 'Warranty Days' }}:</strong> {{ $order->service->number_of_days_of_warranty }}</li>
                     @endif
-                    @if (isset($offer->from_city))
-                        <p>{{ (($lang == 'ar') ? 'المدينة' : 'City') . ' : ' . $offer->city }}
-                        </p>
+            @if(!empty($order->service->notes))
+                <li class="list-group-item"><i class="fas fa-sticky-note text-secondary me-2"></i><strong>{{ $lang == 'ar' ? 'ملاحظات' : 'Notes' }}:</strong> {{ $order->service->notes }}</li>
                     @endif
-                    @if (isset($offer->from_neighborhood))
-                        <p>{{ (($lang == 'ar') ? 'الحي' : 'Neighborhood') . ' : ' . $offer->neighborhood }}
-                        </p>
+        </ul>
+        @if(!empty($order->service->custom_fields) && is_array($order->service->custom_fields))
+            <h4 class="mt-4 mb-3 text-info"><i class="fas fa-list-alt me-2"></i>{{ $lang == 'ar' ? 'تفاصيل إضافية' : 'Custom Fields' }}</h4>
+            <ul class="list-group list-group-flush mb-3">
+                @foreach($order->service->custom_fields as $key => $value)
+                    @if(is_array($value) && isset($value[0]) && is_array($value[0]))
+                        <li class="list-group-item">
+                            <strong>{{ $lang == 'ar' ? $key : ucfirst($key) }}:</strong>
+                            <ul class="mb-0">
+                                @foreach($value as $instance)
+                                    <li>
+                                        @foreach($instance as $fieldName => $fieldValue)
+                                            @if(is_array($fieldValue))
+                                                @foreach($fieldValue as $img)
+                                                    <img src="{{ asset('storage/' . (is_object($img) && isset($img->path) ? $img->path : $img)) }}" alt="صورة" style="max-width:80px; margin:3px; border-radius:6px;">
+                                                @endforeach
+                                            @else
+                                                <span class="badge bg-light text-dark mx-1">{{ $fieldName }}: {{ $fieldValue }}</span>
                     @endif
-                    @if (isset($offer->location))
-                        <p>{{ (($lang == 'ar') ? 'الموقع' : 'Location') . ' : ' . $offer->location }}
-                        </p>
+                                        @endforeach
+                                    </li>
+                                @endforeach
+                            </ul>
+                        </li>
+                    @elseif(is_array($value))
+                        <li class="list-group-item">
+                            <strong>{{ $lang == 'ar' ? $key : ucfirst($key) }}:</strong>
+                            @foreach($value as $img)
+                                <img src="{{ asset('storage/' . (is_object($img) && isset($img->path) ? $img->path : $img)) }}" alt="صورة" style="max-width:80px; margin:3px; border-radius:6px;">
+                            @endforeach
+                        </li>
+                    @else
+                        <li class="list-group-item">
+                            <strong>{{ $lang == 'ar' ? $key : ucfirst($key) }}:</strong> {{ $value }}
+                        </li>
                     @endif
-                    @if (isset($offer->day))
-                        <p>{{ __('general.day') . ' : ' . $offer->day }}</p>
+                @endforeach
+            </ul>
                     @endif
-                    @if (isset($offer->number_of_days_of_warranty))
-                        <p>{{ (($lang == 'ar') ? 'عدد ايام الضمان' : 'Number of Days of Warranty') . ' : ' . $offer->number_of_days_of_warranty }}
-                        </p>
+        <div class="d-flex flex-wrap gap-3 mt-4">
+            @if ($user->id == $order->user_id)
+                @if ($order->status == 'pending')
+                    <a href="{{ route('accept_project', $order->id) }}" class="btn btn-primary btn-lg rounded-pill px-4">
+                        <i class="fas fa-check-circle me-2"></i>{{ ($lang == 'ar') ? 'أستلام المشروع' : 'Confirm Project' }}
+                    </a>
+                @elseif($order->status == 'completed' && !$rating)
+                    <a href="{{ route('web.add_rate', $order->id) }}" class="btn btn-success btn-lg rounded-pill px-4">
+                        <i class="fas fa-star me-2"></i>{{ $lang == 'ar' ? 'تقييم العمل' : 'Rate Work' }}
+                    </a>
+                @elseif($order->status == 'completed' && $rating)
+                    <span class="text-success fw-bold fs-5"><i class="fas fa-check-double me-2"></i>{{ $lang == 'ar' ? 'تم التقييم مسبقًا' : 'Already Rated' }}</span>
                     @endif
-                    @if (isset($offer->notes))
-                        <p>{{ (($lang == 'ar') ? 'ملاحظات عن العمل المطلوب' : 'Notes') . ' : ' . $offer->notes }}
-                        </p>
                     @endif
-                </div>
-            </div>
         </div>
-
     </div>
 </div>
 
-
-
-
-
-
-</div>
-
-</section>
 @endsection
 
 

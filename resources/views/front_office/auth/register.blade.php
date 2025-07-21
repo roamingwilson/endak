@@ -678,11 +678,11 @@ $(document).ready(function() {
             success: function(response) {
                 if (response.success) {
                     otpCode = response.otp;
-                    $('#phone-display').text($('input[name="phone"]').val());
+                $('#phone-display').text($('input[name="phone"]').val());
                     $('#otp-code-display').text('كود التحقق (للعرض فقط): ' + otpCode);
                     $('#otp-demo').show();
-                    startResendCountdown();
-                    showStep(3);
+                startResendCountdown();
+                showStep(3);
                     $('[data-step]').removeClass('active');
                     $('[data-step="3"]').addClass('active');
                 }

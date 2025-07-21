@@ -9,7 +9,7 @@ class notificationController extends Controller
 {
     public function index()
     {
-        $notifications = auth()->user()->notifications; // استرجاع جميع الإشعارات للمستخدم
+        $notifications = Auth::user()->notifications()->paginate(10); // ترقيم الإشعارات
         return view('front_office.notify.show', compact('notifications'));
     }
 
@@ -35,7 +35,18 @@ class notificationController extends Controller
         return redirect()->route('notifications.index')->with('error', 'الإشعار غير موجود');
     }
     public function unreadNotifications()
-{
-    return $this->notifications->whereNull('read_at');
-}
+    {
+        return Auth::user()->unreadNotifications()->get();
+    }
+
+    // تعليم جميع الإشعارات كمقروءة
+    public function markAllAsRead()
+    {
+        $user = Auth::user();
+        $user->unreadNotifications->markAsRead();
+        if (request()->ajax()) {
+            return response()->json(['success' => true]);
+        }
+        return redirect()->route('notifications.index')->with('success', 'تم تعليم جميع الإشعارات كمقروءة');
+    }
 }

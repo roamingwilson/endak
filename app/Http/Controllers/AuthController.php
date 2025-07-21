@@ -361,4 +361,12 @@ public function resendOtp(Request $request)
         session(['register_user_id' => $user->id, 'country_code' => $countryCode]);
         return redirect()->route('otp.form')->with('message', 'تم إرسال رمز التحقق إلى هاتفك.');
     }
+
+    public function showOtpForm()
+    {
+        if (!session('register_user_id')) {
+            return redirect()->route('activate_phone')->with('error', 'الرجاء تفعيل الهاتف أولاً');
+        }
+        return view('auth.otp');
+    }
 }

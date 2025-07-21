@@ -75,6 +75,7 @@ Route::middleware('auth')->group(function () {
     // مسار لتعيين النوتيفيكاشن كـ "مقروء"
     Route::get('/notification/{notificationId}/read', [NotificationController::class, 'markAsRead'])->name('notification.read');
     Route::get('/notifications', [notificationController::class, 'index'])->name('notifications.index');
+    Route::post('/notifications/mark-all-as-read', [notificationController::class, 'markAllAsRead'])->name('notifications.markAllAsRead');
 });
 
 Route::get('/page/{slug}', [PageController::class, 'pageSingle'])->name('page');
@@ -617,3 +618,9 @@ Route::get('/services/{id}/edit', [App\Http\Controllers\ServiceController::class
 Route::put('/services/{id}', [App\Http\Controllers\ServiceController::class, 'update'])->name('services.update')->where('id', '[0-9]+');
 Route::delete('/services/{id}', [App\Http\Controllers\ServiceController::class, 'destroy'])->name('services.destroy')->where('id', '[0-9]+');
 Route::get('show/myservices/{id}', [App\Http\Controllers\ServiceController::class, 'show_services'])->name('show_myservice')->where('id', '[0-9]+');
+
+// Routes لتعديل وحذف طلبات المنتجات (ProductOrder)
+Route::get('/product_orders/{order}/edit', [\App\Http\Controllers\ProductOrderController::class, 'edit'])->name('product_orders.edit');
+Route::delete('/product_orders/{order}', [\App\Http\Controllers\ProductOrderController::class, 'destroy'])->name('product_orders.destroy');
+Route::put('/product_orders/{order}', [\App\Http\Controllers\ProductOrderController::class, 'update'])->name('product_orders.update');
+Route::get('/product_orders/{order}', [\App\Http\Controllers\ProductOrderController::class, 'show'])->name('product_orders.show');

@@ -1,86 +1,53 @@
         <!-- Start::footer -->
-        <footer class="footer bg-primary mt-auto text-white position-relative">
-            {{-- <img src="{{ asset('assets/images/patterns/9.png') }}" alt="img" class="patterns-9 z-index-0">
-            <img src="{{ asset('assets/images/patterns/6.png') }}" alt="img" class="patterns-4 z-index-0">
-            <img src="{{ asset('assets/images/patterns/11.png') }}" alt="img" class="patterns-3 z-index-0"> --}}
-            <div class="py-5">
-                <?php $settings = App\Models\Settings::first(); ?>
-
-                <div class="container">
-                    <div class="row">
-                        <div class="col-lg-3 col-md-6 mb-4 mb-lg-0">
-                            <a href="#" class="d-inline-block mb-3"><img
-                                    src="{{ $settings->image_url ?? '' }}" width="150px" height="50px" alt="img"></a>
-                            {{-- <p class="mb-4 op-8 fw-light">
-                                At dolor clita amet erat takimata sed tempor invidunt lorem.
-                                Justo sea nonumy.
-                            </p> --}}
-                            <ul class="list-unstyled mb-0">
-                                <li class="list-item mb-2"><a href="#" class="footer-link"><i
-                                            class="bi bi-telephone me-3 tx-18"></i>{{ $settings->phone ?? '' }}</a></li>
-                                <li class="list-item mb-2"><a href="#" class="footer-link"><i
-                                            class="bi bi-envelope-plus me-3 tx-18"></i>{{ $settings->email ?? '' }}</a></li>
-                                <li class="list-item"><a href="#" class="footer-link"><i
-                                            class="bi bi-geo-alt me-3 tx-18"></i>{{ $settings->address ?? '' }} </a></li>
-                            </ul>
-                            <div class="footer-btn-list d-flex align-items-center mt-4">
-                                <a href="{{ $settings->facebook ?? '' }}"
-                                    class="footer-btn btn btn-icon btn-info-dark rounded-circle me-2"><i
-                                        class="bi bi-facebook"></i></a>
-                                <a href="{{ $settings->linkedin ?? '' }}"
-                                    class="footer-btn btn btn-icon btn-info-dark rounded-circle me-2"><i
-                                        class="bi bi-linkedin"></i></a>
-                                <a href="{{ $settings->instagram ?? '' }}"
-                                    class="footer-btn btn btn-icon btn-info-dark rounded-circle me-2"><i
-                                        class="bi bi-instagram"></i></a>
-                                <a href="{{ $settings->twitter ?? '' }}"
-                                    class="footer-btn btn btn-icon btn-info-dark rounded-circle"><i
-                                        class="bi bi-twitter"></i></a>
-                            </div>
+        <footer class="footer bg-dark text-white mt-auto pt-5 pb-0 position-relative" style="background: linear-gradient(90deg, #ff9800 60%, #ffb74d 100%);">
+            <div class="container">
+                <div class="row gy-4 align-items-start">
+                    <div class="col-lg-4 col-md-6 mb-4 mb-lg-0">
+                        <a href="#" class="d-inline-block mb-3"><img src="{{ $settings->image_url ?? '' }}" width="150px" height="50px" alt="logo"></a>
+                        <ul class="list-unstyled mb-3 mt-3">
+                            <li class="mb-2"><i class="bi bi-telephone me-2 text-white-50"></i> <span class="text-white">{{ $settings->phone ?? '' }}</span></li>
+                            <li class="mb-2"><i class="bi bi-envelope-plus me-2 text-white-50"></i> <span class="text-white">{{ $settings->email ?? '' }}</span></li>
+                            <li><i class="bi bi-geo-alt me-2 text-white-50"></i> <span class="text-white">{{ $settings->address ?? '' }}</span></li>
+                        </ul>
+                        <div class="d-flex align-items-center gap-2 mt-3">
+                            <a href="{{ $settings->facebook ?? '' }}" class="btn btn-icon rounded-circle" style="background:#fff3e0;color:#ff9800;"><i class="bi bi-facebook"></i></a>
+                            <a href="{{ $settings->linkedin ?? '' }}" class="btn btn-icon rounded-circle" style="background:#fff3e0;color:#ff9800;"><i class="bi bi-linkedin"></i></a>
+                            <a href="{{ $settings->instagram ?? '' }}" class="btn btn-icon rounded-circle" style="background:#fff3e0;color:#ff9800;"><i class="bi bi-instagram"></i></a>
+                            <a href="{{ $settings->twitter ?? '' }}" class="btn btn-icon rounded-circle" style="background:#fff3e0;color:#ff9800;"><i class="bi bi-twitter"></i></a>
                         </div>
-                        {{-- <div class="col-lg-3 col-md-6 mb-4 mb-lg-0">
-                            <h4 class="text-white">Domains</h4>
-                            <ul class="list-unstyled footer-icon">
-                                <li class="list-item mb-2"><a href="" class="footer-link">Register
-                                        Domain Name</a></li>
-                                <li class="list-item mb-2"><a href="" class="footer-link">View
-                                        Domain Pricing</a></li>
-                                <li class="list-item mb-2"><a href="premium-domains.html" class="footer-link">Premium
-                                        Domains</a></li>
-                                <li class="list-item mb-2"><a href="domain-transfer.html" class="footer-link">Transfer
-                                        Your Domain</a></li>
-                                <li class="list-item mb-2"><a href="domain-transfer.html" class="footer-link">Bulk
-                                        Domain Transfer</a></li>
-                                <li class="list-item mb-2"><a href="free-with-domain.html" class="footer-link">Free With
-                                        Every Domain</a></li>
-                                <li class="list-item mb-2"><a href="name-suggestion-tool.html" class="footer-link">Name
-                                        Suggestion</a></li>
-                                <li class="list-item mb-2"><a href="whois-lookup.html" class="footer-link">Whois
-                                        Lookup</a></li>
-                                <li class="list-item"><a href="premium-domains.html" class="footer-link">View Promos</a>
-                                </li>
-                            </ul>
-                        </div> --}}
-
                     </div>
-
+                    <div class="col-lg-2 col-md-6 mb-4 mb-lg-0">
+                        <h6 class="fw-bold mb-3" style="color:#fffbe7;">{{ $lang == 'ar' ? 'روابط سريعة' : 'Quick Links' }}</h6>
+                        <ul class="list-unstyled">
+                            <li class="mb-2"><a href="{{ route('home') }}" class="footer-link" style="color:#fffbe7;opacity:0.85;">{{ $lang == 'ar' ? 'الرئيسية' : 'Home' }}</a></li>
+                            <li class="mb-2"><a href="{{ route('departments') }}" class="footer-link" style="color:#fffbe7;opacity:0.85;">{{ $lang == 'ar' ? 'الأقسام' : 'Departments' }}</a></li>
+                            <li class="mb-2"><a href="{{ route('login-page') }}" class="footer-link" style="color:#fffbe7;opacity:0.85;">{{ $lang == 'ar' ? 'تسجيل الدخول' : 'Login' }}</a></li>
+                            <li><a href="{{ route('register-page') }}" class="footer-link" style="color:#fffbe7;opacity:0.85;">{{ $lang == 'ar' ? 'إنشاء حساب' : 'Register' }}</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-lg-3 col-md-6 mb-4 mb-lg-0">
+                        <h6 class="fw-bold mb-3" style="color:#fffbe7;">{{ $lang == 'ar' ? 'عن المنصة' : 'About' }}</h6>
+                        <p class="mb-2" style="font-size:15px;color:#fffbe7;opacity:0.9;">{{ $settings->about ?? ($lang == 'ar' ? 'منصة عندك تربط العملاء بمزودي الخدمات والمنتجات في جميع المجالات.' : 'Endak platform connects customers with service and product providers in all fields.') }}</p>
+                    </div>
+                    <div class="col-lg-3 col-md-6 mb-4 mb-lg-0">
+                        <h6 class="fw-bold mb-3" style="color:#fffbe7;">{{ $lang == 'ar' ? 'تواصل معنا' : 'Contact Us' }}</h6>
+                        <form action="#" method="post" class="d-flex flex-column gap-2">
+                            <input type="email" class="form-control rounded-pill" style="background:#fffbe7;color:#ff9800;border:none;" placeholder="{{ $lang == 'ar' ? 'بريدك الإلكتروني' : 'Your Email' }}" required>
+                            <textarea class="form-control rounded-3" rows="2" style="background:#fffbe7;color:#ff9800;border:none;" placeholder="{{ $lang == 'ar' ? 'رسالتك' : 'Your Message' }}" required></textarea>
+                            <button type="submit" class="btn rounded-pill fw-bold" style="background:#ff9800;color:#fff;">{{ $lang == 'ar' ? 'إرسال' : 'Send' }}</button>
+                        </form>
+                    </div>
                 </div>
             </div>
-
-            <div class="py-3 border-top border-white-2 text-center">
+            <div class="py-3 border-top border-white-2 text-center mt-4" style="background:rgba(255,152,0,0.08);">
                 <div class="container">
-                    <span class="tx-14 op-8">
-                        Copyright &#169;
-                        <span id="year"></span>
-                        -<?php $mytime = Carbon\Carbon::now();
-                        echo $mytime->format('Y'); ?> </strong>
+                    <span class="tx-14 op-8" style="color:#fffbe7;">
+                        &copy; <span id="year"></span> - <?php $mytime = Carbon\Carbon::now(); echo $mytime->format('Y'); ?>
                         <a href="" class="text-white">Endak</a>
-                        Designed with
-                        <span class="fa fa-heart tx-danger"></span>
-                        by
-                        <a href="{{ config('app.developer_name') }}"
-                            class="text-white">{{ config('app.developer_name') }}</a>
-                        All Rights Reserved
+                        {{ $lang == 'ar' ? 'كل الحقوق محفوظة' : 'All Rights Reserved' }}
+                        <span class="fa fa-heart" style="color:#ff9800;"></span>
+                        {{ $lang == 'ar' ? 'تصميم' : 'Designed by' }}
+                        <a href="{{ config('app.developer_name') }}" class="text-white">{{ config('app.developer_name') }}</a>
                     </span>
                 </div>
             </div>

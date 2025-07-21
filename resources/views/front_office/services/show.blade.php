@@ -267,85 +267,85 @@
     </div>
 </div>
 @if (auth()->check() && auth()->id() == $service->user_id)
-    <section class="section d-flex align-items-center justify-content-center">
-        <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-xl-8">
-                    <div class="card mb-4">
-                        <div class="card-body pb-0 align-items-center" style="height: 100%;">
-                            <h5 class="mb-4 text-center">
-                                <i class="fas fa-gavel"></i> {{ $lang == 'ar' ? 'العروض المقدمة' : 'Offers' }}
-                            </h5>
-                            <div class="mb-4">
-                                <div class="container">
-                                    @forelse ($service->comments as $comment)
-                                        <div class="border rounded p-3 mb-4 bg-light">
-                                            <div class="d-flex align-items-center mb-2">
-                                                <h5 class="mb-0 mr-3 text-primary">
-                                                    <i class="fas fa-user-circle"></i>
-                                                    {{ $comment->user->first_name . ' ' . $comment->user->last_name }}
-                                                </h5>
-                                                @if (auth()->check() && auth()->id() == $service->user_id)
-                                                    <a class="btn btn-outline-info btn-sm mx-2"
-                                                        href="{{ route('web.send_message', $comment->user->id) }}">
-                                                        <i class="fe fe-mail mx-1"></i> {{ __('messages.send_message') }}
-                                                    </a>
-                                                    <form action="{{ route('general_orders.store') }}" method="post" class="d-inline">
-                                                        @csrf
-                                                        <input type="hidden" name="service_id" value="{{ $service->id }}">
-                                                        <input type="hidden" name="service_provider_id" value="{{ $comment->user->id }}">
-                                                        <input type="hidden" name="user_id" value="{{ $comment->customer->id }}">
-                                                        <input type="hidden" name="status" value="pending">
-                                                        <button class="btn btn-success btn-sm" type="submit">
-                                                            {{ $lang == 'ar' ? 'قبول العرض' : 'Accept Offer' }}
-                                                        </button>
-                                                    </form>
+<section class="section d-flex align-items-center justify-content-center">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-xl-8">
+                <div class="card mb-4">
+                    <div class="card-body pb-0 align-items-center" style="height: 100%;">
+                        <h5 class="mb-4 text-center">
+                            <i class="fas fa-gavel"></i> {{ $lang == 'ar' ? 'العروض المقدمة' : 'Offers' }}
+                        </h5>
+                        <div class="mb-4">
+                            <div class="container">
+                                @forelse ($service->comments as $comment)
+                                    <div class="border rounded p-3 mb-4 bg-light">
+                                        <div class="d-flex align-items-center mb-2">
+                                            <h5 class="mb-0 mr-3 text-primary">
+                                                <i class="fas fa-user-circle"></i>
+                                                {{ $comment->user->first_name . ' ' . $comment->user->last_name }}
+                                            </h5>
+                                            @if (auth()->check() && auth()->id() == $service->user_id)
+                                                <a class="btn btn-outline-info btn-sm mx-2"
+                                                    href="{{ route('web.send_message', $comment->user->id) }}">
+                                                    <i class="fe fe-mail mx-1"></i> {{ __('messages.send_message') }}
+                                                </a>
+                                                <form action="{{ route('general_orders.store') }}" method="post" class="d-inline">
+                                                    @csrf
+                                                    <input type="hidden" name="service_id" value="{{ $service->id }}">
+                                                    <input type="hidden" name="service_provider_id" value="{{ $comment->user->id }}">
+                                                    <input type="hidden" name="user_id" value="{{ $comment->customer->id }}">
+                                                    <input type="hidden" name="status" value="pending">
+                                                    <button class="btn btn-success btn-sm" type="submit">
+                                                        {{ $lang == 'ar' ? 'قبول العرض' : 'Accept Offer' }}
+                                                    </button>
+                                                </form>
+                                            @endif
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                @if (isset($comment->price))
+                                                    <p><strong>{{ __('general.price') }}:</strong> {{ $comment->price }}</p>
+                                                @endif
+                                                @if (isset($comment->body))
+                                                    <p><strong>نوع الخدمة:</strong> {{ $comment->body }}</p>
+                                                @endif
+                                                @if (isset($comment->date))
+                                                    <p><strong>{{ __('general.date') }}:</strong> {{ $comment->date }}</p>
+                                                @endif
+                                                @if (isset($comment->time))
+                                                    <p><strong>{{ __('general.time') }}:</strong> {{ \Carbon\Carbon::parse($comment->time)->format('h:i A') }}</p>
                                                 @endif
                                             </div>
-                                            <div class="row">
-                                                <div class="col-md-6">
-                                                    @if (isset($comment->price))
-                                                        <p><strong>{{ __('general.price') }}:</strong> {{ $comment->price }}</p>
-                                                    @endif
-                                                    @if (isset($comment->body))
-                                                        <p><strong>نوع الخدمة:</strong> {{ $comment->body }}</p>
-                                                    @endif
-                                                    @if (isset($comment->date))
-                                                        <p><strong>{{ __('general.date') }}:</strong> {{ $comment->date }}</p>
-                                                    @endif
-                                                    @if (isset($comment->time))
-                                                        <p><strong>{{ __('general.time') }}:</strong> {{ \Carbon\Carbon::parse($comment->time)->format('h:i A') }}</p>
-                                                    @endif
-                                                </div>
-                                                <div class="col-md-6">
-                                                    @if (isset($comment->city))
-                                                        <p><strong>{{ $lang == 'ar' ? 'المدينة' : 'City' }}:</strong> {{ $comment->city }}</p>
-                                                    @endif
-                                                    @if (isset($comment->neighborhood))
-                                                        <p><strong>{{ $lang == 'ar' ? 'الحي' : 'Neighborhood' }}:</strong> {{ $comment->neighborhood }}</p>
-                                                    @endif
-                                                    @if (isset($comment->location))
-                                                        <p><strong>{{ $lang == 'ar' ? 'الموقع' : 'Location' }}:</strong> {{ $comment->location }}</p>
-                                                    @endif
-                                                    @if (isset($comment->day))
-                                                        <p><strong>{{ __('general.day') }}:</strong> {{ $comment->day }}</p>
-                                                    @endif
-                                                    @if (isset($comment->number_of_days_of_warranty))
-                                                        <p><strong>{{ $lang == 'ar' ? 'عدد ايام الضمان' : 'Number of Days of Warranty' }}:</strong> {{ $comment->number_of_days_of_warranty }}</p>
-                                                    @endif
-                                                    @if (isset($comment->notes))
-                                                        <p><strong>{{ $lang == 'ar' ? 'ملاحظات عن العمل المطلوب' : 'Notes' }}:</strong> {{ $comment->notes }}</p>
-                                                    @endif
-                                                </div>
+                                            <div class="col-md-6">
+                                                @if (isset($comment->city))
+                                                    <p><strong>{{ $lang == 'ar' ? 'المدينة' : 'City' }}:</strong> {{ $comment->city }}</p>
+                                                @endif
+                                                @if (isset($comment->neighborhood))
+                                                    <p><strong>{{ $lang == 'ar' ? 'الحي' : 'Neighborhood' }}:</strong> {{ $comment->neighborhood }}</p>
+                                                @endif
+                                                @if (isset($comment->location))
+                                                    <p><strong>{{ $lang == 'ar' ? 'الموقع' : 'Location' }}:</strong> {{ $comment->location }}</p>
+                                                @endif
+                                                @if (isset($comment->day))
+                                                    <p><strong>{{ __('general.day') }}:</strong> {{ $comment->day }}</p>
+                                                @endif
+                                                @if (isset($comment->number_of_days_of_warranty))
+                                                    <p><strong>{{ $lang == 'ar' ? 'عدد ايام الضمان' : 'Number of Days of Warranty' }}:</strong> {{ $comment->number_of_days_of_warranty }}</p>
+                                                @endif
+                                                @if (isset($comment->notes))
+                                                    <p><strong>{{ $lang == 'ar' ? 'ملاحظات عن العمل المطلوب' : 'Notes' }}:</strong> {{ $comment->notes }}</p>
+                                                @endif
                                             </div>
                                         </div>
-                                    @empty
-                                        <div class="alert alert-info text-center">{{ $lang == 'ar' ? 'لا توجد عروض بعد.' : 'No offers yet.' }}</div>
-                                    @endforelse
-                                </div>
+                                    </div>
+                                @empty
+                                    <div class="alert alert-info text-center">{{ $lang == 'ar' ? 'لا توجد عروض بعد.' : 'No offers yet.' }}</div>
+                                @endforelse
                             </div>
                         </div>
                     </div>
+                </div>
                 </div>
             </div>
         </div>
@@ -367,26 +367,26 @@
                         <span style="font-size:2.5rem; color:#1976d2;"><i class="fas fa-hand-holding-usd"></i></span>
                         <h4 class="mt-2 mb-3" style="font-weight:bold; color:#1976d2;">{{ $lang == 'ar' ? 'إضافة عرض جديد' : 'Add Offer' }}</h4>
                     </div>
-                    <form class="form-horizontal m-t-20" action="{{ route('general_comments.store') }}" method="POST" enctype="multipart/form-data">
-                        @csrf
-                        <input type="hidden" value="{{ $service->id }}" name="service_id">
-                        <input type="hidden" value="{{$service->type}}" name="body">
-                        <div class="mb-3">
+                            <form class="form-horizontal m-t-20" action="{{ route('general_comments.store') }}" method="POST" enctype="multipart/form-data">
+                                @csrf
+                                <input type="hidden" value="{{ $service->id }}" name="service_id">
+                                <input type="hidden" value="{{$service->type}}" name="body">
+                                <div class="mb-3">
                             <label class="mb-2" for="price" style="font-weight:500;">{{ __('general.price') }}</label>
                             <input class="form-control mb-2 py-2" type="number" name="price" id="price" required placeholder="{{ $lang == 'ar' ? 'أدخل السعر المقترح' : 'Enter your offer price' }}">
-                        </div>
-                        <div class="mb-3">
+                                </div>
+                                <div class="mb-3">
                             <label class="mb-2" for="notes" style="font-weight:500;">{{ $lang == 'ar' ? 'ملاحظات عن العمل المطلوب' : 'Notes' }}</label>
                             <textarea class="form-control mb-2 py-2" cols="5" rows="4" name="notes" id="notes" placeholder="{{ $lang == 'ar' ? 'اكتب تفاصيل العرض أو أي ملاحظات' : 'Write your offer details or notes' }}"></textarea>
-                        </div>
+                                </div>
                         <button type="submit" class="btn btn-success btn-lg w-100 my-2" style="font-size:1.2em; border-radius: 8px;">
                             <i class="fas fa-paper-plane"></i> {{ $lang == 'ar' ? 'قدم عرض' : 'Add Offer' }}
                         </button>
                         <div class="text-muted small mt-2 text-center">
                             <i class="fas fa-info-circle"></i> {{ $lang == 'ar' ? 'العروض تظهر للعميل فقط بعد الموافقة.' : 'Offers are visible to the client only after approval.' }}
+                                </div>
+                            </form>
                         </div>
-                    </form>
-                </div>
             </div>
         </div>
     @endif

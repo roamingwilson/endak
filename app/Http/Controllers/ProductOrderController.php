@@ -70,4 +70,28 @@ class ProductOrderController extends Controller
 
         return back()->with('success', 'تم حذف الطلب');
     }
+
+    public function edit($id)
+    {
+        $order = ProductOrder::with('items.product', 'user')->findOrFail($id);
+        return view('admin.main_department.industry.edit_pro_order', compact('order'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $order = ProductOrder::with('items')->findOrFail($id);
+        if ($request->has('items')) {
+            foreach ($order->items as $item) {
+                if (isset($request->items[$item->id])) {
+                    $item->quantity = $request->items[$item->id]['quantity'];
+                    $item->price = $request->items[$item->id]['price'];
+                    $item->save();
+                }
+            }
+        }
+        // تحديث الإجمالي الكلي إذا لزم
+        $order->total = $order->items->sum(function($item) { return $item->quantity * $item->price; });
+        $order->save();
+        return redirect()->route('product_orders.show', $order->id)->with('success', 'تم تحديث الطلب بنجاح');
+    }
 }

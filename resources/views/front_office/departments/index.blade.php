@@ -83,6 +83,40 @@
                 grid-template-columns: repeat(2, 1fr);
             }
         }
+        .mb-4.text-center {
+            color: #ff9800;
+            font-weight: bold;
+            letter-spacing: 1px;
+            font-size: 2rem;
+        }
+        .row.g-3 {
+            margin-top: 2rem;
+        }
+        .card.shadow-sm.p-2 {
+            transition: box-shadow 0.18s, transform 0.18s;
+            border-radius: 16px !important;
+            box-shadow: 0 2px 10px rgba(255,152,0,0.07);
+            background: #f5f5f5 !important;
+        }
+        .card.shadow-sm.p-2:hover {
+            box-shadow: 0 8px 32px rgba(255,152,0,0.18), 0 2px 8px rgba(0,0,0,0.10);
+            transform: translateY(-4px) scale(1.04);
+        }
+        .card .mt-2.small.fw-bold {
+            color: #111;
+            font-size: 1.08rem;
+            font-weight: 700;
+            margin-top: 10px !important;
+        }
+        .col-4.col-md-2.text-center {
+            margin-bottom: 24px;
+        }
+        @media (max-width: 768px) {
+            .col-4.col-md-2.text-center { flex: 0 0 50%; max-width: 50%; }
+        }
+        @media (max-width: 500px) {
+            .col-4.col-md-2.text-center { flex: 0 0 50%; max-width: 50%; }
+        }
     </style>
 @endsection
 @section('content')
@@ -96,15 +130,8 @@
     <div class="row g-3">
         @foreach($departments as $department)
         @if ($department->name_en == 'plastic')
-        <div class="col-4 col-md-2 text-center">
-            <a href="{{route('indsproducts.index')}}" class="text-decoration-none text-dark">
-                <div class="card shadow-sm p-2" style="background-color: #f5f5f5; border-radius: 12px;">
-                    <img src="{{ asset('storage/' . $department->image) }}" alt="{{ $department->name }}" style="width: 60px; height: 60px; object-fit: contain; margin: auto;">
-                    <div class="mt-2 small fw-bold">{{ $lang == 'ar' ? $department->name_ar : $department->name_en }}</div>
-                </div>
-            </a>
-        </div>
-        @else
+            @continue
+        @endif
         <div class="col-4 col-md-2 text-center">
             <a href="{{route('services.show',$department->id)}}" class="text-decoration-none text-dark">
                 <div class="card shadow-sm p-2" style="background-color: #f5f5f5; border-radius: 12px;">
@@ -114,7 +141,7 @@
             </a>
         </div>
 
-        @endif
+
 
         @endforeach
     </div>

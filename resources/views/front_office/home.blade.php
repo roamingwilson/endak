@@ -86,39 +86,47 @@
     </style>
 @endsection
 @section('content')
-
-@php
-    $departments = \App\Models\Department::all();
-@endphp
-<div class="container" style=" padding-top: 100px;">
-    <h1 class="mb-4 mt-4 text-center"> {{ $lang == 'ar' ? "اختيار القسم" : "Choose Department"}}</h1>
-
-    <div class="row g-3">
-        @foreach($departments as $department)
-        @if ($department->name_en == 'plastic')
-        <div class="col-4 col-md-2 text-center">
-            <a href="{{route('indsproducts.index')}}" class="text-decoration-none text-dark">
-
-                <div class="card shadow-sm p-2" style="background-color: #f5f5f5; border-radius: 12px;">
-                    <img src="{{ asset('storage/' . $department->image) }}" alt="{{ $department->name }}" style="width: 60px; height: 60px; object-fit: contain; margin: auto;">
-                    <div class="mt-2 small fw-bold">{{ $lang == 'ar' ? $department->name_ar : $department->name_en }}</div>
-                </div>
-            </a>
-        </div>
-        @else
-        <div class="col-4 col-md-2 text-center">
-            <a href="{{route('services.show',$department->id)}}" class="text-decoration-none text-dark">
-                <div class="card shadow-sm p-2" style="background-color: #f5f5f5; border-radius: 12px;">
-                    <img src="{{ asset('storage/' . $department->image) }}" alt="{{ $department->name }}" style="width: 60px; height: 60px; object-fit: contain; margin: auto;">
-                    <div class="mt-2 small fw-bold">{{ $lang == 'ar' ? $department->name_ar : $department->name_en }}</div>
-                </div>
-            </a>
-        </div>
-
-        @endif
-
-        @endforeach
+<div class="container py-5">
+    <!-- تعريف عن الموقع -->
+    <div class="text-center mb-5">
+        <h1 class="fw-bold mb-3" style="color: #ff9800;">{{ $lang == 'ar' ? 'مرحباً بك في منصة عندك' : 'Welcome to Endak Platform' }}</h1>
+        <p class="lead mx-auto" style="max-width: 700px;">
+            {{ $lang == 'ar' ? 'منصتك الذكية لربط العملاء بمزودي الخدمات والمنتجات في جميع المجالات. سهولة في البحث، أمان في التعامل، وراحة في التواصل.' : 'Your smart platform to connect customers with service and product providers in all fields. Easy search, secure transactions, and seamless communication.' }}
+        </p>
     </div>
+    <!-- رسائل إدارية -->
+    @if(Session::has('admin_message') || !empty($adminMessage))
+        <div class="alert alert-info text-center mb-4">
+            <i class="fas fa-info-circle me-2"></i>
+            {{ Session::get('admin_message') ?? $adminMessage }}
+        </div>
+    @endif
+    <!-- تعريف الأدوار -->
+    <div class="row justify-content-center align-items-stretch g-4">
+        <div class="col-md-5">
+            <div class="card h-100 shadow-sm border-0">
+                <div class="card-body text-center">
+                    <i class="fas fa-user fa-3x mb-3 text-primary"></i>
+                    <h4 class="fw-bold mb-2">{{ $lang == 'ar' ? 'العميل' : 'Customer' }}</h4>
+                    <p class="mb-0">
+                        {{ $lang == 'ar' ? 'يمكنك كعميل استكشاف الخدمات والمنتجات، طلب عروض الأسعار، التواصل مع مزودي الخدمة، وإتمام عمليات الشراء بسهولة وأمان.' : 'As a customer, you can explore services and products, request quotes, communicate with providers, and complete purchases easily and securely.' }}
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-5">
+            <div class="card h-100 shadow-sm border-0">
+                <div class="card-body text-center">
+                    <i class="fas fa-briefcase fa-3x mb-3 text-warning"></i>
+                    <h4 class="fw-bold mb-2">{{ $lang == 'ar' ? 'مزود الخدمة' : 'Service Provider' }}</h4>
+                    <p class="mb-0">
+                        {{ $lang == 'ar' ? 'يمكنك كمزود خدمة أو تاجر عرض خدماتك ومنتجاتك، استقبال الطلبات، التفاعل مع العملاء، وزيادة فرصك في الوصول لعملاء جدد.' : 'As a provider or merchant, you can showcase your services and products, receive orders, interact with customers, and increase your reach.' }}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- يمكنك إضافة أي محتوى إضافي هنا -->
 </div>
 @if (Session::has('success'))
 <script>

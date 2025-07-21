@@ -400,6 +400,7 @@
                                                         @endforeach
                                                     </select>
                                                 @elseif($field->type === 'checkbox')
+                                                    <input type="hidden" name="custom_fields[{{ $field->name }}]" value="0">
                                                     <input type="checkbox" name="custom_fields[{{ $field->name }}]" id="custom_fields_{{ $field->name }}" value="1" class="form-check-input" {{ old('custom_fields.' . $field->name) ? 'checked' : '' }}>
                                                 @elseif($field->type === 'image')
                                                     <input type="file" name="custom_fields[{{ $field->name }}]" id="custom_fields_{{ $field->name }}" accept="image/*" class="form-control">
@@ -487,95 +488,114 @@
 @section('script')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    document.addEventListener('click', function(e) {
-        // إضافة مجموعة جديدة
-        if(e.target.classList.contains('add-group-btn')) {
-            var btn = e.target;
-            var group = btn.getAttribute('data-group');
-            var groupBlock = document.querySelector('.group-block[data-group="' + group + '"]');
-            if(groupBlock && groupBlock.getAttribute('data-repeatable') !== '1') return;
-            var groupList = document.querySelector('.group-fields-list[data-group="' + group + '"]');
-            var instances = groupList.querySelectorAll('.group-fields-instance');
-            if(instances.length >= 10) return;
-            var newIndex = instances.length;
-            var template = instances[0].cloneNode(true);
-            template.setAttribute('data-index', newIndex);
-            template.querySelectorAll('input, select, textarea').forEach(function(input) {
-                if(input.type === 'checkbox' || input.type === 'radio') {
-                    input.checked = false;
-                } else {
-                    input.value = '';
+    const container = document.querySelector('.voice-note-container');
+    if (!container) return;
+
+    const startBtn = container.querySelector('.startRecord');
+    const stopBtn = container.querySelector('.stopRecord');
+    const resetBtn = container.querySelector('.resetRecord');
+    const audioPlayback = container.querySelector('.audioPlayback');
+    const downloadLink = container.querySelector('.downloadLink');
+    const recordingStatus = container.querySelector('.recordingStatus');
+    const recordingTimer = container.querySelector('.recordingTimer');
+    const voiceNoteData = container.querySelector('.voiceNoteData');
+
+    let mediaRecorder, audioChunks = [], audioBlob, stream, timerInterval, seconds = 0;
+
+    function updateTimerDisplay() {
+        const minutes = Math.floor(seconds / 60);
+        const remainingSeconds = seconds % 60;
+        recordingTimer.textContent = `${minutes < 10 ? '0' : ''}${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
+    }
+    function startTimer() {
+        seconds = 0;
+        updateTimerDisplay();
+        recordingTimer.style.display = 'inline';
+        timerInterval = setInterval(() => {
+            seconds++;
+            updateTimerDisplay();
+        }, 1000);
+    }
+    function stopTimer() {
+        clearInterval(timerInterval);
+        recordingTimer.style.display = 'none';
+    }
+
+    startBtn.addEventListener('click', async function(e) {
+        e.preventDefault();
+        try {
+            stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            mediaRecorder = new MediaRecorder(stream);
+            audioChunks = [];
+            mediaRecorder.ondataavailable = function(e) {
+                if (e.data.size > 0) {
+                    audioChunks.push(e.data);
                 }
-                var name = input.getAttribute('name');
-                if(name) {
-                    name = name.replace(/custom_fields\[[^\]]+\]\[\d+\]/, 'custom_fields['+group+']['+newIndex+']');
-                    input.setAttribute('name', name);
+            };
+            mediaRecorder.onstart = function() {
+                recordingStatus.style.display = 'block';
+                recordingStatus.textContent = "جاري التسجيل...";
+                startBtn.disabled = true;
+                stopBtn.disabled = false;
+                resetBtn.style.display = 'none';
+                audioPlayback.style.display = 'none';
+                downloadLink.style.display = 'none';
+                startTimer();
+            };
+            mediaRecorder.onstop = function() {
+                stopTimer();
+                audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+                const audioUrl = URL.createObjectURL(audioBlob);
+                audioPlayback.src = audioUrl;
+                audioPlayback.style.display = 'block';
+                downloadLink.href = audioUrl;
+                downloadLink.download = 'voice-note.wav';
+                downloadLink.style.display = 'inline-block';
+                recordingStatus.style.display = 'none';
+                startBtn.disabled = false;
+                stopBtn.disabled = true;
+                resetBtn.style.display = 'inline-block';
+                // Stop all tracks
+                if (stream) {
+                    stream.getTracks().forEach(track => track.stop());
                 }
-                var id = input.getAttribute('id');
-                if(id) {
-                    id = id.replace(/_\d+_/, '_' + newIndex + '_');
-                    input.setAttribute('id', id);
-                }
-            });
-            groupList.appendChild(template);
-            moveAddBtnToBottom(groupList, group);
-            updateRemoveBtns(groupList);
-        }
-        // حذف مجموعة
-        if(e.target.closest('.remove-group-btn')) {
-            var instance = e.target.closest('.group-fields-instance');
-            var groupList = instance.parentElement;
-            var group = groupList.getAttribute('data-group');
-            instance.remove();
-            moveAddBtnToBottom(groupList, group);
-            updateRemoveBtns(groupList);
+                // حفظ البيانات في input مخفي
+                const reader = new FileReader();
+                reader.readAsDataURL(audioBlob);
+                reader.onloadend = function() {
+                    voiceNoteData.value = reader.result;
+                };
+            };
+            mediaRecorder.start();
+        } catch (error) {
+            recordingStatus.style.display = 'block';
+            recordingStatus.textContent = 'خطأ في الوصول إلى الميكروفون: ' + error.message;
+            startBtn.disabled = false;
+            stopBtn.disabled = true;
+            resetBtn.style.display = 'none';
         }
     });
-    // دالة لنقل زر الإضافة دائماً لأسفل آخر مجموعة
-    function moveAddBtnToBottom(groupList, group) {
-        // احذف كل أزرار الإضافة داخل المجموعة
-        groupList.querySelectorAll('.add-group-btn-wrapper').forEach(function(w){w.remove();});
-        var groupBlock = document.querySelector('.group-block[data-group="' + group + '"]');
-        var repeatable = groupBlock && groupBlock.getAttribute('data-repeatable') === '1';
-        if(!repeatable) return; // لا تضف الزر إذا لم تكن المجموعة قابلة للتكرار
-        var instances = groupList.querySelectorAll('.group-fields-instance');
-        if(instances.length < 10) {
-            // أنشئ زر جديد دائري صغير مع نص
-            var addBtn = document.createElement('button');
-            addBtn.type = 'button';
-            addBtn.className = 'btn btn-primary btn-circle add-group-btn d-flex align-items-center';
-            addBtn.setAttribute('data-group', group);
-            addBtn.style.width = 'auto';
-            addBtn.style.height = '38px';
-            addBtn.style.borderRadius = '19px';
-            addBtn.style.display = 'flex';
-            addBtn.style.alignItems = 'center';
-            addBtn.style.justifyContent = 'center';
-            addBtn.style.fontSize = '1.1rem';
-            addBtn.style.boxShadow = '0 2px 8px #1976d233';
-            addBtn.style.background = 'linear-gradient(135deg, #1976d2 60%, #43e97b 100%)';
-            addBtn.style.border = 'none';
-            addBtn.style.color = '#fff';
-            addBtn.innerHTML = '<i class="fas fa-plus me-1"></i> إضافة حقل';
-            var wrapper = document.createElement('div');
-            wrapper.className = 'd-flex justify-content-center mt-3 add-group-btn-wrapper';
-            wrapper.appendChild(addBtn);
-            groupList.appendChild(wrapper);
+
+    stopBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+            mediaRecorder.stop();
         }
-    }
-    // دالة لإظهار/إخفاء زر الحذف حسب عدد المجموعات
-    function updateRemoveBtns(groupList) {
-        var instances = groupList.querySelectorAll('.group-fields-instance');
-        instances.forEach(function(inst) {
-            var removeBtn = inst.querySelector('.remove-group-btn');
-            if(removeBtn) removeBtn.style.display = (instances.length > 1 ? '' : 'none');
-        });
-    }
-    // عند التحميل: ضبط أزرار الحذف وزر الإضافة
-    document.querySelectorAll('.group-fields-list').forEach(function(groupList) {
-        var group = groupList.getAttribute('data-group');
-        moveAddBtnToBottom(groupList, group);
-        updateRemoveBtns(groupList);
+    });
+
+    resetBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        audioBlob = null;
+        audioPlayback.src = '';
+        audioPlayback.style.display = 'none';
+        downloadLink.style.display = 'none';
+        resetBtn.style.display = 'none';
+        startBtn.disabled = false;
+        stopBtn.disabled = true;
+        recordingStatus.style.display = 'none';
+        seconds = 0;
+        updateTimerDisplay();
+        voiceNoteData.value = '';
     });
 });
 </script>

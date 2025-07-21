@@ -8,39 +8,53 @@
 @endsection
 
 @section('content')
-
-    <div class="main-content app-content">
-        <section>
-    {{ ($lang == 'ar') ? 'اشعارات' : "Notifications" }}
-        </section>
-
-        <div class="notifications-wrapper">
-            @if($notifications->count())
-                @foreach($notifications as $notification)
-                    <div class="notification-card" data-id="{{ $notification->id }}">
-                        <div class="notification-header">
-                            <h5 class="notification-title">{{ $notification->data['title'] }}</h5>
-                            <span class="notification-time">{{ $notification->created_at->diffForHumans() }}</span>
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="d-flex align-items-center justify-content-between mb-4">
+                <h2 class="fw-bold mb-0" style="color:#ff9800;"><i class="fas fa-bell me-2"></i>{{ $lang == 'ar' ? 'الإشعارات' : 'Notifications' }}</h2>
+                <span class="badge bg-primary fs-6">{{ $notifications->count() }} {{ $lang == 'ar' ? 'إشعار' : 'Notifications' }}</span>
+                <button id="markAllReadBtn" class="btn btn-sm btn-warning ms-2" style="min-width:150px;">
+                    <i class="fas fa-check-double"></i> {{ $lang == 'ar' ? 'تعليم الكل كمقروء' : 'Mark all as read' }}
+                </button>
+            </div>
+            <div class="notifications-wrapper">
+                @if($notifications->count())
+                    @foreach($notifications as $notification)
+                        <div class="notification-card position-relative {{ $notification->read_at ? 'read' : 'unread' }}" data-id="{{ $notification->id }}">
+                            <div class="notification-header d-flex align-items-center justify-content-between mb-2">
+                                <h5 class="notification-title mb-0"><i class="fas fa-info-circle me-2"></i>{{ $notification->data['title'] }}</h5>
+                                <span class="notification-time small"><i class="far fa-clock me-1"></i>{{ $notification->created_at->diffForHumans() }}</span>
+                            </div>
+                            <div class="notification-body mb-3">
+                                <p class="mb-0">{{ $notification->data['body'] }}</p>
+                            </div>
+                            <div class="notification-footer d-flex gap-2 justify-content-end">
+                                @php $url = $notification->data['url'] ?? null; @endphp
+                                @if($url)
+                                    <a href="{{ $url }}" class="btn btn-details">
+                                        <i class="fas fa-eye"></i> {{ $lang == 'ar' ? 'مزيد من التفاصيل' : 'View Details' }}
+                                    </a>
+                                @endif
+                                <a href="javascript:void(0)" class="btn btn-mark-read mark-read">
+                                    <i class="fas fa-check"></i> {{ $lang == 'ar' ? 'تم قراءة الإشعار' : 'Mark as Read' }}
+                                </a>
+                            </div>
+                            @if(!$notification->read_at)
+                                <span class="position-absolute top-0 end-0 translate-middle badge rounded-pill bg-danger" style="font-size:10px;">{{ $lang == 'ar' ? 'جديد' : 'New' }}</span>
+                            @endif
                         </div>
-                        <div class="notification-body">
-                            <p>{{ $notification->data['body'] }}</p>
-                        </div>
-                        <div class="notification-footer">
-                            <a href="{{route('general_comments.show',auth()->id())}}" class="btn btn-details">
-                                {{ ($lang == 'ar') ? 'مزيد من التفاصيل' : 'View Details' }}
-                            </a>
-                            <a href="javascript:void(0)" class="btn btn-mark-read mark-read">
-                                {{ ($lang == 'ar') ? 'تم قراءة الإشعار' : 'Mark as Read' }}
-                            </a>
-                        </div>
+                    @endforeach
+                @else
+                    <div class="alert alert-info text-center py-4 mb-0">
+                        <i class="fas fa-info-circle fa-2x mb-2"></i><br>
+                        {{ $lang == 'ar' ? 'لا توجد إشعارات' : 'No Notifications' }}
                     </div>
-                @endforeach
-            @else
-                <p>{{ ($lang == 'ar') ? 'لا توجد إشعارات' : 'No Notifications' }}</p>
-            @endif
+                @endif
+            </div>
         </div>
-
     </div>
+</div>
 
 @endsection
 
@@ -67,6 +81,24 @@
                 })
                 .catch(error => console.error('Error:', error));
             });
+        });
+
+        // زر تعليم الكل كمقروء
+        document.getElementById('markAllReadBtn').addEventListener('click', function() {
+            fetch("{{ route('notifications.markAllAsRead') }}", {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').getAttribute('content'),
+                    'Accept': 'application/json',
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                if(data.success){
+                    location.reload();
+                }
+            })
+            .catch(error => console.error('Error:', error));
         });
     </script>
 @endsection

@@ -23,6 +23,7 @@ return [
     'Email_Or_Phone'                => 'Email or Phone',
     'Forget_Password'               => 'Forget Password?',
     'login'                         => 'Login',
+    'logout'                         => 'logout',
     'Phone_Number'                  => 'Phone Number',
     'Send_OTP'                       => 'Send OTP',
 

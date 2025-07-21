@@ -94,5 +94,13 @@ return [
     'complete' => 'مكتمل',
     'pending' => 'قيد الإنتظار',
     'send' => ' إرسال',
+    'profile' => 'الصفحة الشخصية',
+
+    'notifications' => 'الإشعارات',
+    'messages' => 'الرسائل',
+    'no_notifications' => 'لا توجد إشعارات',
+    'no_messages' => 'لا توجد رسائل',
+    'no_conversations' => 'لا توجد محادثات',
+    'no_pages' => 'لا توجد صفحات',
 
 ];

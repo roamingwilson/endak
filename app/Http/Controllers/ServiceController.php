@@ -327,7 +327,7 @@ class ServiceController extends Controller
                     'id' => $service->id,
                     'title' => 'طلب خدمة جديدة في قسم ' . $departmentName,
                     'body' => $message,
-                    'url' => route('services.show', $service->id),
+                    'url' => route('show_myservice', $service->id),
                 ]));
                 if ($provider->phone) {
                     $countryCode = $provider->countryObj ? $provider->countryObj->code : '+966';

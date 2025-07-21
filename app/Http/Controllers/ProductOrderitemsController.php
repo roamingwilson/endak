@@ -39,7 +39,7 @@ class ProductOrderitemsController extends Controller
             'price' => $request->price,
         ]);
 
-        return redirect()->route('order_items.index', $orderId)
+        return redirect()->route('product_orders.show', $orderId)
                          ->with('success', 'تم إضافة المنتج إلى الطلب');
     }
 
@@ -76,10 +76,10 @@ class ProductOrderitemsController extends Controller
     public function destroy($id)
     {
         $orderItem = ProductOrderitems::findOrFail($id);
-        $orderId = $orderItem->order_id;
+        $orderId = $orderItem->product_order_id;
         $orderItem->delete();
 
-        return redirect()->route('order_items.index', $orderId)
+        return redirect()->route('product_orders.show', $orderId)
                          ->with('success', 'تم حذف المنتج من الطلب');
     }
 }

@@ -19,16 +19,16 @@
 @endphp
 
 <div class="container ">
-
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+        <h2 class="fw-bold mb-0" style="color:#ff9800;"><i class="fas fa-store me-2"></i>{{ $lang == 'ar' ? 'متجر البلاستيك' : 'Plastic Store' }}</h2>
+        <span class="badge bg-warning text-dark fs-6">{{ $products->count() }} {{ $lang == 'ar' ? 'منتج' : 'Products' }}</span>
+    </div>
     {{-- الفلاتر --}}
-    <div class="filter-cards mb-4">
-
+    <div class="filter-cards mb-4 w-100 position-relative" style="left:50%;transform:translateX(-50%);width:100vw;max-width:100vw;padding-left:calc((100vw - 100%) / 2);padding-right:calc((100vw - 100%) / 2);">
         {{-- فلتر الأقسام الرئيسية --}}
-        <div class="filter-section mb-3">
-            <h6 class="filter-title">{{ ($lang == 'ar')? ' الأقسام الرئيسية ' : 'Main Sections' }}</h6>
-            <div class="filter-items">
-
-
+        <div class="filter-section mb-4 w-100">
+            <h6 class="filter-title mb-2 text-center">{{ ($lang == 'ar')? 'الأقسام الرئيسية' : 'Main Sections' }}</h6>
+            <div class="filter-items d-flex flex-wrap gap-2 justify-content-center">
                 @foreach($categories as $cat)
                     <div class="filter-card {{ request('inds_category_id') == $cat->id ? 'active' : '' }}"
                         onclick="window.location.href='{{ route('indsproducts.index', array_merge(request()->except('page'), ['inds_category_id' => $cat->id])) }}'">
@@ -38,17 +38,15 @@
                 @endforeach
             </div>
         </div>
-
-        {{-- الأقسام فلتر الفرعية --}}
-        <div class="filter-section mb-3">
-            <h6 class="filter-title"> {{ ($lang == 'ar')? ' الأقسام  الفرعية ' : 'Subcategories' }}</h6>
-            <div class="filter-items">
+        {{-- الأقسام الفرعية --}}
+        <div class="filter-section mb-4 w-100">
+            <h6 class="filter-title mb-2 text-center">{{ ($lang == 'ar')? 'الأقسام الفرعية' : 'Subcategories' }}</h6>
+            <div class="filter-items d-flex flex-wrap gap-2 justify-content-center">
                 <div class="filter-card {{ is_null(request('ind_sub_category_id')) ? 'active' : '' }}"
                     onclick="window.location.href='{{ route('indsproducts.index', request()->except('ind_sub_category_id', 'page')) }}'">
                     <i class="fas fa-layer-group"></i>
-                    <span> {{ ($lang == 'ar')? ' كل الفرعيات ' : 'Subcategories' }}</span>
+                    <span>{{ ($lang == 'ar')? 'كل الفرعيات' : 'All Subcategories' }}</span>
                 </div>
-
                 @foreach($subcategories as $sub)
                     <div class="filter-card {{ request('ind_sub_category_id') == $sub->id ? 'active' : '' }}"
                         onclick="window.location.href='{{ route('indsproducts.index', array_merge(request()->except('page'), ['ind_sub_category_id' => $sub->id])) }}'">
@@ -58,17 +56,15 @@
                 @endforeach
             </div>
         </div>
-
         {{-- فلتر السعر --}}
-        <div class="filter-section">
-            <h6 class="filter-title">{{ ($lang == 'ar')? ' السعر' : 'price' }}</h6>
-            <div class="filter-items">
+        <div class="filter-section w-100">
+            <h6 class="filter-title mb-2 text-center">{{ ($lang == 'ar')? 'السعر' : 'Price' }}</h6>
+            <div class="filter-items d-flex flex-wrap gap-2 justify-content-center">
                 <div class="filter-card {{ is_null(request('price_range')) ? 'active' : '' }}"
                     onclick="window.location.href='{{ route('indsproducts.index', request()->except('price_range', 'min_price', 'max_price', 'page')) }}'">
                     <i class="fas fa-dollar-sign"></i>
-                    <span>كل الأسعار</span>
+                    <span>{{ $lang == 'ar' ? 'كل الأسعار' : 'All Prices' }}</span>
                 </div>
-
                 @foreach($priceRanges as $key => $range)
                     <div class="filter-card {{ request('price_range') == $key ? 'active' : '' }}"
                         onclick="window.location.href='{{ route('indsproducts.index', array_merge(request()->except('page'), [
@@ -82,51 +78,46 @@
                 @endforeach
             </div>
         </div>
-
     </div>
-
     {{-- عرض المنتجات --}}
-    <div class="row g-2">
+    <div class="row g-3">
         @forelse($products as $product)
-        <div class="col-4 col-md-2 text-center">
-                <div class="card shadow-sm p-2" style="background-color: #f5f5f5; border-radius: 12px;">
-                    <img  src="{{ $product->image ? asset('storage/'.$product->image) : asset('images/default-product.png') }}"
-                         class="" alt="{{ $product->title }}" style="width: 100%; height: 100%; object-fit: contain; margin: auto;">
-                    <div class="product-info">
-                        <h5 class="mt-2 small fw-bold">{{ $product->title }}</h5>
-                        <p class="mt-2 small fw-bold">{{ $product->price }} {{ ($lang == 'ar')? 'ر.س' : 'SAR' }}</p>
-
-
+            <div class="col-6 col-md-4 col-xl-3 d-flex">
+                <div class="card shadow-sm border-0 flex-fill d-flex flex-column align-items-center p-3" style="background-color: #f5f5f5; border-radius: 14px; min-height: 340px;">
+                    <img src="{{ $product->image ? asset('storage/'.$product->image) : asset('images/default-product.png') }}"
+                        alt="{{ $product->title }}" style="width: 100%; height: 170px; object-fit: contain; background: #f8f8f8; border-radius: 10px;">
+                    <div class="product-info w-100 text-center mt-2 flex-grow-1 d-flex flex-column justify-content-between">
+                        <h5 class="fw-bold small text-truncate mb-1">{{ $product->title }}</h5>
+                        <p class="fw-bold text-warning fs-5 mb-2">{{ $product->price }} {{ ($lang == 'ar')? 'ر.س' : 'SAR' }}</p>
                         @if (auth()->check())
-
-
-                        <form action="{{ route('pro_cart.add', $product->id) }}" method="POST">
-                            @csrf
-                            <div class="d-flex align-items-center mt-2 flex-wrap">
-                                <input type="number" name="quantity" value="1" min="1" class="form-control w-100 mb-2" style="max-width: 120px;">
-                                <button type="submit" class="btn btn-warning btn-sm ml-2">{{ ($lang == 'ar')? ' إضافة إلى السلة' : 'Add to cart' }}</button>
-                            </div>
-                        </form>
+                            <form action="{{ route('pro_cart.add', $product->id) }}" method="POST" class="w-100 mt-auto">
+                                @csrf
+                                <div class="d-flex align-items-center justify-content-center gap-2 flex-wrap">
+                                    <input type="number" name="quantity" value="1" min="1" class="form-control form-control-sm" style="max-width: 70px;">
+                                    <button type="submit" class="btn btn-warning btn-sm px-3 rounded-pill fw-bold"><i class="fas fa-cart-plus"></i> {{ ($lang == 'ar')? 'إضافة إلى السلة' : 'Add to cart' }}</button>
+                                </div>
+                            </form>
                         @else
-                        <form action="{{ route('register-page') }}" method="get">
-                            @csrf
-                            <div class="d-flex align-items-center mt-2 flex-wrap">
-                                <input type="number" name="quantity" value="1" min="1" class="form-control w-100 mb-2" style="max-width: 120px;">
-                                <button type="submit" class="btn btn-warning btn-sm ml-2">{{ ($lang == 'ar')? ' إضافة إلى السلة' : 'Add to cart' }}</button>
-                            </div>
-                        </form>
-
-                                @endif
+                            <form action="{{ route('register-page') }}" method="get" class="w-100 mt-auto">
+                                @csrf
+                                <div class="d-flex align-items-center justify-content-center gap-2 flex-wrap">
+                                    <input type="number" name="quantity" value="1" min="1" class="form-control form-control-sm" style="max-width: 70px;">
+                                    <button type="submit" class="btn btn-warning btn-sm px-3 rounded-pill fw-bold"><i class="fas fa-user-plus"></i> {{ ($lang == 'ar')? 'سجل لتتمكن من الشراء' : 'Register to buy' }}</button>
+                                </div>
+                            </form>
+                        @endif
                     </div>
                 </div>
             </div>
         @empty
             <div class="col-12">
-                <div class="alert alert-warning text-center">   {{ ($lang == 'ar')? ' لا توجد منتجات مطابقة للبحث الحالي ' : 'Add to cart' }}</div>
+                <div class="alert alert-warning text-center py-5 fs-5 rounded-4 shadow-sm">
+                    <i class="fas fa-info-circle fa-2x mb-2"></i><br>
+                    {{ ($lang == 'ar')? 'لا توجد منتجات مطابقة للبحث الحالي' : 'No products found.' }}
+                </div>
             </div>
         @endforelse
     </div>
-
 </div>
 @endsection
 
@@ -168,61 +159,97 @@
 
     /* الفلاتر */
     .filter-cards {
-
-        background: #f9f9f9;
-        padding: 15px;
-        border-radius: 12px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        background: linear-gradient(90deg, #fffbe7 60%, #fff7c2 100%);
+        border-radius: 14px;
+        box-shadow: 0 4px 18px rgba(255, 193, 7, 0.10), 0 1.5px 6px rgba(0,0,0,0.04);
+        padding: 12px 6px 8px 6px;
+        margin-bottom: 1.2rem;
     }
     .filter-section {
-        margin-bottom: 20px;
+        margin-bottom: 1rem;
     }
     .filter-title {
         font-weight: bold;
-        font-size: 16px;
-        margin-bottom: 10px;
-        color: #333;
+        font-size: 1rem;
+        letter-spacing: 0.2px;
+        color: #ff9800;
+        margin-bottom: 0.5rem;
+        text-shadow: 0 1px 0 #fffbe7;
     }
     .filter-items {
         display: flex;
         flex-wrap: wrap;
-        gap: 10px;
+        gap: 8px;
+        justify-content: center;
     }
     .filter-card {
-
-        flex: 1 1 calc(5% - 1px);
         background: #fff;
-        border: 1px solid #ddd;
-        border-radius: 10px;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(255, 193, 7, 0.08), 0 1.5px 6px rgba(0,0,0,0.03);
         text-align: center;
-        padding: 1px 1px;
+        padding: 7px 10px 5px 10px;
         cursor: pointer;
-        transition: all 0.3s;
+        transition: all 0.18s cubic-bezier(.4,2,.6,1);
         display: flex;
         flex-direction: column;
         align-items: center;
-        justify-content: center;
-        min-height: 1px;
+        min-width: 65px;
+        min-height: 38px;
+        border: 2px solid transparent;
+        position: relative;
     }
     .filter-card i {
-        font-size: 15px;
-        margin-top: 5px;
-        margin-bottom: 8px;
-        color: #0d6efd;
+        font-size: 1.05rem;
+        margin-bottom: 3px;
+        color: #ff9800;
+        transition: color 0.2s;
+        filter: drop-shadow(0 1px 0 #fffbe7);
     }
     .filter-card span {
-        font-size: 14px;
+        font-size: 0.92rem;
         font-weight: 500;
+        color: #333;
+        letter-spacing: 0.1px;
     }
-    .filter-card:hover,
-    .filter-card.active {
-        background: #0d6efd;
-        color: #fff;
-        border-color: #0d6efd;
+    .filter-card.active, .filter-card:hover {
+        background: linear-gradient(90deg, #ffe0a3 60%, #ffd180 100%);
+        border-color: #ff9800;
+        box-shadow: 0 4px 18px rgba(255, 193, 7, 0.13), 0 1.5px 6px rgba(0,0,0,0.05);
+        transform: translateY(-2px) scale(1.025);
     }
-    .filter-card.active i,
-    .filter-card:hover i {
-        color: #fff;
+    .filter-card.active i, .filter-card:hover i {
+        color: #d17b00;
+        filter: drop-shadow(0 2px 0 #fffbe7);
+    }
+    .filter-card.active span, .filter-card:hover span {
+        color: #d17b00;
+    }
+    @media (max-width: 991px) {
+        .filter-cards {
+            padding: 7px 2px 4px 2px;
+        }
+        .filter-card {
+            min-width: 55px;
+            padding: 5px 6px 3px 6px;
+        }
+        .filter-title {
+            font-size: 0.92rem;
+        }
+    }
+    @media (max-width: 600px) {
+        .filter-cards {
+            padding: 4px 1px 2px 1px;
+        }
+        .filter-section {
+            margin-bottom: 0.6rem;
+        }
+        .filter-card {
+            min-width: 45px;
+            padding: 3px 3px 2px 3px;
+        }
+        .filter-title {
+            font-size: 0.85rem;
+        }
     }
 
     @media (max-width: 68px) {

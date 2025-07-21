@@ -140,32 +140,32 @@
                                 {{-- <div class="row"> --}}
                                 <div class="container">
                                     @if (auth()->check() && auth()->id() == $service->user_id)
-                                        @forelse ($service->comments as $comment)
+                                    @forelse ($service->comments as $comment)
                                             <div class="border mb-4 p-4 br-5"
                                                 style="flex: 1 1 calc(33.333% - 1rem); margin: 0.5rem;">
-                                                <div class="d-flex align-items-center">
-                                                    <h5 class="mt-0 mr-3">
-                                                        {{ $comment->user->first_name . ' ' . $comment->user->last_name }}
-                                                    </h5>
+                                            <div class="d-flex align-items-center">
+                                                <h5 class="mt-0 mr-3">
+                                                    {{ $comment->user->first_name . ' ' . $comment->user->last_name }}
+                                                </h5>
                                                     <a class="dropdown-item mb-2"
                                                         href="{{ route('web.send_message', $comment->user->id) }}">
                                                         <i class="fe fe-mail mx-1"></i>
                                                         {{ __('messages.send_message') }}
                                                     </a>
-                                                </div>
-                                                @if (isset($comment->price))
-                                                    <p>{{ __('general.price') . ' : ' . $comment->price }}</p>
-                                                @endif
-                                                @if (isset($comment->body))
-                                                    <p>{{ 'Body : ' . $comment->body }}</p>
-                                                @endif
-                                                @if (isset($comment->date))
-                                                    <p>{{ __('general.date') . ' : ' . $comment->date }}</p>
-                                                @endif
                                             </div>
-                                        @empty
+                                            @if (isset($comment->price))
+                                                <p>{{ __('general.price') . ' : ' . $comment->price }}</p>
+                                            @endif
+                                            @if (isset($comment->body))
+                                                <p>{{ 'Body : ' . $comment->body }}</p>
+                                            @endif
+                                            @if (isset($comment->date))
+                                                <p>{{ __('general.date') . ' : ' . $comment->date }}</p>
+                                            @endif
+                                        </div>
+                                    @empty
                                             <div class="alert alert-info text-center">{{ $lang == 'ar' ? 'لا توجد عروض بعد.' : 'No offers yet.' }}</div>
-                                        @endforelse
+                                    @endforelse
                                     @endif
                                 </div>
                                 {{-- </div> --}}
@@ -266,31 +266,31 @@
                                 <a href="{{ route('login-page') }}" class="btn btn-primary mx-2">{{ $lang == 'ar' ? 'تسجيل الدخول' : 'Login' }}</a>
                             </div>
                         @else
-                            <div class="card">
-                                <div class="card-body">
-                                    <p class="h5 mb-4">{{ $lang == 'ar' ? 'اضافة عرض' : 'Add Offer' }}</p>
-                                    <form class="form-horizontal  m-t-20" action="{{ route('general_comments.store') }}"
-                                        method="POST" enctype="multipart/form-data">
-                                        @csrf
-                                        <input type="hidden" value="{{ $service->id }}" name="service_id">
-                                        <div>
-                                            <label class="mb-2" for="">{{ __('general.price') }}</label>
+                        <div class="card">
+                            <div class="card-body">
+                                <p class="h5 mb-4">{{ $lang == 'ar' ? 'اضافة عرض' : 'Add Offer' }}</p>
+                                <form class="form-horizontal  m-t-20" action="{{ route('general_comments.store') }}"
+                                    method="POST" enctype="multipart/form-data">
+                                    @csrf
+                                    <input type="hidden" value="{{ $service->id }}" name="service_id">
+                                    <div>
+                                        <label class="mb-2" for="">{{ __('general.price') }}</label>
                                             <input class="form-control mb-2" type="text" name="price">
-                                        </div>
-                                        <div>
-                                            <label class="mb-2" for="">{{ __('general.day') }}</label>
-                                            <input class="form-control mb-2" type="text" name="day">
-                                        </div>
-                                        <div>
-                                            <label class="mb-2" for="">{{ __('general.time') }}</label>
-                                            <input class="form-control mb-2" type="time" name="time">
-                                        </div>
-                                        <div class="">
+                                    </div>
+                                    <div>
+                                        <label class="mb-2" for="">{{ __('general.day') }}</label>
+                                        <input class="form-control mb-2" type="text" name="day">
+                                    </div>
+                                    <div>
+                                        <label class="mb-2" for="">{{ __('general.time') }}</label>
+                                        <input class="form-control mb-2" type="time" name="time">
+                                    </div>
+                                    <div class="">
                                             <button type="submit" class="btn btn-primary">{{ __('general.save') }}</button>
-                                        </div>
-                                    </form>
-                                </div>
+                                    </div>
+                                </form>
                             </div>
+                        </div>
                         @endif
                     @endif
                 </div>

@@ -52,12 +52,40 @@ class GeneralOrderController extends Controller
             'status' => 'pending',
         ]);
         if ($order) {
-            $provider->notify(new CommentNotification([
-                'id' => $order->id,
-                'title' => "وافق $user->first_name  علي عرضك",
-                'body' => "$order->notes",
-                'url' => route('notifications.index'),
-            ]));
+            // منطق الإشعار الجماعي
+            $service = $order->service;
+            $departmentId = $service->department_id;
+            $city = $service->city ?? $service->governement ?? null;
+            // جلب جميع مزودي الخدمة في نفس القسم والمدينة
+            $providers = \App\Models\User::where('role_id', 3)
+                ->whereHas('userDepartments', function($q) use ($departmentId) {
+                    $q->where('commentable_type', \App\Models\Department::class)
+                      ->where('commentable_id', $departmentId);
+                })
+                ->where(function($q) use ($city) {
+                    if ($city) {
+                        $q->where('governement', $city)->orWhere('city', $city);
+                    }
+                })
+                ->get();
+            foreach ($providers as $provider) {
+                $provider->notify(new \App\Notifications\CommentNotification([
+                    'id' => $order->id,
+                    'title' => 'طلب خدمة جديد في قسمك ومدينتك',
+                    'body' => 'تم إضافة طلب جديد في قسم ' . ($service->department->name_ar ?? $service->department->name_en ?? '') . ' بمدينة ' . ($city ?? ''),
+                    'url' => route('general_orders.show', $order->id),
+                ]));
+            }
+            // إشعار المزود الأساسي القديم (إن وجد)
+            $provider = \App\Models\User::find($request->service_provider_id);
+            if ($provider) {
+                $provider->notify(new \App\Notifications\CommentNotification([
+                    'id' => $order->id,
+                    'title' => "وافق $user->first_name  علي عرضك",
+                    'body' => "$order->notes",
+                    'url' => route('notifications.index'),
+                ]));
+            }
         }
         return redirect()->route('home')->with('success', '  تم قبول العرض');
     }

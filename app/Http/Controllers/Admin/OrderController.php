@@ -30,4 +30,15 @@ class OrderController extends Controller
 
         return redirect()->route('admin.orders')->with('success' , "Deleted Successfully");
     }
+
+    public function cancel($id)
+    {
+        $order = Order::findOrFail($id);
+        if (in_array(strtolower($order->status), ['completed', 'cancelled'])) {
+            return back()->with('error', 'لا يمكن إلغاء هذا الطلب.');
+        }
+        $order->status = 'cancelled';
+        $order->save();
+        return back()->with('success', 'تم إلغاء الطلب بنجاح.');
+    }
 }
