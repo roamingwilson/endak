@@ -773,7 +773,7 @@ class ServiceController extends Controller
                 }
 
                 // إذا لم يتم تحديد قسم فرعي، اعرض صفحة الأقسام الفرعية
-                return view('front_office.services.sub_departments', compact('service'));
+                return view('front_office.services.show', compact('service'));
             }
 
             // إذا لم يكن هناك أقسام فرعية، اعرض الصفحة العادية

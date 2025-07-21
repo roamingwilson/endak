@@ -45,9 +45,8 @@
                             @if(isset($service->subDepartment) && $service->subDepartment)
                                 <li class="mb-1"><i class="fas fa-sitemap text-success me-1"></i> <span class="fw-semibold">{{ app()->getLocale() == 'ar' ? 'القسم الفرعي' : 'Sub-Department' }}:</span> {{ app()->getLocale() == 'ar' ? $service->subDepartment->name_ar : $service->subDepartment->name_en }}</li>
                             @endif
-                            @if(!empty($service->city))
-                                <li class="mb-1"><i class="fas fa-map-marker-alt text-danger me-1"></i> <span class="fw-semibold">{{ app()->getLocale() == 'ar' ? 'المدينة' : 'City' }}:</span> {{ $service->city }}</li>
-                            @endif
+                            <li class="mb-1"><i class="fas fa-map-marker-alt text-danger me-1"></i> <span class="fw-semibold">{{ app()->getLocale() == 'ar' ? 'المدينة' : 'City' }}:</span> {{ $service->from_city ?? '-' }}</li>
+                            <li class="mb-1"><i class="fas fa-user text-info me-1"></i> <span class="fw-semibold">{{ app()->getLocale() == 'ar' ? 'العميل' : 'Customer' }}:</span> {{ $service->user->first_name ?? '-' }}</li>
                             <li class="mb-1"><i class="fas fa-clock text-warning me-1"></i> <span class="fw-semibold">{{ app()->getLocale() == 'ar' ? 'منذ' : 'Since' }}:</span> {{ $service->created_at ? $service->created_at->diffForHumans() : '-' }}</li>
                         </ul>
                         <div class="mt-auto d-flex flex-column gap-2">
@@ -56,19 +55,24 @@
                             </a>
                             @php
                                 $canOffer = false;
+                                $myOffer = null;
                                 if(auth()->check() && auth()->user()->role_id == 3) {
-                                    $allowedMain = auth()->user()->getAllDepartments()['main']->pluck('id')->toArray();
-                                    $allowedSub = auth()->user()->getAllDepartments()['sub']->pluck('id')->toArray();
+                                    $userDepartmentIds = auth()->user()->userDepartments->pluck('commentable_id')->toArray();
                                     $serviceDepartmentId = $service->department_id ?? null;
                                     $serviceSubDepartmentId = $service->sub_department_id ?? null;
-                                    if ($serviceSubDepartmentId) {
-                                        $canOffer = in_array($serviceSubDepartmentId, $allowedSub);
-                                    } else {
-                                        $canOffer = in_array($serviceDepartmentId, $allowedMain);
-                                    }
+                                    $canOffer = in_array($serviceDepartmentId, $userDepartmentIds) || ($serviceSubDepartmentId && in_array($serviceSubDepartmentId, $userDepartmentIds));
+                                    $myOffer = $service->comments->where('service_provider', auth()->id())->first();
                                 }
                             @endphp
-                            @if($canOffer)
+                            @if($canOffer && $myOffer)
+                                <div class="alert alert-info mb-2">
+                                    <i class="fas fa-check-circle text-success"></i>
+                                    {{ app()->getLocale() == 'ar' ? 'لقد قدمت عرضاً لهذه الخدمة' : 'You have already submitted an offer for this service.' }}<br>
+                                    <span class="fw-bold">{{ app()->getLocale() == 'ar' ? 'السعر:' : 'Price:' }}</span> {{ $myOffer->price ?? '-' }}<br>
+                                    <span class="fw-bold">{{ app()->getLocale() == 'ar' ? 'اسم العميل:' : 'Customer:' }}</span> {{ $service->user->first_name ?? '-' }}<br>
+                                    <span class="fw-bold">{{ app()->getLocale() == 'ar' ? 'المدينة:' : 'City:' }}</span> {{ $service->from_city ?? '-' }}
+                                </div>
+                            @elseif($canOffer)
                                 <a href="{{ route('show_myservice', $service->id) }}#offer-form" class="btn btn-success rounded-pill"><i class="fas fa-paper-plane"></i> {{ app()->getLocale() == 'ar' ? 'قدم عرض' : 'Submit Offer' }}</a>
                             @endif
                         </div>

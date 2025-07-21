@@ -17,6 +17,12 @@
         $isAllowed = in_array($serviceDepartmentId, $allowedMain);
     }
 @endphp
+@php
+    $myOffer = null;
+    if(auth()->check() && auth()->user()->role_id == 3) {
+        $myOffer = $service->comments->where('service_provider', auth()->id())->first();
+    }
+@endphp
 @section('content')
 <div class="container mt-4">
     @if(auth()->check() && auth()->id() == $service->user_id)
@@ -354,7 +360,15 @@
 
 {{-- خانة إضافة عرض جديد تظهر للجميع ما عدا صاحب الخدمة --}}
 @if (!auth()->check() || (auth()->id() != $service->user_id))
-    @if (!auth()->check())
+    @if(auth()->check() && auth()->user()->role_id == 3 && $myOffer)
+        <div class="alert alert-info text-center my-4">
+            <i class="fas fa-check-circle text-success"></i>
+            {{ $lang == 'ar' ? 'لقد قدمت عرضاً لهذه الخدمة بالفعل.' : 'You have already submitted an offer for this service.' }}<br>
+            <span class="fw-bold">{{ $lang == 'ar' ? 'السعر:' : 'Price:' }}</span> {{ $myOffer->price ?? '-' }}<br>
+            <span class="fw-bold">{{ $lang == 'ar' ? 'ملاحظات:' : 'Notes:' }}</span> {{ $myOffer->notes ?? '-' }}<br>
+            <span class="fw-bold">{{ $lang == 'ar' ? 'تاريخ التقديم:' : 'Submitted at:' }}</span> {{ $myOffer->created_at ? $myOffer->created_at->format('Y-m-d H:i') : '-' }}
+        </div>
+    @elseif (!auth()->check())
         <div class="alert alert-info text-center my-4">
             {{ $lang == 'ar' ? 'لتقديم عرض سجل الآن' : 'To submit an offer, please login.' }}
             <a href="{{ route('login-page') }}" class="btn btn-primary mx-2">{{ $lang == 'ar' ? 'تسجيل الدخول' : 'Login' }}</a>
