@@ -167,9 +167,16 @@ class ServiceController extends Controller
                     $rule[] = 'boolean';
                     break;
                 case 'image':
-                    $rule[] = 'file';
-                    $rule[] = 'image';
-                    $rule[] = 'max:5120';
+                    // إذا كان الحقل يقبل multiple (اسم الحقل في الفورم ينتهي بـ [])
+                    $isMultiple = (isset($field->input_group) && !$field->input_group && isset($request->custom_fields[$field->name]) && is_array($request->custom_fields[$field->name]));
+                    if ($isMultiple) {
+                        // تحقق من كل صورة في المصفوفة
+                        $validationRules["custom_fields.{$field->name}.*"] = 'file|image|max:5120';
+                    } else {
+                        $rule[] = 'file';
+                        $rule[] = 'image';
+                        $rule[] = 'max:5120';
+                    }
                     break;
                 case 'select':
                     if (is_array($field->options) && count($field->options)) {
@@ -185,7 +192,10 @@ class ServiceController extends Controller
                     $rule[] = 'string';
                     break;
             }
-            $validationRules["custom_fields.{$field->name}"] = implode('|', $rule);
+            // أضف قاعدة التحقق فقط إذا لم تتم إضافة قاعدة *. (أي ليس multiple)
+            if ($field->type !== 'image' || !$isMultiple) {
+                $validationRules["custom_fields.{$field->name}"] = implode('|', $rule);
+            }
         }
 
         // تمرير أي حقل من custom_fields إلى الجذر إذا كان مطلوبًا في الفاليديشن
@@ -226,23 +236,25 @@ class ServiceController extends Controller
                 if ($group && $field->is_repeatable && isset($request->custom_fields[$group]) && is_array($request->custom_fields[$group])) {
                     // احفظ كل مجموعة كصف مستقل
                     $customFields[$group] = [];
-                    foreach ($request->custom_fields[$group] as $instance) {
+                    foreach ($request->custom_fields[$group] as $instanceIdx => $instance) {
                         $instanceData = [];
                         foreach ($grouped[$group] as $groupField) {
                             $fname = $groupField->name;
                             if ($groupField->type === 'image' || $groupField->type === 'images[]') {
-                                // الصور تحتاج معالجة خاصة إذا كانت موجودة
-                                $files = $instance[$fname] ?? null;
+                                // دعم multiple images
+                                $files = $request->file("custom_fields.$group.$instanceIdx.$fname");
                                 if ($files) {
+                                    $paths = [];
                                     if (is_array($files)) {
-                                        $paths = [];
                                         foreach ($files as $file) {
-                                            $paths[] = $file->store('services/images', 'public');
+                                            if ($file) $paths[] = $file->store('services/images', 'public');
                                         }
-                                        $instanceData[$fname] = $paths;
                                     } else {
-                                        $instanceData[$fname] = $files->store('services/images', 'public');
+                                        $paths[] = $files->store('services/images', 'public');
                                     }
+                                    $instanceData[$fname] = $paths;
+                                } else {
+                                    $instanceData[$fname] = [];
                                 }
                             } elseif ($groupField->type === 'checkbox') {
                                 $instanceData[$fname] = isset($instance[$fname]) ? 1 : 0;
@@ -257,14 +269,14 @@ class ServiceController extends Controller
                     if ($field->type === 'image' || $field->type === 'images[]') {
                         $files = $request->file("custom_fields.$fieldName");
                         if ($files) {
+                            $paths = [];
                             if (is_array($files)) {
-                                $paths = [];
                                 foreach ($files as $file) {
-                                    $paths[] = $file->store('services/images', 'public');
+                                    if ($file) $paths[] = $file->store('services/images', 'public');
                                 }
                                 $customFields[$fieldName] = $paths;
                             } else {
-                                $customFields[$fieldName] = $files->store('services/images', 'public');
+                                $customFields[$fieldName] = [$files->store('services/images', 'public')];
                             }
                         }
                     } elseif ($field->type === 'checkbox') {
@@ -303,11 +315,14 @@ class ServiceController extends Controller
             $cityName = $service->city ?? ($service->from_city ?? '');
             $settings = Settings::first();
             $template = $settings->whatsapp_offer_template ?? 'مرحبا يوجد عميل يحتاج خدمة خاصة بقسم {department} علي موقع endak.net في مدينة {city} , قدم عرض الان';
+            $serviceLink = route('show_myservice', $service->id);
             $message = str_replace(
                 ['{department}', '{city}'],
                 [$departmentName, $cityName],
                 $template
             );
+            // أضف لينك الخدمة أسفل الرسالة
+            $message .= "\nرابط الخدمة: $serviceLink";
             // دالة لتوحيد تنسيق الأرقام
             function normalizePhone($phone, $defaultCode = '+966') {
                 $phone = preg_replace('/[^0-9]/', '', $phone); // أرقام فقط
@@ -917,7 +932,7 @@ class ServiceController extends Controller
                 if ($group && $field->is_repeatable && isset($request->custom_fields[$group]) && is_array($request->custom_fields[$group])) {
                     // احفظ كل مجموعة كصف مستقل
                     $customFields[$group] = [];
-                    foreach ($request->custom_fields[$group] as $instance) {
+                    foreach ($request->custom_fields[$group] as $instanceIdx => $instance) {
                         $instanceData = [];
                         foreach ($grouped[$group] as $groupField) {
                             $fname = $groupField->name;

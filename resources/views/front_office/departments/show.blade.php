@@ -262,7 +262,7 @@
                                                                                 <input type="checkbox" name="custom_fields[{{ $group }}][{{ $idx }}][{{ $field->name }}]" value="1" class="form-check-input" {{ (isset($groupInstance[$field->name]) && $groupInstance[$field->name]) ? 'checked' : '' }}>
                                                                             </div>
                                                                         @elseif($field->type === 'image')
-                                                                            <input type="file" name="custom_fields[{{ $group }}][{{ $idx }}][{{ $field->name }}]" accept="image/*" class="form-control form-control-sm">
+                                                                            <input type="file" name="custom_fields[{{ $group }}][{{ $idx }}][{{ $field->name }}][]" accept="image/*" class="form-control form-control-sm" multiple>
                                                                         @elseif($field->type === 'date')
                                                                             <input type="date" name="custom_fields[{{ $group }}][{{ $idx }}][{{ $field->name }}]" class="form-control form-control-sm" value="{{ $groupInstance[$field->name] ?? '' }}">
                                                                         @elseif($field->type === 'time')
@@ -272,12 +272,17 @@
                                                                         @else
                                                                             <input type="{{ $field->type }}" name="custom_fields[{{ $group }}][{{ $idx }}][{{ $field->name }}]" class="form-control form-control-sm" value="{{ $groupInstance[$field->name] ?? '' }}">
                                                                         @endif
-                                                    </div>
-                                                @endforeach
-                                            </div>
-                                        </div>
-                                    @endforeach
+                                                                    </div>
+                                                                @endforeach
+                                                            </div>
+                                                        </div>
+                                                    @endforeach
                                                     {{-- زر الإضافة الديناميكي بالجافاسكريبت فقط --}}
+                                    @if($repeatable)
+                                        <button type="button" class="btn btn-circle add-group-btn mb-3" data-group="{{ $group }}" title="إضافة مجموعة جديدة">
+                                            <i class="fas fa-plus"></i> إضافة مجموعة
+                                        </button>
+                                    @endif
                                 </div>
                             </div>
                         @endif
@@ -403,7 +408,10 @@
                                                     <input type="hidden" name="custom_fields[{{ $field->name }}]" value="0">
                                                     <input type="checkbox" name="custom_fields[{{ $field->name }}]" id="custom_fields_{{ $field->name }}" value="1" class="form-check-input" {{ old('custom_fields.' . $field->name) ? 'checked' : '' }}>
                                                 @elseif($field->type === 'image')
-                                                    <input type="file" name="custom_fields[{{ $field->name }}]" id="custom_fields_{{ $field->name }}" accept="image/*" class="form-control">
+                                                    <div class="dynamic-images-uploader mb-2" data-field="custom_fields_{{ $field->name }}">
+                                                        <input type="file" name="custom_fields[{{ $field->name }}][]" id="custom_fields_{{ $field->name }}" accept="image/*" class="form-control image-input" multiple style="margin-bottom:8px;">
+                                                        <div class="preview-images d-flex flex-wrap gap-2"></div>
+                                                    </div>
                                                 @elseif($field->type === 'date')
                                                     <input type="date" name="custom_fields[{{ $field->name }}]" id="custom_fields_{{ $field->name }}" class="form-control" value="{{ old('custom_fields.' . $field->name) }}">
                                                 @elseif($field->type === 'time')
@@ -597,6 +605,105 @@ document.addEventListener('DOMContentLoaded', function() {
         updateTimerDisplay();
         voiceNoteData.value = '';
     });
+
+    // تكرار وحذف المجموعات الديناميكية
+    document.querySelectorAll('.add-group-btn').forEach(function(btn) {
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            var group = btn.getAttribute('data-group');
+            var groupBlock = btn.closest('.group-block');
+            var list = groupBlock.querySelector('.group-fields-list');
+            var instances = list.querySelectorAll('.group-fields-instance');
+            var lastIdx = instances.length ? parseInt(instances[instances.length-1].getAttribute('data-index')) : 0;
+            var newIdx = lastIdx + 1;
+            var template = instances[0].cloneNode(true);
+            // امسح القيم
+            template.setAttribute('data-index', newIdx);
+            template.querySelectorAll('input, select, textarea').forEach(function(input) {
+                if(input.type === 'checkbox' || input.type === 'radio') {
+                    input.checked = false;
+                } else if(input.type === 'file') {
+                    input.value = '';
+                    // لا تغير خاصية multiple أو [] في الاسم
+                } else {
+                    input.value = '';
+                }
+                // عدل الاسم ليأخذ الاندكس الجديد، مع الحفاظ على [] في الصور
+                var name = input.getAttribute('name');
+                if(name) {
+                    if(input.type === 'file') {
+                        name = name.replace(/\[\d+\]\[[^\]]*\]\[\]/, '['+newIdx+']['+input.getAttribute('data-field')+'][]');
+                    } else {
+                        name = name.replace(/\[\d+\]/, '['+newIdx+']');
+                    }
+                    input.setAttribute('name', name);
+                }
+            });
+            // أظهر زر الحذف
+            template.querySelector('.remove-group-btn').style.display = 'inline-flex';
+            // أضف المجموعة الجديدة قبل زر الإضافة
+            var addBtn = list.querySelector('.add-group-btn');
+            list.insertBefore(template, addBtn);
+        });
+    });
+    // حذف مجموعة
+    document.querySelectorAll('.group-fields-list').forEach(function(list) {
+        list.addEventListener('click', function(e) {
+            if(e.target.closest('.remove-group-btn')) {
+                var instance = e.target.closest('.group-fields-instance');
+                var siblings = list.querySelectorAll('.group-fields-instance');
+                if(siblings.length > 1) {
+                    instance.remove();
+                }
+            }
+        });
+    });
+
+    // واجهة رفع صور ديناميكية للحقول المفردة
+    document.querySelectorAll('.dynamic-images-uploader').forEach(function(wrapper) {
+        const input = wrapper.querySelector('.image-input');
+        const preview = wrapper.querySelector('.preview-images');
+        let filesArr = [];
+        input.addEventListener('change', function(e) {
+            // أضف الصور الجديدة للمصفوفة
+            for (let file of Array.from(input.files)) {
+                filesArr.push(file);
+            }
+            renderPreviews();
+            // إعادة تعيين input حتى يمكن اختيار نفس الصورة مرة أخرى
+            input.value = '';
+        });
+        function renderPreviews() {
+            preview.innerHTML = '';
+            filesArr.forEach(function(file, idx) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const div = document.createElement('div');
+                    div.className = 'position-relative';
+                    div.style.display = 'inline-block';
+                    div.innerHTML = `<img src="${e.target.result}" style="width:80px; height:80px; object-fit:cover; border-radius:6px; border:1px solid #ddd; margin:2px;" />` +
+                        `<button type="button" class="btn btn-sm btn-danger remove-img-btn position-absolute top-0 end-0" style="transform:translate(30%,-30%); border-radius:50%; padding:2px 6px; font-size:0.9em;" data-idx="${idx}"><i class="fas fa-times"></i></button>`;
+                    preview.appendChild(div);
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+        preview.addEventListener('click', function(e) {
+            if(e.target.closest('.remove-img-btn')) {
+                const idx = parseInt(e.target.closest('.remove-img-btn').getAttribute('data-idx'));
+                filesArr.splice(idx, 1);
+                renderPreviews();
+            }
+        });
+        // عند إرسال النموذج: أنشئ كائن DataTransfer جديد وأضف الملفات المختارة إليه
+        wrapper.closest('form').addEventListener('submit', function(e) {
+            // إذا لم يتم اختيار صور، لا تفعل شيء
+            if(filesArr.length === 0) return;
+            const dt = new DataTransfer();
+            filesArr.forEach(f => dt.items.add(f));
+            input.files = dt.files;
+        });
+    });
 });
 </script>
 <style>
@@ -622,5 +729,7 @@ document.addEventListener('DOMContentLoaded', function() {
     color: #fff !important;
     box-shadow: 0 4px 16px #43e97b33 !important;
 }
+.preview-images img { box-shadow:0 2px 8px #1976d233; }
+.remove-img-btn { z-index: 2; }
 </style>
 @endsection

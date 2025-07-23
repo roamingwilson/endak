@@ -293,36 +293,50 @@
                 <li class="nav-item mb-1">
                     <a href="{{ route('home') }}" class="nav-link"><i class="fas fa-home me-2"></i>{{ __('general.home') }}</a>
                 </li>
+                @if(!auth()->check() || (auth()->check() && auth()->user()->role_id == 3))
                 <li class="nav-item mb-1">
-                    <a href="{{ route('indsproducts.index') }}" class="nav-link"><i class="fas fa-store me-2"></i>{{ $lang == 'ar' ? 'متجر البلاستيك' : 'Plastic Store' }}</a>
+                    <a href="{{ route('all_services') }}" class="nav-link"><i class="fas fa-tasks me-2"></i>{{ $lang == 'ar' ? 'الخدمات المطلوبة' : 'All orders' }}</a>
                 </li>
+                @endif
                 <li class="nav-item mb-1">
                     <a href="{{ route('departments') }}" class="nav-link"><i class="fas fa-th-large me-2"></i>{{ __('department.departments') }}</a>
                 </li>
+                <li class="nav-item mb-1">
+                    <a href="{{ route('indsproducts.index') }}" class="nav-link"><i class="fas fa-store me-2"></i>{{ $lang == 'ar' ? 'متجر البلاستيك' : 'Plastic Store' }}</a>
+                </li>
                 {{--  <li class="nav-item mb-1">
-                    <a href="{{ route('notifications.index') }}" class="nav-link"><i class="fas fa-bell me-2"></i>{{ $lang == 'ar' ? 'الإشعارات' : 'Notifications' }}</a>
+                    <a href="{{ route('orders.all') }}" class="nav-link"><i class="fas fa-list me-2"></i>{{ $lang == 'ar' ? 'كل الطلبات' : 'All Orders' }}</a>
                 </li>  --}}
-                <li class="nav-item mb-1">
-                    @auth
-                        <a href="{{ route('web.send_message', auth()->id()) }}" class="nav-link"><i class="fas fa-envelope me-2"></i>{{ $lang == 'ar' ? 'الرسائل' : 'Messages' }}</a>
-                    @else
-                        <a href="{{ route('login-page') }}" class="nav-link"><i class="fas fa-envelope me-2"></i>{{ $lang == 'ar' ? 'الرسائل' : 'Messages' }}</a>
-                    @endauth
-                </li>
-                <li class="nav-item mb-1">
-                    <a href="{{ route('pro_cart.index') }}" class="nav-link"><i class="fas fa-shopping-cart me-2"></i>{{ $lang == 'ar' ? 'السلة' : 'Cart' }}</a>
-                </li>
-                @auth
-                    @if($user->role_id == 1)
-                        <li class="nav-item mb-1">
-                            <a href="{{ route('orders.index') }}" class="nav-link"><i class="fas fa-clipboard-list me-2"></i>{{ $lang == 'ar' ? 'طلباتي' : 'My Orders' }}</a>
-                        </li>
-                    @elseif($user->role_id == 3)
-                        <li class="nav-item mb-1">
-                            <a href="{{ route('web.comments.my_comments', $user->id) }}" class="nav-link"><i class="fas fa-comments me-2"></i>{{ $lang == 'ar' ? 'عروضي' : 'My Offers' }}</a>
-                        </li>
-                    @endif
-                @endauth
+                @if (auth()->check() && auth()->user()->role_id == 1)
+                    <li class="nav-item mb-1">
+                        <a href="{{ route('services.index') }}" class="nav-link"><i class="fas fa-clipboard-list me-2"></i>{{ $lang == 'ar' ? 'طلباتي' : 'Services' }}</a>
+                    </li>
+                @endif
+                @if (auth()->check())
+                    <li class="nav-item mb-1">
+                        <a href="{{ route('web.user.service_provider') }}" class="nav-link"><i class="fas fa-user-tie me-2"></i>{{ __('user.service_provider') }}</a>
+                    </li>
+                @endif
+                @if (auth()->check() && auth()->user()->role_id == 1)
+                    <li class="nav-item mb-1">
+                        <a href="{{ route('general_orders.customer.index') }}" class="nav-link"><i class="fas fa-check-circle me-2"></i>{{ $lang == 'ar' ? 'العروض المقبولة' : 'Accepted Orders' }}</a>
+                    </li>
+                @endif
+                @if (auth()->check() && auth()->user()->role_id == 1)
+                    <li class="nav-item mb-1">
+                        <a href="{{ route('general_comments.show', $user->id) }}" class="nav-link"><i class="fas fa-gift me-2"></i>{{ $lang == 'ar' ? 'العروض المقدمة' : 'My offers' }}</a>
+                    </li>
+                @endif
+                @if (auth()->check() && auth()->user()->role_id == 3)
+                    <li class="nav-item mb-1">
+                        <a href="{{ route('web.comments.my_comments', $user->id) }}" class="nav-link"><i class="fas fa-comments me-2"></i>{{ $lang == 'ar' ? 'عروضي' : 'My Comments' }}</a>
+                    </li>
+                @endif
+                @if(auth()->check() && auth()->user()->role_id == 3)
+                    <li class="nav-item mb-1">
+                        <a href="{{ route('services.requests.all') }}" class="nav-link"><i class="fas fa-list-alt me-2"></i>{{ $lang == 'ar' ? 'كل الخدمات المطلوبة' : 'All Service Requests' }}</a>
+                    </li>
+                @endif
                 <li><hr class="dropdown-divider"></li>
                 <!-- صفحات الموقع -->
                 <li class="nav-item dropdown">

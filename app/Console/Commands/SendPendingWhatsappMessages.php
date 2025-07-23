@@ -24,7 +24,7 @@ class SendPendingWhatsappMessages extends Command
                 (isset($payload['data']['commandName']) && strpos($payload['data']['commandName'], 'SendWhatsappMessageJob') !== false)
             ) {
                 $command = unserialize($payload['data']['command']);
-                $delay = rand(1, 1000); // من 1 ثانية إلى ساعة
+                $delay = rand(1, 10); // من 1 ثانية إلى ساعة
                 sleep($delay);
                 $command->handle();
                 DB::table('jobs')->where('id', $job->id)->delete();
