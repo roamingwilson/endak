@@ -147,13 +147,19 @@ class AuthController extends Controller
                 'country' => "required|exists:countries,id",
                 'governement' => "required|exists:governements,id",
                 'role' => "required|in:1,3",
-                'password' => "required|digits:6|confirmed",
-                'phone' => 'required|string|min:7|max:20|unique:users',
+                'password' => "required|min:6|confirmed",
+                'phone' => [
+                    'required',
+                    'string',
+                    'regex:/^5[0-9]{8}$/', // يبدأ بـ 5 وطوله 9 أرقام
+                    'unique:users',
+                ],
                 'email' => 'nullable|email|unique:users',
             ], [
                 'phone.string' => 'رقم الهاتف غير صحيح',
                 'phone.min' => 'رقم الهاتف يجب أن يكون 7 أرقام على الأقل',
                 'phone.max' => 'رقم الهاتف يجب أن يكون 20 رقم على الأكثر',
+                'phone.regex' => 'رقم الجوال يجب أن يكون سعودي ويبدأ بـ 5 ويتكون من 9 أرقام بعد الكود (+966)',
             ]);
 
             // تنظيف رقم الهاتف
@@ -162,6 +168,13 @@ class AuthController extends Controller
             $phone = preg_replace('/^(\+|00)/', '', $phone);
             // إزالة أي أحرف غير رقمية
             $phone = preg_replace('/[^0-9]/', '', $phone);
+            // تحقق أن الكود هو 966 فقط
+            if ($request->country != 1 && $request->country != '1') {
+                return response()->json([
+                    'success' => false,
+                    'errors' => ['phone' => ['التسجيل متاح فقط للأرقام السعودية (+966)']]
+                ], 422);
+            }
 
             // الحصول على رمز البلد
             $country = Country::find($request->country);

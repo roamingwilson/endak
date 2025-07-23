@@ -183,7 +183,7 @@
         <a href="{{ route('orders.index') }}"><i class="fas fa-clipboard-list"></i> {{ $lang == 'ar' ? 'طلباتي' : 'My Orders' }}</a>
             <a href="{{ route('pro_cart.index') }}"><i class="fas fa-shopping-cart"></i> {{ $lang == 'ar' ? 'السلة' : 'Cart' }}</a>
         @endif
-    @endauth
+        @endauth
 
         {{-- <a href="#"><i class="fas fa-plus-circle"></i> نشر منتج</a> --}}
     </nav>

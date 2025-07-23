@@ -378,11 +378,14 @@
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">
-                                    <i class="fas fa-phone"></i> رقم الهاتف
+                                    <i class="fas fa-phone"></i> رقم الجوال السعودي
                                 </label>
-                                <input type="tel" name="phone" class="form-control form-control-lg" required
-                                       placeholder="مثال: 00201065686522 أو +201065686522 أو 201065686522">
-                                <div class="invalid-feedback">يرجى إدخال رقم هاتف صحيح (7-20 رقم)</div>
+                                <div class="input-group">
+                                    <span class="input-group-text">+966</span>
+                                    <input type="tel" name="phone" class="form-control form-control-lg" required
+                                           placeholder="5XXXXXXXX" pattern="^5[0-9]{8}$">
+                                </div>
+                                <div class="invalid-feedback">يرجى إدخال رقم جوال سعودي صحيح يبدأ بـ 5 ويتكون من 9 أرقام بعد +966</div>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">
@@ -398,12 +401,7 @@
                                     <i class="fas fa-globe"></i> البلد
                                 </label>
                                 <select name="country" id="country" class="form-control form-control-lg" required>
-                                    <option value="">اختر البلد</option>
-                                    @foreach (\App\Models\Country::all() as $country)
-                                        <option value="{{ $country->id }}">
-                                            {{ app()->getLocale() == 'ar' ? $country->name_ar : $country->name_en }}
-                                        </option>
-                                    @endforeach
+                                    <option value="1">المملكة العربية السعودية</option>
                                 </select>
                                 <div class="invalid-feedback">يرجى اختيار البلد</div>
                             </div>
