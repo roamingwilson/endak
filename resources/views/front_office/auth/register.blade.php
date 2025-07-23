@@ -421,7 +421,7 @@
                                     <i class="fas fa-lock"></i> كلمة المرور
                                 </label>
                                 <input type="password" name="password" class="form-control form-control-lg" required
-                                       placeholder="أدخل 6 أرقام" pattern="\d{6}" maxlength="6">
+                                       placeholder="أدخل  كلمة المرور" >
                                 <div class="invalid-feedback">يجب أن تكون كلمة المرور مكونة من 6 أرقام فقط</div>
                             </div>
 
