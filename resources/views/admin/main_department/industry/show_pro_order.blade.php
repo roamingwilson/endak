@@ -68,9 +68,9 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>
-            @endforeach
+            </div>
+        </div>
+        @endforeach
             <div class="card shadow border-0 rounded-4 p-4 mt-4 order-total">
                 <div class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-3">
                     <h4 class="fw-bold mb-0" style="color:#e91e63;"><i class="fas fa-coins me-2"></i>{{ $lang == 'ar' ? 'الإجمالي الكلي' : 'Total' }}</h4>

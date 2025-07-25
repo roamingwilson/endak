@@ -52,6 +52,7 @@ class ServiceController extends Controller
      */
     public function store(Request $request)
     {
+        // dd($request->all());
         // تحقق من تسجيل الدخول
         if (!auth()->check()) {
             return redirect()->route('login-page')->with('error', 'يجب تسجيل الدخول أولاً لطلب خدمة.');
@@ -234,14 +235,14 @@ class ServiceController extends Controller
                 $group = $field->input_group;
                 // إذا كانت المجموعة قابلة للتكرار
                 if ($group && $field->is_repeatable && isset($request->custom_fields[$group]) && is_array($request->custom_fields[$group])) {
-                    // احفظ كل مجموعة كصف مستقل
+                    // خذ فقط أول 10 عناصر
+                    $instances = array_slice($request->custom_fields[$group], 0, 10);
                     $customFields[$group] = [];
-                    foreach ($request->custom_fields[$group] as $instanceIdx => $instance) {
+                    foreach ($instances as $instanceIdx => $instance) {
                         $instanceData = [];
                         foreach ($grouped[$group] as $groupField) {
                             $fname = $groupField->name;
                             if ($groupField->type === 'image' || $groupField->type === 'images[]') {
-                                // دعم multiple images
                                 $files = $request->file("custom_fields.$group.$instanceIdx.$fname");
                                 if ($files) {
                                     $paths = [];
@@ -348,7 +349,7 @@ class ServiceController extends Controller
                     $countryCode = $provider->countryObj ? $provider->countryObj->code : '+966';
                     $whatsappPhone = normalizePhone($provider->phone, $countryCode);
                     if (!in_array($whatsappPhone, $sentPhones)) {
-                        $sender = \App\Models\WhatsappSender::first();
+                        $sender = \App\Models\WhatsappSender::inRandomOrder()->first();
                         if ($sender) {
                             SendWhatsappMessageJob::dispatch($whatsappPhone, $message, $sender->number, $sender->token, $sender->instance_id)
                                 ->delay(now()->addSeconds(rand(1, 3600)));
@@ -364,7 +365,7 @@ class ServiceController extends Controller
             }
             $mainRecipients = \App\Models\WhatsappRecipients::where('department_id', $service->department_id)->pluck('number')->toArray();
             $recipients = array_unique(array_merge($recipients, $mainRecipients));
-            $sender = \App\Models\WhatsappSender::first();
+            $sender = \App\Models\WhatsappSender::inRandomOrder()->first();
             foreach ($recipients as $number) {
                 $normalized = normalizePhone($number);
                 if ($sender && !in_array($normalized, $sentPhones)) {

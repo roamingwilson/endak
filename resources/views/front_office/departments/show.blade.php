@@ -272,11 +272,11 @@
                                                                         @else
                                                                             <input type="{{ $field->type }}" name="custom_fields[{{ $group }}][{{ $idx }}][{{ $field->name }}]" class="form-control form-control-sm" value="{{ $groupInstance[$field->name] ?? '' }}">
                                                                         @endif
-                                                                    </div>
-                                                                @endforeach
-                                                            </div>
-                                                        </div>
-                                                    @endforeach
+                                                    </div>
+                                                @endforeach
+                                            </div>
+                                        </div>
+                                    @endforeach
                                                     {{-- زر الإضافة الديناميكي بالجافاسكريبت فقط --}}
                                     @if($repeatable)
                                         <button type="button" class="btn btn-circle add-group-btn mb-3" data-group="{{ $group }}" title="إضافة مجموعة جديدة">
@@ -607,56 +607,81 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // تكرار وحذف المجموعات الديناميكية
-    document.querySelectorAll('.add-group-btn').forEach(function(btn) {
-        btn.addEventListener('click', function(e) {
-            e.preventDefault();
+    document.addEventListener('click', function(e) {
+        // إضافة مجموعة جديدة
+        if(e.target.classList.contains('add-group-btn')) {
+            var btn = e.target;
             var group = btn.getAttribute('data-group');
-            var groupBlock = btn.closest('.group-block');
-            var list = groupBlock.querySelector('.group-fields-list');
-            var instances = list.querySelectorAll('.group-fields-instance');
-            var lastIdx = instances.length ? parseInt(instances[instances.length-1].getAttribute('data-index')) : 0;
-            var newIdx = lastIdx + 1;
+            var groupList = document.querySelector('.group-fields-list[data-group="' + group + '"]');
+            var instances = groupList.querySelectorAll('.group-fields-instance');
+            if(instances.length >= 10) return;
+            var newIndex = instances.length;
             var template = instances[0].cloneNode(true);
-            // امسح القيم
-            template.setAttribute('data-index', newIdx);
+            template.setAttribute('data-index', newIndex);
             template.querySelectorAll('input, select, textarea').forEach(function(input) {
                 if(input.type === 'checkbox' || input.type === 'radio') {
                     input.checked = false;
-                } else if(input.type === 'file') {
-                    input.value = '';
-                    // لا تغير خاصية multiple أو [] في الاسم
                 } else {
                     input.value = '';
                 }
-                // عدل الاسم ليأخذ الاندكس الجديد، مع الحفاظ على [] في الصور
                 var name = input.getAttribute('name');
                 if(name) {
-                    if(input.type === 'file') {
-                        name = name.replace(/\[\d+\]\[[^\]]*\]\[\]/, '['+newIdx+']['+input.getAttribute('data-field')+'][]');
-                    } else {
-                        name = name.replace(/\[\d+\]/, '['+newIdx+']');
-                    }
+                    name = name.replace(/custom_fields\[[^\]]+\]\[\d+\]/, 'custom_fields['+group+']['+newIndex+']');
                     input.setAttribute('name', name);
                 }
             });
-            // أظهر زر الحذف
-            template.querySelector('.remove-group-btn').style.display = 'inline-flex';
-            // أضف المجموعة الجديدة قبل زر الإضافة
-            var addBtn = list.querySelector('.add-group-btn');
-            list.insertBefore(template, addBtn);
-        });
-    });
-    // حذف مجموعة
-    document.querySelectorAll('.group-fields-list').forEach(function(list) {
-        list.addEventListener('click', function(e) {
-            if(e.target.closest('.remove-group-btn')) {
-                var instance = e.target.closest('.group-fields-instance');
-                var siblings = list.querySelectorAll('.group-fields-instance');
-                if(siblings.length > 1) {
-                    instance.remove();
+            groupList.appendChild(template);
+
+            // إزالة كل أزرار الإضافة
+            groupList.querySelectorAll('.add-group-btn').forEach(function(b){ b.remove(); });
+            // إضافة زر الإضافة فقط في آخر مجموعة إذا العدد أقل من 10
+            var allInstances = groupList.querySelectorAll('.group-fields-instance');
+            if(allInstances.length < 10) {
+                var newAddBtn = btn.cloneNode(true);
+                // جرب أولاً col-12، إذا لم توجد أضف الزر في نهاية المجموعة
+                var col12 = allInstances[allInstances.length-1].querySelector('.col-12');
+                if(col12) {
+                    col12.appendChild(newAddBtn);
+                } else {
+                    allInstances[allInstances.length-1].appendChild(newAddBtn);
                 }
             }
-        });
+        }
+        // حذف مجموعة
+        if(e.target.closest('.remove-group-btn')) {
+            var instance = e.target.closest('.group-fields-instance');
+            var groupList = instance.parentElement;
+            var group = groupList.getAttribute('data-group');
+            instance.remove();
+            // إعادة ترتيب الفهارس
+            var allInstances = groupList.querySelectorAll('.group-fields-instance');
+            allInstances.forEach(function(inst, idx) {
+                inst.setAttribute('data-index', idx);
+                inst.querySelectorAll('input, select, textarea').forEach(function(input) {
+                    var name = input.getAttribute('name');
+                    if(name) {
+                        name = name.replace(/custom_fields\[[^\]]+\]\[\d+\]/, 'custom_fields['+group+']['+idx+']');
+                        input.setAttribute('name', name);
+                    }
+                });
+            });
+            // إزالة كل أزرار الإضافة
+            groupList.querySelectorAll('.add-group-btn').forEach(function(b){ b.remove(); });
+            // إضافة زر الإضافة فقط في آخر مجموعة إذا العدد أقل من 10
+            if(allInstances.length && allInstances.length < 10) {
+                var newAddBtn = document.createElement('button');
+                newAddBtn.type = 'button';
+                newAddBtn.className = 'btn btn-success btn-sm add-group-btn';
+                newAddBtn.setAttribute('data-group', group);
+                newAddBtn.innerHTML = '<i class="fas fa-plus"></i> إضافة مجموعة';
+                var col12 = allInstances[allInstances.length-1].querySelector('.col-12');
+                if(col12) {
+                    col12.appendChild(newAddBtn);
+                } else {
+                    allInstances[allInstances.length-1].appendChild(newAddBtn);
+                }
+            }
+        }
     });
 
     // واجهة رفع صور ديناميكية للحقول المفردة
@@ -703,6 +728,17 @@ document.addEventListener('DOMContentLoaded', function() {
             filesArr.forEach(f => dt.items.add(f));
             input.files = dt.files;
         });
+    });
+});
+$(document).ready(function() {
+    $('.js-select2-custom').select2({
+        placeholder: "{{ $lang == 'ar' ? 'اختر المدينة' : 'Select City' }}",
+        allowClear: true,
+        language: {
+            noResults: function() {
+                return "{{ $lang == 'ar' ? 'لا توجد نتائج' : 'No Results Found' }}";
+            }
+        }
     });
 });
 </script>
