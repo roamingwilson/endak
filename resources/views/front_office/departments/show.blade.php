@@ -253,6 +253,7 @@
                                                                         </label>
                                                                         @if($field->type === 'select' && is_array($field->options))
                                                                             <select name="custom_fields[{{ $group }}][{{ $idx }}][{{ $field->name }}]" class="form-control form-control-sm">
+                                                                                <option value="" disabled selected>{{ $lang == 'ar' ? 'اختر' : 'Select' }}</option>
                                                                                 @foreach($field->options as $option)
                                                                                     <option value="{{ $option }}" {{ (isset($groupInstance[$field->name]) && $groupInstance[$field->name] == $option) ? 'selected' : '' }}>{{ $option }}</option>
                                                                                 @endforeach
@@ -400,6 +401,7 @@
                                             <div style="flex:2;">
                                                 @if($field->type === 'select' && is_array($field->options))
                                                     <select name="custom_fields[{{ $field->name }}]" id="custom_fields_{{ $field->name }}" class="form-control">
+                                                        <option value="" disabled selected>{{ $lang == 'ar' ? 'اختر' : 'Select' }}</option>
                                                         @foreach($field->options as $option)
                                                             <option value="{{ $option }}" {{ old('custom_fields.' . $field->name) == $option ? 'selected' : '' }}>{{ $option }}</option>
                                                         @endforeach
