@@ -6,6 +6,7 @@
         <table class="table mt-3">
             <thead>
                 <tr>
+                    <th>ID</th>
                     <th>Name</th>
                     <th>Actions</th>
                 </tr>
@@ -13,6 +14,7 @@
             <tbody>
                 @foreach ($departments as $department)
                     <tr>
+                        <td>{{ $department->id }}</td>
                         <td>{{ $department->name_en }}</td>
                         <td>
                             <a href="{{ route('admin.sub_departments.create') }}" class="btn btn-success mb-3">إضافة قسم فرعي</a>
@@ -29,15 +31,27 @@
                     @if($department->sub_departments && $department->sub_departments->count())
                         @foreach($department->sub_departments as $sub)
                             <tr style="background:#f9f9f9;">
+                                <td>{{ $sub->id }}</td>
                                 <td style="padding-left:40px;">&raquo; {{ $sub->name_en }}</td>
                                 <td>
-                                    <a href="{{ route('admin.sub_departments.edit', $sub->id) }}" class="btn btn-sm btn-warning">تعديل</a>
-                                    <a href="{{ route('admin.departments.fields.create', ['department' => $department->id, 'sub_department_id' => $sub->id]) }}" class="btn btn-sm btn-info">إضافة حقل</a>
-                                    <form action="{{ route('admin.sub_departments.destroy', $sub->id) }}" method="POST" style="display:inline-block" onsubmit="return confirm('هل أنت متأكد من الحذف؟');">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-sm btn-danger">حذف</button>
-                                    </form>
+                                    <div class="btn-group btn-group-sm" role="group">
+                                        <a href="{{ route('admin.sub_departments.edit', $sub->id) }}" class="btn btn-warning" title="تعديل">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <a href="{{ route('admin.sub_departments.duplicate', $sub->id) }}" class="btn btn-info" title="تكرار">
+                                            <i class="fas fa-copy"></i>
+                                        </a>
+                                        <a href="{{ route('admin.departments.fields.create', ['department' => $department->id, 'sub_department_id' => $sub->id]) }}" class="btn btn-primary" title="إضافة حقل">
+                                            <i class="fas fa-plus"></i>
+                                        </a>
+                                        <form action="{{ route('admin.sub_departments.destroy', $sub->id) }}" method="POST" style="display:inline-block" onsubmit="return confirm('هل أنت متأكد من الحذف؟');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-danger" title="حذف">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
                                 </td>
                             </tr>
                         @endforeach

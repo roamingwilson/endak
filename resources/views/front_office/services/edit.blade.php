@@ -160,8 +160,42 @@
                         </label>
                         @php
                             $value = old('custom_fields.' . $field->name, $service->custom_fields[$field->name] ?? null);
+                            // التحقق من أن القيمة ليست مصفوفة
+                            if (is_array($value)) {
+                                $value = is_array($value) ? implode(', ', $value) : '';
+                            }
                         @endphp
-                        <input type="text" name="custom_fields[{{ $field->name }}]" id="custom_fields[{{ $field->name }}]" class="form-control" value="{{ $value }}">
+                        @if($field->type === 'image' || $field->type === 'images[]' || $field->type === 'imagess')
+                            <div class="dynamic-images-uploader mb-2" data-field="custom_fields_{{ $field->name }}">
+                                <div class="text-center mb-2" style="color: #6c757d; font-size: 0.9em;">
+                                    <i class="fas fa-cloud-upload-alt"></i> اسحب الصور هنا أو اضغط لاختيار الملفات
+                                </div>
+                                <input type="file" name="custom_fields[{{ $field->name }}][]" id="custom_fields_{{ $field->name }}" accept="image/*" class="form-control image-input" multiple style="margin-bottom:8px;">
+                                <div class="preview-images d-flex flex-wrap gap-2">
+                                    @if(is_array($service->custom_fields[$field->name] ?? null))
+                                        @foreach($service->custom_fields[$field->name] as $imagePath)
+                                            <div class="position-relative">
+                                                <img src="{{ asset('storage/' . $imagePath) }}" style="width:80px; height:80px; object-fit:cover; border-radius:6px; border:1px solid #ddd; margin:2px;">
+                                            </div>
+                                        @endforeach
+                                    @endif
+                                </div>
+                            </div>
+                        @elseif($field->type === 'checkbox')
+                            <input type="hidden" name="custom_fields[{{ $field->name }}]" value="0">
+                            <input type="checkbox" name="custom_fields[{{ $field->name }}]" id="custom_fields_{{ $field->name }}" value="1" class="form-check-input" {{ $value ? 'checked' : '' }}>
+                        @elseif($field->type === 'textarea')
+                            <textarea name="custom_fields[{{ $field->name }}]" id="custom_fields_{{ $field->name }}" class="form-control">{{ $value }}</textarea>
+                        @elseif($field->type === 'select' && is_array($field->options))
+                            <select name="custom_fields[{{ $field->name }}]" id="custom_fields_{{ $field->name }}" class="form-control">
+                                <option value="">{{ app()->getLocale() == 'ar' ? 'اختر' : 'Select' }}</option>
+                                @foreach($field->options as $option)
+                                    <option value="{{ $option }}" {{ $value == $option ? 'selected' : '' }}>{{ $option }}</option>
+                                @endforeach
+                            </select>
+                        @else
+                            <input type="{{ $field->type }}" name="custom_fields[{{ $field->name }}]" id="custom_fields_{{ $field->name }}" class="form-control" value="{{ $value }}">
+                        @endif
                     </div>
                 @endforeach
             @endif
@@ -176,6 +210,126 @@
 @section('script')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // معالجة الصور المتعددة
+    document.querySelectorAll('.dynamic-images-uploader').forEach(function(wrapper) {
+        const input = wrapper.querySelector('.image-input');
+        const preview = wrapper.querySelector('.preview-images');
+        let filesArr = [];
+
+        // دعم drag and drop
+        wrapper.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            wrapper.style.borderColor = '#1976d2';
+            wrapper.style.backgroundColor = '#e3f2fd';
+        });
+
+        wrapper.addEventListener('dragleave', function(e) {
+            e.preventDefault();
+            wrapper.style.borderColor = '#dee2e6';
+            wrapper.style.backgroundColor = '#f8f9fa';
+        });
+
+        wrapper.addEventListener('drop', function(e) {
+            e.preventDefault();
+            wrapper.style.borderColor = '#dee2e6';
+            wrapper.style.backgroundColor = '#f8f9fa';
+
+            const files = Array.from(e.dataTransfer.files);
+            files.forEach(file => {
+                if (file.type.startsWith('image/')) {
+                    if (file.size > 5 * 1024 * 1024) {
+                        alert('حجم الصورة يجب أن لا يتجاوز 5 ميجابايت');
+                        return;
+                    }
+                    if (filesArr.length >= 10) {
+                        alert('يمكن رفع 10 صور كحد أقصى');
+                        return;
+                    }
+                    filesArr.push(file);
+                }
+            });
+            renderPreviews();
+        });
+
+        input.addEventListener('change', function(e) {
+            for (let file of Array.from(input.files)) {
+                if (file.type.startsWith('image/')) {
+                    if (file.size > 5 * 1024 * 1024) {
+                        alert('حجم الصورة يجب أن لا يتجاوز 5 ميجابايت');
+                        continue;
+                    }
+                    if (filesArr.length >= 10) {
+                        alert('يمكن رفع 10 صور كحد أقصى');
+                        input.disabled = true;
+                        break;
+                    }
+                    filesArr.push(file);
+                } else {
+                    alert('يجب اختيار ملفات صور فقط');
+                    continue;
+                }
+            }
+            renderPreviews();
+            input.value = '';
+        });
+
+        function renderPreviews() {
+            preview.innerHTML = '';
+            if (filesArr.length === 0) {
+                preview.innerHTML = '<div class="text-center text-muted" style="padding: 20px;"><i class="fas fa-images"></i><br>لم يتم اختيار صور بعد</div>';
+                return;
+            }
+
+            const counter = document.createElement('div');
+            counter.className = 'text-center text-muted mb-2';
+            counter.style.fontSize = '0.9em';
+            counter.innerHTML = `تم اختيار ${filesArr.length} صورة من أصل 10`;
+            preview.appendChild(counter);
+
+            filesArr.forEach(function(file, idx) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const div = document.createElement('div');
+                    div.className = 'position-relative';
+                    div.style.display = 'inline-block';
+                    div.innerHTML = `<img src="${e.target.result}" style="width:80px; height:80px; object-fit:cover; border-radius:6px; border:1px solid #ddd; margin:2px;" />` +
+                        `<button type="button" class="btn btn-sm btn-danger remove-img-btn position-absolute top-0 end-0" style="transform:translate(30%,-30%); border-radius:50%; padding:2px 6px; font-size:0.9em;" data-idx="${idx}"><i class="fas fa-times"></i></button>`;
+                    preview.appendChild(div);
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        preview.addEventListener('click', function(e) {
+            if(e.target.closest('.remove-img-btn')) {
+                const idx = parseInt(e.target.closest('.remove-img-btn').getAttribute('data-idx'));
+                filesArr.splice(idx, 1);
+                renderPreviews();
+
+                if (filesArr.length < 10) {
+                    input.disabled = false;
+                }
+            }
+        });
+
+        wrapper.closest('form').addEventListener('submit', function(e) {
+            if(filesArr.length === 0) {
+                input.files = null;
+                return;
+            }
+
+            if(filesArr.length > 10) {
+                alert('يمكن رفع 10 صور كحد أقصى');
+                e.preventDefault();
+                return;
+            }
+
+            const dt = new DataTransfer();
+            filesArr.forEach(f => dt.items.add(f));
+            input.files = dt.files;
+        });
+    });
+
     // استخدم التفويض بدلاً من event لكل زر
     document.addEventListener('click', function(e) {
         // إضافة مجموعة جديدة
@@ -255,6 +409,71 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
     });
-});
 </script>
 @endsection
+
+<style>
+.dynamic-images-uploader {
+    border: 2px dashed #dee2e6;
+    border-radius: 8px;
+    padding: 15px;
+    background: #f8f9fa;
+    transition: border-color 0.2s, background-color 0.2s;
+    cursor: pointer;
+    position: relative;
+}
+.dynamic-images-uploader:hover {
+    border-color: #1976d2;
+    background-color: #e3f2fd;
+}
+.dynamic-images-uploader .image-input {
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    opacity: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+.dynamic-images-uploader .text-center {
+    pointer-events: none;
+    z-index: 0;
+}
+.preview-images {
+    min-height: 40px;
+    margin-top: 10px;
+}
+.preview-images:empty::after {
+    content: 'لم يتم اختيار صور بعد';
+    color: #6c757d;
+    font-style: italic;
+    display: block;
+    text-align: center;
+    padding: 10px;
+}
+.preview-images img {
+    box-shadow:0 2px 8px #1976d233;
+    transition: transform 0.2s;
+}
+.preview-images img:hover {
+    transform: scale(1.05);
+}
+.remove-img-btn {
+    z-index: 2;
+    background: #dc3545;
+    border: none;
+    color: white;
+    font-size: 0.8em;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.remove-img-btn:hover {
+    background: #c82333;
+}
+</style>

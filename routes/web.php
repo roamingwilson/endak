@@ -569,11 +569,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/favorites/toggle/{departmentId}', [FavoriteController::class, 'toggle'])->name('favorites.toggle');
 });
 
-use App\Http\Controllers\Admin\DepartmentFieldController;
 
-Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
-    Route::resource('departments.fields', DepartmentFieldController::class)->shallow();
-});
 
 use App\Http\Controllers\Admin\DepartmentController;
 
@@ -607,6 +603,8 @@ Route::get('/all-services', [\App\Http\Controllers\ServiceController::class, 'al
 
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::resource('sub_departments', App\Http\Controllers\Admin\SubDepartmentController::class);
+    Route::get('sub_departments/{id}/duplicate', [App\Http\Controllers\Admin\SubDepartmentController::class, 'duplicate'])->name('sub_departments.duplicate');
+    Route::post('sub_departments/{id}/duplicate', [App\Http\Controllers\Admin\SubDepartmentController::class, 'duplicateStore'])->name('sub_departments.duplicate.store');
 });
 
 Route::get('/services', [App\Http\Controllers\ServiceController::class, 'index'])->name('services.index');

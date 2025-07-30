@@ -7,6 +7,7 @@ use App\Models\Department;
 use App\Models\DepartmentField;
 use App\Models\SubDepartment;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class DepartmentFieldController extends Controller
 {
@@ -69,7 +70,7 @@ class DepartmentFieldController extends Controller
 
     protected function validateRequest(Request $request)
     {
-        $data = $request->validate([
+        $rules = [
             'name' => 'nullable|string|max:255',
             'name_ar' => 'required|string|max:255',
             'name_en' => 'required|string|max:255',
@@ -77,11 +78,37 @@ class DepartmentFieldController extends Controller
             'options' => 'nullable', // مصفوفة أو نص
             'is_required' => 'nullable|boolean',
             'input_group' => 'nullable|string|max:255',
-            'value' => 'nullable',
             'description' => 'nullable|string|max:1000',
             'is_repeatable' => 'nullable|boolean',
             'sub_department_id' => 'nullable|exists:sub_departments,id',
-        ]);
+        ];
+
+        // إضافة قواعد خاصة لحقل القيمة حسب النوع
+        $fieldType = $request->input('type');
+
+        if ($fieldType === 'image') {
+            $rules['value'] = 'nullable|file|image|mimes:jpeg,png,jpg,gif|max:2048';
+        } else {
+            $rules['value'] = 'nullable';
+        }
+
+        try {
+            $data = $request->validate($rules);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // إضافة معلومات إضافية للأخطاء
+            Log::error('Field validation error:', [
+                'request_data' => $request->all(),
+                'field_type' => $fieldType,
+                'errors' => $e->errors()
+            ]);
+            throw $e;
+        }
+
+        // معالجة خاصة لحقل الصورة
+        if ($fieldType === 'image' && $request->hasFile('value')) {
+            $data['value'] = $request->file('value')->store('field_images', 'public');
+        }
+
         $data['is_required'] = $request->has('is_required');
         $data['is_repeatable'] = $request->has('is_repeatable');
         return $data;

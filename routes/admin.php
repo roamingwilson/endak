@@ -113,6 +113,14 @@ Route::group(['prefix' => 'departments'], function () {
     Route::put('/edit/{id}', [DepartmentController::class, 'update'])->name('admin.departments.update');
     Route::post('update_top_departments', [DepartmentController::class, 'update_top_departments'])->name('update_top_departments');
     Route::delete('/{id}', [DepartmentController::class, 'destroy'])->name('admin.departments.destroy');
+
+    // Department Fields Routes
+    Route::get('/{department}/fields', [\App\Http\Controllers\Admin\DepartmentFieldController::class, 'index'])->name('admin.departments.fields.index');
+    Route::get('/{department}/fields/create', [\App\Http\Controllers\Admin\DepartmentFieldController::class, 'create'])->name('admin.departments.fields.create');
+    Route::post('/{department}/fields', [\App\Http\Controllers\Admin\DepartmentFieldController::class, 'store'])->name('admin.departments.fields.store');
+    Route::get('/fields/{field}/edit', [\App\Http\Controllers\Admin\DepartmentFieldController::class, 'edit'])->name('admin.departments.fields.edit');
+    Route::put('/fields/{field}', [\App\Http\Controllers\Admin\DepartmentFieldController::class, 'update'])->name('admin.departments.fields.update');
+    Route::delete('/fields/{field}', [\App\Http\Controllers\Admin\DepartmentFieldController::class, 'destroy'])->name('admin.departments.fields.destroy');
 });
 Route::group(['prefix' => 'orders'], function () {
 

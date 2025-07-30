@@ -61,6 +61,10 @@
         function renderFieldInput() {
             let type = typeSelect.value;
             let html = '';
+
+            // إضافة حقل مخفي لتخزين النوع الحالي
+            html += `<input type="hidden" name="current_type" value="${type}">`;
+
             if(type === 'select') {
                 html += `<label>خيارات القائمة:</label><div id="select-options-list">`;
                 if (!Array.isArray(options) || options.length === 0) options = [''];
@@ -79,7 +83,7 @@
             } else if(type === 'checkbox') {
                 html = `<label>قيمة افتراضية:</label><input type="checkbox" name="value" value="1" ${(value==1)?'checked':''}>`;
             } else if(type === 'image') {
-                html = `<label>قيمة افتراضية:</label><input type="file" name="value" class="form-control">`;
+                html = `<label>قيمة افتراضية:</label><input type="file" name="value" class="form-control" accept="image/*" ${value ? '' : 'required'}>`;
                 if(value) html += `<div class='mt-2'><img src='${value}' style='max-width:120px;'></div>`;
             } else if(type === 'date') {
                 html = `<label>قيمة افتراضية:</label><input type="date" name="value" class="form-control" value="${value}">`;

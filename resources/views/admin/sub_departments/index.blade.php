@@ -24,12 +24,21 @@
                 <td>{{ $sub->department ? $sub->department->name_ar : '-' }}</td>
                 <td>{{ $sub->status ? 'مفعل' : 'غير مفعل' }}</td>
                 <td>
-                    <a href="{{ route('admin.sub_departments.edit', $sub->id) }}" class="btn btn-sm btn-warning">تعديل</a>
-                    <form action="{{ route('admin.sub_departments.destroy', $sub->id) }}" method="POST" style="display:inline-block;">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('هل أنت متأكد من الحذف؟')">حذف</button>
-                    </form>
+                    <div class="btn-group btn-group-sm" role="group">
+                        <a href="{{ route('admin.sub_departments.edit', $sub->id) }}" class="btn btn-warning" title="تعديل">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        <a href="{{ route('admin.sub_departments.duplicate', $sub->id) }}" class="btn btn-info" title="تكرار">
+                            <i class="fas fa-copy"></i>
+                        </a>
+                        <form action="{{ route('admin.sub_departments.destroy', $sub->id) }}" method="POST" style="display:inline-block;">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-danger" onclick="return confirm('هل أنت متأكد من الحذف؟')" title="حذف">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </form>
+                    </div>
                 </td>
             </tr>
             @endforeach

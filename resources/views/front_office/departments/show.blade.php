@@ -210,11 +210,11 @@
                                     @endif
 
                                     <!-- عنوان الحقول الأساسية -->
-                                    <div class="mb-4">
+                                    {{--  <div class="mb-4">
                                         <h5 class="text-center mb-3" style="color:#28a745; font-weight:bold; border-bottom: 2px solid #28a745; padding-bottom: 10px;">
                                             <i class="fas fa-info-circle"></i> {{ $lang == 'ar' ? 'المعلومات الأساسية' : 'Basic Information' }}
                                         </h5>
-                                    </div>
+                                    </div>  --}}
                         </div>
                         <form action="{{ route('services.store') }}" method="POST" enctype="multipart/form-data">
                             @csrf
@@ -226,7 +226,7 @@
                         @endphp
                         @if($groupedFields->filter(function($fields, $group){ return $group; })->count())
                             <div class="mb-4">
-                                <h4 class="text-center mb-3" style="color:#1976d2; font-weight:bold;"><i class="fas fa-object-group"></i> عناصر مجمعة (Group Controls)</h4>
+                                {{--  <h4 class="text-center mb-3" style="color:#1976d2; font-weight:bold;"><i class="fas fa-object-group"></i> عناصر مجمعة (Group Controls)</h4>  --}}
                                 </div>
                         @endif
                                     @foreach($groupedFields as $group => $fields)
@@ -262,8 +262,14 @@
                                                                             <div class="form-check m-0">
                                                                                 <input type="checkbox" name="custom_fields[{{ $group }}][{{ $idx }}][{{ $field->name }}]" value="1" class="form-check-input" {{ (isset($groupInstance[$field->name]) && $groupInstance[$field->name]) ? 'checked' : '' }}>
                                                                             </div>
-                                                                        @elseif($field->type === 'image')
-                                                                            <input type="file" name="custom_fields[{{ $group }}][{{ $idx }}][{{ $field->name }}][]" accept="image/*" class="form-control form-control-sm" multiple>
+                                                                        @elseif($field->type === 'image[]' || $field->type === 'image' || $field->name === 'image')
+                                                                            <div class="dynamic-image-uploader mb-2" data-field="custom_fields_{{ $field->name }}">
+                                                                                <div class="text-center mb-2" style="color: #6c757d; font-size: 0.9em;">
+                                                                                    <i class="fas fa-cloud-upload-alt"></i> اسحب الصور هنا أو اضغط لاختيار الملفات
+                                                                                </div>
+                                                                                <input type="file" name="custom_fields[{{ $field->name }}][]" id="custom_fields_{{ $field->name }}" accept="image/*" class="form-control image-input" multiple style="margin-bottom:8px;">
+                                                                                <div class="preview-image d-flex flex-wrap gap-2"></div>
+                                                                            </div>
                                                                         @elseif($field->type === 'date')
                                                                             <input type="date" name="custom_fields[{{ $group }}][{{ $idx }}][{{ $field->name }}]" class="form-control form-control-sm" value="{{ $groupInstance[$field->name] ?? '' }}">
                                                                         @elseif($field->type === 'time')
@@ -360,6 +366,7 @@
                                                 @endforeach
                                             </select>
                                         </div>
+
                                     </div>
 
                                     <!-- حقل اختيار الحي الهدف (اختياري) -->
@@ -376,11 +383,11 @@
                                     </div>  --}}
 
                                     <!-- عنوان الحقول المخصصة -->
-                                    <div class="mb-4 mt-5">
+                                    {{--  <div class="mb-4 mt-5">
                                         <h5 class="text-center mb-3" style="color:#1976d2; font-weight:bold; border-bottom: 2px solid #1976d2; padding-bottom: 10px;">
                                             <i class="fas fa-cogs"></i> {{ $lang == 'ar' ? 'الحقول المخصصة للقسم' : 'Department Custom Fields' }}
                                         </h5>
-                                    </div>
+                                    </div>  --}}
 
                                     @foreach($department->fields->where('input_group', null) as $field)
                                         <div class="field-card">
@@ -409,8 +416,11 @@
                                                 @elseif($field->type === 'checkbox')
                                                     <input type="hidden" name="custom_fields[{{ $field->name }}]" value="0">
                                                     <input type="checkbox" name="custom_fields[{{ $field->name }}]" id="custom_fields_{{ $field->name }}" value="1" class="form-check-input" {{ old('custom_fields.' . $field->name) ? 'checked' : '' }}>
-                                                @elseif($field->type === 'image')
+                                                @elseif($field->type === 'images[]' || $field->type === 'images' || $field->name === 'images')
                                                     <div class="dynamic-images-uploader mb-2" data-field="custom_fields_{{ $field->name }}">
+                                                        <div class="text-center mb-2" style="color: #6c757d; font-size: 0.9em;">
+                                                            <i class="fas fa-cloud-upload-alt"></i> اسحب الصور هنا أو اضغط لاختيار الملفات
+                                                        </div>
                                                         <input type="file" name="custom_fields[{{ $field->name }}][]" id="custom_fields_{{ $field->name }}" accept="image/*" class="form-control image-input" multiple style="margin-bottom:8px;">
                                                         <div class="preview-images d-flex flex-wrap gap-2"></div>
                                                     </div>
@@ -686,22 +696,95 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // واجهة رفع صور ديناميكية للحقول المفردة
+    // واجهة رفع صور ديناميكية للحقول المفردة والمجمعة
     document.querySelectorAll('.dynamic-images-uploader').forEach(function(wrapper) {
         const input = wrapper.querySelector('.image-input');
         const preview = wrapper.querySelector('.preview-images');
         let filesArr = [];
+
+        // دعم drag and drop
+        wrapper.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            wrapper.style.borderColor = '#1976d2';
+            wrapper.style.backgroundColor = '#e3f2fd';
+        });
+
+        wrapper.addEventListener('dragleave', function(e) {
+            e.preventDefault();
+            wrapper.style.borderColor = '#dee2e6';
+            wrapper.style.backgroundColor = '#f8f9fa';
+        });
+
+        wrapper.addEventListener('drop', function(e) {
+            e.preventDefault();
+            wrapper.style.borderColor = '#dee2e6';
+            wrapper.style.backgroundColor = '#f8f9fa';
+
+            const files = Array.from(e.dataTransfer.files);
+            files.forEach(file => {
+                if (file.type.startsWith('image/')) {
+                    if (file.size > 5 * 1024 * 1024) {
+                        alert('حجم الصورة يجب أن لا يتجاوز 5 ميجابايت');
+                        return;
+                    }
+                    // التحقق من عدد الصور (حد أقصى 10)
+                    if (filesArr.length >= 10) {
+                        alert('يمكن رفع 10 صور كحد أقصى');
+                        return;
+                    }
+                    filesArr.push(file);
+                }
+            });
+            renderPreviews();
+        });
+
         input.addEventListener('change', function(e) {
             // أضف الصور الجديدة للمصفوفة
             for (let file of Array.from(input.files)) {
-                filesArr.push(file);
+                // التحقق من نوع الملف
+                if (file.type.startsWith('image/')) {
+                    // التحقق من حجم الملف (5MB)
+                    if (file.size > 5 * 1024 * 1024) {
+                        alert('حجم الصورة يجب أن لا يتجاوز 5 ميجابايت');
+                        continue;
+                    }
+                    // التحقق من عدد الصور (حد أقصى 10)
+                    if (filesArr.length >= 10) {
+                        alert('يمكن رفع 10 صور كحد أقصى');
+                        input.disabled = true;
+                        break;
+                    }
+                    filesArr.push(file);
+                } else {
+                    alert('يجب اختيار ملفات صور فقط');
+                    continue;
+                }
             }
             renderPreviews();
             // إعادة تعيين input حتى يمكن اختيار نفس الصورة مرة أخرى
             input.value = '';
         });
+
+        // إضافة معالج للأخطاء
+        input.addEventListener('error', function(e) {
+            console.error('Error loading file:', e);
+            alert('حدث خطأ في تحميل الملف');
+        });
+
         function renderPreviews() {
             preview.innerHTML = '';
+            if (filesArr.length === 0) {
+                preview.innerHTML = '<div class="text-center text-muted" style="padding: 20px;"><i class="fas fa-images"></i><br>لم يتم اختيار صور بعد</div>';
+                return;
+            }
+
+            // إضافة عداد للصور
+            const counter = document.createElement('div');
+            counter.className = 'text-center text-muted mb-2';
+            counter.style.fontSize = '0.9em';
+            counter.innerHTML = `تم اختيار ${filesArr.length} صورة من أصل 10`;
+            preview.appendChild(counter);
+
             filesArr.forEach(function(file, idx) {
                 const reader = new FileReader();
                 reader.onload = function(e) {
@@ -715,17 +798,36 @@ document.addEventListener('DOMContentLoaded', function() {
                 reader.readAsDataURL(file);
             });
         }
+
         preview.addEventListener('click', function(e) {
             if(e.target.closest('.remove-img-btn')) {
                 const idx = parseInt(e.target.closest('.remove-img-btn').getAttribute('data-idx'));
                 filesArr.splice(idx, 1);
                 renderPreviews();
+
+                // إعادة تفعيل input إذا كان عدد الصور أقل من 10
+                if (filesArr.length < 10) {
+                    input.disabled = false;
+                }
             }
         });
+
         // عند إرسال النموذج: أنشئ كائن DataTransfer جديد وأضف الملفات المختارة إليه
         wrapper.closest('form').addEventListener('submit', function(e) {
             // إذا لم يتم اختيار صور، لا تفعل شيء
-            if(filesArr.length === 0) return;
+            if(filesArr.length === 0) {
+                // إزالة الملفات من input إذا لم يتم اختيار أي شيء
+                input.files = null;
+                return;
+            }
+
+            // التحقق من عدد الصور (حد أقصى 10)
+            if(filesArr.length > 10) {
+                alert('يمكن رفع 10 صور كحد أقصى');
+                e.preventDefault();
+                return;
+            }
+
             const dt = new DataTransfer();
             filesArr.forEach(f => dt.items.add(f));
             input.files = dt.files;
@@ -767,7 +869,72 @@ $(document).ready(function() {
     color: #fff !important;
     box-shadow: 0 4px 16px #43e97b33 !important;
 }
-.preview-images img { box-shadow:0 2px 8px #1976d233; }
-.remove-img-btn { z-index: 2; }
+.preview-images img {
+    box-shadow:0 2px 8px #1976d233;
+    transition: transform 0.2s;
+}
+.preview-images img:hover {
+    transform: scale(1.05);
+}
+.remove-img-btn {
+    z-index: 2;
+    background: #dc3545;
+    border: none;
+    color: white;
+    font-size: 0.8em;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.remove-img-btn:hover {
+    background: #c82333;
+}
+.dynamic-images-uploader {
+    border: 2px dashed #dee2e6;
+    border-radius: 8px;
+    padding: 15px;
+    background: #f8f9fa;
+    transition: border-color 0.2s, background-color 0.2s;
+    cursor: pointer;
+    position: relative;
+}
+.dynamic-images-uploader:hover {
+    border-color: #1976d2;
+    background-color: #e3f2fd;
+}
+.dynamic-images-uploader .image-input {
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    opacity: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+.dynamic-images-uploader .text-center {
+    pointer-events: none;
+    z-index: 0;
+}
+.preview-images {
+    min-height: 40px;
+    margin-top: 10px;
+}
+.preview-images:empty::after {
+    content: 'لم يتم اختيار صور بعد';
+    color: #6c757d;
+    font-style: italic;
+    display: block;
+    text-align: center;
+    padding: 10px;
+}
+.preview-images .text-center {
+    color: #6c757d;
+    font-size: 0.9em;
+}
 </style>
 @endsection

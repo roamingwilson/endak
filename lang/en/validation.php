@@ -173,6 +173,36 @@ return [
         'attribute-name' => [
             'rule-name' => 'custom-message',
         ],
+        'custom_fields.*.imagess' => [
+            'file' => 'The images field must be a file.',
+            'image' => 'The images field must be an image.',
+            'array' => 'The images field must be an array of files.',
+        ],
+        'custom_fields.*.images' => [
+            'file' => 'The images field must be a file.',
+            'image' => 'The images field must be an image.',
+            'array' => 'The images field must be an array of files.',
+        ],
+        'custom_fields.*.image' => [
+            'file' => 'The image field must be a file.',
+            'image' => 'The image field must be an image.',
+            'array' => 'The image field must be an array of files.',
+        ],
+        'custom_fields.*.image.*' => [
+            'file' => 'Each item must be a file.',
+            'image' => 'Each item must be an image.',
+            'max' => 'Image size must not exceed 5MB.',
+        ],
+        'custom_fields.*.images.*' => [
+            'file' => 'Each item must be a file.',
+            'image' => 'Each item must be an image.',
+            'max' => 'Image size must not exceed 5MB.',
+        ],
+        'custom_fields.*.imagess.*' => [
+            'file' => 'Each item must be a file.',
+            'image' => 'Each item must be an image.',
+            'max' => 'Image size must not exceed 5MB.',
+        ],
     ],
 
     /*

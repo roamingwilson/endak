@@ -22,6 +22,7 @@ use App\Models\MessageTemplate;
 use App\Notifications\CommentNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 class ServiceController extends Controller
@@ -61,6 +62,9 @@ class ServiceController extends Controller
         $departmentFields = [];
         if ($request->has('department_id')) {
             $departmentFields = \App\Models\DepartmentField::where('department_id', $request->department_id)->get();
+
+            // Check for problematic fields
+            $this->checkAndCleanFields($request->department_id);
         }
 
         // إضافة قاعدة التحقق من sub_department_id
@@ -107,97 +111,9 @@ class ServiceController extends Controller
             'status' => 'nullable|in:open,close,pending,confirm',
         ];
 
-        // $validationRules = [
-        //     'user_id' => 'required|exists:users,id',
-        //     'department_id' => 'required|exists:departments,id',
-        //     'provider_id' => 'nullable|exists:users,id',
-        //     'type' => 'required|string',
-        //     'city' => 'nullable|string',
-        //     'neighborhood' => 'nullable|string',
-        //     'from_city' => 'required|string',
-        //     'from_neighborhood' => 'nullable|string',
-        //     'to_city' => 'nullable|string',
-        //     'to_neighborhood' => 'nullable|string',
-        //     'model' => 'nullable|string',
-        //     'year' => 'nullable|string',
-        //     'brand' => 'nullable|string',
-        //     'part_number' => 'nullable|string',
-        //     'equip_type' => 'nullable|string',
-        //     'car_type' => 'nullable|string',
-        //     'location' => 'nullable|string',
-        //     'gender' => 'nullable|in:male,female',
-        //     'time' => 'nullable',
-        //     'date' => 'nullable|date',
-        //     'day' => 'nullable|string',
-        //     'quantity' => 'nullable|integer',
-        //     'price' => 'nullable|numeric',
-        //     'drink_width' => 'nullable|string',
-        //     'wall_width' => 'nullable|string',
-        //     'split' => 'nullable|boolean',
-        //     'window' => 'nullable|boolean',
-        //     'clean' => 'nullable|boolean',
-        //     'feryoun' => 'nullable|boolean',
-        //     'maintance' => 'nullable|boolean',
-        //     'finger' => 'nullable|boolean',
-        //     'camera' => 'nullable|boolean',
-        //     'smart' => 'nullable|boolean',
-        //     'fire_system' => 'nullable|boolean',
-        //     'security_system' => 'nullable|boolean',
-        //     'network' => 'nullable|boolean',
-        //     'notes' => 'nullable|string',
-        //     'notes_voice' => 'nullable|file|mimes:audio/wav,audio/mpeg,audio/ogg|max:5120',
-        //     'status' => 'nullable|in:open,close,pending,confirm',
-        // ];
-
         // بناء قواعد التحقق الديناميكية
-        foreach ($departmentFields as $field) {
-            $rule = [];
-            if ($field->is_required) {
-                $rule[] = 'required';
-            } else {
-                $rule[] = 'nullable';
-            }
-            switch ($field->type) {
-                case 'number':
-                    $rule[] = 'numeric';
-                    break;
-                case 'date':
-                    $rule[] = 'date';
-                    break;
-                case 'checkbox':
-                    $rule[] = 'boolean';
-                    break;
-                case 'image':
-                    // إذا كان الحقل يقبل multiple (اسم الحقل في الفورم ينتهي بـ [])
-                    $isMultiple = (isset($field->input_group) && !$field->input_group && isset($request->custom_fields[$field->name]) && is_array($request->custom_fields[$field->name]));
-                    if ($isMultiple) {
-                        // تحقق من كل صورة في المصفوفة
-                        $validationRules["custom_fields.{$field->name}.*"] = 'file|image|max:5120';
-                    } else {
-                        $rule[] = 'file';
-                        $rule[] = 'image';
-                        $rule[] = 'max:5120';
-                    }
-                    break;
-                case 'select':
-                    if (is_array($field->options) && count($field->options)) {
-                        $rule[] = 'in:' . implode(',', $field->options);
-                    }
-                    break;
-                case 'time':
-                    $rule[] = 'date_format:H:i';
-                    break;
-                case 'textarea':
-                case 'text':
-                default:
-                    $rule[] = 'string';
-                    break;
-            }
-            // أضف قاعدة التحقق فقط إذا لم تتم إضافة قاعدة *. (أي ليس multiple)
-            if ($field->type !== 'image' || !$isMultiple) {
-                $validationRules["custom_fields.{$field->name}"] = implode('|', $rule);
-            }
-        }
+        $customFieldRules = $this->buildCustomFieldValidationRules($departmentFields, $request);
+        $validationRules = array_merge($validationRules, $customFieldRules);
 
         // تمرير أي حقل من custom_fields إلى الجذر إذا كان مطلوبًا في الفاليديشن
         foreach (array_keys($validationRules) as $field) {
@@ -207,7 +123,32 @@ class ServiceController extends Controller
                 ]);
             }
         }
-        $data = $request->validate($validationRules);
+
+        // Debug: Log validation rules for troubleshooting
+        Log::info('Validation rules for service creation:', [
+            'department_id' => $request->department_id,
+            'custom_field_rules' => $customFieldRules,
+            'all_rules' => $validationRules
+        ]);
+
+        // Debug: Log the actual request data for image fields
+        if ($request->has('custom_fields')) {
+            Log::info('Custom fields data:', [
+                'custom_fields' => $request->input('custom_fields'),
+                'files' => $request->allFiles()
+            ]);
+        }
+
+        try {
+            $data = $request->validate($validationRules);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            Log::error('Service validation failed:', [
+                'errors' => $e->errors(),
+                'request_data' => $request->all(),
+                'validation_rules' => $validationRules
+            ]);
+            throw $e;
+        }
 
         // Enhanced note_voice handling
         if ($request->filled('voice_note_data')) {
@@ -228,6 +169,8 @@ class ServiceController extends Controller
         // معالجة الحقول المخصصة (بما فيها الصور)
         $department = Department::with('fields')->find($request->department_id);
         $customFields = [];
+        $imagesToSave = []; // Array to store images for later saving to GeneralImage
+
         if ($department && $department->fields) {
             $grouped = $department->fields->groupBy('input_group');
             foreach ($department->fields as $field) {
@@ -242,16 +185,24 @@ class ServiceController extends Controller
                         $instanceData = [];
                         foreach ($grouped[$group] as $groupField) {
                             $fname = $groupField->name;
-                            if ($groupField->type === 'image' || $groupField->type === 'images[]') {
+                            if ($groupField->type === 'image' || $groupField->type === 'images[]' || $groupField->type === 'imagess') {
                                 $files = $request->file("custom_fields.$group.$instanceIdx.$fname");
                                 if ($files) {
                                     $paths = [];
                                     if (is_array($files)) {
                                         foreach ($files as $file) {
-                                            if ($file) $paths[] = $file->store('services/images', 'public');
+                                            if ($file && $file->isValid()) {
+                                                $path = $file->store('services/images', 'public');
+                                                $paths[] = $path;
+                                                $imagesToSave[] = $path; // Store for GeneralImage
+                                            }
                                         }
                                     } else {
-                                        $paths[] = $files->store('services/images', 'public');
+                                        if ($files->isValid()) {
+                                            $path = $files->store('services/images', 'public');
+                                            $paths[] = $path;
+                                            $imagesToSave[] = $path; // Store for GeneralImage
+                                        }
                                     }
                                     $instanceData[$fname] = $paths;
                                 } else {
@@ -265,20 +216,60 @@ class ServiceController extends Controller
                         }
                         $customFields[$group][] = $instanceData;
                     }
-                } elseif (!$group || !$field->is_repeatable) {
-                    // الحقول العادية
+                } elseif ($group && !$field->is_repeatable) {
+                    // الحقول المجمعة غير القابلة للتكرار
                     if ($field->type === 'image' || $field->type === 'images[]') {
+                        $files = $request->file("custom_fields.$fieldName");
+                        if ($files && !empty($files)) {
+                            $paths = [];
+                            if (is_array($files)) {
+                                foreach ($files as $file) {
+                                    if ($file && $file->isValid()) {
+                                        $path = $file->store('services/images', 'public');
+                                        $paths[] = $path;
+                                        $imagesToSave[] = $path; // Store for GeneralImage
+                                    }
+                                }
+                                $customFields[$fieldName] = $paths;
+                            } else {
+                                if ($files->isValid()) {
+                                    $path = $files->store('services/images', 'public');
+                                    $customFields[$fieldName] = [$path];
+                                    $imagesToSave[] = $path; // Store for GeneralImage
+                                }
+                            }
+                        } else {
+                            $customFields[$fieldName] = [];
+                        }
+                    } elseif ($field->type === 'checkbox') {
+                        $customFields[$fieldName] = $request->has("custom_fields.$fieldName") ? 1 : 0;
+                    } else {
+                        $customFields[$fieldName] = $request->input("custom_fields.$fieldName");
+                    }
+                } elseif (!$group) {
+                    // الحقول العادية (غير مجمعة)
+                    if ($field->type === 'image' || $field->type === 'images[]' || $field->type === 'imagess') {
                         $files = $request->file("custom_fields.$fieldName");
                         if ($files) {
                             $paths = [];
                             if (is_array($files)) {
                                 foreach ($files as $file) {
-                                    if ($file) $paths[] = $file->store('services/images', 'public');
+                                    if ($file && $file->isValid()) {
+                                        $path = $file->store('services/images', 'public');
+                                        $paths[] = $path;
+                                        $imagesToSave[] = $path; // Store for GeneralImage
+                                    }
                                 }
                                 $customFields[$fieldName] = $paths;
                             } else {
-                                $customFields[$fieldName] = [$files->store('services/images', 'public')];
+                                if ($files->isValid()) {
+                                    $path = $files->store('services/images', 'public');
+                                    $customFields[$fieldName] = [$path];
+                                    $imagesToSave[] = $path; // Store for GeneralImage
+                                }
                             }
+                        } else {
+                            $customFields[$fieldName] = [];
                         }
                     } elseif ($field->type === 'checkbox') {
                         $customFields[$fieldName] = $request->has("custom_fields.$fieldName") ? 1 : 0;
@@ -290,8 +281,15 @@ class ServiceController extends Controller
         }
         $data['custom_fields'] = $customFields;
 
-
         $service = Services::create($data);
+
+        // Save images to GeneralImage model
+        foreach ($imagesToSave as $imagePath) {
+            $image = new GeneralImage([
+                'path' => $imagePath,
+            ]);
+            $service->images()->save($image);
+        }
 
        // إرسال إشعار لمزودي الخدمة المشتركين في القسم أو القسم الفرعي
         if ($service) {
@@ -395,7 +393,6 @@ class ServiceController extends Controller
         }
         //custom services id
 
-
         if ($service && $request->hasFile('images')) {
             $files = $request->file('images');
 
@@ -413,6 +410,156 @@ class ServiceController extends Controller
         return redirect()->route('home')->with('success', 'تم اضافة الطلب بنجاح');
     }
 
+    /**
+     * Helper method to build validation rules for custom fields
+     */
+    private function buildCustomFieldValidationRules($departmentFields, $request)
+    {
+        $validationRules = [];
+
+        foreach ($departmentFields as $field) {
+            // Skip invalid fields
+            if (empty($field->name) || empty($field->type)) {
+                continue;
+            }
+
+            $rule = [];
+            if ($field->is_required) {
+                $rule[] = 'required';
+            } else {
+                $rule[] = 'nullable';
+            }
+
+            switch ($field->type) {
+                case 'number':
+                    $rule[] = 'numeric';
+                    break;
+                case 'date':
+                    $rule[] = 'date';
+                    break;
+                case 'checkbox':
+                    $rule[] = 'boolean';
+                    break;
+                case 'image':
+                    $rule[] = 'nullable';
+                    $rule[] = 'array';
+                    $rule[] = 'max:10';
+                    break;
+                case 'images[]':
+                    $rule[] = 'nullable';
+                    $rule[] = 'array';
+                    $rule[] = 'max:10';
+                    break;
+                case 'imagess':
+                    $rule[] = 'nullable';
+                    $rule[] = 'array';
+                    $rule[] = 'max:10';
+                    break;
+                case 'select':
+                    if (is_array($field->options) && count($field->options)) {
+                        $rule[] = 'in:' . implode(',', $field->options);
+                    }
+                    break;
+                case 'time':
+                    $rule[] = 'date_format:H:i';
+                    break;
+                case 'textarea':
+                case 'text':
+                default:
+                    $rule[] = 'string';
+                    break;
+            }
+
+            // إضافة قواعد التحقق للحقول المجمعة
+            if ($field->input_group) {
+                // للحقول المجمعة القابلة للتكرار
+                if ($field->is_repeatable) {
+                    $validationRules["custom_fields.{$field->input_group}"] = 'array';
+                    $validationRules["custom_fields.{$field->input_group}.*"] = 'array';
+                    if ($field->type === 'image' || $field->type === 'images[]' || $field->type === 'imagess') {
+                        $validationRules["custom_fields.{$field->input_group}.*.{$field->name}"] = 'nullable|array';
+                        $validationRules["custom_fields.{$field->input_group}.*.{$field->name}.*"] = 'nullable|file|image|max:5120';
+                    } else {
+                        $validationRules["custom_fields.{$field->input_group}.*.{$field->name}"] = implode('|', $rule);
+                    }
+                } else {
+                    // للحقول المجمعة غير القابلة للتكرار
+                    $validationRules["custom_fields.{$field->input_group}"] = 'array';
+                    $validationRules["custom_fields.{$field->input_group}.0"] = 'array';
+                    if ($field->type === 'image' || $field->type === 'images[]' || $field->type === 'imagess') {
+                        $validationRules["custom_fields.{$field->input_group}.0.{$field->name}"] = 'nullable|array';
+                        $validationRules["custom_fields.{$field->input_group}.0.{$field->name}.*"] = 'nullable|file|image|max:5120';
+                    } else {
+                        $validationRules["custom_fields.{$field->input_group}.0.{$field->name}"] = implode('|', $rule);
+                    }
+                }
+            } else {
+                // أضف قاعدة التحقق للحقول العادية
+                if ($field->type === 'image' || $field->type === 'images[]' || $field->type === 'imagess') {
+                    $validationRules["custom_fields.{$field->name}"] = 'nullable|array';
+                    $validationRules["custom_fields.{$field->name}.*"] = 'nullable|file|image|max:5120';
+                } else {
+                    $validationRules["custom_fields.{$field->name}"] = implode('|', $rule);
+                }
+            }
+        }
+
+        return $validationRules;
+    }
+
+    /**
+     * Helper method to check and clean up problematic fields
+     */
+    private function checkAndCleanFields($departmentId)
+    {
+        $problematicFields = \App\Models\DepartmentField::where('department_id', $departmentId)
+            ->where(function($query) {
+                $query->where('name', 'like', '%imagess%')
+                      ->orWhere('name', 'like', '%images%')
+                      ->orWhere('type', 'image');
+            })
+            ->get();
+
+        if ($problematicFields->count() > 0) {
+            Log::warning('Found potentially problematic fields:', [
+                'department_id' => $departmentId,
+                'fields' => $problematicFields->map(function($field) {
+                    return [
+                        'id' => $field->id,
+                        'name' => $field->name,
+                        'type' => $field->type,
+                        'name_ar' => $field->name_ar,
+                        'name_en' => $field->name_en
+                    ];
+                })
+            ]);
+        }
+
+        return $problematicFields;
+    }
+
+    /**
+     * Custom validation method for image fields
+     */
+    private function validateImageField($field, $value)
+    {
+        if ($field->type === 'images[]') {
+            if (!is_array($value)) {
+                return false;
+            }
+
+            foreach ($value as $file) {
+                if (!$file || !$file->isValid() || !in_array($file->getMimeType(), ['image/jpeg', 'image/png', 'image/gif', 'image/webp'])) {
+                    return false;
+                }
+            }
+            return true;
+        } elseif ($field->type === 'image') {
+            return $value && $value->isValid() && in_array($value->getMimeType(), ['image/jpeg', 'image/png', 'image/gif', 'image/webp']);
+        }
+
+        return true;
+    }
 
 
     /**
@@ -833,6 +980,12 @@ class ServiceController extends Controller
 
 // dd($request->all());
 
+        // جلب الحقول الديناميكية للقسم
+        $departmentFields = [];
+        if ($request->has('department_id')) {
+            $departmentFields = \App\Models\DepartmentField::where('department_id', $request->department_id)->get();
+        }
+
         $validationRules = [
             'user_id' => 'required|exists:users,id',
             'department_id' => 'required|exists:departments,id',
@@ -874,6 +1027,10 @@ class ServiceController extends Controller
             'notes_voice' => 'nullable|file|mimes:audio/wav,audio/mpeg,audio/ogg|max:5120',
             'status' => 'nullable|in:open,close,pending,confirm',
         ];
+
+        // بناء قواعد التحقق الديناميكية
+        $customFieldRules = $this->buildCustomFieldValidationRules($departmentFields, $request);
+        $validationRules = array_merge($validationRules, $customFieldRules);
         // تمرير أي حقل من custom_fields إلى الجذر إذا كان مطلوبًا في الفاليديشن
         foreach (array_keys($validationRules) as $field) {
             if (!$request->has($field) && $request->has("custom_fields.$field")) {
@@ -882,7 +1039,33 @@ class ServiceController extends Controller
                 ]);
             }
         }
-        $data = $request->validate($validationRules);
+
+        // Debug: Log validation rules for troubleshooting
+        Log::info('Validation rules for service update:', [
+            'service_id' => $id,
+            'custom_field_rules' => $customFieldRules,
+            'all_rules' => $validationRules
+        ]);
+
+        // Debug: Log the actual request data for image fields
+        if ($request->has('custom_fields')) {
+            Log::info('Custom fields data for update:', [
+                'custom_fields' => $request->input('custom_fields'),
+                'files' => $request->allFiles()
+            ]);
+        }
+
+        try {
+            $data = $request->validate($validationRules);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            Log::error('Service update validation failed:', [
+                'service_id' => $id,
+                'errors' => $e->errors(),
+                'request_data' => $request->all(),
+                'validation_rules' => $validationRules
+            ]);
+            throw $e;
+        }
 
         // تمرير الحقول المطلوبة من custom_fields إلى الطلب الرئيسي
         foreach (array_keys($data) as $field) {
@@ -924,6 +1107,8 @@ class ServiceController extends Controller
         // update furniture transportation products
         $department = $service->department()->with('fields')->first();
         $customFields = $service->custom_fields ?? [];
+        $imagesToSave = []; // Array to store images for later saving to GeneralImage
+
         if ($department && $department->fields) {
             $grouped = $department->fields->groupBy('input_group');
             foreach ($department->fields as $field) {
@@ -931,25 +1116,35 @@ class ServiceController extends Controller
                 $group = $field->input_group;
                 // إذا كانت المجموعة قابلة للتكرار
                 if ($group && $field->is_repeatable && isset($request->custom_fields[$group]) && is_array($request->custom_fields[$group])) {
-                    // احفظ كل مجموعة كصف مستقل
+                    // خذ فقط أول 10 عناصر
+                    $instances = array_slice($request->custom_fields[$group], 0, 10);
                     $customFields[$group] = [];
-                    foreach ($request->custom_fields[$group] as $instanceIdx => $instance) {
+                    foreach ($instances as $instanceIdx => $instance) {
                         $instanceData = [];
                         foreach ($grouped[$group] as $groupField) {
                             $fname = $groupField->name;
-                            if ($groupField->type === 'image' || $groupField->type === 'images[]') {
-                                // الصور تحتاج معالجة خاصة إذا كانت موجودة
-                                $files = $instance[$fname] ?? null;
-                                if ($files) {
+                            if ($groupField->type === 'image' || $groupField->type === 'images[]' || $groupField->type === 'imagess') {
+                                $files = $request->file("custom_fields.$group.$instanceIdx.$fname");
+                                if ($files && !empty($files)) {
+                                    $paths = [];
                                     if (is_array($files)) {
-                                        $paths = [];
                                         foreach ($files as $file) {
-                                            $paths[] = $file->store('services/images', 'public');
+                                            if ($file && $file->isValid()) {
+                                                $path = $file->store('services/images', 'public');
+                                                $paths[] = $path;
+                                                $imagesToSave[] = $path; // Store for GeneralImage
+                                            }
                                         }
-                                        $instanceData[$fname] = $paths;
                                     } else {
-                                        $instanceData[$fname] = $files->store('services/images', 'public');
+                                        if ($files->isValid()) {
+                                            $path = $files->store('services/images', 'public');
+                                            $paths[] = $path;
+                                            $imagesToSave[] = $path; // Store for GeneralImage
+                                        }
                                     }
+                                    $instanceData[$fname] = $paths;
+                                } else {
+                                    $instanceData[$fname] = [];
                                 }
                             } elseif ($groupField->type === 'checkbox') {
                                 $instanceData[$fname] = isset($instance[$fname]) ? 1 : 0;
@@ -959,20 +1154,60 @@ class ServiceController extends Controller
                         }
                         $customFields[$group][] = $instanceData;
                     }
-                } elseif (!$group || !$field->is_repeatable) {
-                    // الحقول العادية
-                    if ($field->type === 'image' || $field->type === 'images[]') {
+                } elseif ($group && !$field->is_repeatable) {
+                    // الحقول المجمعة غير القابلة للتكرار
+                    if ($field->type === 'image' || $field->type === 'images[]' || $field->type === 'imagess') {
                         $files = $request->file("custom_fields.$fieldName");
-                        if ($files) {
+                        if ($files && !empty($files)) {
+                            $paths = [];
                             if (is_array($files)) {
-                                $paths = [];
                                 foreach ($files as $file) {
-                                    $paths[] = $file->store('services/images', 'public');
+                                    if ($file && $file->isValid()) {
+                                        $path = $file->store('services/images', 'public');
+                                        $paths[] = $path;
+                                        $imagesToSave[] = $path; // Store for GeneralImage
+                                    }
                                 }
                                 $customFields[$fieldName] = $paths;
                             } else {
-                                $customFields[$fieldName] = $files->store('services/images', 'public');
+                                if ($files->isValid()) {
+                                    $path = $files->store('services/images', 'public');
+                                    $customFields[$fieldName] = [$path];
+                                    $imagesToSave[] = $path; // Store for GeneralImage
+                                }
                             }
+                        } else {
+                            $customFields[$fieldName] = [];
+                        }
+                    } elseif ($field->type === 'checkbox') {
+                        $customFields[$fieldName] = $request->has("custom_fields.$fieldName") ? 1 : 0;
+                    } else {
+                        $customFields[$fieldName] = $request->input("custom_fields.$fieldName");
+                    }
+                } elseif (!$group) {
+                    // الحقول العادية (غير مجمعة)
+                    if ($field->type === 'image' || $field->type === 'images[]' || $field->type === 'imagess') {
+                        $files = $request->file("custom_fields.$fieldName");
+                        if ($files && !empty($files)) {
+                            $paths = [];
+                            if (is_array($files)) {
+                                foreach ($files as $file) {
+                                    if ($file && $file->isValid()) {
+                                        $path = $file->store('services/images', 'public');
+                                        $paths[] = $path;
+                                        $imagesToSave[] = $path; // Store for GeneralImage
+                                    }
+                                }
+                                $customFields[$fieldName] = $paths;
+                            } else {
+                                if ($files->isValid()) {
+                                    $path = $files->store('services/images', 'public');
+                                    $customFields[$fieldName] = [$path];
+                                    $imagesToSave[] = $path; // Store for GeneralImage
+                                }
+                            }
+                        } else {
+                            $customFields[$fieldName] = [];
                         }
                     } elseif ($field->type === 'checkbox') {
                         $customFields[$fieldName] = $request->has("custom_fields.$fieldName") ? 1 : 0;
@@ -985,6 +1220,14 @@ class ServiceController extends Controller
         $data['custom_fields'] = $customFields;
 
         $service->update($data);
+
+        // Save images to GeneralImage model
+        foreach ($imagesToSave as $imagePath) {
+            $image = new GeneralImage([
+                'path' => $imagePath,
+            ]);
+            $service->images()->save($image);
+        }
 
 
         if (
