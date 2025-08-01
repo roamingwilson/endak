@@ -83,6 +83,9 @@
             </label>
             <select class="form-control @error('type') is-invalid @enderror" id="type" name="type" required>
                 <option value="">اختر نوع الحقل</option>
+                <option value="title" @selected(old('type', $field->type ?? '') == 'title')>
+                    <i class="fas fa-heading"></i> عنوان فقط
+                </option>
                 <option value="text" @selected(old('type', $field->type ?? '') == 'text')>
                     <i class="fas fa-font"></i> نص
                 </option>
@@ -384,6 +387,17 @@ document.addEventListener('DOMContentLoaded', function() {
                     </div>
                 </div>`;
 
+        } else if(type === 'title') {
+            html = `
+                <div class="card">
+                    <div class="card-body">
+                        <label class="form-label"><i class="fas fa-star"></i> نص العنوان:</label>
+                        <input type="text" name="value" class="form-control" value="${value}" placeholder="أدخل نص العنوان" maxlength="255">
+                        <small class="text-muted">
+                            <i class="fas fa-info-circle"></i> هذا النص سيظهر كعنوان في النموذج (لا يمكن للمستخدم تعديله)
+                        </small>
+                    </div>
+                </div>`;
         } else {
             html = `
                 <div class="card">

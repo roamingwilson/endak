@@ -251,14 +251,18 @@
                                                                         <label for="custom_fields_{{ $group }}_{{ $idx }}_{{ $field->name }}" style="font-weight:500; color:#333; font-size:0.98rem; margin-bottom:4px; display:block;">
                                                                             {{ app()->getLocale() == 'ar' ? $field->name_ar : $field->name_en }}
                                                                         </label>
-                                                                        @if($field->type === 'select' && is_array($field->options))
-                                                                            <select name="custom_fields[{{ $group }}][{{ $idx }}][{{ $field->name }}]" class="form-control form-control-sm">
-                                                                                <option value="" disabled selected>{{ $lang == 'ar' ? 'اختر' : 'Select' }}</option>
-                                                                                @foreach($field->options as $option)
-                                                                                    <option value="{{ $option }}" {{ (isset($groupInstance[$field->name]) && $groupInstance[$field->name] == $option) ? 'selected' : '' }}>{{ $option }}</option>
-                                                                                @endforeach
-                                                                            </select>
-                                                                        @elseif($field->type === 'checkbox')
+                                                                                                                        @if($field->type === 'title')
+                                                    <div class="alert alert-info mb-0" style="font-size: 0.9rem; padding: 8px 12px;">
+                                                        <i class="fas fa-heading"></i> {{ $field->value ?? (app()->getLocale() == 'ar' ? $field->name_ar : $field->name_en) }}
+                                                    </div>
+                                                @elseif($field->type === 'select' && is_array($field->options))
+                                                    <select name="custom_fields[{{ $group }}][{{ $idx }}][{{ $field->name }}]" class="form-control form-control-sm">
+                                                        <option value="" disabled selected>{{ $lang == 'ar' ? 'اختر' : 'Select' }}</option>
+                                                        @foreach($field->options as $option)
+                                                            <option value="{{ $option }}" {{ (isset($groupInstance[$field->name]) && $groupInstance[$field->name] == $option) ? 'selected' : '' }}>{{ $option }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                @elseif($field->type === 'checkbox')
                                                                             <div class="form-check m-0">
                                                                                 <input type="checkbox" name="custom_fields[{{ $group }}][{{ $idx }}][{{ $field->name }}]" value="1" class="form-check-input" {{ (isset($groupInstance[$field->name]) && $groupInstance[$field->name]) ? 'checked' : '' }}>
                                                                             </div>
@@ -406,7 +410,11 @@
                                                 </label>
                                             </div>
                                             <div style="flex:2;">
-                                                @if($field->type === 'select' && is_array($field->options))
+                                                @if($field->type === 'title')
+                                                    <div class="alert alert-info mb-0" style="font-size: 0.9rem; padding: 8px 12px;">
+                                                        <i class="fas fa-heading"></i> {{ $field->value ?? (app()->getLocale() == 'ar' ? $field->name_ar : $field->name_en) }}
+                                                    </div>
+                                                @elseif($field->type === 'select' && is_array($field->options))
                                                     <select name="custom_fields[{{ $field->name }}]" id="custom_fields_{{ $field->name }}" class="form-control">
                                                         <option value="" disabled selected>{{ $lang == 'ar' ? 'اختر' : 'Select' }}</option>
                                                         @foreach($field->options as $option)

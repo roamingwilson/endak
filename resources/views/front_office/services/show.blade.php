@@ -174,8 +174,12 @@
                                             <span style="font-weight:bold; color:#1976d2; min-width: 90px; display: flex; align-items: center;">
                                                 <i class="fas fa-tag me-1"></i> {{ app()->getLocale() == 'ar' ? $field->name_ar : $field->name_en }}
                                             </span>
-                                            <span style="flex:1; font-size:1.08em; color:#333;">
-                                                @if($field->type === 'image' || $field->type === 'images[]')
+                                                                            <span style="flex:1; font-size:1.08em; color:#333;">
+                                    @if($field->type === 'title')
+                                        <div class="alert alert-info mb-0" style="font-size: 0.9rem; padding: 8px 12px;">
+                                            <i class="fas fa-heading"></i> {{ $field->value ?? (app()->getLocale() == 'ar' ? $field->name_ar : $field->name_en) }}
+                                        </div>
+                                    @elseif($field->type === 'image' || $field->type === 'images[]')
                                                     @if(is_array($value))
                                                         @foreach($value as $img)
                                                             <img src="{{ asset('storage/' . (is_object($img) && isset($img->path) ? $img->path : $img)) }}" alt="صورة" style="max-width:80px; margin:3px; border-radius:6px;">
