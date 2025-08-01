@@ -146,8 +146,28 @@
 
             <a href="{{ route('home') }}"><i class="fas fa-home"></i> {{ $lang == 'ar' ? 'الرئيسية' : 'Home' }}</a>
             @auth
-                <a href="{{ route('notifications.index') }}"><i class="fas fa-bell"></i> {{ $lang == 'ar' ? 'الإشعارات' : 'Notifications' }}</a>
-                <a href="{{ route('web.send_message', auth()->id()) }}"><i class="fas fa-envelope"></i> {{ $lang == 'ar' ? 'الرسائل' : 'Messages' }}</a>
+                <a href="{{ route('notifications.index') }}" id="notificationsLink1" style="position: relative;">
+                    <i class="fas fa-bell"></i> {{ $lang == 'ar' ? 'الإشعارات' : 'Notifications' }}
+                    @php
+                        $unreadCount = auth()->user()->unreadNotifications()->count();
+                    @endphp
+                    @if($unreadCount > 0)
+                        <span id="notificationsBadge1" style="position: absolute; top: -8px; right: -8px; background: #dc3545; color: white; border-radius: 50%; width: 18px; height: 18px; font-size: 10px; display: flex; align-items: center; justify-content: center; font-weight: bold;">
+                            {{ $unreadCount > 99 ? '99+' : $unreadCount }}
+                        </span>
+                    @endif
+                </a>
+                <a href="{{ route('web.send_message', auth()->id()) }}" id="messagesLink1" style="position: relative;">
+                    <i class="fas fa-envelope"></i> {{ $lang == 'ar' ? 'الرسائل' : 'Messages' }}
+                    @php
+                        $unreadMessagesCount = \App\Models\Message::where('recipient_id', auth()->id())->whereNull('read_at')->count();
+                    @endphp
+                    @if($unreadMessagesCount > 0)
+                        <span id="messagesBadge1" style="position: absolute; top: -8px; right: -8px; background: #007bff; color: white; border-radius: 50%; width: 18px; height: 18px; font-size: 10px; display: flex; align-items: center; justify-content: center; font-weight: bold;">
+                            {{ $unreadMessagesCount > 99 ? '99+' : $unreadMessagesCount }}
+                        </span>
+                    @endif
+                </a>
                 @if($user->role_id == 1)
                     <a href="{{ route('services.index') }}"><i class="fas fa-clipboard-list"></i> {{ $lang == 'ar' ? 'طلباتي' : 'My Orders' }}</a>
                 @elseif($user->role_id == 3)
@@ -176,8 +196,28 @@
             <a href="{{ route('departments') }}"><i class="fas fa-th-large"></i> {{ $lang == 'ar' ? 'الأقسام' : 'Departments' }}</a>
         @endif
         @auth
-        <a href="{{ route('notifications.index') }}"><i class="fas fa-bell"></i> {{ $lang == 'ar' ? 'الإشعارات' : 'Notifications' }}</a>
-        <a href="{{ route('web.send_message', auth()->id()) }}"><i class="fas fa-envelope"></i> {{ $lang == 'ar' ? 'الرسائل' : 'Messages' }}</a>
+        <a href="{{ route('notifications.index') }}" id="notificationsLink2" style="position: relative;">
+            <i class="fas fa-bell"></i> {{ $lang == 'ar' ? 'الإشعارات' : 'Notifications' }}
+            @php
+                $unreadCount = auth()->user()->unreadNotifications()->count();
+            @endphp
+            @if($unreadCount > 0)
+                <span id="notificationsBadge2" style="position: absolute; top: -8px; right: -8px; background: #dc3545; color: white; border-radius: 50%; width: 18px; height: 18px; font-size: 10px; display: flex; align-items: center; justify-content: center; font-weight: bold;">
+                    {{ $unreadCount > 99 ? '99+' : $unreadCount }}
+                </span>
+            @endif
+        </a>
+        <a href="{{ route('web.send_message', auth()->id()) }}" id="messagesLink2" style="position: relative;">
+            <i class="fas fa-envelope"></i> {{ $lang == 'ar' ? 'الرسائل' : 'Messages' }}
+            @php
+                $unreadMessagesCount = \App\Models\Message::where('recipient_id', auth()->id())->whereNull('read_at')->count();
+            @endphp
+            @if($unreadMessagesCount > 0)
+                <span id="messagesBadge2" style="position: absolute; top: -8px; right: -8px; background: #007bff; color: white; border-radius: 50%; width: 18px; height: 18px; font-size: 10px; display: flex; align-items: center; justify-content: center; font-weight: bold;">
+                    {{ $unreadMessagesCount > 99 ? '99+' : $unreadMessagesCount }}
+                </span>
+            @endif
+        </a>
         @if($user->role_id == 1)
             <a href="{{ route('services.index') }}"><i class="fas fa-clipboard-list"></i> {{ $lang == 'ar' ? 'طلباتي' : 'My Orders' }}</a>
         @elseif($user->role_id == 3)
@@ -385,6 +425,101 @@
                 };
             }
         }
+    });
+
+        // تفعيل قراءة جميع الإشعارات عند الضغط على أيقونة الإشعارات
+    document.addEventListener('DOMContentLoaded', function() {
+        const notificationsLinks = document.querySelectorAll('a[href*="notifications"]');
+
+        notificationsLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+
+                // إرسال طلب AJAX لقراءة جميع الإشعارات
+                fetch("{{ route('notifications.markAllAsRead') }}", {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                        'Accept': 'application/json',
+                    },
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if(data.success){
+                        // إخفاء جميع badges
+                        const badges = document.querySelectorAll('[id^="notificationsBadge"]');
+                        badges.forEach(badge => {
+                            badge.style.display = 'none';
+                        });
+
+                        // الانتقال إلى صفحة الإشعارات
+                        window.location.href = this.href;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    // في حالة الخطأ، إخفاء الـ badges أيضاً
+                    const badges = document.querySelectorAll('[id^="messagesBadge"]');
+                    badges.forEach(badge => {
+                        badge.style.display = 'none';
+                        console.log('Hidden badge on error:', badge.id);
+                    });
+
+                    // طريقة بديلة لإخفاء جميع badges في حالة الخطأ
+                    const allBadges = document.querySelectorAll('span[style*="background: #007bff"]');
+                    allBadges.forEach(badge => {
+                        badge.style.display = 'none';
+                        console.log('Hidden blue badge on error');
+                    });
+
+                    // طريقة ثالثة لإخفاء جميع badges في حالة الخطأ
+                    const allSpans = document.querySelectorAll('span');
+                    allSpans.forEach(span => {
+                        if (span.style.backgroundColor === 'rgb(0, 123, 255)' || span.style.background === '#007bff') {
+                            span.style.display = 'none';
+                            console.log('Hidden span with blue background on error');
+                        }
+                    });
+
+                    // في حالة الخطأ، انتقل إلى الصفحة مباشرة
+                    console.log('Redirecting due to error');
+                    window.location.href = this.href;
+                });
+            });
+        });
+
+                // تفعيل قراءة جميع الرسائل عند الضغط على أيقونة الرسائل
+        const messagesLinks = document.querySelectorAll('a[href*="send_message"]');
+        messagesLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+
+                // أخفي جميع الـ badges فورًا
+                const badges = document.querySelectorAll('[id^="messagesBadge"]');
+                badges.forEach(badge => {
+                    badge.style.display = 'none';
+                });
+                // أخفي أي badge أزرق إضافي
+                const allBadges = document.querySelectorAll('span[style*="background: #007bff"]');
+                allBadges.forEach(badge => {
+                    badge.style.display = 'none';
+                });
+
+                // أرسل الطلب للسيرفر (اختياري)
+                fetch("{{ route('messages.markAllAsRead') }}", {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name=\'csrf-token\']').getAttribute('content'),
+                        'Accept': 'application/json',
+                    },
+                });
+
+                // انتقل للصفحة بعد 200ms
+                setTimeout(() => {
+                    window.location.href = this.href;
+                }, 200);
+            });
+        });
     });
 </script>
     @yield('script')

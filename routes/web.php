@@ -35,6 +35,7 @@ use App\Http\Controllers\GeneralOrderController;
 use App\Http\Controllers\GovernementsController;
 use App\Http\Controllers\IndustryController;
 use App\Http\Controllers\notificationController;
+use App\Http\Controllers\MessageController;
 use App\Http\Controllers\ProductCartController;
 use App\Http\Controllers\ProductOrderController;
 use App\Http\Controllers\ProductOrderitemsController;
@@ -76,6 +77,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/notification/{notificationId}/read', [NotificationController::class, 'markAsRead'])->name('notification.read');
     Route::get('/notifications', [notificationController::class, 'index'])->name('notifications.index');
     Route::post('/notifications/mark-all-as-read', [notificationController::class, 'markAllAsRead'])->name('notifications.markAllAsRead');
+
+    // مسار لتعليم جميع الرسائل كمقروءة
+    Route::post('/messages/mark-all-as-read', [MessageController::class, 'markAllAsRead'])->name('messages.markAllAsRead');
 });
 
 Route::get('/page/{slug}', [PageController::class, 'pageSingle'])->name('page');

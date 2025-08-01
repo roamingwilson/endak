@@ -16,6 +16,8 @@ class Kernel extends ConsoleKernel
 
         // حذف رموز OTP المنتهية الصلاحية كل ساعة
         $schedule->command('otp:cleanup')->hourly();
+        // حذف الإشعارات المقروءة بعد 48 ساعة
+        $schedule->command('notifications:cleanup-read')->hourly();
     }
 
     /**
