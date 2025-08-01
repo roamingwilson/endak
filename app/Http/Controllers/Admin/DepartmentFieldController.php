@@ -74,7 +74,7 @@ class DepartmentFieldController extends Controller
             'name' => 'nullable|string|max:255',
             'name_ar' => 'required|string|max:255',
             'name_en' => 'required|string|max:255',
-            'type' => 'required|in:text,number,select,checkbox,textarea,image,date,time',
+            'type' => 'required|in:text,number,select,checkbox,textarea,image,date,time,title',
             'options' => 'nullable', // مصفوفة أو نص
             'is_required' => 'nullable|boolean',
             'input_group' => 'nullable|string|max:255',

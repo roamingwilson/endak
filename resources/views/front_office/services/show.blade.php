@@ -176,7 +176,7 @@
                                             </span>
                                                                             <span style="flex:1; font-size:1.08em; color:#333;">
                                     @if($field->type === 'title')
-                                        <div class="alert alert-info mb-0" style="font-size: 0.9rem; padding: 8px 12px;">
+                                        <div class="text-dark" style="font-weight: bold; font-size: 1.3em;">
                                             <i class="fas fa-heading"></i> {{ $field->value ?? (app()->getLocale() == 'ar' ? $field->name_ar : $field->name_en) }}
                                         </div>
                                     @elseif($field->type === 'image' || $field->type === 'images[]')
@@ -223,13 +223,20 @@
                 <div class="card-body py-3">
                     <div class="row g-3 align-items-center">
                         @foreach($groupedFields[null] as $field)
-                            <div class="col-12 mb-2 d-flex align-items-center gap-2" style="background: #fff; border-radius: 8px; padding: 10px 12px; box-shadow: 0 1px 4px #e3e8ef;">
-                                <span style="font-weight:bold; color:#1976d2; min-width: 90px; display: flex; align-items: center;">
-                                    <i class="fas fa-tag me-1"></i> {{ app()->getLocale() == 'ar' ? $field->name_ar : $field->name_en }}
-                                </span>
-                                <span style="flex:1; font-size:1.08em; color:#333;">
-                                    @php $value = $service->custom_fields[$field->name] ?? null; @endphp
-                                    @if($field->type === 'image' || $field->type === 'images[]')
+                            @if($field->type === 'title')
+                                <div class="col-12 mb-3">
+                                    <h4 class="text-dark mb-0" style="font-weight: bold; font-size: 1.5rem; border-bottom: 2px solid #333; padding-bottom: 8px;">
+                                        <i class="fas fa-heading"></i> {{ $field->value ?? (app()->getLocale() == 'ar' ? $field->name_ar : $field->name_en) }}
+                                    </h4>
+                                </div>
+                            @else
+                                <div class="col-12 mb-2 d-flex align-items-center gap-2" style="background: #fff; border-radius: 8px; padding: 10px 12px; box-shadow: 0 1px 4px #e3e8ef;">
+                                    <span style="font-weight:bold; color:#1976d2; min-width: 90px; display: flex; align-items: center;">
+                                        <i class="fas fa-tag me-1"></i> {{ app()->getLocale() == 'ar' ? $field->name_ar : $field->name_en }}
+                                    </span>
+                                    <span style="flex:1; font-size:1.08em; color:#333;">
+                                        @php $value = $service->custom_fields[$field->name] ?? null; @endphp
+                                        @if($field->type === 'image' || $field->type === 'images[]')
                                         @if(is_array($value))
                                             @foreach($value as $img)
                                                 <img src="{{ asset('storage/' . (is_object($img) && isset($img->path) ? $img->path : $img)) }}" alt="صورة" style="max-width:80px; margin:3px; border-radius:6px;">
@@ -254,6 +261,7 @@
                                     @endif
                                 </span>
                             </div>
+                            @endif
                         @endforeach
                     </div>
                 </div>

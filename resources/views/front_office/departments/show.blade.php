@@ -248,25 +248,31 @@
                                                             <div class="row g-2 align-items-end">
                                                 @foreach($fields as $field)
                                                                     <div class="col-md-3 col-sm-6 mb-2">
-                                                                        <label for="custom_fields_{{ $group }}_{{ $idx }}_{{ $field->name }}" style="font-weight:500; color:#333; font-size:0.98rem; margin-bottom:4px; display:block;">
-                                                                            {{ app()->getLocale() == 'ar' ? $field->name_ar : $field->name_en }}
-                                                                        </label>
-                                                                                                                        @if($field->type === 'title')
-                                                    <div class="alert alert-info mb-0" style="font-size: 0.9rem; padding: 8px 12px;">
-                                                        <i class="fas fa-heading"></i> {{ $field->value ?? (app()->getLocale() == 'ar' ? $field->name_ar : $field->name_en) }}
-                                                    </div>
-                                                @elseif($field->type === 'select' && is_array($field->options))
+                                                                        @if($field->type === 'title')
+                                                                            <div class="col-12 mb-3">
+                                                                                <h4 class="text-dark mb-0" style="font-weight: bold; font-size: 1.5rem; border-bottom: 2px solid #333; padding-bottom: 8px;">
+                                                                                    <i class="fas fa-heading"></i> {{ $field->value ?? (app()->getLocale() == 'ar' ? $field->name_ar : $field->name_en) }}
+                                                                                </h4>
+                                                                            </div>
+                                                                        @else
+                                                                            <label for="custom_fields_{{ $group }}_{{ $idx }}_{{ $field->name }}" style="font-weight:500; color:#333; font-size:0.98rem; margin-bottom:4px; display:block;">
+                                                                                {{ app()->getLocale() == 'ar' ? $field->name_ar : $field->name_en }}
+                                                                            </label>
+                                                                        @endif
+                                                                        @if($field->type === 'select' && is_array($field->options))
                                                     <select name="custom_fields[{{ $group }}][{{ $idx }}][{{ $field->name }}]" class="form-control form-control-sm">
                                                         <option value="" disabled selected>{{ $lang == 'ar' ? 'اختر' : 'Select' }}</option>
                                                         @foreach($field->options as $option)
                                                             <option value="{{ $option }}" {{ (isset($groupInstance[$field->name]) && $groupInstance[$field->name] == $option) ? 'selected' : '' }}>{{ $option }}</option>
                                                         @endforeach
-                                                    </select>
-                                                @elseif($field->type === 'checkbox')
-                                                                            <div class="form-check m-0">
-                                                                                <input type="checkbox" name="custom_fields[{{ $group }}][{{ $idx }}][{{ $field->name }}]" value="1" class="form-check-input" {{ (isset($groupInstance[$field->name]) && $groupInstance[$field->name]) ? 'checked' : '' }}>
-                                                                            </div>
-                                                                        @elseif($field->type === 'image[]' || $field->type === 'image' || $field->name === 'image')
+                                                                                                        </select>
+                                                @endif
+                                                @if($field->type === 'checkbox')
+                                                    <div class="form-check m-0">
+                                                        <input type="checkbox" name="custom_fields[{{ $group }}][{{ $idx }}][{{ $field->name }}]" value="1" class="form-check-input" {{ (isset($groupInstance[$field->name]) && $groupInstance[$field->name]) ? 'checked' : '' }}>
+                                                    </div>
+                                                @endif
+                                                @if($field->type === 'image[]' || $field->type === 'image' || $field->name === 'image')
                                                                             <div class="dynamic-image-uploader mb-2" data-field="custom_fields_{{ $field->name }}">
                                                                                 <div class="text-center mb-2" style="color: #6c757d; font-size: 0.9em;">
                                                                                     <i class="fas fa-cloud-upload-alt"></i> اسحب الصور هنا أو اضغط لاختيار الملفات
@@ -274,13 +280,17 @@
                                                                                 <input type="file" name="custom_fields[{{ $field->name }}][]" id="custom_fields_{{ $field->name }}" accept="image/*" class="form-control image-input" multiple style="margin-bottom:8px;">
                                                                                 <div class="preview-image d-flex flex-wrap gap-2"></div>
                                                                             </div>
-                                                                        @elseif($field->type === 'date')
+                                                                        @endif
+                                                                        @if($field->type === 'date')
                                                                             <input type="date" name="custom_fields[{{ $group }}][{{ $idx }}][{{ $field->name }}]" class="form-control form-control-sm" value="{{ $groupInstance[$field->name] ?? '' }}">
-                                                                        @elseif($field->type === 'time')
+                                                                        @endif
+                                                                        @if($field->type === 'time')
                                                                             <input type="time" name="custom_fields[{{ $group }}][{{ $idx }}][{{ $field->name }}]" class="form-control form-control-sm" value="{{ $groupInstance[$field->name] ?? '' }}">
-                                                                        @elseif($field->type === 'textarea')
+                                                                        @endif
+                                                                        @if($field->type === 'textarea')
                                                                             <textarea name="custom_fields[{{ $group }}][{{ $idx }}][{{ $field->name }}]" class="form-control form-control-sm" rows="2">{{ $groupInstance[$field->name] ?? '' }}</textarea>
-                                                                        @else
+                                                                        @endif
+                                                                        @if($field->type !== 'title' && $field->type !== 'select' && $field->type !== 'checkbox' && $field->type !== 'image[]' && $field->type !== 'image' && $field->name !== 'image' && $field->type !== 'date' && $field->type !== 'time' && $field->type !== 'textarea')
                                                                             <input type="{{ $field->type }}" name="custom_fields[{{ $group }}][{{ $idx }}][{{ $field->name }}]" class="form-control form-control-sm" value="{{ $groupInstance[$field->name] ?? '' }}">
                                                                         @endif
                                                     </div>
@@ -394,37 +404,42 @@
                                     </div>  --}}
 
                                     @foreach($department->fields->where('input_group', null) as $field)
-                                        <div class="field-card">
-                                            <div class="field-label">
-                                                <i class="fas fa-{{
-                                                    $field->type === 'text' ? 'font' :
-                                                    ($field->type === 'number' ? 'hashtag' :
-                                                    ($field->type === 'select' ? 'list' :
-                                                    ($field->type === 'checkbox' ? 'check-square' :
-                                                    ($field->type === 'image' ? 'image' :
-                                                    ($field->type === 'date' ? 'calendar-alt' :
-                                                    ($field->type === 'time' ? 'clock' :
-                                                    ($field->type === 'textarea' ? 'align-left' : 'edit'))))))) }}"></i>
-                                                <label for="custom_fields_{{ $field->name }}" style="margin-bottom:0; font-weight:bold;">
-                                                    {{ $lang == 'ar' ? $field->name_ar : $field->name_en }}
-                                                </label>
+                                        @if($field->type === 'title')
+                                            <div class="col-12 mb-3">
+                                                <h4 class="text-dark mb-0" style="font-weight: bold; font-size: 1.5rem; border-bottom: 2px solid #333; padding-bottom: 8px;">
+                                                     {{ $field->value ?? (app()->getLocale() == 'ar' ? $field->name_ar : $field->name_en) }}
+                                                </h4>
                                             </div>
-                                            <div style="flex:2;">
-                                                @if($field->type === 'title')
-                                                    <div class="alert alert-info mb-0" style="font-size: 0.9rem; padding: 8px 12px;">
-                                                        <i class="fas fa-heading"></i> {{ $field->value ?? (app()->getLocale() == 'ar' ? $field->name_ar : $field->name_en) }}
-                                                    </div>
-                                                @elseif($field->type === 'select' && is_array($field->options))
+                                        @else
+                                            <div class="field-card">
+                                                <div class="field-label">
+                                                    <i class="fas fa-{{
+                                                        $field->type === 'text' ? 'font' :
+                                                        ($field->type === 'number' ? 'hashtag' :
+                                                        ($field->type === 'select' ? 'list' :
+                                                        ($field->type === 'checkbox' ? 'check-square' :
+                                                        ($field->type === 'image' ? 'image' :
+                                                        ($field->type === 'date' ? 'calendar-alt' :
+                                                        ($field->type === 'time' ? 'clock' :
+                                                        ($field->type === 'textarea' ? 'align-left' : 'edit'))))))) }}"></i>
+                                                    <label for="custom_fields_{{ $field->name }}" style="margin-bottom:0; font-weight:bold;">
+                                                        {{ $lang == 'ar' ? $field->name_ar : $field->name_en }}
+                                                    </label>
+                                                </div>
+                                                <div style="flex:2;">
+                                                @if($field->type === 'select' && is_array($field->options))
                                                     <select name="custom_fields[{{ $field->name }}]" id="custom_fields_{{ $field->name }}" class="form-control">
                                                         <option value="" disabled selected>{{ $lang == 'ar' ? 'اختر' : 'Select' }}</option>
                                                         @foreach($field->options as $option)
                                                             <option value="{{ $option }}" {{ old('custom_fields.' . $field->name) == $option ? 'selected' : '' }}>{{ $option }}</option>
                                                         @endforeach
                                                     </select>
-                                                @elseif($field->type === 'checkbox')
+                                                @endif
+                                                @if($field->type === 'checkbox')
                                                     <input type="hidden" name="custom_fields[{{ $field->name }}]" value="0">
                                                     <input type="checkbox" name="custom_fields[{{ $field->name }}]" id="custom_fields_{{ $field->name }}" value="1" class="form-check-input" {{ old('custom_fields.' . $field->name) ? 'checked' : '' }}>
-                                                @elseif($field->type === 'images[]' || $field->type === 'images' || $field->name === 'images')
+                                                @endif
+                                                @if($field->type === 'images[]' || $field->type === 'images' || $field->name === 'images')
                                                     <div class="dynamic-images-uploader mb-2" data-field="custom_fields_{{ $field->name }}">
                                                         <div class="text-center mb-2" style="color: #6c757d; font-size: 0.9em;">
                                                             <i class="fas fa-cloud-upload-alt"></i> اسحب الصور هنا أو اضغط لاختيار الملفات
@@ -432,17 +447,22 @@
                                                         <input type="file" name="custom_fields[{{ $field->name }}][]" id="custom_fields_{{ $field->name }}" accept="image/*" class="form-control image-input" multiple style="margin-bottom:8px;">
                                                         <div class="preview-images d-flex flex-wrap gap-2"></div>
                                                     </div>
-                                                @elseif($field->type === 'date')
+                                                @endif
+                                                @if($field->type === 'date')
                                                     <input type="date" name="custom_fields[{{ $field->name }}]" id="custom_fields_{{ $field->name }}" class="form-control" value="{{ old('custom_fields.' . $field->name) }}">
-                                                @elseif($field->type === 'time')
+                                                @endif
+                                                @if($field->type === 'time')
                                                     <input type="time" name="custom_fields[{{ $field->name }}]" id="custom_fields_{{ $field->name }}" class="form-control" value="{{ old('custom_fields.' . $field->name) }}">
-                                                @elseif($field->type === 'textarea')
+                                                @endif
+                                                @if($field->type === 'textarea')
                                                     <textarea name="custom_fields[{{ $field->name }}]" id="custom_fields_{{ $field->name }}" class="form-control">{{ old('custom_fields.' . $field->name) }}</textarea>
-                                                @else
+                                                @endif
+                                                @if($field->type !== 'title' && $field->type !== 'select' && $field->type !== 'checkbox' && $field->type !== 'images[]' && $field->type !== 'images' && $field->name !== 'images' && $field->type !== 'date' && $field->type !== 'time' && $field->type !== 'textarea')
                                                     <input type="{{ $field->type }}" name="custom_fields[{{ $field->name }}]" id="custom_fields_{{ $field->name }}" class="form-control" value="{{ old('custom_fields.' . $field->name) }}">
                                                 @endif
                                             </div>
                                         </div>
+                                        @endif
                                     @endforeach
                                     <!-- Note Section -->
                                     <div class="field-card">
