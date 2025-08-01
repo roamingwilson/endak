@@ -40,38 +40,44 @@ class ProfileController extends Controller
         return view('front_office.user.all_user', compact('users'));
     }
     public function updateProfile(Request $request)
-                {    $user = auth()->user();
-                $data = $request->except('image');
+    {
+        $user = auth()->user();
+        $data = $request->except('image');
 
-                if ($request->hasFile('image')) {
-                    $new_image = uploadImage($request, "users", "image");
-                    if ($new_image) {
-                        $data['image'] = $new_image;
-                    }
-                }
+        // التحقق من عدد الأقسام المختارة (حد أقصى 3)
+        if ($request->departments && count($request->departments) > 3) {
+            return redirect()->back()->with('error', 'يمكنك اختيار 3 أقسام فقط');
+        }
 
-              $user_update =  User::where('id', $user->id)->first();
+        if ($request->hasFile('image')) {
+            $new_image = uploadImage($request, "users", "image");
+            if ($new_image) {
+                $data['image'] = $new_image;
+            }
+        }
+
+        $user_update = User::where('id', $user->id)->first();
         $user_update->update($data);
 
-    if ($request->departments) {
-        UserDepartment::where('user_id', $user->id)->delete();
-        foreach ($request->departments as $item) {
-            [$type, $id] = explode('-', $item);
-            $commentable_type = $type === 'main'
-                ? \App\Models\Department::class
-                : \App\Models\SubDepartment::class;
+        if ($request->departments) {
+            UserDepartment::where('user_id', $user->id)->delete();
+            foreach ($request->departments as $item) {
+                [$type, $id] = explode('-', $item);
+                $commentable_type = $type === 'main'
+                    ? \App\Models\Department::class
+                    : \App\Models\SubDepartment::class;
 
-            $main_department = new UserDepartment([
-                'user_id'         => $user->id,
-                'commentable_id'  => $id,
-                'commentable_type'=> $commentable_type,
-            ]);
-            $main_department->save();
+                $main_department = new UserDepartment([
+                    'user_id'         => $user->id,
+                    'commentable_id'  => $id,
+                    'commentable_type'=> $commentable_type,
+                ]);
+                $main_department->save();
+            }
         }
-    }
 
-    return redirect()->route('web.profile', auth()->id())->with('success', 'تم التحديث بنجاح');
-}
+        return redirect()->route('web.profile', auth()->id())->with('success', 'تم التحديث بنجاح');
+    }
 public function user_note(){
         return view('front_office.profile.userNote');
 }

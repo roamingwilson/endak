@@ -170,7 +170,11 @@
     @php  $lang = config('app.locale'); @endphp
     <nav class="bottom-nav">
 
-        <a href="{{ route('home') }}"><i class="fas fa-home"></i> {{ $lang == 'ar' ? 'الرئيسية' : 'Home' }}</a>
+               @if(auth()->check() && auth()->user()->role_id == 3)
+            <a href="{{ route('all_services') }}"><i class="fas fa-home"></i> {{ $lang == 'ar' ? 'الخدمات المطلوبة' : 'All Services' }}</a>
+        @else
+            <a href="{{ route('departments') }}"><i class="fas fa-th-large"></i> {{ $lang == 'ar' ? 'الأقسام' : 'Departments' }}</a>
+        @endif
         @auth
         <a href="{{ route('notifications.index') }}"><i class="fas fa-bell"></i> {{ $lang == 'ar' ? 'الإشعارات' : 'Notifications' }}</a>
         <a href="{{ route('web.send_message', auth()->id()) }}"><i class="fas fa-envelope"></i> {{ $lang == 'ar' ? 'الرسائل' : 'Messages' }}</a>
@@ -183,6 +187,7 @@
         <a href="{{ route('orders.index') }}"><i class="fas fa-clipboard-list"></i> {{ $lang == 'ar' ? 'طلباتي' : 'My Orders' }}</a>
             <a href="{{ route('pro_cart.index') }}"><i class="fas fa-shopping-cart"></i> {{ $lang == 'ar' ? 'السلة' : 'Cart' }}</a>
         @endif
+        <a href="{{ route('web.profile.edit', auth()->id()) }}"><i class="fas fa-cog"></i> {{ $lang == 'ar' ? 'الإعدادات' : 'Settings' }}</a>
         @endauth
 
         {{-- <a href="#"><i class="fas fa-plus-circle"></i> نشر منتج</a> --}}

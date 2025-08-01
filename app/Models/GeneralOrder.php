@@ -13,13 +13,19 @@ class GeneralOrder extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class, 'service_provider_id');
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     // العميل
     public function customer()
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    // مقدم الخدمة
+    public function service_provider()
+    {
+        return $this->belongsTo(User::class, 'service_provider_id');
     }
     public function service()
     {

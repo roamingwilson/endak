@@ -89,8 +89,12 @@ class User extends Authenticatable
 
     public function orders()
     {
-        return $this->hasMany(Order::class, 'service_provider_id', 'id');
-            // ->orWhere('teacher_id', $this->id);
+        return $this->hasMany(GeneralOrder::class, 'service_provider_id', 'id');
+    }
+
+    public function services()
+    {
+        return $this->hasMany(Services::class, 'provider_id', 'id');
     }
     public function myorders()
     {

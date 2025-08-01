@@ -436,6 +436,16 @@
                                             </div>
                                         </div>
                                     @endforeach
+                                    <!-- Note Section -->
+                                    <div class="field-card">
+                                        <div class="field-label">
+                                            <i class="fas fa-sticky-note"></i> {{ $lang == 'ar' ? 'ملاحظات إضافية' : 'Additional Notes' }}
+                                        </div>
+                                        <div style="flex:2;">
+                                            <textarea name="notes" id="note" class="form-control" rows="4" placeholder="{{ $lang == 'ar' ? 'أضف أي ملاحظات إضافية هنا...' : 'Add any additional notes here...' }}">{{ old('note') }}</textarea>
+                                        </div>
+                                    </div>
+
                                     <!-- Voice Note Section -->
                                     <div class="field-card">
                                         <div class="field-label">

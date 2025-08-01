@@ -122,11 +122,39 @@ Route::group(['prefix' => 'departments'], function () {
     Route::put('/fields/{field}', [\App\Http\Controllers\Admin\DepartmentFieldController::class, 'update'])->name('admin.departments.fields.update');
     Route::delete('/fields/{field}', [\App\Http\Controllers\Admin\DepartmentFieldController::class, 'destroy'])->name('admin.departments.fields.destroy');
 });
+
+// Sub Departments
+Route::group(['prefix' => 'sub_departments'], function () {
+    Route::get('/', [\App\Http\Controllers\Admin\SubDepartmentController::class, 'index'])->name('admin.sub_departments.index');
+    Route::get('/create', [\App\Http\Controllers\Admin\SubDepartmentController::class, 'create'])->name('admin.sub_departments.create');
+    Route::post('/store', [\App\Http\Controllers\Admin\SubDepartmentController::class, 'store'])->name('admin.sub_departments.store');
+    Route::get('/edit/{id}', [\App\Http\Controllers\Admin\SubDepartmentController::class, 'edit'])->name('admin.sub_departments.edit');
+    Route::put('/update/{id}', [\App\Http\Controllers\Admin\SubDepartmentController::class, 'update'])->name('admin.sub_departments.update');
+    Route::delete('/destroy/{id}', [\App\Http\Controllers\Admin\SubDepartmentController::class, 'destroy'])->name('admin.sub_departments.destroy');
+    Route::get('/{id}/duplicate', [\App\Http\Controllers\Admin\SubDepartmentController::class, 'duplicate'])->name('admin.sub_departments.duplicate');
+    Route::post('/{id}/duplicate', [\App\Http\Controllers\Admin\SubDepartmentController::class, 'duplicateStore'])->name('admin.sub_departments.duplicate.store');
+});
 Route::group(['prefix' => 'orders'], function () {
 
     Route::get('/', [OrderController::class, 'index'])->name('admin.orders');
     // Route::get('/show/{id}' , [OrderController::class , 'show'])->name('admin.orders.show');
     Route::get('/delete/{id}', [OrderController::class, 'destroy'])->name('admin.orders.delete');
+});
+
+// Service Management
+Route::group(['prefix' => 'service-management'], function () {
+    Route::get('/dashboard', [\App\Http\Controllers\Admin\ServiceManagementController::class, 'dashboard'])->name('admin.service_management.dashboard');
+    Route::get('/services', [\App\Http\Controllers\Admin\ServiceManagementController::class, 'services'])->name('admin.service_management.services');
+    Route::get('/services/{id}', [\App\Http\Controllers\Admin\ServiceManagementController::class, 'showService'])->name('admin.service_management.show_service');
+    Route::put('/services/{id}/status', [\App\Http\Controllers\Admin\ServiceManagementController::class, 'updateServiceStatus'])->name('admin.service_management.update_service_status');
+    Route::delete('/services/{id}', [\App\Http\Controllers\Admin\ServiceManagementController::class, 'deleteService'])->name('admin.service_management.delete_service');
+    Route::get('/orders', [\App\Http\Controllers\Admin\ServiceManagementController::class, 'orders'])->name('admin.service_management.orders');
+    Route::get('/orders/{id}', [\App\Http\Controllers\Admin\ServiceManagementController::class, 'showOrder'])->name('admin.service_management.show_order');
+    Route::put('/orders/{id}/status', [\App\Http\Controllers\Admin\ServiceManagementController::class, 'updateOrderStatus'])->name('admin.service_management.update_order_status');
+    Route::get('/orders/{id}/offers', [\App\Http\Controllers\Admin\ServiceManagementController::class, 'getOrderOffers'])->name('admin.service_management.get_order_offers');
+    Route::get('/statistics', [\App\Http\Controllers\Admin\ServiceManagementController::class, 'statistics'])->name('admin.service_management.statistics');
+    Route::get('/providers', [\App\Http\Controllers\Admin\ServiceManagementController::class, 'providers'])->name('admin.service_management.providers');
+    Route::get('/providers/{id}', [\App\Http\Controllers\Admin\ServiceManagementController::class, 'showProvider'])->name('admin.service_management.show_provider');
 });
 
 // Posts

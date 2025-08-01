@@ -15,6 +15,6 @@ class Governements extends Model
     ];
 
     public function country(){
-        $this->belongsTo(Country::class);
+        return $this->belongsTo(Country::class);
     }
 }

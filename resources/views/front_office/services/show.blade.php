@@ -49,13 +49,9 @@
             </ul>
         </div>
     @endif  --}}
-    <h2>تفاصيل الخدمة</h2>
     <div class="card p-4">
         {{-- بيانات الخدمة الأساسية --}}
         <div class="mb-4">
-            <h4 class="text-center mb-3" style="color:#1976d2; font-weight:bold;">
-                <i class="fas fa-info-circle"></i> {{ app()->getLocale() == 'ar' ? 'بيانات الخدمة الأساسية' : 'Basic Service Information' }}
-            </h4>
             <div class="row g-3">
                 @if($service->department)
                     <div class="col-md-6">
@@ -107,8 +103,9 @@
         {{--  <h4>الحقول المخصصة</h4>  --}}
         @if($groupedFields->count())
             <div class="mb-4">
-                <h4 class="text-center mb-3" style="color:#1976d2; font-weight:bold;"><i class="fas fa-object-group"></i> {{ app()->getLocale() == 'ar' ? 'الخدمات المطلوبة' : 'Ordered Services' }}</h4>
-            </div>
+                <h4 class="text-center mb-3" style="color:#1976d2; font-weight:bold;">
+                    {{ app()->getLocale() == 'ar' ? 'الخدمات المطلوبة' : 'Requested Services' }}
+                </h4>
             @foreach($groupedFields as $group => $fields)
                 @php
                     $repeatable = $fields->first()->is_repeatable ?? false;
@@ -117,9 +114,7 @@
                 @if($group)
                     <div class="card mb-4 shadow-sm border-0" style="background: #f8fafc;">
                         <div class="card-header bg-info text-white text-center" style="font-size:1.1rem; font-weight:bold; border-radius: 8px 8px 0 0;">
-                            <i class="fas fa-layer-group"></i>
                             {{ $group }}
-
                         </div>
                         <div class="card-body py-3">
                             @if($repeatable && is_array($groupValues) && count($groupValues))
@@ -217,11 +212,9 @@
         {{-- الحقول العادية (غير مجمعة) --}}
         @if($groupedFields->has(null))
             <div class="mb-4">
-                <h4 class="text-center mb-3" style="color:#28a745; font-weight:bold;"><i class="fas fa-list"></i> {{ app()->getLocale() == 'ar' ? 'الحقول الإضافية' : 'Additional Fields' }}</h4>
-            </div>
             <div class="card mb-4 shadow-sm border-0" style="background: #f8fafc;">
                 <div class="card-header bg-secondary text-white text-center" style="font-size:1.1rem; font-weight:bold; border-radius: 8px 8px 0 0;">
-                    <i class="fas fa-list"></i>
+                    {{ app()->getLocale() == 'ar' ? 'معلومات إضافية' : 'Additional Info' }}
                 </div>
                 <div class="card-body py-3">
                     <div class="row g-3 align-items-center">
@@ -263,6 +256,19 @@
             </div>
         @endif
 
+        @if($service->notes)
+            <div class="mb-3">
+                <div class="d-flex align-items-center gap-2" style="background: #fff; border-radius: 8px; padding: 12px; box-shadow: 0 1px 4px #e3e8ef;">
+                    <span style="font-weight:bold; color:#28a745; min-width: 100px;">
+                        <i class="fas fa-sticky-note me-1"></i> {{ app()->getLocale() == 'ar' ? 'ملاحظات' : 'Notes' }}
+                    </span>
+                    <span style="flex:1; font-size:1.08em; color:#333; white-space: pre-line;">
+                        {{ $service->notes }}
+                    </span>
+                </div>
+            </div>
+        @endif
+
         @if($service->notes_voice)
             <div class="mb-3">
                 <label><i class="fas fa-microphone"></i> {{ __('ملاحظة صوتية') }}</label>
@@ -283,10 +289,10 @@
         <div class="row justify-content-center">
             <div class="col-xl-8">
                 <div class="card mb-4">
-                    <div class="card-body pb-0 align-items-center" style="height: 100%;">
-                        <h5 class="mb-4 text-center">
-                            <i class="fas fa-gavel"></i> {{ $lang == 'ar' ? 'العروض المقدمة' : 'Offers' }}
-                        </h5>
+                                    <div class="card-body pb-0 align-items-center" style="height: 100%;">
+                    <h5 class="mb-4 text-center">
+                        <i class="fas fa-gavel"></i> {{ $lang == 'ar' ? 'العروض' : 'Offers' }}
+                    </h5>
                         <div class="mb-4">
                             <div class="container">
                                 @forelse ($service->comments as $comment)
@@ -383,8 +389,7 @@
             <div class="card shadow-lg" style="max-width: 420px; width:100%; border-radius: 18px;">
                 <div class="card-body p-4">
                     <div class="text-center mb-3">
-                        <span style="font-size:2.5rem; color:#1976d2;"><i class="fas fa-hand-holding-usd"></i></span>
-                        <h4 class="mt-2 mb-3" style="font-weight:bold; color:#1976d2;">{{ $lang == 'ar' ? 'إضافة عرض جديد' : 'Add Offer' }}</h4>
+                        <h4 class="mt-2 mb-3" style="font-weight:bold; color:#1976d2;">{{ $lang == 'ar' ? 'إضافة عرض' : 'Add Offer' }}</h4>
                     </div>
                             <form class="form-horizontal m-t-20" action="{{ route('general_comments.store') }}" method="POST" enctype="multipart/form-data">
                                 @csrf

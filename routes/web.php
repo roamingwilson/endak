@@ -549,13 +549,22 @@ Route::get('/accept_project/{id}', function ($id) {
 route::get('show/myservices/{id}', [ServiceController::class, 'show_services'])->name('show_myservice')->where('id', '[0-9]+');
 // route::get('sub_show/myservices/{id}', [ServiceController::class,'sub_show'])->name('service_sub_show');
 
+// Countries Routes
+route::get('countries/dashboard', [CountryController::class, 'dashboard'])->name('countries.dashboard');
+route::get('countries', [CountryController::class, 'index'])->name('countries.index');
 route::get('add/country', [CountryController::class, 'create'])->name('add_country');
 route::post('country', [CountryController::class, 'store'])->name('store_country');
+route::get('countries/{id}/edit', [CountryController::class, 'edit'])->name('countries.edit');
+route::put('countries/{id}', [CountryController::class, 'update'])->name('countries.update');
+route::delete('countries/{id}', [CountryController::class, 'destroy'])->name('countries.destroy');
 
-
-
+// Governorates Routes
+route::get('governorates', [GovernementsController::class, 'index'])->name('governorates.index');
 route::get('add/gover', [GovernementsController::class, 'create'])->name('add_gover');
 route::post('gover', [GovernementsController::class, 'store'])->name('store_gover');
+route::get('governorates/{id}/edit', [GovernementsController::class, 'edit'])->name('governorates.edit');
+route::put('governorates/{id}', [GovernementsController::class, 'update'])->name('governorates.update');
+route::delete('governorates/{id}', [GovernementsController::class, 'destroy'])->name('governorates.destroy');
 route::get('get/governorates', [GovernementsController::class, 'getGovernorates'])->name('get.governorates');
 
 Route::get('/products', [IndustryController::class, 'index'])->name('indsustry.index');
@@ -601,11 +610,7 @@ Route::get('/services/{id}/sub-department/{subDepartmentId}', [App\Http\Controll
 Route::get('/all-service-requests', [App\Http\Controllers\OrderUserController::class, 'allServiceRequests'])->name('services.requests.all');
 Route::get('/all-services', [\App\Http\Controllers\ServiceController::class, 'allServices'])->name('all_services');
 
-Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
-    Route::resource('sub_departments', App\Http\Controllers\Admin\SubDepartmentController::class);
-    Route::get('sub_departments/{id}/duplicate', [App\Http\Controllers\Admin\SubDepartmentController::class, 'duplicate'])->name('sub_departments.duplicate');
-    Route::post('sub_departments/{id}/duplicate', [App\Http\Controllers\Admin\SubDepartmentController::class, 'duplicateStore'])->name('sub_departments.duplicate.store');
-});
+
 
 Route::get('/services', [App\Http\Controllers\ServiceController::class, 'index'])->name('services.index');
 Route::get('/services/create', [App\Http\Controllers\ServiceController::class, 'create'])->name('services.create');

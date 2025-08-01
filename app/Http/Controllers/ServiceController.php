@@ -209,7 +209,9 @@ class ServiceController extends Controller
                                     $instanceData[$fname] = [];
                                 }
                             } elseif ($groupField->type === 'checkbox') {
-                                $instanceData[$fname] = isset($instance[$fname]) ? 1 : 0;
+                                // Debug: طباعة القيمة المستلمة
+                                \Illuminate\Support\Facades\Log::info("Checkbox value for $fname: " . json_encode($instance[$fname] ?? 'not set'));
+                                $instanceData[$fname] = isset($instance[$fname]) && $instance[$fname] == '1' ? 1 : 0;
                             } else {
                                 $instanceData[$fname] = $instance[$fname] ?? null;
                             }

@@ -104,6 +104,32 @@ class DepartmentFieldController extends Controller
             throw $e;
         }
 
+        // إنشاء field key تلقائياً من الاسم الإنجليزي إذا لم يتم توفيره (للحقول الجديدة فقط)
+        if (empty($data['name']) && !empty($data['name_en'])) {
+            $data['name'] = $this->generateFieldKey($data['name_en']);
+        }
+
+        // التحقق من عدم تكرار field key في نفس القسم
+        $existingField = DepartmentField::where('department_id', $request->input('department_id'))
+            ->where('name', $data['name'])
+            ->when($request->route('field'), function($query, $field) {
+                return $query->where('id', '!=', $field->id);
+            })
+            ->first();
+
+        if ($existingField) {
+            throw \Illuminate\Validation\ValidationException::withMessages([
+                'name' => 'Field key already exists in this department.'
+            ]);
+        }
+
+        // التحقق من صحة field key (يجب أن يحتوي على أحرف وأرقام فقط مع underscore)
+        if (!empty($data['name']) && !preg_match('/^[a-z0-9_]+$/', $data['name'])) {
+            throw \Illuminate\Validation\ValidationException::withMessages([
+                'name' => 'Field key must contain only lowercase letters, numbers, and underscores.'
+            ]);
+        }
+
         // معالجة خاصة لحقل الصورة
         if ($fieldType === 'image' && $request->hasFile('value')) {
             $data['value'] = $request->file('value')->store('field_images', 'public');
@@ -112,5 +138,27 @@ class DepartmentFieldController extends Controller
         $data['is_required'] = $request->has('is_required');
         $data['is_repeatable'] = $request->has('is_repeatable');
         return $data;
+    }
+
+    /**
+     * إنشاء field key من الاسم الإنجليزي
+     */
+    private function generateFieldKey($englishName)
+    {
+        return strtolower(
+            preg_replace(
+                '/[^a-zA-Z0-9\s]/',
+                '',
+                str_replace(' ', '_', trim($englishName))
+            )
+        );
+    }
+
+    /**
+     * التحقق من صحة field key
+     */
+    private function validateFieldKey($fieldKey)
+    {
+        return preg_match('/^[a-z0-9_]+$/', $fieldKey);
     }
 }

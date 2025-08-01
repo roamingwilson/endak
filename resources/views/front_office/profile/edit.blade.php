@@ -168,6 +168,15 @@
             })
         </script>
     @endif
+    @if (Session::has('error'))
+        <script>
+            swal("Message", "{{ Session::get('error') }}", 'error', {
+                button: true,
+                button: "Ok",
+                timer: 3000,
+            })
+        </script>
+    @endif
     @if (Session::has('info'))
         <script>
             swal("Message", "{{ Session::get('info') }}", 'info', {
@@ -189,17 +198,38 @@
     <script>
         $(".main_departments").select2({
             topics: true,
-            tokenSeparators: [',', ' ']
+            tokenSeparators: [',', ' '],
+            maximumSelectionLength: 3,
+            language: {
+                maximumSelected: function (e) {
+                    return '{{ $lang == "ar" ? "يمكنك اختيار 3 أقسام فقط" : "You can select up to 3 departments only" }}';
+                }
+            }
         });
-        // منع اختيار أكثر من 3 أقسام
+
+        // تحسين التقييد لمنع اختيار أكثر من 3 أقسام
         document.addEventListener('DOMContentLoaded', function() {
             const select = document.querySelector('.main_departments');
-            select.addEventListener('change', function() {
-                if (select.selectedOptions.length > 3) {
-                    select.options[select.selectedIndex].selected = false;
-                    alert('يمكنك اختيار 3 أقسام فقط');
+
+            // التحقق من عدد الأقسام المختارة عند التحميل
+            function checkSelectionLimit() {
+                const selectedOptions = select.selectedOptions;
+                if (selectedOptions.length > 3) {
+                    // إزالة الخيارات الزائدة
+                    for (let i = 3; i < selectedOptions.length; i++) {
+                        selectedOptions[i].selected = false;
+                    }
+                    alert('{{ $lang == "ar" ? "يمكنك اختيار 3 أقسام فقط" : "You can select up to 3 departments only" }}');
                 }
+            }
+
+            // التحقق عند تغيير الاختيار
+            select.addEventListener('change', function() {
+                checkSelectionLimit();
             });
+
+            // التحقق الأولي
+            checkSelectionLimit();
         });
     </script>
 @endsection

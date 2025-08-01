@@ -197,9 +197,9 @@
                     <span class="ml-2 px-2 py-1 rounded-full bg-green-100 text-green-700 text-xs font-semibold">{{ $lang == 'ar' ? 'مفعل' : 'Active' }}</span>
                 @elseif($user->status == 'disactive')
                     <span class="ml-2 px-2 py-1 rounded-full bg-red-100 text-red-700 text-xs font-semibold">{{ $lang == 'ar' ? 'غير مفعل' : 'Disactive' }}</span>
-                    @if(auth()->id() == $user->id)
+                    {{--  @if(auth()->id() == $user->id)
                         <a href="{{ route('activate_phone') }}" class="ml-2 px-2 py-1 rounded bg-yellow-400 text-white text-xs font-semibold hover:bg-yellow-500 transition">{{ $lang == 'ar' ? 'تفعيل الحساب' : 'Activate Now' }}</a>
-                    @endif
+                    @endif  --}}
                 @elseif($user->status == 'banned')
                     <span class="ml-2 px-2 py-1 rounded-full bg-gray-300 text-gray-700 text-xs font-semibold">{{ $lang == 'ar' ? 'محظور' : 'Banned' }}</span>
                 @endif

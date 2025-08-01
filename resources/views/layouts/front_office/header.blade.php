@@ -337,6 +337,11 @@
                         <a href="{{ route('services.requests.all') }}" class="nav-link"><i class="fas fa-list-alt me-2"></i>{{ $lang == 'ar' ? 'كل الخدمات المطلوبة' : 'All Service Requests' }}</a>
                     </li>
                 @endif
+                @if(auth()->check())
+                    <li class="nav-item mb-1">
+                        <a href="{{ route('web.profile.edit', auth()->id()) }}" class="nav-link"><i class="fas fa-cog me-2"></i>{{ $lang == 'ar' ? 'الإعدادات' : 'Settings' }}</a>
+                    </li>
+                @endif
                 <li><hr class="dropdown-divider"></li>
                 <!-- صفحات الموقع -->
                 <li class="nav-item dropdown">
