@@ -15,7 +15,7 @@
                     </button>
 
                     <!-- Logo -->
-                    <a href="{{ route('home') }}" class="navbar-brand">
+                    <a href="{{ route('departments') }}" class="navbar-brand">
                         {{--  <img src="{{ asset('images/logo2.jpg') }}" alt="Logo" height="40px">  --}}
                     </a>
             </div>
@@ -24,7 +24,7 @@
                 <nav class="d-none d-lg-flex mx-auto">
                     <ul class="nav">
                         <li class="nav-item mx-2">
-                            <a href="{{ route('home') }}" class="nav-link fw-medium">{{ __('general.home') }}</a>
+                            <a href="{{ route('departments') }}" class="nav-link fw-medium">{{ __('general.home') }}</a>
                         </li>
                         @if(!auth()->check() || (auth()->check() && auth()->user()->role_id == 3))
                         <li class="nav-item mx-2">
@@ -32,9 +32,7 @@
                         </li>
                         @endif
 
-                        <li class="nav-item mx-2">
-                            <a href="{{ route('departments') }}" class="nav-link fw-medium">{{ __('department.departments') }}</a>
-                        </li>
+
                         <li class="nav-item mx-2">
                             <a href="{{ route('indsproducts.index') }}" class="nav-link fw-medium">
                                 {{ $lang == 'ar' ? 'متجر البلاستيك' : 'Plastic Store' }}
@@ -112,71 +110,20 @@
                 <div class="d-flex align-items-center gap-3">
                     <!-- Contact -->
                     <div class="d-none d-md-flex align-items-center me-2">
-                        <a href="tel:{{ $settings->phone ?? '01150099801' }}" class="text-decoration-none">
+                        <a href="https://wa.me/966568401348" target="_blank" class="text-decoration-none">
                             <div class="d-flex align-items-center">
-                                <span class="avatar bg-primary bg-opacity-10 text-primary rounded-circle p-2 me-2">
-                                    <i class="bi bi-telephone"></i>
+                                <span class="avatar bg-success bg-opacity-10 text-success rounded-circle p-2 me-2">
+                                    <i class="bi bi-whatsapp"></i>
                                 </span>
                                 <div>
                                     <div class="small text-muted">{{ __('general.call_to_us') }}</div>
-                                    <div class="fw-medium">{{ $settings->phone ?? '01150099801' }}</div>
+                                    <div class="fw-medium">+966568401348</div>
                                 </div>
                             </div>
                         </a>
                     </div>
 
-                    <!-- Messages Dropdown -->
-                    @auth
-                    <div class="dropdown">
-                        <a href="#" class="position-relative text-decoration-none" data-bs-toggle="dropdown">
-                            <span class="avatar bg-primary bg-opacity-10 text-primary rounded-circle p-2">
-                                <i class="bi bi-chat"></i>
-                                @if($conversations->isNotEmpty() && $conversations->first()->latestMessage && $conversations->first()->latestMessage->created_at->gt(now()->subMinutes(10)))
-                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                                    1
-                                </span>
-                                @endif
-                                </span>
-                            </a>
-                        <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2" style="width: 320px;">
-                            <li class="dropdown-header bg-light py-2 px-3 d-flex justify-content-between align-items-center">
-                                <span class="fw-semibold">{{ __('general.messages') }}</span>
-                                <a href="#" class="small text-primary">View All</a>
-                            </li>
-                            <li class="px-2">
-                                <div style="max-height: 300px; overflow-y: auto;">
-                                    @forelse($conversations as $conversation)
-                                    @php
-                                        $otherUser = $user->id == $conversation->sender_id
-                                            ? $conversation->recipient
-                                            : $conversation->sender;
-                                        $message = $conversation->latestMessage;
-                                    @endphp
-                                    <a href="{{ route('web.send_message', $otherUser->id) }}"
-                                       class="dropdown-item d-flex align-items-center py-2 border-bottom">
-                                        <img src="{{ $otherUser->image_url ?? asset('storage/users/default_avatar.png') }}"
-                                             class="rounded-circle me-2" width="40" height="40"
-                                             alt="{{ $otherUser->first_name }}">
-                                        <div class="flex-grow-1">
-                                            <div class="d-flex justify-content-between">
-                                                <h6 class="mb-0">{{ $otherUser->first_name }}</h6>
-                                                <small class="text-muted">{{ $message ? $message->created_at->diffForHumans() : '' }}</small>
-                                            </div>
-                                            <p class="mb-0 text-truncate small" style="max-width: 200px;">
-                                                {{ $message ? Str::limit($message->message, 30) : __('general.no_messages') }}
-                                            </p>
-                                        </div>
-                                    </a>
-                                    @empty
-                                    <div class="text-center py-3 text-muted">
-                                        {{ __('general.no_conversations') }}
-                                    </div>
-                                    @endforelse
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
-                    @endauth
+
 
                     <!-- Notifications Dropdown -->
                     {{--  @auth
@@ -290,17 +237,23 @@
         </div>
         <div class="offcanvas-body">
             <ul class="nav flex-column">
+                <!-- Contact WhatsApp -->
+                <li class="nav-item mb-2">
+                    <a href="https://wa.me/966568401348" target="_blank" class="nav-link text-success">
+                        <i class="fab fa-whatsapp me-2"></i>+966568401348
+                    </a>
+                </li>
+                <li><hr class="dropdown-divider"></li>
+
                 <li class="nav-item mb-1">
-                    <a href="{{ route('home') }}" class="nav-link"><i class="fas fa-home me-2"></i>{{ __('general.home') }}</a>
+                    <a href="{{ route('departments') }}" class="nav-link"><i class="fas fa-home me-2"></i>{{ __('general.home') }}</a>
                 </li>
                 @if(!auth()->check() || (auth()->check() && auth()->user()->role_id == 3))
                 <li class="nav-item mb-1">
                     <a href="{{ route('all_services') }}" class="nav-link"><i class="fas fa-tasks me-2"></i>{{ $lang == 'ar' ? 'الخدمات المطلوبة' : 'All orders' }}</a>
                 </li>
                 @endif
-                <li class="nav-item mb-1">
-                    <a href="{{ route('departments') }}" class="nav-link"><i class="fas fa-th-large me-2"></i>{{ __('department.departments') }}</a>
-                </li>
+
                 <li class="nav-item mb-1">
                     <a href="{{ route('indsproducts.index') }}" class="nav-link"><i class="fas fa-store me-2"></i>{{ $lang == 'ar' ? 'متجر البلاستيك' : 'Plastic Store' }}</a>
                 </li>

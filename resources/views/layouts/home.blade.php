@@ -193,7 +193,7 @@
                @if(auth()->check() && auth()->user()->role_id == 3)
             <a href="{{ route('all_services') }}"><i class="fas fa-home"></i> {{ $lang == 'ar' ? 'الخدمات المطلوبة' : 'All Services' }}</a>
         @else
-            <a href="{{ route('departments') }}"><i class="fas fa-th-large"></i> {{ $lang == 'ar' ? 'الأقسام' : 'Departments' }}</a>
+            <a href="{{ route('departments') }}"><i class="fas fa-th-large"></i> {{ $lang == 'ar' ? 'الخدمات' : 'Services' }}</a>
         @endif
         @auth
         <a href="{{ route('notifications.index') }}" id="notificationsLink2" style="position: relative;">

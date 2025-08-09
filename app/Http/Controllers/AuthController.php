@@ -70,7 +70,7 @@ class AuthController extends Controller
         }
 
         $countries = Country::all();
-        $govers = Governements::all();
+        $govers = Governements::all(); // Get all cities
 
         return view('front_office.auth.register', compact('message', 'countries', 'govers'));
     }

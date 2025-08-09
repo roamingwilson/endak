@@ -13,15 +13,20 @@ class Comment extends Model
     public function user(){
         return $this->belongsTo(User::class);
     }
+
+    public function service(){
+        return $this->belongsTo(Services::class);
+    }
+
     public function post(){
         return $this->belongsTo(Post::class);
     }
+
     public function department(){
         return $this->belongsTo(Department::class);
     }
-    
-    public function files(){
-        return $this->hasMany(CommentsFiles::class , 'comment_id' , 'id');
-    }
 
+    public function files(){
+        return $this->belongsTo(CommentsFiles::class , 'comment_id' , 'id');
+    }
 }

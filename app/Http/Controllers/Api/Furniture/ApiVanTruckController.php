@@ -157,7 +157,7 @@ class ApiVanTruckController extends Controller
                 'id' => $comment->id,
                 'title' => "قدم $user->first_name  لك عرضا",
                 'body' => "$comment->notes",
-                'url' => route('web.posts.show' , $request->service_id)
+                'url' => route('van_truck.show_myservice' , $request->service_id)
             ]));
         }
         return response()->apiSuccess($comment);

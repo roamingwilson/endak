@@ -408,12 +408,20 @@
 
                             <div class="mb-3">
                                 <label class="form-label">
-                                    <i class="fas fa-map-marker-alt"></i> المحافظة
+                                    <i class="fas fa-map-marker-alt"></i> المدينة
                                 </label>
                                 <select name="governement" id="governement" class="form-control form-control-lg" required>
-                                    <option value="">اختر المحافظة</option>
+                                    <option value="">اختر المدينة</option>
+                                    @if(isset($govers) && $govers->count() > 0)
+                                        @foreach($govers as $gover)
+                                            <option value="{{ $gover->id }}">{{ app()->getLocale() == 'ar' ? $gover->name_ar : $gover->name_en }}</option>
+                                        @endforeach
+                                    @else
+                                        <option value="" disabled>لا توجد مدن متاحة</option>
+                                    @endif
                                 </select>
-                                <div class="invalid-feedback">يرجى اختيار المحافظة</div>
+                                <div class="invalid-feedback">يرجى اختيار المدينة</div>
+
                             </div>
 
                             <div class="mb-3">
@@ -430,7 +438,7 @@
                                     <i class="fas fa-lock"></i> تأكيد كلمة المرور
                                 </label>
                                 <input type="password" name="password_confirmation" class="form-control form-control-lg" required
-                                       placeholder="أعد إدخال كلمة المرور" pattern="\d{6}" maxlength="6">
+                                       placeholder="أعد إدخال كلمة المرور">
                                 <div class="invalid-feedback">كلمة المرور غير متطابقة</div>
                             </div>
                             <div class="d-flex justify-content-between">
@@ -493,6 +501,11 @@
 @endsection
 
 @section('script')
+@if(isset($govers) && $govers->count() > 0)
+    <script>
+        console.log('Cities loaded:', @json($govers));
+    </script>
+@endif
 <script src="{{ asset('js/jquery/jquery.min.js') }}"></script>
 <script src="{{ asset('select2-4.0.3/js/select2.min.js') }}"></script>
 <script>
@@ -849,7 +862,7 @@ $.ajax({
                 data: { country_id: countryId },
                 success: function(response) {
                     governementSelect.empty();
-                    governementSelect.append('<option value="">اختر المحافظة</option>');
+                    governementSelect.append('<option value="">اختر المدينة</option>');
 
                     response.forEach(function(governorate) {
                         const name = '{{ app()->getLocale() }}' === 'ar' ? governorate.name_ar : governorate.name_en;
@@ -862,7 +875,7 @@ $.ajax({
             });
         } else {
             governementSelect.empty();
-            governementSelect.append('<option value="">اختر المحافظة</option>');
+            governementSelect.append('<option value="">اختر المدينة</option>');
         }
     });
 
@@ -871,6 +884,30 @@ $.ajax({
         theme: 'bootstrap-5',
         width: '100%'
     });
+
+    // Load all cities on page load
+    loadAllCities();
+
+    function loadAllCities() {
+        $.ajax({
+            url: '{{ route("get.governorates") }}',
+            type: 'GET',
+            data: { country_id: 0 }, // 0 means all cities
+            success: function(response) {
+                var governementSelect = $('#governement');
+                governementSelect.empty();
+                governementSelect.append('<option value="">اختر المدينة</option>');
+
+                response.forEach(function(city) {
+                    var cityName = '{{ app()->getLocale() }}' === 'ar' ? city.name_ar : city.name_en;
+                    governementSelect.append('<option value="' + city.id + '">' + cityName + '</option>');
+                });
+            },
+            error: function() {
+                console.log('Error loading cities');
+            }
+        });
+    }
 });
 </script>
 @endsection

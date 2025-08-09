@@ -268,8 +268,11 @@
                                                                                                         </select>
                                                 @endif
                                                 @if($field->type === 'checkbox')
-                                                    <div class="form-check m-0">
-                                                        <input type="checkbox" name="custom_fields[{{ $group }}][{{ $idx }}][{{ $field->name }}]" value="1" class="form-check-input" {{ (isset($groupInstance[$field->name]) && $groupInstance[$field->name]) ? 'checked' : '' }}>
+                                                    <div class="d-flex align-items-center gap-2">
+                                                        <input type="checkbox" name="custom_fields[{{ $group }}][{{ $idx }}][{{ $field->name }}]" value="1" class="form-check-input" {{ (isset($groupInstance[$field->name]) && $groupInstance[$field->name] == '1') ? 'checked' : '' }}>
+                                                        <label for="custom_fields_{{ $group }}_{{ $idx }}_{{ $field->name }}" style="font-weight:500; color:#333; font-size:0.98rem; margin-bottom:0;">
+                                                            {{ app()->getLocale() == 'ar' ? $field->name_ar : $field->name_en }}
+                                                        </label>
                                                     </div>
                                                 @endif
                                                 @if($field->type === 'image[]' || $field->type === 'image' || $field->name === 'image')
@@ -436,8 +439,12 @@
                                                     </select>
                                                 @endif
                                                 @if($field->type === 'checkbox')
-                                                    <input type="hidden" name="custom_fields[{{ $field->name }}]" value="0">
-                                                    <input type="checkbox" name="custom_fields[{{ $field->name }}]" id="custom_fields_{{ $field->name }}" value="1" class="form-check-input" {{ old('custom_fields.' . $field->name) ? 'checked' : '' }}>
+                                                    <div class="d-flex align-items-center gap-2">
+                                                        <input type="checkbox" name="custom_fields[{{ $field->name }}]" id="custom_fields_{{ $field->name }}" value="1" class="form-check-input" {{ old('custom_fields.' . $field->name) == '1' ? 'checked' : '' }}>
+                                                        <label for="custom_fields_{{ $field->name }}" style="font-weight:500; color:#333; font-size:0.98rem; margin-bottom:0;">
+                                                            {{ app()->getLocale() == 'ar' ? $field->name_ar : $field->name_en }}
+                                                        </label>
+                                                    </div>
                                                 @endif
                                                 @if($field->type === 'images[]' || $field->type === 'images' || $field->name === 'images')
                                                     <div class="dynamic-images-uploader mb-2" data-field="custom_fields_{{ $field->name }}">

@@ -54,14 +54,30 @@ class GovernementsController extends Controller
     public function getGovernorates(Request $request)
     {
         $countryId = $request->country_id;
-        $governorates = Governements::where('country_id', $countryId)->get();
+
+        if ($countryId == 0) {
+            // Return all cities
+            $governorates = Governements::all();
+        } else {
+            // Return cities for specific country
+            $governorates = Governements::where('country_id', $countryId)->get();
+        }
+
         return response()->json($governorates);
     }
 
     public function getByCountry(Request $request)
     {
         $countryId = $request->country_id;
-        $governorates = Governements::where('country_id', $countryId)->get();
+
+        if ($countryId == 0) {
+            // Return all cities
+            $governorates = Governements::all();
+        } else {
+            // Return cities for specific country
+            $governorates = Governements::where('country_id', $countryId)->get();
+        }
+
         return response()->json($governorates);
     }
 }

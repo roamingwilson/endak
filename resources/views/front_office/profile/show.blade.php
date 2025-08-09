@@ -235,10 +235,12 @@
                 <p class="mt-2 text-gray-600 text-center">{{ $user->about_me }}</p>
             @endif
         </div>
+
         <div class="flex flex-col md:flex-row justify-between items-center mt-6 gap-4">
             <a href="{{route('web.profile.edit',auth()->id())}}" class="flex-1 bg-yellow-400 hover:bg-yellow-500 text-white font-bold py-2 rounded-lg text-center transition"> <i class="fas fa-edit mr-2"></i> {{ $lang == 'ar' ? 'تعديل الملف الشخصي' : 'Edit Profile' }}</a>
             <a href="{{ route('logout') }}" onclick="confirmLogout()" class="flex-1 bg-red-500 hover:bg-red-600 text-white font-bold py-2 rounded-lg text-center transition"> <i class="fas fa-sign-out-alt mr-2"></i> {{ $lang == 'ar' ? 'تسجيل الخروج' : 'Log Out' }}</a>
         </div>
+        @if($user->role_id == 3)
         <div class="mt-8">
             <h3 class="text-lg font-semibold text-gray-700 mb-3 flex items-center"><i class="fas fa-layer-group mr-2 text-yellow-500"></i> {{ $lang == 'ar' ? 'الأقسام المشترك بها' : 'Subscribed Departments' }}</h3>
             @php
@@ -287,6 +289,7 @@
                 @endif
             </div>
         </div>
+        @endif
         <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4">
             <a href="#" class="flex items-center gap-2 bg-gray-50 hover:bg-yellow-50 p-4 rounded-lg shadow transition">
                 <i class="fas fa-wallet text-yellow-500"></i> <span class="font-semibold text-gray-700">{{ $lang == 'ar' ? 'رصيدي' : 'My Credit' }}</span>

@@ -67,8 +67,7 @@ use App\Models\PartyPreparationOrder;
 Route::get(
     '/',
     function () {
-
-        return view('front_office.home');
+        return redirect()->route('departments');
     }
 
 )->name('home');
@@ -569,7 +568,7 @@ route::post('gover', [GovernementsController::class, 'store'])->name('store_gove
 route::get('governorates/{id}/edit', [GovernementsController::class, 'edit'])->name('governorates.edit');
 route::put('governorates/{id}', [GovernementsController::class, 'update'])->name('governorates.update');
 route::delete('governorates/{id}', [GovernementsController::class, 'destroy'])->name('governorates.destroy');
-route::get('get/governorates', [GovernementsController::class, 'getGovernorates'])->name('get.governorates');
+route::get('get/governorates', [GovernementsController::class, 'getGovernorates'])->name('get.governorates.alt');
 
 Route::get('/products', [IndustryController::class, 'index'])->name('indsustry.index');
 Route::get('/category', [IndustryController::class, 'show_cat'])->name('indsustry.cat');
@@ -631,3 +630,11 @@ Route::get('/product_orders/{order}/edit', [\App\Http\Controllers\ProductOrderCo
 Route::delete('/product_orders/{order}', [\App\Http\Controllers\ProductOrderController::class, 'destroy'])->name('product_orders.destroy');
 Route::put('/product_orders/{order}', [\App\Http\Controllers\ProductOrderController::class, 'update'])->name('product_orders.update');
 Route::get('/product_orders/{order}', [\App\Http\Controllers\ProductOrderController::class, 'show'])->name('product_orders.show');
+
+// Routes for specific services
+Route::get('/teacher/service/{id}', [App\Http\Controllers\departments\TeacherController::class, 'show_my_service'])->name('teacher.show_myservice')->where('id', '[0-9]+');
+Route::get('/worker/service/{id}', [App\Http\Controllers\departments\WorkerController::class, 'show_my_service'])->name('worker.show_myservice')->where('id', '[0-9]+');
+Route::get('/water/service/{id}', [App\Http\Controllers\departments\WaterController::class, 'show_my_service'])->name('water.show_myservice')->where('id', '[0-9]+');
+Route::get('/van-truck/service/{id}', [App\Http\Controllers\departments\VanTruck\VanTruckController::class, 'show_my_service'])->name('van_truck.show_myservice')->where('id', '[0-9]+');
+Route::get('/spare-part/service/{id}', [App\Http\Controllers\departments\SpareParts\SparePartController::class, 'show_my_service'])->name('spare_part.show_myservice')->where('id', '[0-9]+');
+Route::get('/surveillance/service/{id}', [App\Http\Controllers\Surveillance\SurveillanceCamerasController::class, 'show_myservice'])->name('surveillance.show_myservice')->where('id', '[0-9]+');

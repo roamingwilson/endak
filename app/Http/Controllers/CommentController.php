@@ -50,7 +50,7 @@ class CommentController extends Controller
                 'id' => $comment->id,
                 'title' => "قدم $user->first_name  لك عرضا",
                 'body' => "$comment->description",
-                'url' => route('web.posts.show' , $request->post_id)
+                'url' => route('show_myservice' , $request->post_id)
             ]));
         }
         return redirect()->back()->with('success','Add Seccessfully');

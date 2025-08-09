@@ -134,6 +134,7 @@
                 <label for="email">{{ __('user.email') }}</label>
                 <input type="text" name="email" value="{{ old('email', $user->email) }}">
                             </div>
+            @if($user->role_id == 2)
             <div class="form-group">
                 <label for="departments">{{ __('department.departments') }}</label>
                 <small style="display:block; color:#888; margin-bottom:6px;">{{ $lang == 'ar' ? 'يمكنك اختيار 3 أقسام رئيسية أو فرعية فقط' : 'You can select up to 3 main or sub departments only' }}</small>
@@ -151,6 +152,7 @@
                                 </select>
                 @error('departments') <span class="error">{{ $message }}</span> @enderror
                             </div>
+            @endif
             <div class="form-group">
                 <label for="about_me">{{ __('user.about_me') }}</label>
                 <textarea name="about_me" cols="30" rows="4">{{ old('about_me', $user->about_me) }}</textarea>
@@ -193,6 +195,7 @@
     <script>
         feather.replace();
     </script>
+    @if($user->role_id != 3)
     <script src="{{ asset('js/jquery/jquery.min.js') }}"></script>
     <script src="{{ asset('select2-4.0.3/js/select2.min.js') }}"></script>
     <script>
@@ -232,4 +235,5 @@
             checkSelectionLimit();
         });
     </script>
+    @endif
 @endsection

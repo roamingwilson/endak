@@ -41,11 +41,11 @@ class ApiWorkerController extends Controller
         if ($is_created) {
             if ($request->hasFile('images')) {
                 $files = $request->file('images');
-    
+
                 if (!is_array($files)) {
                     $files = [$files];
                 }
-    
+
                 foreach ($files as $file) {
                     $path = $file->store('worker', [
                         'disk' => 'public',
@@ -62,7 +62,7 @@ class ApiWorkerController extends Controller
 
     }
     public function accept_offer(Request $request){
-     
+
         $is_create = WorkerOrder::create([
             'service_id'    => $request->service_id,
             'customer_id'    => $request->customer_id,
@@ -131,12 +131,12 @@ class ApiWorkerController extends Controller
         return response()->apiSuccess($services);
     }
 
-    
+
     public function service_provider_add_offer(Request $request){
         $service = WorkerService::where('id' , $request->service_id)->first();
         $customer = User::where('id' ,$service->user_id )->first();
         $user = auth('sanctum')->user();
-        $data = $request->except('image'); 
+        $data = $request->except('image');
          $comment = new GeneralComments([
             'service_provider'                      => $user->id ?? 2,
             'body'                                  => $request->body  ?? null,
@@ -151,13 +151,13 @@ class ApiWorkerController extends Controller
         ]);
         $service->comments()->save($comment);
 
-         
+
         if($comment){
             $customer->notify(new CommentNotification([
                 'id' => $comment->id,
                 'title' => "قدم $user->first_name  لك عرضا",
                 'body' => "$comment->notes",
-                'url' => route('web.posts.show' , $request->service_id)
+                'url' => route('show_myservice' , $request->service_id)
             ]));
         }
         return response()->apiSuccess($comment);

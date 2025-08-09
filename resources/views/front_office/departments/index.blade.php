@@ -125,7 +125,7 @@
     $departments = \App\Models\Department::all();
 @endphp
 <div class="container" style=" padding-top: 100px;">
-    <h1 class="mb-4 text-center"> {{ $lang == 'ar' ? "اختيار القسم" : "Choose Department"}}</h1>
+    <h1 class="mb-4 text-center"> {{ $lang == 'ar' ? "اختيار خدمة" : "Choose Service"}}</h1>
 
     <div class="row g-3">
         @foreach($departments as $department)

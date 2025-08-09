@@ -48,7 +48,7 @@ class ApiServeillanceCamerasController extends Controller
 
     }
     public function accept_offer(Request $request){
-     
+
         $is_create = FollowCameraOrder::create([
             'service_id'    => $request->service_id,
             'customer_id'    => $request->customer_id,
@@ -116,12 +116,12 @@ class ApiServeillanceCamerasController extends Controller
         return response()->apiSuccess($services);
     }
 
-    
+
     public function service_provider_add_offer(Request $request){
         $service = FollowCameraService::where('id' , $request->service_id)->first();
         $customer = User::where('id' ,$service->user_id )->first();
         $user = auth('sanctum')->user();
-        $data = $request->except('image'); 
+        $data = $request->except('image');
          $comment = new GeneralComments([
             'service_provider'                      => $user->id ?? 2,
             'body'                                  => $request->body  ?? null,
@@ -136,13 +136,13 @@ class ApiServeillanceCamerasController extends Controller
         ]);
         $service->comments()->save($comment);
 
-         
+
         if($comment){
             $customer->notify(new CommentNotification([
                 'id' => $comment->id,
                 'title' => "قدم $user->first_name  لك عرضا",
                 'body' => "$comment->notes",
-                'url' => route('web.posts.show' , $request->service_id)
+                'url' => route('surveillance.show_myservice' , $request->service_id)
             ]));
         }
         return response()->apiSuccess($comment);
@@ -152,7 +152,7 @@ class ApiServeillanceCamerasController extends Controller
 
         $is_created = FollowCameraService::find($id);
         $offers = GeneralComments::where('commentable_id',$id)->where('commentable_type' ,'App\Models\FollowCameraService')->get();
-        $data = ['service' => $is_created , 'offers' => $offers];        
+        $data = ['service' => $is_created , 'offers' => $offers];
         return response()->apiSuccess($data, 'success', 200);
 
     }

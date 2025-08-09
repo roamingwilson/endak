@@ -244,7 +244,7 @@ class ServiceController extends Controller
                             $customFields[$fieldName] = [];
                         }
                     } elseif ($field->type === 'checkbox') {
-                        $customFields[$fieldName] = $request->has("custom_fields.$fieldName") ? 1 : 0;
+                        $customFields[$fieldName] = $request->input("custom_fields.$fieldName") == '1' ? 1 : 0;
                     } else {
                         $customFields[$fieldName] = $request->input("custom_fields.$fieldName");
                     }
@@ -1149,7 +1149,7 @@ class ServiceController extends Controller
                                     $instanceData[$fname] = [];
                                 }
                             } elseif ($groupField->type === 'checkbox') {
-                                $instanceData[$fname] = isset($instance[$fname]) ? 1 : 0;
+                                $instanceData[$fname] = isset($instance[$fname]) && $instance[$fname] == '1' ? 1 : 0;
                             } else {
                                 $instanceData[$fname] = $instance[$fname] ?? null;
                             }
@@ -1182,7 +1182,7 @@ class ServiceController extends Controller
                             $customFields[$fieldName] = [];
                         }
                     } elseif ($field->type === 'checkbox') {
-                        $customFields[$fieldName] = $request->has("custom_fields.$fieldName") ? 1 : 0;
+                        $customFields[$fieldName] = $request->input("custom_fields.$fieldName") == '1' ? 1 : 0;
                     } else {
                         $customFields[$fieldName] = $request->input("custom_fields.$fieldName");
                     }
@@ -1212,7 +1212,7 @@ class ServiceController extends Controller
                             $customFields[$fieldName] = [];
                         }
                     } elseif ($field->type === 'checkbox') {
-                        $customFields[$fieldName] = $request->has("custom_fields.$fieldName") ? 1 : 0;
+                        $customFields[$fieldName] = $request->input("custom_fields.$fieldName") == '1' ? 1 : 0;
                     } else {
                         $customFields[$fieldName] = $request->input("custom_fields.$fieldName");
                     }
