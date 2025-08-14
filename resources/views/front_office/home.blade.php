@@ -130,9 +130,9 @@
 </div>
 @if (Session::has('success'))
 <script>
-    swal("Message", "{{ Session::get('success') }}", 'success', {
+    swal("نجاح", "{{ Session::get('success') }}", 'success', {
         button: true,
-        button: "Ok",
+        button: "{{ $lang == 'ar' ? 'حسناً' : 'Ok' }}",
         timer: 3000,
     })
 </script>

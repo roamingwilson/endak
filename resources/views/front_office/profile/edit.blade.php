@@ -134,7 +134,7 @@
                 <label for="email">{{ __('user.email') }}</label>
                 <input type="text" name="email" value="{{ old('email', $user->email) }}">
                             </div>
-            @if($user->role_id == 2)
+            @if($user->role_id == 3)
             <div class="form-group">
                 <label for="departments">{{ __('department.departments') }}</label>
                 <small style="display:block; color:#888; margin-bottom:6px;">{{ $lang == 'ar' ? 'يمكنك اختيار 3 أقسام رئيسية أو فرعية فقط' : 'You can select up to 3 main or sub departments only' }}</small>
@@ -162,14 +162,14 @@
                     </div>
                 </div>
     @if (Session::has('success'))
-        <script>
-            swal("Message", "{{ Session::get('success') }}", 'success', {
-                button: true,
-                button: "Ok",
-                timer: 3000,
-            })
-        </script>
-    @endif
+    <script>
+        swal("نجاح", "{{ Session::get('success') }}", 'success', {
+            button: true,
+            button: "{{ app()->getLocale() == 'ar' ? 'حسناً' : 'Ok' }}",
+            timer: 3000,
+        })
+    </script>
+@endif
     @if (Session::has('error'))
         <script>
             swal("Message", "{{ Session::get('error') }}", 'error', {

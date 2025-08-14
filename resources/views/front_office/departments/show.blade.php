@@ -510,6 +510,36 @@
             </div>
         </section>
         @if (auth()->check() && auth()->user()->role_id == 3)
+            @php
+                $user = auth()->user();
+                $allWorkCities = $user->getAllWorkCities();
+            @endphp
+            @if($allWorkCities->count() > 0)
+                <div class="alert alert-info text-center mb-4">
+                    <i class="fas fa-map-marker-alt me-2"></i>
+                    <strong>{{ $lang == 'ar' ? 'عرض الخدمات في المدن المختارة ومدينتك الأصلية:' : 'Showing services in selected cities and your original city:' }}</strong>
+                    @foreach($allWorkCities as $city)
+                        @php
+                            $isOriginalCity = $city->id == $user->governement;
+                            $badgeClass = $isOriginalCity ? 'badge bg-success' : 'badge bg-primary';
+                            $label = $isOriginalCity ? ' (مدينتي)' : '';
+                        @endphp
+                        <span class="{{ $badgeClass }} me-1">{{ app()->getLocale() == 'ar' ? $city->name_ar : $city->name_en }}{{ $label }}</span>
+                    @endforeach
+                    <a href="{{ route('provider.cities') }}" class="btn btn-sm btn-outline-primary ms-2">
+                        <i class="fas fa-edit"></i> {{ $lang == 'ar' ? 'تعديل المدن' : 'Edit Cities' }}
+                    </a>
+                </div>
+            @else
+                <div class="alert alert-warning text-center mb-4">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    <strong>{{ $lang == 'ar' ? 'لم يتم تحديد مدن للعمل فيها' : 'No cities selected for work' }}</strong>
+                    <p class="mb-2">{{ $lang == 'ar' ? 'لرؤية الخدمات المتاحة، يرجى تحديد المدن التي يمكنك العمل فيها.' : 'To see available services, please select the cities where you can work.' }}</p>
+                    <a href="{{ route('provider.cities') }}" class="btn btn-primary">
+                        <i class="fas fa-map-marker-alt"></i> {{ $lang == 'ar' ? 'اختيار المدن' : 'Select Cities' }}
+                    </a>
+                </div>
+            @endif
             <section class="section">
                 <div class="container">
                     <div class="row">
@@ -536,7 +566,21 @@
                                     </div>
                                 @empty
                                     <div class="col-12 text-center text-muted py-4">
-                                        {{ $lang == 'ar' ? 'لا توجد خدمات متاحة' : 'No services available.' }}
+                                        @if(auth()->check() && auth()->user()->role_id == 3 && $allWorkCities->count() > 0)
+                                            <i class="fas fa-map-marker-alt fa-2x mb-3 text-warning"></i>
+                                            <h5 class="text-warning">{{ $lang == 'ar' ? 'لا توجد خدمات في المدن المختارة ومدينتك الأصلية' : 'No services in selected cities and your original city' }}</h5>
+                                            <p class="text-muted">{{ $lang == 'ar' ? 'لا توجد خدمات متاحة في المدن التي اخترتها للعمل فيها أو مدينتك الأصلية. يمكنك:' : 'No services available in the cities you selected to work in or your original city. You can:' }}</p>
+                                            <div class="mt-3">
+                                                <a href="{{ route('provider.cities') }}" class="btn btn-outline-primary me-2">
+                                                    <i class="fas fa-map-marker-alt"></i> {{ $lang == 'ar' ? 'إدارة المدن' : 'Manage Cities' }}
+                                                </a>
+                                                <a href="{{ route('all_services') }}" class="btn btn-outline-secondary">
+                                                    <i class="fas fa-list"></i> {{ $lang == 'ar' ? 'عرض جميع الخدمات' : 'View All Services' }}
+                                                </a>
+                                            </div>
+                                        @else
+                                            {{ $lang == 'ar' ? 'لا توجد خدمات متاحة' : 'No services available.' }}
+                                        @endif
                                     </div>
                                 @endforelse
                             </div>

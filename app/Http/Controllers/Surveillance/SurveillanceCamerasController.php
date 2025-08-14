@@ -65,7 +65,7 @@ class SurveillanceCamerasController extends Controller
 
         $is_created = FollowCameraService::create($data);
 
-        return redirect()->route('home')->with('success' , 'تم اضافة الطلب بنجاح');
+        return redirect()->route('home')->with('success' , 'تم تقديم الخدمة بنجاح');
 
     }
 

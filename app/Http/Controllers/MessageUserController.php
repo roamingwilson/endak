@@ -162,6 +162,6 @@ class MessageUserController extends Controller
 
         $is_create = Message::create($messageData);
 
-        return redirect()->back();
+        return redirect()->back()->with('success', 'تم إرسال الرسالة بنجاح');
     }
 }

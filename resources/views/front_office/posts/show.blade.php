@@ -76,12 +76,12 @@
                                     <?php $product = App\Models\Product::find($item->product_id) ?>
                                     <label for="product-{{ $product->id }}" class="d-flex align-items-center justify-content-between ml-2 mr-3">
                                         <span>{{ $lang == 'ar' ? $product->name_ar : $product->name_en }}</span>
-                                    
+
                                         <img src="{{ $product->image_url }}" width="80px" height="80px" alt="">
-                                                                            
+
                                         <p class="mb-0 ml-2">{{ "الكمية : " . $item->quantity }}</p>
                                     </label>
-                                    
+
                                     @endforeach
                                 @endif
                                 <p>
@@ -110,7 +110,7 @@
                                                     {{-- <div class="dropdown-menu dropdown-menu-end">
                                                             <a class="dropdown-item" href="{{ route('web.send_message' , $comment->user->id) }}"><i
                                                                     class="fe fe-mail mx-1"></i> {{ __('messages.send_message') }}</a>
-                                                            
+
                                                         </div> --}}
                                                     {{-- </div> --
                                                 </nav> --}}
@@ -120,12 +120,12 @@
                                                     <p class="tx-muted"> {{ $comment->description }}</p>
                                                     @if(isset($comment->files))
                                                         @foreach ($comment->files as $item)
-                                                         
+
                                                         <img width="100px" height="100px" src="{{ Storage::url( $item->file) }}" alt="">
                                                         <a href="{{ Storage::url($item->file) }}" target="_blank">Download</a>
                                                         @endforeach
                                                     @endif
-                                                    
+
                                                     @if ($user->id == $post->user_id)
                                                         <form action="{{ route('web.order.save') }}" method="post">
                                                             @csrf
@@ -367,7 +367,7 @@
                             </div>
                         </div>
                     </div> --}}
-                    {{-- 
+                    {{--
                     <div class="card">
                         <div class="card-body">
                             <div class="">
@@ -450,9 +450,9 @@
     </div>
     @if (Session::has('success'))
         <script>
-            swal("Message", "{{ Session::get('success') }}", 'success', {
+            swal("نجاح", "{{ Session::get('success') }}", 'success', {
                 button: true,
-                button: "Ok",
+                button: "{{ app()->getLocale() == 'ar' ? 'حسناً' : 'Ok' }}",
                 timer: 3000,
             })
         </script>

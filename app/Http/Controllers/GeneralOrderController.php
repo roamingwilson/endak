@@ -56,18 +56,22 @@ class GeneralOrderController extends Controller
             $service = $order->service;
             $departmentId = $service->department_id;
             $city = $service->city ?? $service->governement ?? null;
-            // جلب جميع مزودي الخدمة في نفس القسم والمدينة
-            $providers = \App\Models\User::where('role_id', 3)
+            // جلب جميع مزودي الخدمة في نفس القسم
+            $allProviders = \App\Models\User::where('role_id', 3)
                 ->whereHas('userDepartments', function($q) use ($departmentId) {
                     $q->where('commentable_type', \App\Models\Department::class)
                       ->where('commentable_id', $departmentId);
-                })
-                ->where(function($q) use ($city) {
-                    if ($city) {
-                        $q->where('governement', $city)->orWhere('city', $city);
-                    }
-                })
-                ->get();
+                })->get();
+
+            // فلترة المزودين حسب المدن المختارة + مدينتهم الأصلية
+            $providers = collect();
+            foreach ($allProviders as $provider) {
+                // إذا لم يحدد المزود مدن، أو إذا كانت المدينة في مدن عمله أو مدينته الأصلية
+                if ($provider->providerCities()->count() == 0 ||
+                    ($city && in_array($city, $provider->getAllWorkCityNames()))) {
+                    $providers->push($provider);
+                }
+            }
             foreach ($providers as $provider) {
                 $provider->notify(new \App\Notifications\CommentNotification([
                     'id' => $order->id,

@@ -40,6 +40,7 @@ use App\Http\Controllers\ProductCartController;
 use App\Http\Controllers\ProductOrderController;
 use App\Http\Controllers\ProductOrderitemsController;
 use App\Http\Controllers\ServiceController;
+use App\Http\Controllers\ProviderCityController;
 
 use App\Models\GeneralOrder;
 use App\Models\ProductOrder;
@@ -101,7 +102,7 @@ Route::middleware('guest')->group(function () {
     Route::get('/register-page', [AuthController::class, 'registerPage'])->name('register-page');
     Route::get('/register', [AuthController::class, 'showRegistrationForm'])->name('register');
     Route::post('/login', [AuthController::class, 'login'])->name('login');
-    Route::post('/register', [AuthController::class, 'register'])->name('register');
+    Route::post('/register', [AuthController::class, 'register'])->name('register.post');
     Route::get('/forgot-password', [AuthController::class, 'forgotPassword'])->name('forgot-password');
 
     // OTP Routes
@@ -111,11 +112,18 @@ Route::middleware('guest')->group(function () {
 
 Route::middleware('auth')->group(function () {
     Route::get('logout', [AuthController::class, 'logout'])->name('logout');
+
+    // مسارات إدارة مدن مزود الخدمة
+    Route::get('/provider/cities', [ProviderCityController::class, 'index'])->name('provider.cities');
+    Route::put('/provider/cities', [ProviderCityController::class, 'update'])->name('provider.cities.update');
+    Route::get('/provider/cities/{providerId}', [ProviderCityController::class, 'getProviderCities'])->name('provider.cities.get');
 });
 
 // // Departments
 Route::get('/departments', [DepartmentsController::class, 'index'])->name('departments');
 Route::get('/departments/{id}', [DepartmentsController::class, 'show'])->name('departments.show');
+
+// عرض جميع الخدمات - تم نقله إلى الأسفل لتجنب التضارب
 
 // Get governorates by country
 Route::get('/get-governorates', [GovernementsController::class, 'getByCountry'])->name('get.governorates');
@@ -585,9 +593,7 @@ Route::middleware('auth')->group(function () {
 
 use App\Http\Controllers\Admin\DepartmentController;
 
-Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
-    Route::resource('departments', DepartmentController::class);
-});
+// تم نقل مسارات admin إلى ملف admin.php منفصل
 
 // روت عرض الخدمة مع دعم المعاملات الإضافية
 Route::get('/services/{id}', [App\Http\Controllers\ServiceController::class, 'showService'])

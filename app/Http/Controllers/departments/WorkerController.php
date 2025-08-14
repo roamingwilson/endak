@@ -86,7 +86,7 @@ class WorkerController extends Controller
         }
 
 
-        return redirect()->route('home')->with('success' , 'تم اضافة الطلب بنجاح');
+        return redirect()->route('home')->with('success' , 'تم تقديم الخدمة بنجاح');
 
     }
     public function show_my_service($id){

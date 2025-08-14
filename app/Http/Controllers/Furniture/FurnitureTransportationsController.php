@@ -92,7 +92,7 @@ class FurnitureTransportationsController extends Controller
                 }
             }
         }
-        return redirect()->route('home')->with('success' , 'تم اضافة الطلب بنجاح');
+        return redirect()->route('home')->with('success' , 'تم تقديم الخدمة بنجاح');
 
     }
 

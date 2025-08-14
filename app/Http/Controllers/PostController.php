@@ -38,7 +38,7 @@ class PostController extends Controller
     }
     public function store(Request $request)
     {
- 
+
         $current_url = url()->previous();
         $url = explode('/', $current_url);
         $department_id = (int) end($url);
@@ -88,8 +88,8 @@ class PostController extends Controller
         //     'to_city'                       => $request->to_city,
         //     'to_neighborhood'               => $request->to_neighborhood,
         //     'to_home'                       => $request->to_home,
-        //     'notes'                         => $request->notes, 
-        //     'user_id'                       => auth()->id(), 
+        //     'notes'                         => $request->notes,
+        //     'user_id'                       => auth()->id(),
         // ]);
         // if($is_created){
         //     foreach($request->selected_products as $key => $value){
@@ -108,7 +108,7 @@ class PostController extends Controller
 
 
         // if($request->selected_products){
-            
+
         // foreach ($request->input('selected_products') as $productId) {
         //     $quantity = $request->input("quantities.$productId");
 
@@ -120,23 +120,23 @@ class PostController extends Controller
         //         ]);
         //     }
         // }
-        
-        return redirect()->route('web.posts' , $department_id)->with('success','تم اضافة الطلب بنجاح');
+
+        return redirect()->route('web.posts' , $department_id)->with('success','تم تقديم الخدمة بنجاح');
     }
     public function show($id)
     {
-        $post = $this->post_service->show($id);        
+        $post = $this->post_service->show($id);
         $userUnreadNotification = auth()->user()->unreadNotifications;
 
         if($userUnreadNotification) {
             $userUnreadNotification->markAsRead();
-        }  
+        }
         return view('front_office.posts.show', compact('post'));
     }
 
     public function my_posts($id){
         $posts = Post::where('user_id', $id)->paginate(6);
-        
+
         return view('front_office.posts.my_posts' , compact('posts'));
     }
 

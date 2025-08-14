@@ -150,7 +150,7 @@ class VanTruckController extends Controller
                 }
             }
 
-            return redirect()->route('home')->with('success', 'تم اضافة الطلب بنجاح');
+            return redirect()->route('home')->with('success', 'تم تقديم الخدمة بنجاح');
 
         } catch (\Exception $e) {
             return back()->with('error', 'حدث خطأ أثناء الإضافة: ' . $e->getMessage());

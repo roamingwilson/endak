@@ -22,9 +22,22 @@ class DepartmentsController extends Controller
         // تجميع الحقول حسب input_group
         $groupedFields = $department->fields->groupBy('input_group');
         $cities = \App\Models\Governements::all();
+
         if ($department->department_id == 0) {
             $main = $department;
-            $services = Post::where('department_id', $main->id)->paginate();
+            $servicesQuery = Post::where('department_id', $main->id);
+
+            // فلترة الخدمات حسب المدن المختارة للمزود + مدينته الأصلية
+            if ($user && $user->role_id == 3) {
+                $allCityNames = $user->getAllWorkCityNames();
+
+                $servicesQuery->where(function($q) use ($allCityNames) {
+                    $q->whereIn('from_city', $allCityNames)
+                      ->orWhereIn('city', $allCityNames);
+                });
+            }
+
+            $services = $servicesQuery->paginate();
             $sub_departments = $main->sub_Departments;
             $products = $main->products;
             $inputs = $main->inputs;
@@ -42,7 +55,19 @@ class DepartmentsController extends Controller
         if ($department->department_id != 0) {
             $sub = $department;
             $main = Department::findOrFail($department->department_id);
-            $services = Post::where('department_id', $sub->id)->paginate();
+            $servicesQuery = Post::where('department_id', $sub->id);
+
+            // فلترة الخدمات حسب المدن المختارة للمزود + مدينته الأصلية
+            if ($user && $user->role_id == 3) {
+                $allCityNames = $user->getAllWorkCityNames();
+
+                $servicesQuery->where(function($q) use ($allCityNames) {
+                    $q->whereIn('from_city', $allCityNames)
+                      ->orWhereIn('city', $allCityNames);
+                });
+            }
+
+            $services = $servicesQuery->paginate();
             $sub_departments = $sub->sub_Departments;
             $products = $sub->products;
             $inputs = $sub->inputs;

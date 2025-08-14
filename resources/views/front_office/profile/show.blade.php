@@ -164,9 +164,9 @@
     </div>
     @if (Session::has('success'))
     <script>
-        swal("Message", "{{ Session::get('success') }}", 'success', {
+        swal("نجاح", "{{ Session::get('success') }}", 'success', {
             button: true,
-            button: "Ok",
+            button: "{{ app()->getLocale() == 'ar' ? 'حسناً' : 'Ok' }}",
             timer: 3000,
         })
     </script>
@@ -290,7 +290,44 @@
             </div>
         </div>
         @endif
+
+        @if($user->role_id == 3)
+        <div class="mt-8">
+            <h3 class="text-lg font-semibold text-gray-700 mb-3 flex items-center"><i class="fas fa-map-marker-alt mr-2 text-yellow-500"></i> {{ $lang == 'ar' ? 'المدن التي أعمل فيها' : 'Cities I Work In' }}</h3>
+            @php
+                $allWorkCities = $user->getAllWorkCities();
+            @endphp
+            <div class="space-y-3">
+                @if($allWorkCities->count() > 0)
+                    <div class="flex flex-wrap gap-2">
+                        @foreach($allWorkCities as $city)
+                            @php
+                                $isOriginalCity = $city->id == $user->governement;
+                                $bgColor = $isOriginalCity ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700';
+                                $label = $isOriginalCity ? ' (مدينتي الأصلية)' : '';
+                            @endphp
+                            <span class="{{ $bgColor }} px-3 py-1 rounded-full text-sm font-semibold shadow">
+                                {{ app()->getLocale() == 'ar' ? $city->name_ar : $city->name_en }}{{ $label }}
+                            </span>
+                        @endforeach
+                    </div>
+                    <p class="text-sm text-gray-600 mt-2">
+                        <i class="fas fa-info-circle mr-1"></i>
+                        {{ $lang == 'ar' ? 'الخدمات ستظهر في المدن المختارة ومدينتك الأصلية' : 'Services will appear in selected cities and your original city' }}
+                    </p>
+                @else
+                    <span class="text-gray-400">{{ $lang == 'ar' ? 'لم يتم تحديد مدن بعد' : 'No cities selected yet' }}</span>
+                @endif
+            </div>
+        </div>
+        @endif
+
         <div class="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4">
+            @if($user->role_id == 3)
+            <a href="{{ route('provider.cities') }}" class="flex items-center gap-2 bg-gray-50 hover:bg-yellow-50 p-4 rounded-lg shadow transition">
+                <i class="fas fa-map-marker-alt text-yellow-500"></i> <span class="font-semibold text-gray-700">{{ $lang == 'ar' ? 'إدارة المدن' : 'Manage Cities' }}</span>
+            </a>
+            @endif
             <a href="#" class="flex items-center gap-2 bg-gray-50 hover:bg-yellow-50 p-4 rounded-lg shadow transition">
                 <i class="fas fa-wallet text-yellow-500"></i> <span class="font-semibold text-gray-700">{{ $lang == 'ar' ? 'رصيدي' : 'My Credit' }}</span>
             </a>

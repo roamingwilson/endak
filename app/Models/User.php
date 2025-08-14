@@ -191,6 +191,60 @@ public function getOnlineStatusColorAttribute()
     }
 
     /**
+     * العلاقة مع المدن التي يمكن للمزود العمل فيها
+     */
+    public function providerCities()
+    {
+        return $this->hasMany(ProviderCity::class);
+    }
+
+    /**
+     * الحصول على المدن التي يمكن للمزود العمل فيها
+     */
+    public function getServiceCities()
+    {
+        return $this->providerCities()->with('governement')->get()->pluck('governement');
+    }
+
+    /**
+     * التحقق من إمكانية العمل في مدينة معينة
+     */
+    public function canWorkInCity($cityId)
+    {
+        return $this->providerCities()->where('governement_id', $cityId)->exists();
+    }
+
+    /**
+     * الحصول على جميع المدن (المختارة + المدينة الأصلية)
+     */
+    public function getAllWorkCities()
+    {
+        $selectedCities = $this->getServiceCities();
+        $originalCity = $this->governementObj;
+
+        $allCities = $selectedCities;
+
+        // إضافة المدينة الأصلية إذا لم تكن موجودة في المدن المختارة
+        if ($originalCity && !$selectedCities->contains('id', $originalCity->id)) {
+            $allCities->push($originalCity);
+        }
+
+        return $allCities;
+    }
+
+    /**
+     * الحصول على أسماء جميع المدن (المختارة + المدينة الأصلية)
+     */
+    public function getAllWorkCityNames()
+    {
+        $allCities = $this->getAllWorkCities();
+        $cityNames = $allCities->pluck('name_ar')->toArray();
+        $cityNamesEn = $allCities->pluck('name_en')->toArray();
+
+        return array_merge($cityNames, $cityNamesEn);
+    }
+
+    /**
      * Get all departments (main and sub) the user is subscribed to as models.
      */
     public function getAllDepartments()

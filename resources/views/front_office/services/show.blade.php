@@ -427,4 +427,24 @@
         </div>
     @endif
 @endif
+
+@if (Session::has('success'))
+    <script>
+        swal("نجاح", "{{ Session::get('success') }}", 'success', {
+            button: true,
+            button: "{{ app()->getLocale() == 'ar' ? 'حسناً' : 'Ok' }}",
+            timer: 3000,
+        })
+    </script>
+@endif
+
+@if (Session::has('error'))
+    <script>
+        swal("خطأ", "{{ Session::get('error') }}", 'error', {
+            button: true,
+            button: "{{ app()->getLocale() == 'ar' ? 'حسناً' : 'Ok' }}",
+            timer: 3000,
+        })
+    </script>
+@endif
 @endsection
