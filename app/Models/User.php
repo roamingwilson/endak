@@ -8,6 +8,9 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\Builder;
+use App\Models\UserDepartment;
+use App\Models\Department;
+use App\Models\SubDepartment;
 
 class User extends Authenticatable
 {
@@ -122,7 +125,7 @@ class User extends Authenticatable
     }
     public function userDepartments()
     {
-        return $this->hasMany(\App\Models\UserDepartment::class, 'user_id');
+        return $this->hasMany(UserDepartment::class, 'user_id');
     }
     public function comments()
 {

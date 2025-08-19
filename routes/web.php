@@ -157,6 +157,15 @@ Route::get('/privcy', [ProfileController::class, 'privcy'])->name('privcy');
 Route::get('/terms', [ProfileController::class, 'terms'])->name('terms');
 Route::post('/profile/update', [ProfileController::class, 'updateProfile'])->name('web.profile.update');
 
+// User Settings Routes
+Route::middleware('auth')->group(function () {
+    Route::get('/settings/account', [App\Http\Controllers\UserSettingsController::class, 'accountSettings'])->name('user.settings.account');
+    Route::get('/settings/account/show', [App\Http\Controllers\UserSettingsController::class, 'showAccountSettings'])->name('user.settings.account.show');
+    Route::get('/settings/profile', [App\Http\Controllers\UserSettingsController::class, 'profileSettings'])->name('user.settings.profile');
+    Route::post('/settings/account/update', [App\Http\Controllers\UserSettingsController::class, 'updateAccountSettings'])->name('user.settings.account.update');
+    Route::post('/settings/profile/update', [App\Http\Controllers\UserSettingsController::class, 'updateProfileSettings'])->name('user.settings.profile.update');
+});
+
 // Users
 
 Route::get('/service_provider', [ProfileController::class, 'users'])->name('web.user.service_provider');

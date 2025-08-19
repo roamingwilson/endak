@@ -237,7 +237,9 @@
         </div>
 
         <div class="flex flex-col md:flex-row justify-between items-center mt-6 gap-4">
-            <a href="{{route('web.profile.edit',auth()->id())}}" class="flex-1 bg-yellow-400 hover:bg-yellow-500 text-white font-bold py-2 rounded-lg text-center transition"> <i class="fas fa-edit mr-2"></i> {{ $lang == 'ar' ? 'تعديل الملف الشخصي' : 'Edit Profile' }}</a>
+            <a href="{{ route('user.settings.account.show') }}" class="flex-1 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 rounded-lg text-center transition"> <i class="fas fa-eye mr-2"></i> {{ $lang == 'ar' ? 'عرض الإعدادات' : 'View Settings' }}</a>
+            <a href="{{ route('user.settings.account') }}" class="flex-1 bg-green-500 hover:bg-green-600 text-white font-bold py-2 rounded-lg text-center transition"> <i class="fas fa-cog mr-2"></i> {{ $lang == 'ar' ? 'تعديل الإعدادات' : 'Edit Settings' }}</a>
+            <a href="{{ route('user.settings.profile') }}" class="flex-1 bg-yellow-400 hover:bg-yellow-500 text-white font-bold py-2 rounded-lg text-center transition"> <i class="fas fa-user-edit mr-2"></i> {{ $lang == 'ar' ? 'الملف الشخصي' : 'Profile Settings' }}</a>
             <a href="{{ route('logout') }}" onclick="confirmLogout()" class="flex-1 bg-red-500 hover:bg-red-600 text-white font-bold py-2 rounded-lg text-center transition"> <i class="fas fa-sign-out-alt mr-2"></i> {{ $lang == 'ar' ? 'تسجيل الخروج' : 'Log Out' }}</a>
         </div>
         @if($user->role_id == 3)
@@ -373,6 +375,41 @@
     }
 </script>
 @endsection
+
+<style>
+    /* Updated text colors for light and dark themes */
+    body.light-theme .text-primary {
+        color: var(--light-text-accent) !important;
+    }
+    body.light-theme .text-success {
+        color: var(--light-text-success) !important;
+    }
+    body.light-theme .text-danger {
+        color: var(--light-text-danger) !important;
+    }
+    body.light-theme .text-warning {
+        color: var(--light-text-warning) !important;
+    }
+    body.light-theme .text-info {
+        color: var(--light-text-info) !important;
+    }
+
+    body.dark-theme .text-primary {
+        color: var(--dark-text-accent) !important;
+    }
+    body.dark-theme .text-success {
+        color: var(--dark-text-success) !important;
+    }
+    body.dark-theme .text-danger {
+        color: var(--dark-text-danger) !important;
+    }
+    body.dark-theme .text-warning {
+        color: var(--dark-text-warning) !important;
+    }
+    body.dark-theme .text-info {
+        color: var(--dark-text-info) !important;
+    }
+</style>
 
 @section('script')
     {{-- <script src="{{ asset('js/app.js') }}" ></script> --}}

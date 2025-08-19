@@ -108,14 +108,14 @@
 
                 <!-- Right Side - User Actions -->
                 <div class="d-flex align-items-center gap-3">
-                    <!-- Contact -->
-                    <div class="d-none d-md-flex align-items-center me-2">
-                        <a href="https://wa.me/966568401348" target="_blank" class="text-decoration-none">
+                    <!-- WhatsApp Contact - Always Visible -->
+                    <div class="d-flex align-items-center me-2">
+                        <a href="https://wa.me/966568401348" target="_blank" class="whatsapp-contact-btn text-decoration-none">
                             <div class="d-flex align-items-center">
-                                <span class="avatar bg-success bg-opacity-10 text-success rounded-circle p-2 me-2">
+                                <span class="">
                                     <i class="bi bi-whatsapp"></i>
                                 </span>
-                                <div>
+                                <div class="d-none d-md-block">
                                     <div class="small text-muted">{{ __('general.call_to_us') }}</div>
                                     <div class="fw-medium">+966568401348</div>
                                 </div>
@@ -238,9 +238,17 @@
         <div class="offcanvas-body">
             <ul class="nav flex-column">
                 <!-- Contact WhatsApp -->
-                <li class="nav-item mb-2">
-                    <a href="https://wa.me/966568401348" target="_blank" class="nav-link text-success">
-                        <i class="fab fa-whatsapp me-2"></i>+966568401348
+                <li class="nav-item mb-3">
+                    <a href="https://wa.me/966568401348" target="_blank" class="nav-link whatsapp-mobile-link">
+                        <div class="d-flex align-items-center">
+                            <span class="avatar bg-success bg-opacity-10 text-success rounded-circle p-2 me-3">
+                                <i class="fab fa-whatsapp"></i>
+                            </span>
+                            <div>
+                                <div class="fw-bold text-success">واتساب الدعم</div>
+                                <div class="small text-muted">+966568401348</div>
+                            </div>
+                        </div>
                     </a>
                 </li>
                 <li><hr class="dropdown-divider"></li>
@@ -292,7 +300,13 @@
                 @endif
                 @if(auth()->check())
                     <li class="nav-item mb-1">
-                        <a href="{{ route('web.profile.edit', auth()->id()) }}" class="nav-link"><i class="fas fa-cog me-2"></i>{{ $lang == 'ar' ? 'الإعدادات' : 'Settings' }}</a>
+                        <a href="{{ route('user.settings.account.show') }}" class="nav-link"><i class="fas fa-eye me-2"></i>{{ $lang == 'ar' ? 'عرض الإعدادات' : 'View Settings' }}</a>
+                    </li>
+                    <li class="nav-item mb-1">
+                        <a href="{{ route('user.settings.account') }}" class="nav-link"><i class="fas fa-cog me-2"></i>{{ $lang == 'ar' ? 'تعديل الإعدادات' : 'Edit Settings' }}</a>
+                    </li>
+                    <li class="nav-item mb-1">
+                        <a href="{{ route('user.settings.profile') }}" class="nav-link"><i class="fas fa-user-edit me-2"></i>{{ $lang == 'ar' ? 'الملف الشخصي' : 'Profile Settings' }}</a>
                     </li>
                 @endif
                 <li><hr class="dropdown-divider"></li>
@@ -342,6 +356,99 @@
         display: inline-flex;
         align-items: center;
         justify-content: center;
+    }
+
+    /* WhatsApp Contact Button Styles */
+    .whatsapp-contact-btn {
+        background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+        color: white !important;
+        padding: 8px 12px;
+        border-radius: 25px;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 8px rgba(37, 211, 102, 0.3);
+        border: 2px solid transparent;
+    }
+
+    .whatsapp-contact-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4);
+        color: white !important;
+        text-decoration: none;
+    }
+
+    .whatsapp-contact-btn .avatar {
+        background-color: rgba(255, 255, 255, 0.2) !important;
+        color: white !important;
+    }
+
+    .whatsapp-contact-btn .text-muted {
+        color: rgba(255, 255, 255, 0.8) !important;
+    }
+
+    .whatsapp-contact-btn .fw-medium {
+        color: white !important;
+        font-weight: 600;
+    }
+
+    /* Mobile WhatsApp Button */
+    @media (max-width: 767.98px) {
+        .whatsapp-contact-btn {
+            padding: 8px;
+            border-radius: 50%;
+            min-width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .whatsapp-contact-btn .avatar {
+            margin: 0 !important;
+        }
+
+        .whatsapp-contact-btn .avatar i {
+            font-size: 1.2rem;
+        }
+    }
+
+    /* Dark mode support for WhatsApp button */
+    body.dark-theme .whatsapp-contact-btn {
+        background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+        color: white !important;
+    }
+
+    body.dark-theme .whatsapp-contact-btn:hover {
+        background: linear-gradient(135deg, #128C7E 0%, #075E54 100%);
+    }
+
+    /* Mobile Menu WhatsApp Link */
+    .whatsapp-mobile-link {
+        background: linear-gradient(135deg, rgba(37, 211, 102, 0.1) 0%, rgba(18, 140, 126, 0.1) 100%);
+        border: 2px solid #25D366;
+        border-radius: 12px;
+        margin-bottom: 10px;
+        transition: all 0.3s ease;
+    }
+
+    .whatsapp-mobile-link:hover {
+        background: linear-gradient(135deg, rgba(37, 211, 102, 0.2) 0%, rgba(18, 140, 126, 0.2) 100%);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);
+    }
+
+    .whatsapp-mobile-link .avatar {
+        background-color: rgba(37, 211, 102, 0.2) !important;
+        color: #25D366 !important;
+    }
+
+    /* Dark mode support for mobile WhatsApp link */
+    body.dark-theme .whatsapp-mobile-link {
+        background: linear-gradient(135deg, rgba(37, 211, 102, 0.15) 0%, rgba(18, 140, 126, 0.15) 100%);
+        border-color: #25D366;
+    }
+
+    body.dark-theme .whatsapp-mobile-link:hover {
+        background: linear-gradient(135deg, rgba(37, 211, 102, 0.25) 0%, rgba(18, 140, 126, 0.25) 100%);
     }
 
     @media (max-width: 991.98px) {

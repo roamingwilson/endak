@@ -53,16 +53,18 @@
     <link rel="stylesheet" href="{{ asset('select2-4.0.3/css/select2.css') }}">
     <!-- ICONS CSS -->
     <link href="{{ asset('home/assets/css/icons.css') }}" rel="stylesheet">
+
+    <!-- Dark Mode CSS -->
+    <link href="{{ asset('css/dark-mode.css') }}" rel="stylesheet">
+
     @yield('style')
     <style>
+        /* Remove conflicting styles for dark mode compatibility */
         a {
             text-decoration: none;
-            color: black
         }
 
-        * {
-            color: black
-        }
+        /* Let dark mode CSS handle colors */
 
         .bottom-nav {
             position: fixed;
@@ -95,11 +97,50 @@
             text-decoration: none;
             transition: background-color 0.3s;
         }
+
+        /* Fixed WhatsApp Button for Mobile */
+        .fixed-whatsapp-btn {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4);
+            z-index: 1000;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .fixed-whatsapp-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(37, 211, 102, 0.6);
+            color: white;
+            text-decoration: none;
+        }
+
+        /* RTL Support for fixed WhatsApp button */
+        [dir="rtl"] .fixed-whatsapp-btn {
+            right: auto;
+            left: 20px;
+        }
+
+        /* Dark mode support for fixed WhatsApp button */
+        body.dark-theme .fixed-whatsapp-btn {
+            background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+            color: white;
+        }
     </style>
 
 </head>
 
-<body class="main-body light-theme">
+<body class="main-body light-theme" data-theme="light">
     @php
         $lang = config('app.locale');
         $user = auth()->user();
@@ -187,6 +228,12 @@
 
 
     @include('layouts.front_office.footer')
+
+    <!-- Fixed WhatsApp Button for Mobile -->
+    <a href="https://wa.me/966568401348" target="_blank" class="fixed-whatsapp-btn d-md-none">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+
     @php  $lang = config('app.locale'); @endphp
     <nav class="bottom-nav">
 
@@ -227,7 +274,8 @@
         <a href="{{ route('orders.index') }}"><i class="fas fa-clipboard-list"></i> {{ $lang == 'ar' ? 'طلباتي' : 'My Orders' }}</a>
             <a href="{{ route('pro_cart.index') }}"><i class="fas fa-shopping-cart"></i> {{ $lang == 'ar' ? 'السلة' : 'Cart' }}</a>
         @endif
-        <a href="{{ route('web.profile.edit', auth()->id()) }}"><i class="fas fa-cog"></i> {{ $lang == 'ar' ? 'الإعدادات' : 'Settings' }}</a>
+        <a href="{{ route('user.settings.account.show') }}"><i class="fas fa-eye"></i> {{ $lang == 'ar' ? 'عرض الإعدادات' : 'View' }}</a>
+        <a href="{{ route('user.settings.profile') }}"><i class="fas fa-user-edit"></i> {{ $lang == 'ar' ? 'الملف الشخصي' : 'Profile' }}</a>
         @endauth
 
         {{-- <a href="#"><i class="fas fa-plus-circle"></i> نشر منتج</a> --}}
@@ -522,6 +570,10 @@
         });
     });
 </script>
+
+    <!-- Theme Switcher JavaScript -->
+    <script src="{{ asset('js/theme-switcher.js') }}"></script>
+
     @yield('script')
 </body>
 

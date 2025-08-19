@@ -229,6 +229,91 @@
         .otp-input-wrapper:focus-within::after {
             width: 100%;
         }
+
+        .department-card {
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .department-card:hover {
+            border-color: #4e73df;
+            box-shadow: 0 5px 15px rgba(78, 115, 223, 0.1);
+        }
+
+        .step-1-5 .form-label {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 10px;
+        }
+
+        .step-1-5 .form-control {
+            font-size: 1rem;
+            padding: 12px 15px;
+        }
+
+        .select2-container--bootstrap-5 .select2-selection--multiple {
+            min-height: 50px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+        }
+
+        .select2-container--bootstrap-5 .select2-selection--multiple:focus {
+            border-color: #4e73df;
+            box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.25);
+        }
+
+        .select2-container--bootstrap-5 .select2-selection--multiple .select2-selection__choice {
+            background-color: #4e73df;
+            color: white;
+            border: none;
+            border-radius: 15px;
+            padding: 5px 10px;
+            margin: 2px;
+        }
+
+        .select2-container--bootstrap-5 .select2-selection--multiple .select2-selection__choice__remove {
+            color: white;
+            margin-right: 5px;
+        }
+
+        .select2-container--bootstrap-5 .select2-selection--multiple .select2-selection__choice__remove:hover {
+            color: #ffc107;
+        }
+
+        /* Updated text colors for light and dark themes */
+        body.light-theme .text-primary {
+            color: var(--light-text-accent) !important;
+        }
+        body.light-theme .text-success {
+            color: var(--light-text-success) !important;
+        }
+        body.light-theme .text-danger {
+            color: var(--light-text-danger) !important;
+        }
+        body.light-theme .text-warning {
+            color: var(--light-text-warning) !important;
+        }
+        body.light-theme .text-info {
+            color: var(--light-text-info) !important;
+        }
+
+        body.dark-theme .text-primary {
+            color: var(--dark-text-accent) !important;
+        }
+        body.dark-theme .text-success {
+            color: var(--dark-text-success) !important;
+        }
+        body.dark-theme .text-danger {
+            color: var(--dark-text-danger) !important;
+        }
+        body.dark-theme .text-warning {
+            color: var(--dark-text-warning) !important;
+        }
+        body.dark-theme .text-info {
+            color: var(--dark-text-info) !important;
+        }
     </style>
 @endsection
 
@@ -303,48 +388,79 @@
                             </button>
                         </div>
 
-                        <!-- Step 1.5: Department Selection (for provider only) -->
+                        <!-- Step 1.5: City and Department Selection (for provider only) -->
                         @php
                             $departments = \App\Models\Department::with(['sub_departments' => function($q){$q->where('status',1);}])->where('department_id',0)->where('status',1)->get(['id','name_ar','name_en']);
                         @endphp
                         <div class="step step-1-5 d-none">
                             <div id="step15-errors" class="alert alert-danger d-none"></div>
                             <div class="text-center mb-4">
-                                <i class="fas fa-list fa-3x text-primary mb-3"></i>
-                                <h4 class="fw-bold">اختر حتى 3 أقسام تقدم فيها الخدمة</h4>
-                                <p class="text-muted">هذه الخطوة خاصة بمزود الخدمة فقط<br>يمكنك اختيار حتى 3 أقسام فقط</p>
+                                <i class="fas fa-map-marker-alt fa-3x text-primary mb-3"></i>
+                                <h4 class="fw-bold">اختر المدن والأقسام التي تقدم فيها الخدمة</h4>
+                                <p class="text-muted">هذه الخطوة خاصة بمزود الخدمة فقط<br>اختر المدن وحدد الأقسام التي تعمل فيها</p>
                             </div>
-                            <div class="row g-3 justify-content-center">
-                                @foreach($departments as $department)
-                                    <div class="col-12 col-md-6 col-lg-4 mb-3">
-                                        <div class="card department-card h-100 p-3">
-                                            <div class="fw-bold mb-2">{{ app()->getLocale() == 'ar' ? $department->name_ar : $department->name_en }}</div>
-                                            @if($department->sub_departments->count())
-                                                <div class="row">
-                                                    @foreach($department->sub_departments as $sub)
-                                                        <div class="col-12">
-                                                            <div class="form-check">
-                                                                <input class="form-check-input department-checkbox" type="checkbox" name="departments[]" value="sub-{{ $sub->id }}-parent-{{ $department->id }}" id="sub-{{ $sub->id }}">
-                                                                <label class="form-check-label" for="sub-{{ $sub->id }}">
-                                                                    {{ app()->getLocale() == 'ar' ? $sub->name_ar : $sub->name_en }}
-                                                                </label>
+
+                            <!-- Cities Selection -->
+                            <div class="mb-4">
+                                <div class="card p-3 border-primary">
+                                    <label class="form-label">
+                                        <i class="fas fa-map-marker-alt text-primary"></i> المدن التي تعمل فيها
+                                    </label>
+                                    <p class="text-muted small mb-3">يمكنك اختيار عدة مدن تعمل فيها</p>
+                                    <select name="provider_cities[]" id="provider_cities" class="form-control form-control-lg" multiple required>
+                                        @if(isset($govers) && $govers->count() > 0)
+                                            @foreach($govers as $gover)
+                                                <option value="{{ $gover->id }}">{{ app()->getLocale() == 'ar' ? $gover->name_ar : $gover->name_en }}</option>
+                                            @endforeach
+                                        @else
+                                            <option value="" disabled>لا توجد مدن متاحة</option>
+                                        @endif
+                                    </select>
+                                    <div class="invalid-feedback">يرجى اختيار مدينة واحدة على الأقل</div>
+                                </div>
+                            </div>
+
+                            <!-- Department Selection -->
+                            <div class="mb-4">
+                                <div class="card p-3 border-success">
+                                    <label class="form-label">
+                                        <i class="fas fa-list text-success"></i> الأقسام التي تقدم فيها الخدمة
+                                    </label>
+                                    <p class="text-muted small mb-3">يمكنك اختيار حتى 3 أقسام فقط</p>
+                                <div class="row g-3 justify-content-center">
+                                    @foreach($departments as $department)
+                                        <div class="col-12 col-md-6 col-lg-4 mb-3">
+                                            <div class="card department-card h-100 p-3">
+                                                <div class="fw-bold mb-2">{{ app()->getLocale() == 'ar' ? $department->name_ar : $department->name_en }}</div>
+                                                @if($department->sub_departments->count())
+                                                    <div class="row">
+                                                        @foreach($department->sub_departments as $sub)
+                                                            <div class="col-12">
+                                                                <div class="form-check">
+                                                                    <input class="form-check-input department-checkbox" type="checkbox" name="departments[]" value="sub-{{ $sub->id }}-parent-{{ $department->id }}" id="sub-{{ $sub->id }}">
+                                                                    <label class="form-check-label" for="sub-{{ $sub->id }}">
+                                                                        {{ app()->getLocale() == 'ar' ? $sub->name_ar : $sub->name_en }}
+                                                                    </label>
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                    @endforeach
-                                                </div>
-                                            @else
-                                                <div class="form-check">
-                                                    <input class="form-check-input department-checkbox" type="checkbox" name="departments[]" value="main-{{ $department->id }}" id="main-{{ $department->id }}">
-                                                    <label class="form-check-label" for="main-{{ $department->id }}">
-                                                        {{ app()->getLocale() == 'ar' ? $department->name_ar : $department->name_en }}
-                                                    </label>
-                                                </div>
-                                            @endif
+                                                        @endforeach
+                                                    </div>
+                                                @else
+                                                    <div class="form-check">
+                                                        <input class="form-check-input department-checkbox" type="checkbox" name="departments[]" value="main-{{ $department->id }}" id="main-{{ $department->id }}">
+                                                        <label class="form-check-label" for="main-{{ $department->id }}">
+                                                            {{ app()->getLocale() == 'ar' ? $department->name_ar : $department->name_en }}
+                                                        </label>
+                                                    </div>
+                                                @endif
+                                            </div>
                                         </div>
-                                    </div>
-                                @endforeach
+                                    @endforeach
+                                </div>
+                                <div class="invalid-feedback d-block text-center" id="departments-error" style="display:none;"></div>
+                                </div>
                             </div>
-                            <div class="invalid-feedback d-block text-center" id="departments-error" style="display:none;"></div>
+
                             <div class="d-flex justify-content-between mt-4">
                                 <button type="button" class="btn btn-outline-secondary prev-step">
                                     <i class="fas fa-arrow-right me-2"></i> السابق
@@ -520,6 +636,19 @@ $(document).ready(function() {
         $('.step').fadeOut(300).promise().done(function() {
             $('.step').addClass('d-none');
             $('.step-' + step).removeClass('d-none').fadeIn(300);
+
+            // Initialize select2 for provider cities when step 1.5 is shown
+            if(step === '1-5') {
+                setTimeout(function() {
+                    $('#provider_cities').select2({
+                        theme: 'bootstrap-5',
+                        width: '100%',
+                        placeholder: 'اختر المدن التي تعمل فيها',
+                        allowClear: true,
+                        closeOnSelect: false
+                    });
+                }, 350);
+            }
         });
 
         $('.step-indicator').removeClass('active');
@@ -668,6 +797,15 @@ $(document).ready(function() {
         // إزالة التكرار
         mainDepartments = [...new Set(mainDepartments)];
         departments = [...new Set(departments)];
+
+        // تحديد المدن حسب نوع المستخدم
+        let selectedCities = [];
+        if($('input[name="role"]:checked').val() == '3') {
+            selectedCities = $('#provider_cities').val();
+        } else {
+            selectedCities = [$('select[name="governement"]').val()];
+        }
+
         // أرسلهم مع البيانات
         $.ajax({
             url: '{{ route('register') }}',
@@ -678,7 +816,7 @@ $(document).ready(function() {
                 phone: $('input[name="phone"]').val(),
                 email: $('input[name="email"]').val(),
                 country: $('select[name="country"]').val(),
-                governement: $('select[name="governement"]').val(),
+                governement: selectedCities,
                 password: $('input[name="password"]').val(),
                 password_confirmation: $('input[name="password_confirmation"]').val(),
                 role: $('input[name="role"]:checked').val(),
@@ -707,8 +845,18 @@ $(document).ready(function() {
             }
         });
     });
-    // تحقق خطوة الأقسام
+    // تحقق خطوة المدن والأقسام
     function validateDepartmentsStep() {
+        // التحقق من المدن
+        const selectedCities = $('#provider_cities').val();
+        if (!selectedCities || selectedCities.length === 0) {
+            $('#provider_cities').addClass('is-invalid');
+            $('#step15-errors').removeClass('d-none').text('يرجى اختيار مدينة واحدة على الأقل');
+            return false;
+        }
+        $('#provider_cities').removeClass('is-invalid');
+
+        // التحقق من الأقسام
         const checked = $('.department-checkbox:checked').length;
         if(checked == 0) {
             $('#departments-error').text('يرجى اختيار قسم واحد على الأقل').show();
@@ -719,6 +867,7 @@ $(document).ready(function() {
             return false;
         }
         $('#departments-error').hide();
+        $('#step15-errors').addClass('d-none').empty();
         return true;
     }
     // منع اختيار أكثر من 3 أقسام
@@ -850,6 +999,12 @@ $.ajax({
         $('#step2-errors').addClass('d-none').empty();
     });
 
+    // Real-time validation for step 1.5
+    $('#provider_cities').on('change', function() {
+        $(this).removeClass('is-invalid');
+        $('#step15-errors').addClass('d-none').empty();
+    });
+
     // Load governorates when country is selected
     $('#country').on('change', function() {
         const countryId = $(this).val();
@@ -885,6 +1040,19 @@ $.ajax({
         width: '100%'
     });
 
+    // Initialize select2 for provider cities when step 1.5 is shown
+    $(document).on('shown.bs.step', function() {
+        if($('.step-1-5').is(':visible')) {
+            $('#provider_cities').select2({
+                theme: 'bootstrap-5',
+                width: '100%',
+                placeholder: 'اختر المدن التي تعمل فيها',
+                allowClear: true,
+                closeOnSelect: false
+            });
+        }
+    });
+
     // Load all cities on page load
     loadAllCities();
 
@@ -893,14 +1061,19 @@ $.ajax({
             url: '{{ route("get.governorates") }}',
             type: 'GET',
             data: { country_id: 0 }, // 0 means all cities
-            success: function(response) {
+                        success: function(response) {
                 var governementSelect = $('#governement');
+                var providerCitiesSelect = $('#provider_cities');
+
                 governementSelect.empty();
                 governementSelect.append('<option value="">اختر المدينة</option>');
+
+                providerCitiesSelect.empty();
 
                 response.forEach(function(city) {
                     var cityName = '{{ app()->getLocale() }}' === 'ar' ? city.name_ar : city.name_en;
                     governementSelect.append('<option value="' + city.id + '">' + cityName + '</option>');
+                    providerCitiesSelect.append('<option value="' + city.id + '">' + cityName + '</option>');
                 });
             },
             error: function() {

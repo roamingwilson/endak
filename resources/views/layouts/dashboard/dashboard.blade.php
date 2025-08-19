@@ -34,6 +34,11 @@ scratch. This page gets rid of all links and provides the needed markup only.
         href="https://cdnjs.cloudflare.com/ajax/libs/line-awesome/1.3.0/line-awesome/css/line-awesome.min.css">
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
+    
+    <!-- Dark Mode CSS -->
+    <link href="{{ asset('css/dark-mode.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/dashboard-dark-mode.css') }}" rel="stylesheet">
+    
     @if (session()->has('locale') && session()->get('locale') == 'ar')
         <link rel="stylesheet" href="{{ asset('css/bootstrap_rtl-v4.2.1/bootstrap.min.css') }}">
         <link rel="stylesheet" href="{{ asset('css/bootstrap_rtl-v4.2.1/custom_rtl.css') }}">
@@ -42,7 +47,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
     @yield('css')
 </head>
 
-<body class="hold-transition sidebar-mini">
+<body class="hold-transition sidebar-mini light-theme" data-theme="light">
     <div class="wrapper">
         <!-- Navbar -->
         @include('layouts.dashboard.header')
@@ -86,6 +91,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
         });
     </script>
     <script>$('.dropify').dropify();</script>
+
+    <!-- Theme Switcher JavaScript -->
+    <script src="{{ asset('js/theme-switcher.js') }}"></script>
 
     @yield('js')
 </body>
