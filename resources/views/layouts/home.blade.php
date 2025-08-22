@@ -2,7 +2,6 @@
 <html lang="en" dir="ltr" data-nav-layout="horizontal" data-nav-style="menu-hover" data-theme-mode="light">
 
 <head>
-
     <!-- META DATA -->
     <meta charset="UTF-8">
     <meta name='viewport' content='width=device-width, initial-scale=1.0, user-scalable=0'>
@@ -10,14 +9,8 @@
     <meta name="author" content="Eslam Badawy">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/jquery-bar-rating/1.2.2/themes/fontawesome-stars.css"
-        rel="stylesheet">
-
     <!-- TITLE -->
     <title>@yield('title')</title>
-
 
     <!-- Meta -->
     <meta property="og:title" content="عندك">
@@ -27,45 +20,26 @@
 
     <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('images/logo2.jpg') }}">
 
-
-    <!-- Favicon -->
-    {{-- <link rel="icon" href="{{ asset('assets/images/brand/favicon.ico') }}" type="image/x-icon"> --}}
-    <link rel="stylesheet" href="{{ asset('home/assets/css/line-awesome.min.css') }}">
-
-    <!-- BOOTSTRAP CSS -->
-    {{-- <link id="style" href="{{ asset('home/assets/libs/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet"> --}}
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
-    <!-- STYLE CSS -->
-    <link href="{{ asset('home/assets/css/styles.css') }}" rel="stylesheet">
-    {{-- @if (config('app.locale') == 'ar') --}}
-    <link href="{{ asset('home/assets/libs/bootstrap/css/bootstrap.rtl.min.css') }}" rel="stylesheet">
-    {{-- @else --}}
-    <link id="style" href="{{ asset('home/assets/libs/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
-    {{-- @endif --}}
-    <!-- Simonwep-picker CSS -->
-    <link href="{{ asset('home/assets/libs/@simonwep/pickr/themes/classic.min.css') }}" rel="stylesheet">
-    <link href="{{ asset('home/assets/libs/@simonwep/pickr/themes/monolith.min.css') }}" rel="stylesheet">
-    <link href="{{ asset('home/assets/libs/@simonwep/pickr/themes/nano.min.css') }}" rel="stylesheet">
-    <!-- إضافة Font Awesome -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="{{ asset('select2-4.0.3/css/select2.css') }}">
-    <!-- ICONS CSS -->
-    <link href="{{ asset('home/assets/css/icons.css') }}" rel="stylesheet">
-
-    <!-- Dark Mode CSS -->
-    <link href="{{ asset('css/dark-mode.css') }}" rel="stylesheet">
-
-    @yield('style')
+    <!-- Critical CSS - Load First -->
     <style>
-        /* Remove conflicting styles for dark mode compatibility */
-        a {
-            text-decoration: none;
-        }
+        /* Critical CSS for above-the-fold content */
+        body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 15px; }
+        .card { background: #fff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .btn { display: inline-block; padding: 8px 16px; border: none; border-radius: 4px; text-decoration: none; cursor: pointer; }
+        .btn-primary { background: #007bff; color: white; }
+        .btn-warning { background: #ffc107; color: #212529; }
+        .btn-danger { background: #dc3545; color: white; }
+        .text-center { text-align: center; }
+        .mb-3 { margin-bottom: 1rem; }
+        .mt-4 { margin-top: 1.5rem; }
+        .p-4 { padding: 1.5rem; }
+        .d-flex { display: flex; }
+        .justify-content-end { justify-content: flex-end; }
+        .gap-2 { gap: 0.5rem; }
+        .mx-1 { margin-left: 0.25rem; margin-right: 0.25rem; }
 
-        /* Let dark mode CSS handle colors */
-
+        /* Bottom Navigation */
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -75,69 +49,57 @@
             justify-content: space-around;
             padding: 10px 0;
             border-top: 1px solid #ddd;
+            z-index: 1000;
         }
-
         .bottom-nav a {
             text-align: center;
             color: #000;
             font-size: 12px;
             text-decoration: none;
         }
-
         .bottom-nav i {
             display: block;
             font-size: 18px;
         }
 
-        .btn-secondary {
-            background-color: #6c757d;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 5px;
-            text-decoration: none;
-            transition: background-color 0.3s;
-        }
-
-        /* Fixed WhatsApp Button for Mobile */
-        .fixed-whatsapp-btn {
+        /* Loading indicator */
+        .loading {
             position: fixed;
-            bottom: 80px;
-            right: 20px;
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
-            color: white;
-            border-radius: 50%;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255,255,255,0.9);
             display: flex;
-            align-items: center;
             justify-content: center;
-            font-size: 28px;
-            box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4);
-            z-index: 1000;
-            transition: all 0.3s ease;
-            text-decoration: none;
+            align-items: center;
+            z-index: 9999;
         }
-
-        .fixed-whatsapp-btn:hover {
-            transform: scale(1.1);
-            box-shadow: 0 6px 20px rgba(37, 211, 102, 0.6);
-            color: white;
-            text-decoration: none;
-        }
-
-        /* RTL Support for fixed WhatsApp button */
-        [dir="rtl"] .fixed-whatsapp-btn {
-            right: auto;
-            left: 20px;
-        }
-
-        /* Dark mode support for fixed WhatsApp button */
-        body.dark-theme .fixed-whatsapp-btn {
-            background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
-            color: white;
-        }
+        .loading.hidden { display: none; }
     </style>
 
+    <!-- Preload critical resources -->
+    <link rel="preload" href="{{ asset('home/assets/css/styles.min.css') }}" as="style">
+    <link rel="preload" href="{{ asset('home/assets/libs/bootstrap/css/bootstrap.min.css') }}" as="style">
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" as="style">
+
+    <!-- Non-critical CSS - Load asynchronously -->
+    <link rel="preload" href="{{ asset('home/assets/css/styles.min.css') }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="{{ asset('home/assets/css/styles.min.css') }}"></noscript>
+
+    <link rel="preload" href="{{ asset('home/assets/libs/bootstrap/css/bootstrap.min.css') }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="{{ asset('home/assets/libs/bootstrap/css/bootstrap.min.css') }}"></noscript>
+
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"></noscript>
+
+    <!-- Other CSS - Load after critical content -->
+    <link rel="stylesheet" href="{{ asset('home/assets/css/line-awesome.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('home/assets/css/icons.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/dark-mode.css') }}">
+    <link rel="stylesheet" href="{{ asset('select2-4.0.3/css/select2.css') }}">
+
+    @yield('style')
 </head>
 
 <body class="main-body light-theme" data-theme="light">
@@ -228,6 +190,13 @@
 
 
     @include('layouts.front_office.footer')
+
+    <!-- Loading indicator -->
+    <div class="loading" id="loading">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
 
     <!-- Fixed WhatsApp Button for Mobile -->
     <a href="https://wa.me/966568401348" target="_blank" class="fixed-whatsapp-btn d-md-none">
@@ -571,8 +540,39 @@
     });
 </script>
 
+    <!-- Optimized JavaScript Loading -->
+    <script>
+        // Hide loading indicator when page is ready
+        window.addEventListener('load', function() {
+            document.getElementById('loading').classList.add('hidden');
+        });
+
+        // Hide loading indicator after 3 seconds max
+        setTimeout(function() {
+            document.getElementById('loading').classList.add('hidden');
+        }, 3000);
+    </script>
+
+    <!-- Load critical JavaScript first -->
+    <script src="{{ asset('home/assets/libs/bootstrap/js/bootstrap.bundle.min.js') }}" defer></script>
+
+    <!-- Load non-critical JavaScript asynchronously -->
+    <script src="{{ asset('home/assets/libs/@popperjs/core/umd/popper.min.js') }}" async></script>
+    <script src="{{ asset('home/assets/js/defaultmenu.js') }}" async></script>
+    <script src="{{ asset('home/assets/js/category-menu.js') }}" async></script>
+    <script src="{{ asset('home/assets/js/cookies.js') }}" async></script>
+    <script src="{{ asset('home/assets/js/custom-switcher.js') }}" async></script>
+
+    <!-- Load external libraries asynchronously -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js" defer></script>
+
+    <!-- Image optimization script -->
+    <script src="{{ asset('js/image-optimizer.js') }}" async></script>
+
     <!-- Theme Switcher JavaScript -->
-    <script src="{{ asset('js/theme-switcher.js') }}"></script>
+    <script src="{{ asset('js/theme-switcher.js') }}" async></script>
 
     @yield('script')
 </body>
