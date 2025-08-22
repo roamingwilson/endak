@@ -197,25 +197,27 @@ class AuthController extends Controller
             if($request->role == 3) {
                 $mainDepartments = is_array($request->main_departments) ? $request->main_departments : [];
                 $subDepartments = is_array($request->departments) ? $request->departments : [];
-                $addedMain = [];
+
                 // الأقسام الرئيسية
                 foreach($mainDepartments as $mainId) {
-                    if(!in_array($mainId, $addedMain)) {
-                        UserDepartment::create([
-                            'user_id' => $user->id,
-                            'commentable_id' => $mainId,
-                            'commentable_type' => \App\Models\Department::class,
-                        ]);
-                        $addedMain[] = $mainId;
-                    }
-                }
-                // الأقسام الفرعية
-                foreach($subDepartments as $subId) {
                     UserDepartment::create([
                         'user_id' => $user->id,
-                        'commentable_id' => $subId,
-                        'commentable_type' => \App\Models\SubDepartment::class,
+                        'commentable_id' => $mainId,
+                        'commentable_type' => \App\Models\Department::class,
                     ]);
+                }
+
+                // الأقسام الفرعية
+                foreach($subDepartments as $subItem) {
+                    // تحليل القيمة sub-X-parent-Y
+                    if(preg_match('/^sub-(\d+)-parent-(\d+)$/', $subItem, $matches)) {
+                        $subId = $matches[1];
+                        UserDepartment::create([
+                            'user_id' => $user->id,
+                            'commentable_id' => $subId,
+                            'commentable_type' => \App\Models\SubDepartment::class,
+                        ]);
+                    }
                 }
             }
 

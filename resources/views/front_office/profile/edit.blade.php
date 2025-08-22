@@ -137,21 +137,47 @@
             @if($user->role_id == 3)
             <div class="form-group">
                 <label for="departments">{{ __('department.departments') }}</label>
-                <small style="display:block; color:#888; margin-bottom:6px;">{{ $lang == 'ar' ? 'يمكنك اختيار 3 أقسام رئيسية أو فرعية فقط' : 'You can select up to 3 main or sub departments only' }}</small>
-                <select name="departments[]" id="tags" class="main_departments select2" multiple="multiple">
-                    @foreach ($main_departments as $main)
-                        <option value="main-{{ $main->id }}">{{ $lang == 'ar' ? $main->name_ar : $main->name_en }}</option>
-                        @if($main->sub_departments && $main->sub_departments->count())
-                            <optgroup label="{{ $lang == 'ar' ? $main->name_ar : $main->name_en }} - {{ $lang == 'ar' ? 'الأقسام الفرعية' : 'Sub Departments' }}">
-                                @foreach($main->sub_departments as $sub)
-                                    <option value="sub-{{ $sub->id }}">&nbsp;&nbsp;{{ $lang == 'ar' ? $sub->name_ar : $sub->name_en }}</option>
-                                @endforeach
-                            </optgroup>
-                        @endif
+                <small style="display:block; color:#888; margin-bottom:6px;">{{ $lang == 'ar' ? 'يمكنك اختيار 3 أقسام رئيسية فقط، والأقسام الفرعية غير محدودة' : 'You can select up to 3 main departments only, sub departments are unlimited' }}</small>
+
+                <!-- الأقسام الرئيسية -->
+                <div class="mb-3">
+                    <label class="form-label fw-bold">{{ $lang == 'ar' ? 'الأقسام الرئيسية (حد أقصى 3):' : 'Main Departments (Max 3):' }}</label>
+                    <select name="main_departments[]" id="main_departments" class="main_departments select2" multiple="multiple">
+                        @foreach ($main_departments as $main)
+                            @php
+                                $isSelected = $user->userDepartments()
+                                    ->where('commentable_id', $main->id)
+                                    ->where('commentable_type', 'App\Models\Department')
+                                    ->exists();
+                            @endphp
+                            <option value="{{ $main->id }}" {{ $isSelected ? 'selected' : '' }}>{{ $lang == 'ar' ? $main->name_ar : $main->name_en }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <!-- الأقسام الفرعية -->
+                <div class="mb-3">
+                    <label class="form-label fw-bold">{{ $lang == 'ar' ? 'الأقسام الفرعية (غير محدودة):' : 'Sub Departments (Unlimited):' }}</label>
+                    <select name="sub_departments[]" id="sub_departments" class="sub_departments select2" multiple="multiple">
+                        @foreach ($main_departments as $main)
+                            @if($main->sub_departments && $main->sub_departments->count())
+                                <optgroup label="{{ $lang == 'ar' ? $main->name_ar : $main->name_en }}">
+                                    @foreach($main->sub_departments as $sub)
+                                        @php
+                                            $isSelected = $user->userDepartments()
+                                                ->where('commentable_id', $sub->id)
+                                                ->where('commentable_type', 'App\Models\SubDepartment')
+                                                ->exists();
+                                        @endphp
+                                        <option value="{{ $sub->id }}" {{ $isSelected ? 'selected' : '' }}>{{ $lang == 'ar' ? $sub->name_ar : $sub->name_en }}</option>
                                     @endforeach
-                                </select>
+                                </optgroup>
+                            @endif
+                        @endforeach
+                    </select>
+                </div>
                 @error('departments') <span class="error">{{ $message }}</span> @enderror
-                            </div>
+            </div>
             @endif
             <div class="form-group">
                 <label for="about_me">{{ __('user.about_me') }}</label>
@@ -195,44 +221,57 @@
     <script>
         feather.replace();
     </script>
-    @if($user->role_id != 3)
+    @if($user->role_id == 3)
     <script src="{{ asset('js/jquery/jquery.min.js') }}"></script>
     <script src="{{ asset('select2-4.0.3/js/select2.min.js') }}"></script>
     <script>
-        $(".main_departments").select2({
+        // تهيئة الأقسام الرئيسية (حد أقصى 3)
+        $("#main_departments").select2({
             topics: true,
             tokenSeparators: [',', ' '],
             maximumSelectionLength: 3,
             language: {
                 maximumSelected: function (e) {
-                    return '{{ $lang == "ar" ? "يمكنك اختيار 3 أقسام فقط" : "You can select up to 3 departments only" }}';
+                    return '{{ $lang == "ar" ? "يمكنك اختيار 3 أقسام رئيسية فقط" : "You can select up to 3 main departments only" }}';
                 }
             }
         });
 
-        // تحسين التقييد لمنع اختيار أكثر من 3 أقسام
-        document.addEventListener('DOMContentLoaded', function() {
-            const select = document.querySelector('.main_departments');
+        // تهيئة الأقسام الفرعية (غير محدودة)
+        $("#sub_departments").select2({
+            topics: true,
+            tokenSeparators: [',', ' '],
+            language: {
+                maximumSelected: function (e) {
+                    return '{{ $lang == "ar" ? "يمكنك اختيار أي عدد من الأقسام الفرعية" : "You can select unlimited sub departments" }}';
+                }
+            }
+        });
 
-            // التحقق من عدد الأقسام المختارة عند التحميل
-            function checkSelectionLimit() {
-                const selectedOptions = select.selectedOptions;
+        // تحسين التقييد لمنع اختيار أكثر من 3 أقسام رئيسية
+        document.addEventListener('DOMContentLoaded', function() {
+            const mainSelect = document.querySelector('#main_departments');
+            const subSelect = document.querySelector('#sub_departments');
+
+            // التحقق من عدد الأقسام الرئيسية المختارة
+            function checkMainSelectionLimit() {
+                const selectedOptions = mainSelect.selectedOptions;
                 if (selectedOptions.length > 3) {
                     // إزالة الخيارات الزائدة
                     for (let i = 3; i < selectedOptions.length; i++) {
                         selectedOptions[i].selected = false;
                     }
-                    alert('{{ $lang == "ar" ? "يمكنك اختيار 3 أقسام فقط" : "You can select up to 3 departments only" }}');
+                    alert('{{ $lang == "ar" ? "يمكنك اختيار 3 أقسام رئيسية فقط" : "You can select up to 3 main departments only" }}');
                 }
             }
 
-            // التحقق عند تغيير الاختيار
-            select.addEventListener('change', function() {
-                checkSelectionLimit();
+            // التحقق عند تغيير الاختيار للأقسام الرئيسية
+            mainSelect.addEventListener('change', function() {
+                checkMainSelectionLimit();
             });
 
             // التحقق الأولي
-            checkSelectionLimit();
+            checkMainSelectionLimit();
         });
     </script>
     @endif

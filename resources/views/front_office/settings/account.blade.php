@@ -88,47 +88,70 @@
                             <label class="form-label fw-bold">
                                 <i class="fas fa-th-large me-2 text-primary"></i>
                                 {{ $lang == 'ar' ? 'الأقسام' : 'Departments' }}
-                                <small class="text-muted">({{ $lang == 'ar' ? 'حد أقصى 3 أقسام' : 'Max 3 departments' }})</small>
+                                <small class="text-muted">({{ $lang == 'ar' ? '3 أقسام رئيسية فقط، والأقسام الفرعية غير محدودة' : '3 main departments only, sub departments unlimited' }})</small>
                             </label>
 
-                            <div class="departments-container">
-                                @foreach($departments as $department)
-                                    <div class="department-card mb-3 p-3 border rounded">
-                                        <div class="form-check">
-                                            <input class="form-check-input department-checkbox"
-                                                   type="checkbox"
-                                                   name="departments[]"
-                                                   value="main-{{ $department->id }}"
-                                                   id="dept_{{ $department->id }}"
-                                                   {{ $userDepartments->where('commentable_id', $department->id)->where('commentable_type', 'App\Models\Department')->count() > 0 ? 'checked' : '' }}>
-                                            <label class="form-check-label fw-bold" for="dept_{{ $department->id }}">
-                                                <i class="fas fa-folder me-2 text-warning"></i>
-                                                {{ $lang == 'ar' ? $department->name_ar : $department->name_en }}
-                                            </label>
+                            <!-- الأقسام الرئيسية -->
+                            <div class="mb-3">
+                                <label class="form-label fw-bold text-warning">
+                                    <i class="fas fa-folder me-2"></i>
+                                    {{ $lang == 'ar' ? 'الأقسام الرئيسية (حد أقصى 3):' : 'Main Departments (Max 3):' }}
+                                </label>
+                                <div class="departments-container">
+                                    @foreach($departments as $department)
+                                        <div class="department-card mb-2 p-2 border rounded">
+                                            <div class="form-check">
+                                                <input class="form-check-input main-department-checkbox"
+                                                       type="checkbox"
+                                                       name="main_departments[]"
+                                                       value="{{ $department->id }}"
+                                                       id="main_dept_{{ $department->id }}"
+                                                       {{ $userDepartments->where('commentable_id', $department->id)->where('commentable_type', 'App\Models\Department')->count() > 0 ? 'checked' : '' }}>
+                                                <label class="form-check-label fw-bold" for="main_dept_{{ $department->id }}">
+                                                    <i class="fas fa-folder me-2 text-warning"></i>
+                                                    {{ $lang == 'ar' ? $department->name_ar : $department->name_en }}
+                                                </label>
+                                            </div>
                                         </div>
+                                    @endforeach
+                                </div>
+                            </div>
 
-                                        <!-- Sub Departments -->
+                            <!-- الأقسام الفرعية -->
+                            <div class="mb-3">
+                                <label class="form-label fw-bold text-info">
+                                    <i class="fas fa-folder-open me-2"></i>
+                                    {{ $lang == 'ar' ? 'الأقسام الفرعية (غير محدودة):' : 'Sub Departments (Unlimited):' }}
+                                </label>
+                                <div class="departments-container">
+                                    @foreach($departments as $department)
                                         @if($department->sub_departments->count() > 0)
-                                            <div class="sub-departments ms-4 mt-2">
-                                                @foreach($department->sub_departments as $subDepartment)
-                                                    <div class="form-check">
-                                                        <input class="form-check-input sub-department-checkbox"
-                                                               type="checkbox"
-                                                               name="departments[]"
-                                                               value="sub-{{ $subDepartment->id }}"
-                                                               id="sub_dept_{{ $subDepartment->id }}"
-                                                               data-parent="{{ $department->id }}"
-                                                               {{ $userDepartments->where('commentable_id', $subDepartment->id)->where('commentable_type', 'App\Models\SubDepartment')->count() > 0 ? 'checked' : '' }}>
-                                                        <label class="form-check-label" for="sub_dept_{{ $subDepartment->id }}">
-                                                            <i class="fas fa-folder-open me-2 text-info"></i>
-                                                            {{ $lang == 'ar' ? $subDepartment->name_ar : $subDepartment->name_en }}
-                                                        </label>
-                                                    </div>
-                                                @endforeach
+                                            <div class="department-card mb-3 p-3 border rounded">
+                                                <div class="fw-bold mb-2 text-muted">
+                                                    <i class="fas fa-folder me-2"></i>
+                                                    {{ $lang == 'ar' ? $department->name_ar : $department->name_en }}
+                                                </div>
+                                                <div class="sub-departments ms-3">
+                                                    @foreach($department->sub_departments as $subDepartment)
+                                                        <div class="form-check">
+                                                            <input class="form-check-input sub-department-checkbox"
+                                                                   type="checkbox"
+                                                                   name="sub_departments[]"
+                                                                   value="{{ $subDepartment->id }}"
+                                                                   id="sub_dept_{{ $subDepartment->id }}"
+                                                                   data-parent="{{ $department->id }}"
+                                                                   {{ $userDepartments->where('commentable_id', $subDepartment->id)->where('commentable_type', 'App\Models\SubDepartment')->count() > 0 ? 'checked' : '' }}>
+                                                            <label class="form-check-label" for="sub_dept_{{ $subDepartment->id }}">
+                                                                <i class="fas fa-folder-open me-2 text-info"></i>
+                                                                {{ $lang == 'ar' ? $subDepartment->name_ar : $subDepartment->name_en }}
+                                                            </label>
+                                                        </div>
+                                                    @endforeach
+                                                </div>
                                             </div>
                                         @endif
-                                    </div>
-                                @endforeach
+                                    @endforeach
+                                </div>
                             </div>
 
                             @error('departments')
@@ -314,13 +337,26 @@ document.addEventListener('DOMContentLoaded', function() {
     const subDepartmentCheckboxes = document.querySelectorAll('.sub-department-checkbox');
     const form = document.getElementById('accountSettingsForm');
 
-    // التحقق من عدد الأقسام المختارة
-    function validateDepartments() {
-        const checkedBoxes = document.querySelectorAll('input[name="departments[]"]:checked');
-        const maxDepartments = 3;
+    // التحقق من عدد الأقسام الرئيسية المختارة
+    function validateMainDepartments() {
+        const checkedMainBoxes = document.querySelectorAll('input[name="main_departments[]"]:checked');
+        const maxMainDepartments = 3;
 
-        if (checkedBoxes.length > maxDepartments) {
-            alert('{{ $lang == "ar" ? "يمكنك اختيار 3 أقسام فقط" : "You can select maximum 3 departments" }}');
+        if (checkedMainBoxes.length > maxMainDepartments) {
+            alert('{{ $lang == "ar" ? "يمكنك اختيار 3 أقسام رئيسية فقط" : "You can select maximum 3 main departments" }}');
+            return false;
+        }
+
+        return true;
+    }
+
+    // التحقق من وجود قسم واحد على الأقل
+    function validateAtLeastOneDepartment() {
+        const checkedMainBoxes = document.querySelectorAll('input[name="main_departments[]"]:checked');
+        const checkedSubBoxes = document.querySelectorAll('input[name="sub_departments[]"]:checked');
+
+        if (checkedMainBoxes.length === 0 && checkedSubBoxes.length === 0) {
+            alert('{{ $lang == "ar" ? "يرجى اختيار قسم واحد على الأقل" : "Please select at least one department" }}');
             return false;
         }
 
@@ -329,15 +365,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // إضافة مستمع الأحداث للنموذج
     form.addEventListener('submit', function(e) {
-        if (!validateDepartments()) {
+        if (!validateMainDepartments() || !validateAtLeastOneDepartment()) {
             e.preventDefault();
         }
     });
 
     // التحقق من الأقسام الفرعية عند اختيار القسم الرئيسي
-    departmentCheckboxes.forEach(checkbox => {
+    const mainDepartmentCheckboxes = document.querySelectorAll('.main-department-checkbox');
+    mainDepartmentCheckboxes.forEach(checkbox => {
         checkbox.addEventListener('change', function() {
-            const departmentId = this.id.replace('dept_', '');
+            const departmentId = this.id.replace('main_dept_', '');
             const subDepartments = document.querySelectorAll(`[data-parent="${departmentId}"]`);
 
             if (this.checked) {
@@ -350,6 +387,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // التحقق من القسم الرئيسي عند اختيار الأقسام الفرعية
+    const subDepartmentCheckboxes = document.querySelectorAll('.sub-department-checkbox');
     subDepartmentCheckboxes.forEach(checkbox => {
         checkbox.addEventListener('change', function() {
             const parentId = this.getAttribute('data-parent');

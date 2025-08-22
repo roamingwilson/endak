@@ -115,7 +115,7 @@ class GeneralCommentsController extends Controller
             ]));
         }
 
-        return redirect()->route('home')->with('success', 'تم تقديم العرض بنجاح');
+        return redirect()->route('departments')->with('success', 'تم تقديم العرض بنجاح');
     }
     public function index($id)
     {

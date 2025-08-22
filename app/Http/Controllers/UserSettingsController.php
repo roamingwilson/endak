@@ -85,36 +85,48 @@ class UserSettingsController extends Controller
 
         // التحقق من صحة البيانات
         $request->validate([
-            'departments' => 'required|array|min:1|max:3',
-            'departments.*' => 'string',
+            'main_departments' => 'nullable|array|max:3',
+            'main_departments.*' => 'exists:departments,id',
+            'sub_departments' => 'nullable|array',
+            'sub_departments.*' => 'exists:sub_departments,id',
             'cities' => 'array',
             'cities.*' => 'exists:governements,id'
         ], [
-            'departments.required' => 'يرجى اختيار قسم واحد على الأقل',
-            'departments.min' => 'يرجى اختيار قسم واحد على الأقل',
-            'departments.max' => 'يمكنك اختيار 3 أقسام فقط',
+            'main_departments.max' => 'يمكنك اختيار 3 أقسام رئيسية فقط',
+            'main_departments.*.exists' => 'أحد الأقسام الرئيسية غير صحيح',
+            'sub_departments.*.exists' => 'أحد الأقسام الفرعية غير صحيح',
             'cities.array' => 'يجب أن تكون المدن قائمة',
             'cities.*.exists' => 'إحدى المدن المختارة غير صحيحة'
         ]);
 
+        // التحقق من وجود قسم واحد على الأقل
+        $mainDepartments = $request->main_departments ?? [];
+        $subDepartments = $request->sub_departments ?? [];
+
+        if (empty($mainDepartments) && empty($subDepartments)) {
+            return redirect()->back()->withErrors(['departments' => 'يرجى اختيار قسم واحد على الأقل']);
+        }
+
         // تحديث الأقسام
-        if ($request->departments) {
-            // حذف الأقسام القديمة
-            UserDepartment::where('user_id', $user->id)->delete();
+        // حذف الأقسام القديمة
+        UserDepartment::where('user_id', $user->id)->delete();
 
-            // إضافة الأقسام الجديدة
-            foreach ($request->departments as $item) {
-                [$type, $id] = explode('-', $item);
-                $commentable_type = $type === 'main'
-                    ? \App\Models\Department::class
-                    : \App\Models\SubDepartment::class;
+        // إضافة الأقسام الرئيسية الجديدة
+        foreach ($mainDepartments as $mainId) {
+            UserDepartment::create([
+                'user_id' => $user->id,
+                'commentable_id' => $mainId,
+                'commentable_type' => \App\Models\Department::class,
+            ]);
+        }
 
-                UserDepartment::create([
-                    'user_id' => $user->id,
-                    'commentable_id' => $id,
-                    'commentable_type' => $commentable_type,
-                ]);
-            }
+        // إضافة الأقسام الفرعية الجديدة
+        foreach ($subDepartments as $subId) {
+            UserDepartment::create([
+                'user_id' => $user->id,
+                'commentable_id' => $subId,
+                'commentable_type' => \App\Models\SubDepartment::class,
+            ]);
         }
 
         // تحديث المدن (للمزودين فقط)

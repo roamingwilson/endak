@@ -426,7 +426,22 @@
                                     <label class="form-label">
                                         <i class="fas fa-list text-success"></i> الأقسام التي تقدم فيها الخدمة
                                     </label>
-                                    <p class="text-muted small mb-3">يمكنك اختيار حتى 3 أقسام فقط</p>
+                                    <p class="text-muted small mb-3">يمكنك اختيار حتى 3 أقسام رئيسية فقط، والأقسام الفرعية غير محدودة</p>
+
+                                    <!-- عداد الأقسام المختارة -->
+                                    <div class="alert alert-info mb-3">
+                                        <div class="row text-center">
+                                            <div class="col-6">
+                                                <strong id="main-count">0</strong>
+                                                <div class="small">أقسام رئيسية</div>
+                                            </div>
+                                            <div class="col-6">
+                                                <strong id="sub-count">0</strong>
+                                                <div class="small">أقسام فرعية</div>
+                                            </div>
+                                        </div>
+                                    </div>
+
                                 <div class="row g-3 justify-content-center">
                                     @foreach($departments as $department)
                                         <div class="col-12 col-md-6 col-lg-4 mb-3">
@@ -434,20 +449,33 @@
                                                 <div class="fw-bold mb-2">{{ app()->getLocale() == 'ar' ? $department->name_ar : $department->name_en }}</div>
                                                 @if($department->sub_departments->count())
                                                     <div class="row">
-                                                        @foreach($department->sub_departments as $sub)
-                                                            <div class="col-12">
-                                                                <div class="form-check">
-                                                                    <input class="form-check-input department-checkbox" type="checkbox" name="departments[]" value="sub-{{ $sub->id }}-parent-{{ $department->id }}" id="sub-{{ $sub->id }}">
-                                                                    <label class="form-check-label" for="sub-{{ $sub->id }}">
-                                                                        {{ app()->getLocale() == 'ar' ? $sub->name_ar : $sub->name_en }}
-                                                                    </label>
-                                                                </div>
+                                                        <!-- القسم الرئيسي -->
+                                                        <div class="col-12 mb-2">
+                                                            <div class="form-check">
+                                                                <input class="form-check-input main-department-checkbox" type="checkbox" name="main_departments[]" value="{{ $department->id }}" id="main-{{ $department->id }}">
+                                                                <label class="form-check-label fw-bold" for="main-{{ $department->id }}">
+                                                                    {{ app()->getLocale() == 'ar' ? $department->name_ar : $department->name_en }} (قسم رئيسي)
+                                                                </label>
                                                             </div>
-                                                        @endforeach
+                                                        </div>
+                                                        <!-- الأقسام الفرعية -->
+                                                        <div class="col-12">
+                                                            <small class="text-muted d-block mb-2">الأقسام الفرعية:</small>
+                                                            @foreach($department->sub_departments as $sub)
+                                                                <div class="col-12">
+                                                                    <div class="form-check">
+                                                                        <input class="form-check-input sub-department-checkbox" type="checkbox" name="departments[]" value="sub-{{ $sub->id }}-parent-{{ $department->id }}" id="sub-{{ $sub->id }}" data-parent="{{ $department->id }}">
+                                                                        <label class="form-check-label" for="sub-{{ $sub->id }}">
+                                                                            {{ app()->getLocale() == 'ar' ? $sub->name_ar : $sub->name_en }}
+                                                                        </label>
+                                                                    </div>
+                                                                </div>
+                                                            @endforeach
+                                                        </div>
                                                     </div>
                                                 @else
                                                     <div class="form-check">
-                                                        <input class="form-check-input department-checkbox" type="checkbox" name="departments[]" value="main-{{ $department->id }}" id="main-{{ $department->id }}">
+                                                        <input class="form-check-input main-department-checkbox" type="checkbox" name="main_departments[]" value="{{ $department->id }}" id="main-{{ $department->id }}">
                                                         <label class="form-check-label" for="main-{{ $department->id }}">
                                                             {{ app()->getLocale() == 'ar' ? $department->name_ar : $department->name_en }}
                                                         </label>
@@ -856,29 +884,84 @@ $(document).ready(function() {
         }
         $('#provider_cities').removeClass('is-invalid');
 
-        // التحقق من الأقسام
-        const checked = $('.department-checkbox:checked').length;
-        if(checked == 0) {
+        // التحقق من الأقسام الرئيسية
+        const mainChecked = $('.main-department-checkbox:checked').length;
+        const subChecked = $('.sub-department-checkbox:checked').length;
+
+        if(mainChecked == 0 && subChecked == 0) {
             $('#departments-error').text('يرجى اختيار قسم واحد على الأقل').show();
             return false;
         }
-        if(checked > 3) {
-            $('#departments-error').text('يمكنك اختيار 3 أقسام فقط').show();
+        if(mainChecked > 3) {
+            $('#departments-error').text('يمكنك اختيار 3 أقسام رئيسية فقط').show();
             return false;
         }
         $('#departments-error').hide();
         $('#step15-errors').addClass('d-none').empty();
         return true;
     }
-    // منع اختيار أكثر من 3 أقسام
-    $(document).on('change', '.department-checkbox', function() {
-        const checkedCount = $('.department-checkbox:checked').length;
+
+    // منع اختيار أكثر من 3 أقسام رئيسية
+    $(document).on('change', '.main-department-checkbox', function() {
+        const checkedCount = $('.main-department-checkbox:checked').length;
         if(checkedCount > 3) {
             this.checked = false;
-            $('#departments-error').text('يمكنك اختيار 3 أقسام فقط').show();
+            $('#departments-error').text('يمكنك اختيار 3 أقسام رئيسية فقط').show();
         } else {
             $('#departments-error').hide();
         }
+
+        // تحديث العداد
+        updateDepartmentCounters();
+    });
+
+        // عند اختيار قسم رئيسي، إلغاء تحديد الأقسام الفرعية التابعة له
+    $(document).on('change', '.main-department-checkbox', function() {
+        const departmentId = $(this).val();
+        const isChecked = $(this).is(':checked');
+
+        if(isChecked) {
+            // إلغاء تحديد الأقسام الفرعية التابعة لهذا القسم الرئيسي
+            $(`.sub-department-checkbox[data-parent="${departmentId}"]`).prop('checked', false);
+        }
+
+        // تحديث العداد
+        updateDepartmentCounters();
+    });
+
+        // عند اختيار قسم فرعي، إلغاء تحديد القسم الرئيسي التابع له
+    $(document).on('change', '.sub-department-checkbox', function() {
+        const parentId = $(this).data('parent');
+        const isChecked = $(this).is(':checked');
+
+        if(isChecked) {
+            // إلغاء تحديد القسم الرئيسي
+            $(`#main-${parentId}`).prop('checked', false);
+        }
+
+        // تحديث العداد
+        updateDepartmentCounters();
+    });
+
+    // دالة تحديث عداد الأقسام
+    function updateDepartmentCounters() {
+        const mainCount = $('.main-department-checkbox:checked').length;
+        const subCount = $('.sub-department-checkbox:checked').length;
+
+        $('#main-count').text(mainCount);
+        $('#sub-count').text(subCount);
+
+        // تغيير لون العداد حسب الحد الأقصى
+        if(mainCount >= 3) {
+            $('#main-count').parent().addClass('text-danger');
+        } else {
+            $('#main-count').parent().removeClass('text-danger');
+        }
+    }
+
+    // تحديث العداد عند التحميل
+    $(document).ready(function() {
+        updateDepartmentCounters();
     });
 
     // Previous step

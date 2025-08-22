@@ -95,23 +95,50 @@
                         </h6>
 
                         @if($userDepartments->count() > 0)
-                            <div class="departments-display">
-                                @foreach($userDepartments as $userDept)
-                                    @if($userDept->commentable)
-                                        <div class="department-item mb-2 p-2 rounded border">
-                                            @if($userDept->commentable_type == 'App\Models\Department')
-                                                <i class="fas fa-folder me-2 text-warning"></i>
-                                                <span class="fw-bold">{{ $lang == 'ar' ? $userDept->commentable->name_ar : $userDept->commentable->name_en }}</span>
-                                                <small class="text-muted ms-2">({{ $lang == 'ar' ? 'قسم رئيسي' : 'Main Department' }})</small>
-                                            @else
-                                                <i class="fas fa-folder-open me-2 text-info"></i>
-                                                <span>{{ $lang == 'ar' ? $userDept->commentable->name_ar : $userDept->commentable->name_en }}</span>
-                                                <small class="text-muted ms-2">({{ $lang == 'ar' ? 'قسم فرعي' : 'Sub Department' }})</small>
+                            @php
+                                $mainDepartments = $userDepartments->where('commentable_type', 'App\Models\Department');
+                                $subDepartments = $userDepartments->where('commentable_type', 'App\Models\SubDepartment');
+                            @endphp
+
+                            <!-- الأقسام الرئيسية -->
+                            @if($mainDepartments->count() > 0)
+                                <div class="mb-3">
+                                    <h6 class="fw-bold text-warning">
+                                        <i class="fas fa-folder me-2"></i>
+                                        {{ $lang == 'ar' ? 'الأقسام الرئيسية:' : 'Main Departments:' }}
+                                    </h6>
+                                    <div class="departments-display">
+                                        @foreach($mainDepartments as $userDept)
+                                            @if($userDept->commentable)
+                                                <div class="department-item mb-2 p-2 rounded border">
+                                                    <i class="fas fa-folder me-2 text-warning"></i>
+                                                    <span class="fw-bold">{{ $lang == 'ar' ? $userDept->commentable->name_ar : $userDept->commentable->name_en }}</span>
+                                                </div>
                                             @endif
-                                        </div>
-                                    @endif
-                                @endforeach
-                            </div>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            @endif
+
+                            <!-- الأقسام الفرعية -->
+                            @if($subDepartments->count() > 0)
+                                <div class="mb-3">
+                                    <h6 class="fw-bold text-info">
+                                        <i class="fas fa-folder-open me-2"></i>
+                                        {{ $lang == 'ar' ? 'الأقسام الفرعية:' : 'Sub Departments:' }}
+                                    </h6>
+                                    <div class="departments-display">
+                                        @foreach($subDepartments as $userDept)
+                                            @if($userDept->commentable)
+                                                <div class="department-item mb-2 p-2 rounded border">
+                                                    <i class="fas fa-folder-open me-2 text-info"></i>
+                                                    <span>{{ $lang == 'ar' ? $userDept->commentable->name_ar : $userDept->commentable->name_en }}</span>
+                                                </div>
+                                            @endif
+                                        @endforeach
+                                    </div>
+                                </div>
+                            @endif
                         @else
                             <div class="alert alert-warning">
                                 <i class="fas fa-exclamation-triangle me-2"></i>
@@ -134,6 +161,13 @@
                                 <i class="fas fa-th-large fa-2x text-success mb-2"></i>
                                 <h5 class="mb-1">{{ $userDepartments->count() }}</h5>
                                 <small class="text-muted">{{ $lang == 'ar' ? 'قسم مختار' : 'Selected Departments' }}</small>
+                                <div class="small text-muted mt-1">
+                                    @php
+                                        $mainCount = $userDepartments->where('commentable_type', 'App\Models\Department')->count();
+                                        $subCount = $userDepartments->where('commentable_type', 'App\Models\SubDepartment')->count();
+                                    @endphp
+                                    {{ $mainCount }} {{ $lang == 'ar' ? 'رئيسي' : 'main' }}, {{ $subCount }} {{ $lang == 'ar' ? 'فرعي' : 'sub' }}
+                                </div>
                             </div>
                         </div>
                     </div>

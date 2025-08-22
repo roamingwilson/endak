@@ -50,13 +50,7 @@
                                 </a>
                             </li>
                         @endif
-                        @if (auth()->check())
-                            <li class="nav-item mx-2">
-                                <a href="{{ route('web.user.service_provider') }}" class="nav-link fw-medium">
-                                    {{ __('user.service_provider') }}
-                                </a>
-                            </li>
-                        @endif
+
                         @if (auth()->check() && auth()->user()->role_id == 1)
                             <li class="nav-item mx-2">
                                 <a href="{{ route('general_orders.customer.index') }}" class="nav-link fw-medium">
@@ -273,11 +267,7 @@
                         <a href="{{ route('services.index') }}" class="nav-link"><i class="fas fa-clipboard-list me-2"></i>{{ $lang == 'ar' ? 'طلباتي' : 'Services' }}</a>
                     </li>
                 @endif
-                @if (auth()->check())
-                    <li class="nav-item mb-1">
-                        <a href="{{ route('web.user.service_provider') }}" class="nav-link"><i class="fas fa-user-tie me-2"></i>{{ __('user.service_provider') }}</a>
-                    </li>
-                @endif
+
                 @if (auth()->check() && auth()->user()->role_id == 1)
                     <li class="nav-item mb-1">
                         <a href="{{ route('general_orders.customer.index') }}" class="nav-link"><i class="fas fa-check-circle me-2"></i>{{ $lang == 'ar' ? 'العروض المقبولة' : 'Accepted Orders' }}</a>
