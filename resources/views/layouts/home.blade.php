@@ -77,17 +77,47 @@
         }
         .loading.hidden { display: none; }
 
-        /* Image optimization */
+        /* Image optimization - Prevent Layout Shifts */
         img {
             max-width: 100%;
             height: auto;
+            display: block;
         }
         img[width][height] {
             aspect-ratio: attr(width) / attr(height);
         }
         img.lazy {
-            background: #f0f0f0;
+            background: #f8f9fa;
             min-height: 200px;
+        }
+        
+        /* Prevent layout shift for all media */
+        img, video, iframe, embed, object {
+            max-width: 100%;
+            height: auto;
+            box-sizing: border-box;
+        }
+        
+        /* Font loading optimization */
+        @font-face {
+            font-display: swap;
+        }
+        
+        /* Prevent layout shift for dynamic content */
+        .dynamic-content {
+            min-height: 50px;
+        }
+        
+        /* Skeleton loading for better UX */
+        .skeleton {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+        }
+        
+        @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
         }
 
         /* Prevent layout shift for images */
@@ -651,12 +681,22 @@
     <!-- Load critical JavaScript first -->
     <script src="{{ asset('home/assets/libs/bootstrap/js/bootstrap.bundle.min.js') }}" defer></script>
 
-    <!-- Load non-critical JavaScript asynchronously -->
-    <script src="{{ asset('home/assets/libs/@popperjs/core/umd/popper.min.js') }}" async></script>
-    <script src="{{ asset('home/assets/js/defaultmenu.js') }}" async></script>
-    <script src="{{ asset('home/assets/js/category-menu.js') }}" async></script>
-    <script src="{{ asset('home/assets/js/cookies.js') }}" async></script>
-    <script src="{{ asset('home/assets/js/custom-switcher.js') }}" async></script>
+    <!-- Load non-critical JavaScript asynchronously - Modern browsers only -->
+    <script type="module">
+        // Only load for modern browsers that support modules
+        import('{{ asset("home/assets/js/defaultmenu.js") }}');
+        import('{{ asset("home/assets/js/category-menu.js") }}');
+        import('{{ asset("home/assets/js/cookies.js") }}');
+        import('{{ asset("home/assets/js/custom-switcher.js") }}');
+    </script>
+    
+    <!-- Fallback for older browsers -->
+    <script nomodule>
+        // Legacy browser support
+        document.addEventListener('DOMContentLoaded', function() {
+            console.warn('Legacy browser detected. Some features may not work optimally.');
+        });
+    </script>
 
     <!-- Load essential JavaScript first -->
     <script src="{{ asset('js/optimized-core.js') }}" defer></script>

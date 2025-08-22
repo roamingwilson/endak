@@ -74,7 +74,7 @@
                         @endif
                         @if(auth()->check() && auth()->user()->role_id == 3)
                             <li class="nav-item mx-2">
-                                <a href="{{ route('services.requests.all') }}" class="nav-link fw-medium">
+                                <a href="{{ route('all_services') }}" class="nav-link fw-medium">
                                     {{ $lang == 'ar' ? 'كل الخدمات المطلوبة' : 'All Service Requests' }}
                                 </a>
                             </li>

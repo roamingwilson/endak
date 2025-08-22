@@ -45,7 +45,17 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Auto-add dimensions if missing to prevent layout shift
         if (!img.hasAttribute('width') && !img.hasAttribute('height')) {
+            // Add placeholder dimensions immediately to prevent layout shift
+            img.style.minHeight = '200px';
+            img.style.backgroundColor = '#f8f9fa';
+            img.style.display = 'block';
+            
             img.onload = function() {
+                // Remove placeholder styles
+                this.style.minHeight = '';
+                this.style.backgroundColor = '';
+                
+                // Add actual dimensions
                 if (!this.hasAttribute('width')) {
                     this.setAttribute('width', this.naturalWidth);
                 }
@@ -55,6 +65,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Add aspect-ratio CSS property for better responsive behavior
                 this.style.aspectRatio = `${this.naturalWidth} / ${this.naturalHeight}`;
             };
+        }
+        
+        // Prevent layout shift for images with src but no dimensions
+        if (img.src && !img.complete && !img.hasAttribute('width')) {
+            img.style.aspectRatio = '16 / 9'; // Default aspect ratio
+            img.style.width = '100%';
+            img.style.height = 'auto';
         }
     });
 });
