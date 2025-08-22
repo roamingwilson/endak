@@ -30,18 +30,32 @@ document.addEventListener('DOMContentLoaded', function() {
         document.head.appendChild(link);
     });
 
-    // Optimize image loading
+        // Optimize image loading
     const allImages = document.querySelectorAll('img');
     allImages.forEach(img => {
         // Add loading="lazy" to non-critical images
         if (!img.classList.contains('critical')) {
             img.loading = 'lazy';
         }
-
+        
         // Add error handling
         img.onerror = function() {
             this.style.display = 'none';
         };
+        
+        // Auto-add dimensions if missing to prevent layout shift
+        if (!img.hasAttribute('width') && !img.hasAttribute('height')) {
+            img.onload = function() {
+                if (!this.hasAttribute('width')) {
+                    this.setAttribute('width', this.naturalWidth);
+                }
+                if (!this.hasAttribute('height')) {
+                    this.setAttribute('height', this.naturalHeight);
+                }
+                // Add aspect-ratio CSS property for better responsive behavior
+                this.style.aspectRatio = `${this.naturalWidth} / ${this.naturalHeight}`;
+            };
+        }
     });
 });
 

@@ -76,6 +76,38 @@
             z-index: 9999;
         }
         .loading.hidden { display: none; }
+
+        /* Image optimization */
+        img {
+            max-width: 100%;
+            height: auto;
+        }
+        img[width][height] {
+            aspect-ratio: attr(width) / attr(height);
+        }
+        img.lazy {
+            background: #f0f0f0;
+            min-height: 200px;
+        }
+
+        /* Prevent layout shift for images */
+        .img-container {
+            position: relative;
+            overflow: hidden;
+        }
+        .img-container::before {
+            content: '';
+            display: block;
+            padding-bottom: 56.25%; /* 16:9 aspect ratio */
+        }
+        .img-container img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
     </style>
 
     <!-- Preload critical resources -->
@@ -540,17 +572,80 @@
     });
 </script>
 
-    <!-- Optimized JavaScript Loading -->
+        <!-- Optimized JavaScript Loading -->
     <script>
-        // Hide loading indicator when page is ready
-        window.addEventListener('load', function() {
-            document.getElementById('loading').classList.add('hidden');
-        });
+        // Performance optimization for Time to Interactive
+        const perfOptimizer = {
+            init() {
+                this.hideLoadingIndicator();
+                this.optimizeInteractivity();
+                this.preloadCriticalResources();
+            },
 
-        // Hide loading indicator after 3 seconds max
-        setTimeout(function() {
-            document.getElementById('loading').classList.add('hidden');
-        }, 3000);
+            hideLoadingIndicator() {
+                const hideLoading = () => {
+                    const loadingEl = document.getElementById('loading');
+                    if (loadingEl) loadingEl.classList.add('hidden');
+                };
+
+                // Hide loading when DOM is interactive
+                if (document.readyState === 'interactive' || document.readyState === 'complete') {
+                    hideLoading();
+                } else {
+                    document.addEventListener('DOMContentLoaded', hideLoading);
+                }
+
+                // Fallback timeout
+                setTimeout(hideLoading, 2000);
+            },
+
+            optimizeInteractivity() {
+                // Defer non-critical operations until after page is interactive
+                const deferredTasks = [];
+
+                // Add tasks that can be deferred
+                deferredTasks.push(() => {
+                    // Initialize analytics or other non-critical features
+                    console.log('Deferred tasks initialized');
+                });
+
+                // Execute deferred tasks after interaction is possible
+                const executeDeferredTasks = () => {
+                    requestIdleCallback(() => {
+                        deferredTasks.forEach(task => {
+                            try { task(); } catch(e) { console.warn('Deferred task failed:', e); }
+                        });
+                    });
+                };
+
+                if (document.readyState === 'complete') {
+                    executeDeferredTasks();
+                } else {
+                    window.addEventListener('load', executeDeferredTasks);
+                }
+            },
+
+            preloadCriticalResources() {
+                // Preload resources that will be needed soon
+                const criticalResources = [
+                    { href: '/css/critical.css', as: 'style' },
+                    { href: '/js/essential.js', as: 'script' }
+                ];
+
+                criticalResources.forEach(resource => {
+                    if (!document.querySelector(`link[href="${resource.href}"]`)) {
+                        const link = document.createElement('link');
+                        link.rel = 'preload';
+                        link.href = resource.href;
+                        link.as = resource.as;
+                        document.head.appendChild(link);
+                    }
+                });
+            }
+        };
+
+        // Initialize performance optimizer
+        perfOptimizer.init();
     </script>
 
     <!-- Load critical JavaScript first -->
@@ -563,10 +658,41 @@
     <script src="{{ asset('home/assets/js/cookies.js') }}" async></script>
     <script src="{{ asset('home/assets/js/custom-switcher.js') }}" async></script>
 
-    <!-- Load external libraries asynchronously -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js" defer></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js" defer></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js" defer></script>
+    <!-- Load essential JavaScript first -->
+    <script src="{{ asset('js/optimized-core.js') }}" defer></script>
+
+    <!-- Load modern JavaScript features -->
+    <script src="{{ asset('js/modern-features.js') }}" defer></script>
+
+    <!-- Load external libraries only when needed -->
+    <script>
+        // Lazy load jQuery and Select2 only if needed
+        function loadLibraryIfNeeded(selector, libUrl, callback) {
+            if (document.querySelector(selector)) {
+                const script = document.createElement('script');
+                script.src = libUrl;
+                script.onload = callback;
+                document.head.appendChild(script);
+            }
+        }
+
+        // Load libraries after page load
+        window.addEventListener('load', () => {
+            // Load jQuery only if Select2 elements exist
+            loadLibraryIfNeeded('.select2', 'https://code.jquery.com/jquery-3.6.0.min.js', () => {
+                loadLibraryIfNeeded('.select2', 'https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js', () => {
+                    $('.select2').select2();
+                });
+            });
+
+            // Load SweetAlert only if swal function is called
+            if (typeof swal !== 'undefined' || document.querySelector('[data-swal]')) {
+                const script = document.createElement('script');
+                script.src = 'https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js';
+                document.head.appendChild(script);
+            }
+        });
+    </script>
 
     <!-- Image optimization script -->
     <script src="{{ asset('js/image-optimizer.js') }}" async></script>
