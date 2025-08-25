@@ -702,6 +702,7 @@ $(document).ready(function() {
 
     // Show current step with animation
     function showStep(step) {
+        console.log('Showing step:', step);
         $('.step').fadeOut(300).promise().done(function() {
             $('.step').addClass('d-none');
             $('.step-' + step).removeClass('d-none').fadeIn(300);
@@ -732,6 +733,7 @@ $(document).ready(function() {
     // Validate step 1 (role selection)
     function validateStep1() {
         const selectedRole = $('input[name="role"]:checked').val();
+        console.log('Selected role:', selectedRole);
         if (!selectedRole) {
             $('#step1-errors').removeClass('d-none').text('الرجاء اختيار نوع الحساب قبل المتابعة');
             $('.role-card').addClass('is-invalid');
@@ -744,13 +746,19 @@ $(document).ready(function() {
 
     // Validate step 2 (user info)
     function validateStep2() {
+        console.log('Validating step 2...');
         let isValid = true;
         const step2Inputs = $('.step-2 input[required]');
         const step2Selects = $('.step-2 select[required]');
 
+        console.log('Required inputs count:', step2Inputs.length);
+        console.log('Required selects count:', step2Selects.length);
+
         step2Inputs.each(function() {
             const input = $(this);
+            console.log('Validating input:', input.attr('name'), 'Value:', input.val());
             if (!input.val()) {
+                console.log('Input is empty:', input.attr('name'));
                 input.addClass('is-invalid');
                 isValid = false;
             } else {
@@ -781,7 +789,9 @@ $(document).ready(function() {
 
         step2Selects.each(function() {
             const select = $(this);
+            console.log('Validating select:', select.attr('name'), 'Value:', select.val());
             if (!select.val()) {
+                console.log('Select is empty:', select.attr('name'));
                 select.addClass('is-invalid');
                 isValid = false;
             } else {
@@ -789,6 +799,7 @@ $(document).ready(function() {
             }
         });
 
+        console.log('Step 2 validation result:', isValid);
         return isValid;
     }
 
@@ -890,9 +901,9 @@ $(document).ready(function() {
             main_departments: mainDepartments,
             _token: $('input[name="_token"]').val()
         };
-        
+
         console.log('Sending data:', formData);
-        
+
         $.ajax({
             url: '{{ route('register.post') }}',
             method: 'POST',
