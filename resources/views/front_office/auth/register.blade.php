@@ -545,9 +545,13 @@
                                     <i class="fas fa-globe"></i> البلد
                                 </label>
                                 <select name="country" id="country" class="form-control form-control-lg" required>
-                                    <option value="1">المملكة العربية السعودية</option>
+                                    <option value="1" selected>المملكة العربية السعودية</option>
                                 </select>
                                 <div class="invalid-feedback">يرجى اختيار البلد</div>
+                                <small class="form-text text-muted">
+                                    <i class="fas fa-info-circle"></i>
+                                    التسجيل متاح حالياً للمستخدمين السعوديين فقط
+                                </small>
                             </div>
 
                             <div class="mb-3">
@@ -573,8 +577,8 @@
                                     <i class="fas fa-lock"></i> كلمة المرور
                                 </label>
                                 <input type="password" name="password" class="form-control form-control-lg" required
-                                       placeholder="أدخل  كلمة المرور" >
-                                <div class="invalid-feedback">يجب أن تكون كلمة المرور مكونة من 6 أرقام فقط</div>
+                                       placeholder="أدخل كلمة المرور" >
+                                <div class="invalid-feedback">يرجى إدخال كلمة المرور</div>
                             </div>
 
                             <div class="mb-4">
@@ -727,7 +731,7 @@ $(document).ready(function() {
                         isValid = false;
                     }
                 }
-                if (input.attr('name') === 'password' && !/^\d{6}$/.test(input.val())) {
+                if (input.attr('name') === 'password' && input.val().length < 6) {
                     input.addClass('is-invalid');
                     isValid = false;
                 }
@@ -740,6 +744,11 @@ $(document).ready(function() {
 
         step2Selects.each(function() {
             const select = $(this);
+            // Skip validation for disabled country field since it's pre-selected
+            if (select.attr('name') === 'country' && select.prop('disabled')) {
+                select.removeClass('is-invalid');
+                return true;
+            }
             if (!select.val()) {
                 select.addClass('is-invalid');
                 isValid = false;
@@ -843,7 +852,7 @@ $(document).ready(function() {
                 last_name: $('input[name="last_name"]').val(),
                 phone: $('input[name="phone"]').val(),
                 email: $('input[name="email"]').val(),
-                country: $('select[name="country"]').val(),
+                country: '1', // Always Saudi Arabia
                 governement: selectedCities,
                 password: $('input[name="password"]').val(),
                 password_confirmation: $('input[name="password_confirmation"]').val(),
@@ -1139,12 +1148,24 @@ $.ajax({
     // Load all cities on page load
     loadAllCities();
 
+    // Ensure country is selected on page load
+    $(document).ready(function() {
+        // Set country to Saudi Arabia by default
+        $('#country').val('1').trigger('change');
+
+        // Remove the change event for country since it's fixed
+        $('#country').off('change');
+
+        // Make country field readonly to prevent changes
+        $('#country').prop('disabled', true);
+    });
+
     function loadAllCities() {
         $.ajax({
             url: '{{ route("get.governorates") }}',
             type: 'GET',
-            data: { country_id: 0 }, // 0 means all cities
-                        success: function(response) {
+            data: { country_id: 1 }, // Only load Saudi cities
+            success: function(response) {
                 var governementSelect = $('#governement');
                 var providerCitiesSelect = $('#provider_cities');
 
