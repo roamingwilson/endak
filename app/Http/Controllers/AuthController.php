@@ -240,7 +240,12 @@ class AuthController extends Controller
 
             $sender = \App\Models\WhatsappSender::first();
             if ($sender) {
-                sendWhatsAppMessage($whatsappPhone, $message, $sender->number, $sender->token, $sender->instance_id);
+                try {
+                    sendWhatsAppMessage($whatsappPhone, $message, $sender->number, $sender->token, $sender->instance_id);
+                } catch (\Exception $e) {
+                    Log::error('WhatsApp sending error: ' . $e->getMessage());
+                    // لا نوقف العملية إذا فشل إرسال الواتساب
+                }
             }
 
             DB::commit();
@@ -253,12 +258,15 @@ class AuthController extends Controller
 
         } catch (\Illuminate\Validation\ValidationException $e) {
             DB::rollBack();
+            Log::error('Register validation error: ' . json_encode($e->validator->errors()));
             return response()->json([
                 'success' => false,
                 'errors' => $e->validator->errors()
             ], 422);
         } catch (\Exception $e) {
             DB::rollBack();
+            Log::error('Register error: ' . $e->getMessage());
+            Log::error('Register error trace: ' . $e->getTraceAsString());
             return response()->json([
                 'success' => false,
                 'message' => 'حدث خطأ غير متوقع: ' . $e->getMessage()

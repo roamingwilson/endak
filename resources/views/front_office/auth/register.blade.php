@@ -876,27 +876,33 @@ $(document).ready(function() {
         }
 
         // أرسلهم مع البيانات
+        const formData = {
+            first_name: $('input[name="first_name"]').val(),
+            last_name: $('input[name="last_name"]').val(),
+            phone: $('input[name="phone"]').val(),
+            email: $('input[name="email"]').val(),
+            country: $('select[name="country"]').val(),
+            governement: $('select[name="governement"]').val(),
+            password: $('input[name="password"]').val(),
+            password_confirmation: $('input[name="password_confirmation"]').val(),
+            role: $('input[name="role"]:checked').val(),
+            departments: departments,
+            main_departments: mainDepartments,
+            _token: $('input[name="_token"]').val()
+        };
+        
+        console.log('Sending data:', formData);
+        
         $.ajax({
             url: '{{ route('register.post') }}',
             method: 'POST',
-            data: {
-                first_name: $('input[name="first_name"]').val(),
-                last_name: $('input[name="last_name"]').val(),
-                phone: $('input[name="phone"]').val(),
-                email: $('input[name="email"]').val(),
-                country: $('select[name="country"]').val(),
-                governement: $('select[name="governement"]').val(),
-                password: $('input[name="password"]').val(),
-                password_confirmation: $('input[name="password_confirmation"]').val(),
-                role: $('input[name="role"]:checked').val(),
-                departments: departments,
-                main_departments: mainDepartments,
-                _token: $('input[name="_token"]').val()
-            },
+            data: formData,
             success: function(response) {
+                console.log('Response received:', response);
                 btn.prop('disabled', false).html('التالي <i class="fas fa-arrow-left ms-2"></i>');
                 if (response.success) {
                     otpCode = response.otp;
+                    console.log('OTP Code:', otpCode);
                     $('#phone-display').text($('input[name="phone"]').val());
                     $('#otp-code-display').text('كود التحقق (للعرض فقط): ' + otpCode);
                     $('#otp-demo').show();
