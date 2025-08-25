@@ -27,7 +27,7 @@ class RegisterController extends Controller
                 'email' => 'nullable|email|unique:users,email',
                 'country' => 'required|exists:countries,id',
                 'governement' => 'required|exists:governements,id',
-                'password' => 'required|confirmed',
+                'password' => 'required|string|digits:5|confirmed',
             ]);
 
             // إذا كان الطلب AJAX (من خطوات التسجيل)

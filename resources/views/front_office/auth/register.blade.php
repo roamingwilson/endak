@@ -2,7 +2,6 @@
 @section('title', 'تسجيل جديد - خطوات')
 @section('style')
     <link rel="stylesheet" href="{{ asset('select2-4.0.3/css/select2.css') }}">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         .steps-progress {
@@ -337,7 +336,7 @@
                 </div>
 
                 <div class="card-body p-4 p-md-5">
-                    <form id="register-steps-form" method="POST" action="{{ route('register.post') }}" novalidate>
+                    <form id="register-steps-form" method="POST" action="{{ route('register') }}" novalidate>
                         @csrf
 
                         <!-- Step 1: Role Selection -->
@@ -546,14 +545,7 @@
                                     <i class="fas fa-globe"></i> البلد
                                 </label>
                                 <select name="country" id="country" class="form-control form-control-lg" required>
-                                    <option value="">اختر البلد</option>
-                                    @if(isset($countries) && $countries->count() > 0)
-                                        @foreach($countries as $country)
-                                            <option value="{{ $country->id }}">{{ app()->getLocale() == 'ar' ? $country->name_ar : $country->name_en }}</option>
-                                        @endforeach
-                                    @else
-                                        <option value="1">المملكة العربية السعودية</option>
-                                    @endif
+                                    <option value="1">المملكة العربية السعودية</option>
                                 </select>
                                 <div class="invalid-feedback">يرجى اختيار البلد</div>
                             </div>
@@ -581,8 +573,8 @@
                                     <i class="fas fa-lock"></i> كلمة المرور
                                 </label>
                                 <input type="password" name="password" class="form-control form-control-lg" required
-                                       placeholder="أدخل كلمة المرور">
-                                <div class="invalid-feedback">يرجى إدخال كلمة المرور</div>
+                                       placeholder="أدخل  كلمة المرور" >
+                                <div class="invalid-feedback">يجب أن تكون كلمة المرور مكونة من 6 أرقام فقط</div>
                             </div>
 
                             <div class="mb-4">
@@ -658,49 +650,10 @@
         console.log('Cities loaded:', @json($govers));
     </script>
 @endif
-<script>
-    // تحميل المحافظات حسب البلد المختار
-    function loadGovernements(countryId) {
-        if (countryId) {
-            $.ajax({
-                url: '{{ route("get.governorates") }}',
-                method: 'GET',
-                data: { country_id: countryId },
-                success: function(response) {
-                    const governementSelect = $('#governement');
-                    governementSelect.empty();
-                    governementSelect.append('<option value="">اختر المدينة</option>');
-
-                    if (response.length > 0) {
-                        response.forEach(function(gover) {
-                            governementSelect.append(`<option value="${gover.id}">${gover.name_ar}</option>`);
-                        });
-                    } else {
-                        governementSelect.append('<option value="" disabled>لا توجد مدن متاحة</option>');
-                    }
-                },
-                error: function() {
-                    console.error('خطأ في تحميل المحافظات');
-                }
-            });
-        }
-    }
-
-    // عند تغيير البلد
-    $(document).on('change', '#country', function() {
-        const countryId = $(this).val();
-        loadGovernements(countryId);
-    });
-</script>
 <script src="{{ asset('js/jquery/jquery.min.js') }}"></script>
 <script src="{{ asset('select2-4.0.3/js/select2.min.js') }}"></script>
 <script>
-    // تشخيص jQuery
-    console.log('jQuery version:', typeof $ !== 'undefined' ? $.fn.jquery : 'jQuery not loaded');
-    console.log('Document ready state:', document.readyState);
-    
-    $(document).ready(function() {
-        console.log('Document ready - jQuery loaded successfully');
+$(document).ready(function() {
     let currentStep = 1;
     let resendTimer = null;
     let secondsLeft = 60;
@@ -708,7 +661,6 @@
 
     // Show current step with animation
     function showStep(step) {
-        console.log('Showing step:', step);
         $('.step').fadeOut(300).promise().done(function() {
             $('.step').addClass('d-none');
             $('.step-' + step).removeClass('d-none').fadeIn(300);
@@ -739,7 +691,6 @@
     // Validate step 1 (role selection)
     function validateStep1() {
         const selectedRole = $('input[name="role"]:checked').val();
-        console.log('Selected role:', selectedRole);
         if (!selectedRole) {
             $('#step1-errors').removeClass('d-none').text('الرجاء اختيار نوع الحساب قبل المتابعة');
             $('.role-card').addClass('is-invalid');
@@ -750,31 +701,15 @@
         return true;
     }
 
-        // Validate step 2 (user info)
+    // Validate step 2 (user info)
     function validateStep2() {
-        console.log('=== Starting Step 2 Validation ===');
         let isValid = true;
         const step2Inputs = $('.step-2 input[required]');
         const step2Selects = $('.step-2 select[required]');
 
-        console.log('Required inputs count:', step2Inputs.length);
-        console.log('Required selects count:', step2Selects.length);
-
-        // Log all required inputs
-        step2Inputs.each(function(index) {
-            console.log(`Input ${index + 1}:`, $(this).attr('name'), 'Value:', $(this).val());
-        });
-
-        // Log all required selects
-        step2Selects.each(function(index) {
-            console.log(`Select ${index + 1}:`, $(this).attr('name'), 'Value:', $(this).val());
-        });
-
         step2Inputs.each(function() {
             const input = $(this);
-            console.log('Validating input:', input.attr('name'), 'Value:', input.val());
             if (!input.val()) {
-                console.log('Input is empty:', input.attr('name'));
                 input.addClass('is-invalid');
                 isValid = false;
             } else {
@@ -792,7 +727,7 @@
                         isValid = false;
                     }
                 }
-                if (input.attr('name') === 'password' && input.val().trim() === '') {
+                if (input.attr('name') === 'password' && !/^\d{6}$/.test(input.val())) {
                     input.addClass('is-invalid');
                     isValid = false;
                 }
@@ -805,9 +740,7 @@
 
         step2Selects.each(function() {
             const select = $(this);
-            console.log('Validating select:', select.attr('name'), 'Value:', select.val());
             if (!select.val()) {
-                console.log('Select is empty:', select.attr('name'));
                 select.addClass('is-invalid');
                 isValid = false;
             } else {
@@ -815,13 +748,6 @@
             }
         });
 
-        console.log('=== Step 2 Validation Complete ===');
-        console.log('Final validation result:', isValid);
-        if (!isValid) {
-            console.log('❌ Step 2 validation FAILED');
-        } else {
-            console.log('✅ Step 2 validation PASSED');
-        }
         return isValid;
     }
 
@@ -848,9 +774,7 @@
         updateStepIndicators(selectedRole);
     });
     // Next step from 1 to 1.5 or 2
-    console.log('Adding click event listener to step-1 next button');
     $('.step-1 .next-step').on('click', function() {
-        console.log('Step 1 next button clicked!');
         selectedRole = $('input[name="role"]:checked').val();
         if (!validateStep1()) return;
         if(selectedRole == '3') {
@@ -871,20 +795,11 @@
         $('[data-step="2"]').addClass('active');
     });
     // Next step from 2 to 3 (user info -> OTP)
-    console.log('Adding click event listener to step-2 next button');
     $('.step-2 .next-step').on('click', function() {
-        console.log('Step 2 next button clicked!');
-        console.log('=== Step 2 Next Button Clicked ===');
-        const validationResult = validateStep2();
-        console.log('Validation result:', validationResult);
-
-        if (!validationResult) {
-            console.log('❌ Validation failed, showing error message');
+        if (!validateStep2()) {
             $('#step2-errors').removeClass('d-none').text('الرجاء تصحيح الأخطاء في النموذج قبل المتابعة');
             return;
         }
-
-        console.log('✅ Validation passed, proceeding with AJAX request');
         $('#step2-errors').addClass('d-none').empty();
         const btn = $(this);
         btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> جاري الإرسال...');
@@ -920,82 +835,40 @@
         }
 
         // أرسلهم مع البيانات
-        const formData = {
-            first_name: $('input[name="first_name"]').val(),
-            last_name: $('input[name="last_name"]').val(),
-            phone: $('input[name="phone"]').val(),
-            email: $('input[name="email"]').val(),
-            country: $('select[name="country"]').val(),
-            governement: $('select[name="governement"]').val(),
-            password: $('input[name="password"]').val(),
-            password_confirmation: $('input[name="password_confirmation"]').val(),
-            role: $('input[name="role"]:checked').val(),
-            departments: departments,
-            main_departments: mainDepartments,
-            _token: $('input[name="_token"]').val()
-        };
-
-        // تشخيص مفصل للبيانات
-        console.log('=== Form Data Details ===');
-        console.log('First Name:', formData.first_name);
-        console.log('Last Name:', formData.last_name);
-        console.log('Phone:', formData.phone);
-        console.log('Email:', formData.email);
-        console.log('Country:', formData.country);
-        console.log('Governement:', formData.governement);
-        console.log('Password:', formData.password ? '***' : 'empty');
-        console.log('Password Confirmation:', formData.password_confirmation ? '***' : 'empty');
-        console.log('Role:', formData.role);
-        console.log('Departments:', formData.departments);
-        console.log('Main Departments:', formData.main_departments);
-        console.log('CSRF Token:', formData._token ? 'exists' : 'missing');
-
-        console.log('Sending data:', formData);
-        console.log('AJAX URL:', '{{ route('register.post') }}');
-        console.log('AJAX Method: POST');
-
         $.ajax({
-            url: '{{ route('register.post') }}',
+            url: '{{ route('register') }}',
             method: 'POST',
-            data: formData,
-            beforeSend: function() {
-                console.log('=== AJAX Request Starting ===');
+            data: {
+                first_name: $('input[name="first_name"]').val(),
+                last_name: $('input[name="last_name"]').val(),
+                phone: $('input[name="phone"]').val(),
+                email: $('input[name="email"]').val(),
+                country: $('select[name="country"]').val(),
+                governement: selectedCities,
+                password: $('input[name="password"]').val(),
+                password_confirmation: $('input[name="password_confirmation"]').val(),
+                role: $('input[name="role"]:checked').val(),
+                departments: departments,
+                main_departments: mainDepartments,
+                _token: $('input[name="_token"]').val()
             },
             success: function(response) {
-                console.log('Response received:', response);
-                btn.prop('disabled', false).html('التالي <i class="fas fa-arrow-left ms-2"></i>');
                 if (response.success) {
                     otpCode = response.otp;
-                    console.log('OTP Code:', otpCode);
-                    $('#phone-display').text($('input[name="phone"]').val());
+                $('#phone-display').text($('input[name="phone"]').val());
                     $('#otp-code-display').text('كود التحقق (للعرض فقط): ' + otpCode);
                     $('#otp-demo').show();
-                    startResendCountdown();
-                    showStep(3);
+                startResendCountdown();
+                showStep(3);
                     $('[data-step]').removeClass('active');
                     $('[data-step="3"]').addClass('active');
-                } else {
-                    $('#step2-errors').removeClass('d-none').text(response.message || 'حدث خطأ في الإرسال');
                 }
             },
-            error: function(xhr, status, error) {
-                console.log('=== AJAX Error ===');
-                console.log('Status:', status);
-                console.log('Error:', error);
-                console.log('Response Text:', xhr.responseText);
-                console.log('Status Code:', xhr.status);
-                console.log('Response JSON:', xhr.responseJSON);
-
-                btn.prop('disabled', false).html('التالي <i class="fas fa-arrow-left ms-2"></i>');
-                if (xhr.responseJSON && xhr.responseJSON.errors) {
-                    let errors = xhr.responseJSON.errors;
-                    console.log('Validation errors:', errors);
-                    for (let field in errors) {
-                        $(`[name="${field}"]`).addClass('is-invalid');
-                        $(`[name="${field}"]`).next('.invalid-feedback').text(errors[field][0]);
-                    }
-                } else {
-                    $('#step2-errors').removeClass('d-none').text('حدث خطأ في الإرسال، يرجى المحاولة مرة أخرى');
+            error: function(xhr) {
+                let errors = xhr.responseJSON.errors;
+                for (let field in errors) {
+                    $(`[name="${field}"]`).addClass('is-invalid');
+                    $(`[name="${field}"]`).next('.invalid-feedback').text(errors[field][0]);
                 }
             }
         });

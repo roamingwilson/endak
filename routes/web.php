@@ -103,13 +103,11 @@ Route::middleware('guest')->group(function () {
     Route::get('/register', [AuthController::class, 'showRegistrationForm'])->name('register');
     Route::post('/login', [AuthController::class, 'login'])->name('login');
     Route::post('/register', [AuthController::class, 'register'])->name('register.post');
-Route::post('/test-register', [AuthController::class, 'register'])->name('test.register')->withoutMiddleware([\App\Http\Middleware\VerifyCsrfToken::class]);
     Route::get('/forgot-password', [AuthController::class, 'forgotPassword'])->name('forgot-password');
 
     // OTP Routes
     Route::post('/otp/verify', [AuthController::class, 'verifyOtp'])->name('otp.verify');
     Route::post('/register/resend-otp', [AuthController::class, 'resendOtp'])->name('register.resend_otp');
-    Route::get('/activate-phone', [AuthController::class, 'showActivateForm'])->name('activatePhone');
 });
 
 Route::middleware('auth')->group(function () {

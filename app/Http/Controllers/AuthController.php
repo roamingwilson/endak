@@ -77,10 +77,7 @@ class AuthController extends Controller
 
     public function showRegistrationForm()
     {
-        $countries = \App\Models\Country::where('status', 1)->get();
-        $govers = \App\Models\Governements::all(); // Remove status filter since column doesn't exist
-
-        return view('front_office.auth.register', compact('countries', 'govers'));
+        return view('front_office.auth.register');
     }
 
 
@@ -150,7 +147,7 @@ class AuthController extends Controller
                 'country' => "required|exists:countries,id",
                 'governement' => "required|exists:governements,id",
                 'role' => "required|in:1,3",
-                'password' => "required|confirmed",
+                'password' => "required|min:6|confirmed",
                 'phone' => [
                     'required',
                     'string',
@@ -172,7 +169,7 @@ class AuthController extends Controller
             // إزالة أي أحرف غير رقمية
             $phone = preg_replace('/[^0-9]/', '', $phone);
             // تحقق أن الكود هو 966 فقط
-            if ($request->country != 232 && $request->country != '232') {
+            if ($request->country != 1 && $request->country != '1') {
                 return response()->json([
                     'success' => false,
                     'errors' => ['phone' => ['التسجيل متاح فقط للأرقام السعودية (+966)']]
@@ -240,33 +237,24 @@ class AuthController extends Controller
 
             $sender = \App\Models\WhatsappSender::first();
             if ($sender) {
-                try {
-                    sendWhatsAppMessage($whatsappPhone, $message, $sender->number, $sender->token, $sender->instance_id);
-                } catch (\Exception $e) {
-                    Log::error('WhatsApp sending error: ' . $e->getMessage());
-                    // لا نوقف العملية إذا فشل إرسال الواتساب
-                }
+                sendWhatsAppMessage($whatsappPhone, $message, $sender->number, $sender->token, $sender->instance_id);
             }
 
             DB::commit();
 
             return response()->json([
                 'success' => true,
-                'otp' => $otpCode->code,
                 'message' => 'تم إرسال رمز التحقق إلى هاتفك عبر الواتساب'
             ]);
 
         } catch (\Illuminate\Validation\ValidationException $e) {
             DB::rollBack();
-            Log::error('Register validation error: ' . json_encode($e->validator->errors()));
             return response()->json([
                 'success' => false,
                 'errors' => $e->validator->errors()
             ], 422);
         } catch (\Exception $e) {
             DB::rollBack();
-            Log::error('Register error: ' . $e->getMessage());
-            Log::error('Register error trace: ' . $e->getTraceAsString());
             return response()->json([
                 'success' => false,
                 'message' => 'حدث خطأ غير متوقع: ' . $e->getMessage()
