@@ -744,15 +744,25 @@ $(document).ready(function() {
         return true;
     }
 
-    // Validate step 2 (user info)
+        // Validate step 2 (user info)
     function validateStep2() {
-        console.log('Validating step 2...');
+        console.log('=== Starting Step 2 Validation ===');
         let isValid = true;
         const step2Inputs = $('.step-2 input[required]');
         const step2Selects = $('.step-2 select[required]');
 
         console.log('Required inputs count:', step2Inputs.length);
         console.log('Required selects count:', step2Selects.length);
+
+        // Log all required inputs
+        step2Inputs.each(function(index) {
+            console.log(`Input ${index + 1}:`, $(this).attr('name'), 'Value:', $(this).val());
+        });
+
+        // Log all required selects
+        step2Selects.each(function(index) {
+            console.log(`Select ${index + 1}:`, $(this).attr('name'), 'Value:', $(this).val());
+        });
 
         step2Inputs.each(function() {
             const input = $(this);
@@ -799,7 +809,13 @@ $(document).ready(function() {
             }
         });
 
-        console.log('Step 2 validation result:', isValid);
+        console.log('=== Step 2 Validation Complete ===');
+        console.log('Final validation result:', isValid);
+        if (!isValid) {
+            console.log('❌ Step 2 validation FAILED');
+        } else {
+            console.log('✅ Step 2 validation PASSED');
+        }
         return isValid;
     }
 
@@ -848,10 +864,17 @@ $(document).ready(function() {
     });
     // Next step from 2 to 3 (user info -> OTP)
     $('.step-2 .next-step').on('click', function() {
-        if (!validateStep2()) {
+        console.log('=== Step 2 Next Button Clicked ===');
+        const validationResult = validateStep2();
+        console.log('Validation result:', validationResult);
+
+        if (!validationResult) {
+            console.log('❌ Validation failed, showing error message');
             $('#step2-errors').removeClass('d-none').text('الرجاء تصحيح الأخطاء في النموذج قبل المتابعة');
             return;
         }
+
+        console.log('✅ Validation passed, proceeding with AJAX request');
         $('#step2-errors').addClass('d-none').empty();
         const btn = $(this);
         btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> جاري الإرسال...');
@@ -902,12 +925,32 @@ $(document).ready(function() {
             _token: $('input[name="_token"]').val()
         };
 
+        // تشخيص مفصل للبيانات
+        console.log('=== Form Data Details ===');
+        console.log('First Name:', formData.first_name);
+        console.log('Last Name:', formData.last_name);
+        console.log('Phone:', formData.phone);
+        console.log('Email:', formData.email);
+        console.log('Country:', formData.country);
+        console.log('Governement:', formData.governement);
+        console.log('Password:', formData.password ? '***' : 'empty');
+        console.log('Password Confirmation:', formData.password_confirmation ? '***' : 'empty');
+        console.log('Role:', formData.role);
+        console.log('Departments:', formData.departments);
+        console.log('Main Departments:', formData.main_departments);
+        console.log('CSRF Token:', formData._token ? 'exists' : 'missing');
+
         console.log('Sending data:', formData);
+        console.log('AJAX URL:', '{{ route('register.post') }}');
+        console.log('AJAX Method: POST');
 
         $.ajax({
             url: '{{ route('register.post') }}',
             method: 'POST',
             data: formData,
+            beforeSend: function() {
+                console.log('=== AJAX Request Starting ===');
+            },
             success: function(response) {
                 console.log('Response received:', response);
                 btn.prop('disabled', false).html('التالي <i class="fas fa-arrow-left ms-2"></i>');
@@ -925,10 +968,18 @@ $(document).ready(function() {
                     $('#step2-errors').removeClass('d-none').text(response.message || 'حدث خطأ في الإرسال');
                 }
             },
-            error: function(xhr) {
+            error: function(xhr, status, error) {
+                console.log('=== AJAX Error ===');
+                console.log('Status:', status);
+                console.log('Error:', error);
+                console.log('Response Text:', xhr.responseText);
+                console.log('Status Code:', xhr.status);
+                console.log('Response JSON:', xhr.responseJSON);
+
                 btn.prop('disabled', false).html('التالي <i class="fas fa-arrow-left ms-2"></i>');
                 if (xhr.responseJSON && xhr.responseJSON.errors) {
                     let errors = xhr.responseJSON.errors;
+                    console.log('Validation errors:', errors);
                     for (let field in errors) {
                         $(`[name="${field}"]`).addClass('is-invalid');
                         $(`[name="${field}"]`).next('.invalid-feedback').text(errors[field][0]);
