@@ -77,7 +77,10 @@ class AuthController extends Controller
 
     public function showRegistrationForm()
     {
-        return view('front_office.auth.register');
+        $countries = \App\Models\Country::where('status', 1)->get();
+        $govers = \App\Models\Governements::where('status', 1)->get();
+
+        return view('front_office.auth.register', compact('countries', 'govers'));
     }
 
 

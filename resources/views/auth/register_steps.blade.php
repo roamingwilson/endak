@@ -121,7 +121,7 @@
                 </div>
 
                 <div class="card-body p-4 p-md-5">
-                    <form id="register-steps-form" method="POST" action="{{ route('register') }}" novalidate>
+                    <form id="register-steps-form" method="POST" action="{{ route('register.post') }}" novalidate>
                         @csrf
 
                         <!-- Step 1: Role Selection -->
@@ -413,7 +413,7 @@ $(document).ready(function() {
             departments.push($(this).val());
         });
         $.ajax({
-            url: '{{ route('register') }}',
+            url: '{{ route('register.post') }}',
             method: 'POST',
             data: {
                 first_name: $('input[name="first_name"]').val(),

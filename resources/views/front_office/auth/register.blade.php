@@ -336,7 +336,7 @@
                 </div>
 
                 <div class="card-body p-4 p-md-5">
-                    <form id="register-steps-form" method="POST" action="{{ route('register') }}" novalidate>
+                    <form id="register-steps-form" method="POST" action="{{ route('register.post') }}" novalidate>
                         @csrf
 
                         <!-- Step 1: Role Selection -->
@@ -545,7 +545,14 @@
                                     <i class="fas fa-globe"></i> البلد
                                 </label>
                                 <select name="country" id="country" class="form-control form-control-lg" required>
-                                    <option value="1">المملكة العربية السعودية</option>
+                                    <option value="">اختر البلد</option>
+                                    @if(isset($countries) && $countries->count() > 0)
+                                        @foreach($countries as $country)
+                                            <option value="{{ $country->id }}">{{ app()->getLocale() == 'ar' ? $country->name_ar : $country->name_en }}</option>
+                                        @endforeach
+                                    @else
+                                        <option value="1">المملكة العربية السعودية</option>
+                                    @endif
                                 </select>
                                 <div class="invalid-feedback">يرجى اختيار البلد</div>
                             </div>
@@ -650,6 +657,40 @@
         console.log('Cities loaded:', @json($govers));
     </script>
 @endif
+<script>
+    // تحميل المحافظات حسب البلد المختار
+    function loadGovernements(countryId) {
+        if (countryId) {
+            $.ajax({
+                url: '{{ route("get.governorates") }}',
+                method: 'GET',
+                data: { country_id: countryId },
+                success: function(response) {
+                    const governementSelect = $('#governement');
+                    governementSelect.empty();
+                    governementSelect.append('<option value="">اختر المدينة</option>');
+
+                    if (response.length > 0) {
+                        response.forEach(function(gover) {
+                            governementSelect.append(`<option value="${gover.id}">${gover.name_ar}</option>`);
+                        });
+                    } else {
+                        governementSelect.append('<option value="" disabled>لا توجد مدن متاحة</option>');
+                    }
+                },
+                error: function() {
+                    console.error('خطأ في تحميل المحافظات');
+                }
+            });
+        }
+    }
+
+    // عند تغيير البلد
+    $(document).on('change', '#country', function() {
+        const countryId = $(this).val();
+        loadGovernements(countryId);
+    });
+</script>
 <script src="{{ asset('js/jquery/jquery.min.js') }}"></script>
 <script src="{{ asset('select2-4.0.3/js/select2.min.js') }}"></script>
 <script>
