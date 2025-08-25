@@ -877,7 +877,7 @@ $(document).ready(function() {
 
         // أرسلهم مع البيانات
         $.ajax({
-            url: '{{ route('register') }}',
+            url: '{{ route('register.post') }}',
             method: 'POST',
             data: {
                 first_name: $('input[name="first_name"]').val(),
@@ -885,7 +885,7 @@ $(document).ready(function() {
                 phone: $('input[name="phone"]').val(),
                 email: $('input[name="email"]').val(),
                 country: $('select[name="country"]').val(),
-                governement: selectedCities,
+                governement: $('select[name="governement"]').val(),
                 password: $('input[name="password"]').val(),
                 password_confirmation: $('input[name="password_confirmation"]').val(),
                 role: $('input[name="role"]:checked').val(),
@@ -894,22 +894,30 @@ $(document).ready(function() {
                 _token: $('input[name="_token"]').val()
             },
             success: function(response) {
+                btn.prop('disabled', false).html('التالي <i class="fas fa-arrow-left ms-2"></i>');
                 if (response.success) {
                     otpCode = response.otp;
-                $('#phone-display').text($('input[name="phone"]').val());
+                    $('#phone-display').text($('input[name="phone"]').val());
                     $('#otp-code-display').text('كود التحقق (للعرض فقط): ' + otpCode);
                     $('#otp-demo').show();
-                startResendCountdown();
-                showStep(3);
+                    startResendCountdown();
+                    showStep(3);
                     $('[data-step]').removeClass('active');
                     $('[data-step="3"]').addClass('active');
+                } else {
+                    $('#step2-errors').removeClass('d-none').text(response.message || 'حدث خطأ في الإرسال');
                 }
             },
             error: function(xhr) {
-                let errors = xhr.responseJSON.errors;
-                for (let field in errors) {
-                    $(`[name="${field}"]`).addClass('is-invalid');
-                    $(`[name="${field}"]`).next('.invalid-feedback').text(errors[field][0]);
+                btn.prop('disabled', false).html('التالي <i class="fas fa-arrow-left ms-2"></i>');
+                if (xhr.responseJSON && xhr.responseJSON.errors) {
+                    let errors = xhr.responseJSON.errors;
+                    for (let field in errors) {
+                        $(`[name="${field}"]`).addClass('is-invalid');
+                        $(`[name="${field}"]`).next('.invalid-feedback').text(errors[field][0]);
+                    }
+                } else {
+                    $('#step2-errors').removeClass('d-none').text('حدث خطأ في الإرسال، يرجى المحاولة مرة أخرى');
                 }
             }
         });

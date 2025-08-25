@@ -172,7 +172,7 @@ class AuthController extends Controller
             // إزالة أي أحرف غير رقمية
             $phone = preg_replace('/[^0-9]/', '', $phone);
             // تحقق أن الكود هو 966 فقط
-            if ($request->country != 1 && $request->country != '1') {
+            if ($request->country != 232 && $request->country != '232') {
                 return response()->json([
                     'success' => false,
                     'errors' => ['phone' => ['التسجيل متاح فقط للأرقام السعودية (+966)']]
@@ -247,6 +247,7 @@ class AuthController extends Controller
 
             return response()->json([
                 'success' => true,
+                'otp' => $otpCode->code,
                 'message' => 'تم إرسال رمز التحقق إلى هاتفك عبر الواتساب'
             ]);
 
