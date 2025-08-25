@@ -359,7 +359,7 @@ $(document).ready(function() {
                     input.addClass('is-invalid');
                     isValid = false;
                 }
-                if (input.attr('name') === 'password' && !/^\d{5}$/.test(input.val())) {
+                if (input.attr('name') === 'password' && input.val().trim() === '') {
                     input.addClass('is-invalid');
                     isValid = false;
                 }
