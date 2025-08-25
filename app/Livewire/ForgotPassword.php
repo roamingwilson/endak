@@ -19,7 +19,7 @@ class ForgotPassword extends Component
     protected $rules = [
         'phone' => 'required|numeric|exists:users,phone',
         'otp' => 'required|numeric|min:4',
-        'newPassword' => 'required|min:6',
+        'newPassword' => 'required',
     ];
 
     public function sendOtp()
@@ -50,7 +50,7 @@ class ForgotPassword extends Component
     {
         $this->validate([
             'otp' => 'required|numeric|min:4',
-            'newPassword' => 'required|min:6',
+            'newPassword' => 'required',
         ]);
 
         // التحقق من الرمز المدخل

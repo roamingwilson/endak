@@ -573,8 +573,8 @@
                                     <i class="fas fa-lock"></i> كلمة المرور
                                 </label>
                                 <input type="password" name="password" class="form-control form-control-lg" required
-                                       placeholder="أدخل  كلمة المرور" >
-                                <div class="invalid-feedback">يجب أن تكون كلمة المرور مكونة من 6 أرقام فقط</div>
+                                       placeholder="أدخل كلمة المرور">
+                                <div class="invalid-feedback">يرجى إدخال كلمة المرور</div>
                             </div>
 
                             <div class="mb-4">
@@ -727,7 +727,7 @@ $(document).ready(function() {
                         isValid = false;
                     }
                 }
-                if (input.attr('name') === 'password' && !/^\d{6}$/.test(input.val())) {
+                if (input.attr('name') === 'password' && input.val().trim() === '') {
                     input.addClass('is-invalid');
                     isValid = false;
                 }

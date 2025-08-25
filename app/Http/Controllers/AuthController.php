@@ -147,7 +147,7 @@ class AuthController extends Controller
                 'country' => "required|exists:countries,id",
                 'governement' => "required|exists:governements,id",
                 'role' => "required|in:1,3",
-                'password' => "required|min:6|confirmed",
+                'password' => "required|confirmed",
                 'phone' => [
                     'required',
                     'string',

@@ -90,31 +90,31 @@
             background: #f8f9fa;
             min-height: 200px;
         }
-        
+
         /* Prevent layout shift for all media */
         img, video, iframe, embed, object {
             max-width: 100%;
             height: auto;
             box-sizing: border-box;
         }
-        
+
         /* Font loading optimization */
         @font-face {
             font-display: swap;
         }
-        
+
         /* Prevent layout shift for dynamic content */
         .dynamic-content {
             min-height: 50px;
         }
-        
+
         /* Skeleton loading for better UX */
         .skeleton {
             background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
             background-size: 200% 100%;
             animation: loading 1.5s infinite;
         }
-        
+
         @keyframes loading {
             0% { background-position: 200% 0; }
             100% { background-position: -200% 0; }
@@ -689,7 +689,7 @@
         import('{{ asset("home/assets/js/cookies.js") }}');
         import('{{ asset("home/assets/js/custom-switcher.js") }}');
     </script>
-    
+
     <!-- Fallback for older browsers -->
     <script nomodule>
         // Legacy browser support

@@ -250,14 +250,14 @@
                             <div class="mb-3">
                                 <label class="form-label"><i class="fas fa-lock"></i> كلمة المرور</label>
                                 <input type="password" name="password" class="form-control form-control-lg" required
-                                       placeholder="أدخل 5 أرقام" pattern="\d{5}" maxlength="5">
-                                <div class="invalid-feedback">يجب أن تكون كلمة المرور مكونة من 5 أرقام فقط</div>
+                                       placeholder="أدخل كلمة المرور">
+                                <div class="invalid-feedback">يرجى إدخال كلمة المرور</div>
                             </div>
 
                             <div class="mb-4">
                                 <label class="form-label"><i class="fas fa-lock"></i> تأكيد كلمة المرور</label>
                                 <input type="password" name="password_confirmation" class="form-control form-control-lg" required
-                                       placeholder="أعد إدخال كلمة المرور" pattern="\d{5}" maxlength="5">
+                                       placeholder="أعد إدخال كلمة المرور">
                                 <div class="invalid-feedback">كلمة المرور غير متطابقة</div>
                             </div>
                             <div class="d-flex justify-content-between">

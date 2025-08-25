@@ -12,7 +12,7 @@ class Login extends Component
 
     protected $rules = [
         'email' => 'required',
-        'password' => 'required|min:6',
+        'password' => 'required',
     ];
 
     public function updated($propertyName)
