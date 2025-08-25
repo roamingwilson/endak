@@ -23,7 +23,7 @@ class Register extends Component
         "first_name"        => "required|min:3",
         "last_name"         => "required|min:3",
         'email'             => "email",
-        'password'          => "required|digits:5",
+        'password'          => "required|min:6",
         'phone'             => "required",
     ];
 

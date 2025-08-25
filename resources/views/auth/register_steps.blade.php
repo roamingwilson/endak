@@ -231,7 +231,7 @@
                                 <select name="country" id="country" class="form-control form-control-lg" required>
                                     <option value="">اختر البلد</option>
                                     @foreach (\App\Models\Country::all() as $country)
-                                        <option value="{{ $country->id }}">
+                                        <option value="{{ $country->id }}" data-code="{{ $country->code }}">
                                             {{ app()->getLocale() == 'ar' ? $country->name_ar : $country->name_en }}
                                         </option>
                                     @endforeach
@@ -359,7 +359,7 @@ $(document).ready(function() {
                     input.addClass('is-invalid');
                     isValid = false;
                 }
-                if (input.attr('name') === 'password' && !/^\d{5}$/.test(input.val())) {
+                if (input.attr('name') === 'password' && input.val().length < 6) {
                     input.addClass('is-invalid');
                     isValid = false;
                 }

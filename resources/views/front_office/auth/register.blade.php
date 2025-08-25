@@ -522,14 +522,14 @@
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">
-                                    <i class="fas fa-phone"></i> رقم الجوال السعودي
+                                    <i class="fas fa-phone"></i> رقم الجوال
                                 </label>
                                 <div class="input-group">
-                                    <span class="input-group-text">+966</span>
+                                    <span class="input-group-text" id="country-code">+966</span>
                                     <input type="tel" name="phone" class="form-control form-control-lg" required
-                                           placeholder="5XXXXXXXX" pattern="^5[0-9]{8}$">
+                                           placeholder="أدخل رقم الجوال">
                                 </div>
-                                <div class="invalid-feedback">يرجى إدخال رقم جوال سعودي صحيح يبدأ بـ 5 ويتكون من 9 أرقام بعد +966</div>
+                                <div class="invalid-feedback">يرجى إدخال رقم جوال صحيح</div>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">
@@ -545,12 +545,23 @@
                                     <i class="fas fa-globe"></i> البلد
                                 </label>
                                 <select name="country" id="country" class="form-control form-control-lg" required>
-                                    <option value="1" selected>المملكة العربية السعودية</option>
+                                    <option value="">اختر البلد</option>
+                                    @if(isset($countries) && $countries->count() > 0)
+                                        @foreach($countries as $country)
+                                            <option value="{{ $country->id }}"
+                                                    data-code="{{ $country->code }}"
+                                                    {{ $country->id == 1 ? 'selected' : '' }}>
+                                                {{ app()->getLocale() == 'ar' ? $country->name_ar : $country->name_en }}
+                                            </option>
+                                        @endforeach
+                                    @else
+                                        <option value="1" data-code="+966" selected>المملكة العربية السعودية</option>
+                                    @endif
                                 </select>
                                 <div class="invalid-feedback">يرجى اختيار البلد</div>
                                 <small class="form-text text-muted">
                                     <i class="fas fa-info-circle"></i>
-                                    التسجيل متاح حالياً للمستخدمين السعوديين فقط
+                                    يرجى اختيار البلد للحصول على المدن المرتبطة بها
                                 </small>
                             </div>
 
@@ -726,7 +737,7 @@ $(document).ready(function() {
                     // إزالة أي أحرف غير رقمية
                     phone = phone.replace(/[^0-9]/g, '');
 
-                    if (phone.length < 7 || phone.length > 20) {
+                    if (phone.length < 7 || phone.length > 15) {
                         input.addClass('is-invalid');
                         isValid = false;
                     }
@@ -744,11 +755,6 @@ $(document).ready(function() {
 
         step2Selects.each(function() {
             const select = $(this);
-            // Skip validation for disabled country field since it's pre-selected
-            if (select.attr('name') === 'country' && select.prop('disabled')) {
-                select.removeClass('is-invalid');
-                return true;
-            }
             if (!select.val()) {
                 select.addClass('is-invalid');
                 isValid = false;
@@ -852,7 +858,7 @@ $(document).ready(function() {
                 last_name: $('input[name="last_name"]').val(),
                 phone: $('input[name="phone"]').val(),
                 email: $('input[name="email"]').val(),
-                country: '1', // Always Saudi Arabia
+                country: $('select[name="country"]').val(),
                 governement: selectedCities,
                 password: $('input[name="password"]').val(),
                 password_confirmation: $('input[name="password_confirmation"]').val(),
@@ -1101,8 +1107,14 @@ $.ajax({
     $('#country').on('change', function() {
         const countryId = $(this).val();
         const governementSelect = $('#governement');
+        const countryCodeSpan = $('#country-code');
 
         if (countryId) {
+            // تحديث رمز البلد
+            const selectedOption = $(this).find('option:selected');
+            const countryCode = selectedOption.data('code') || '+966';
+            countryCodeSpan.text(countryCode);
+
             $.ajax({
                 url: '{{ route("get.governorates") }}',
                 method: 'GET',
@@ -1123,6 +1135,7 @@ $.ajax({
         } else {
             governementSelect.empty();
             governementSelect.append('<option value="">اختر المدينة</option>');
+            countryCodeSpan.text('+966');
         }
     });
 
@@ -1148,23 +1161,26 @@ $.ajax({
     // Load all cities on page load
     loadAllCities();
 
-    // Ensure country is selected on page load
+        // Ensure country is selected on page load
     $(document).ready(function() {
-        // Set country to Saudi Arabia by default
-        $('#country').val('1').trigger('change');
-
-        // Remove the change event for country since it's fixed
-        $('#country').off('change');
-
-        // Make country field readonly to prevent changes
-        $('#country').prop('disabled', true);
+        // Set country to Saudi Arabia by default if not already selected
+        if (!$('#country').val()) {
+            $('#country').val('1').trigger('change');
+        }
     });
 
     function loadAllCities() {
+        var selectedCountry = $('#country').val() || '1';
+        var selectedOption = $('#country option:selected');
+        var countryCode = selectedOption.data('code') || '+966';
+
+        // تحديث رمز البلد
+        $('#country-code').text(countryCode);
+
         $.ajax({
             url: '{{ route("get.governorates") }}',
             type: 'GET',
-            data: { country_id: 1 }, // Only load Saudi cities
+            data: { country_id: selectedCountry },
             success: function(response) {
                 var governementSelect = $('#governement');
                 var providerCitiesSelect = $('#provider_cities');

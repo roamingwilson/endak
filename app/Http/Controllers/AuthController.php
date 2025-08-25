@@ -151,15 +151,15 @@ class AuthController extends Controller
                 'phone' => [
                     'required',
                     'string',
-                    'regex:/^5[0-9]{8}$/', // يبدأ بـ 5 وطوله 9 أرقام
+                    'min:7',
+                    'max:15',
                     'unique:users',
                 ],
                 'email' => 'nullable|email|unique:users',
             ], [
                 'phone.string' => 'رقم الهاتف غير صحيح',
                 'phone.min' => 'رقم الهاتف يجب أن يكون 7 أرقام على الأقل',
-                'phone.max' => 'رقم الهاتف يجب أن يكون 20 رقم على الأكثر',
-                'phone.regex' => 'رقم الجوال يجب أن يكون سعودي ويبدأ بـ 5 ويتكون من 9 أرقام بعد الكود (+966)',
+                'phone.max' => 'رقم الهاتف يجب أن يكون 15 رقم على الأكثر',
             ]);
 
             // تنظيف رقم الهاتف
@@ -168,11 +168,11 @@ class AuthController extends Controller
             $phone = preg_replace('/^(\+|00)/', '', $phone);
             // إزالة أي أحرف غير رقمية
             $phone = preg_replace('/[^0-9]/', '', $phone);
-            // تحقق أن الكود هو 966 فقط
-            if ($request->country != 1 && $request->country != '1') {
+            // التحقق من وجود البلد
+            if (!$request->country) {
                 return response()->json([
                     'success' => false,
-                    'errors' => ['phone' => ['التسجيل متاح فقط للأرقام السعودية (+966)']]
+                    'errors' => ['country' => ['يرجى اختيار البلد']]
                 ], 422);
             }
 
