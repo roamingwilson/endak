@@ -80,6 +80,15 @@
 - إضافة تشخيص مفصل لـ AJAX request مع تسجيل URL والبيانات المرسلة
 - إضافة تشخيص مفصل لأخطاء AJAX مع تسجيل status code و response
 - إضافة تشخيص مفصل للبيانات المرسلة مع التحقق من CSRF token
+- إصلاح مشكلة jQuery غير المحمل بإضافته مباشرة في صفحة التسجيل
+- إضافة تشخيص لـ jQuery و event listeners للأزرار
+- إنشاء ملف test HTML لاختبار التسجيل بشكل منفصل
+- التحقق من وجود البيانات في قاعدة البيانات (countries, governorates)
+- إصلاح مشكلة CSRF token mismatch في ملف test
+- إنشاء route خاص للاختبار بدون CSRF protection
+- إصلاح مشكلة governorate ID غير صحيح في ملف test (تحديث من 1 إلى 3082)
+- إصلاح مشكلة عدم وجود عمود status في جدول governements
+- إزالة filter status من query governorates
 
 ### تاريخ التعديل:
 تم إجراء هذه التعديلات في: {{ date('Y-m-d H:i:s') }}

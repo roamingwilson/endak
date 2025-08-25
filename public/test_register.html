@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Registration</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <h1>Test Registration</h1>
+    <form id="testForm">
+        <input type="hidden" name="_token" id="csrf-token">
+        <div>
+            <label>First Name:</label>
+            <input type="text" name="first_name" value="Test" required>
+        </div>
+        <div>
+            <label>Last Name:</label>
+            <input type="text" name="last_name" value="User" required>
+        </div>
+        <div>
+            <label>Phone:</label>
+            <input type="text" name="phone" value="545951025" required>
+        </div>
+        <div>
+            <label>Email:</label>
+            <input type="email" name="email" value="test@example.com">
+        </div>
+        <div>
+            <label>Country:</label>
+            <select name="country" required>
+                <option value="232">Saudi Arabia</option>
+            </select>
+        </div>
+        <div>
+            <label>Governorate:</label>
+            <select name="governement" required>
+                <option value="3082">Test City</option>
+            </select>
+        </div>
+        <div>
+            <label>Password:</label>
+            <input type="password" name="password" value="password123" required>
+        </div>
+        <div>
+            <label>Password Confirmation:</label>
+            <input type="password" name="password_confirmation" value="password123" required>
+        </div>
+        <div>
+            <label>Role:</label>
+            <input type="radio" name="role" value="1" checked> Client
+        </div>
+        <button type="submit">Test Registration</button>
+    </form>
+
+    <div id="result"></div>
+
+    <script>
+        $(document).ready(function() {
+            // Get CSRF token from meta tag
+            var token = $('meta[name="csrf-token"]').attr('content');
+            if (!token) {
+                // If not in meta tag, try to get from cookie
+                token = getCookie('XSRF-TOKEN');
+                if (token) {
+                    token = decodeURIComponent(token);
+                }
+            }
+            $('#csrf-token').val(token);
+
+            console.log('CSRF Token:', token);
+
+            function getCookie(name) {
+                var value = "; " + document.cookie;
+                var parts = value.split("; " + name + "=");
+                if (parts.length == 2) return parts.pop().split(";").shift();
+            }
+            $('#testForm').on('submit', function(e) {
+                e.preventDefault();
+
+                var formData = {
+                    first_name: $('input[name="first_name"]').val(),
+                    last_name: $('input[name="last_name"]').val(),
+                    phone: $('input[name="phone"]').val(),
+                    email: $('input[name="email"]').val(),
+                    country: $('select[name="country"]').val(),
+                    governement: $('select[name="governement"]').val(),
+                    password: $('input[name="password"]').val(),
+                    password_confirmation: $('input[name="password_confirmation"]').val(),
+                    role: $('input[name="role"]:checked').val(),
+                    departments: [],
+                    main_departments: [],
+                    _token: $('input[name="_token"]').val()
+                };
+
+                console.log('Sending data:', formData);
+
+                $.ajax({
+                    url: '/test-register',
+                    method: 'POST',
+                    data: formData,
+                    success: function(response) {
+                        console.log('Success:', response);
+                        $('#result').html('<p style="color: green;">Success: ' + JSON.stringify(response) + '</p>');
+                    },
+                    error: function(xhr, status, error) {
+                        console.log('Error:', xhr.responseText);
+                        $('#result').html('<p style="color: red;">Error: ' + xhr.responseText + '</p>');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

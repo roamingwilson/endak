@@ -2,6 +2,7 @@
 @section('title', 'تسجيل جديد - خطوات')
 @section('style')
     <link rel="stylesheet" href="{{ asset('select2-4.0.3/css/select2.css') }}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         .steps-progress {
@@ -694,7 +695,12 @@
 <script src="{{ asset('js/jquery/jquery.min.js') }}"></script>
 <script src="{{ asset('select2-4.0.3/js/select2.min.js') }}"></script>
 <script>
-$(document).ready(function() {
+    // تشخيص jQuery
+    console.log('jQuery version:', typeof $ !== 'undefined' ? $.fn.jquery : 'jQuery not loaded');
+    console.log('Document ready state:', document.readyState);
+    
+    $(document).ready(function() {
+        console.log('Document ready - jQuery loaded successfully');
     let currentStep = 1;
     let resendTimer = null;
     let secondsLeft = 60;
@@ -842,7 +848,9 @@ $(document).ready(function() {
         updateStepIndicators(selectedRole);
     });
     // Next step from 1 to 1.5 or 2
+    console.log('Adding click event listener to step-1 next button');
     $('.step-1 .next-step').on('click', function() {
+        console.log('Step 1 next button clicked!');
         selectedRole = $('input[name="role"]:checked').val();
         if (!validateStep1()) return;
         if(selectedRole == '3') {
@@ -863,7 +871,9 @@ $(document).ready(function() {
         $('[data-step="2"]').addClass('active');
     });
     // Next step from 2 to 3 (user info -> OTP)
+    console.log('Adding click event listener to step-2 next button');
     $('.step-2 .next-step').on('click', function() {
+        console.log('Step 2 next button clicked!');
         console.log('=== Step 2 Next Button Clicked ===');
         const validationResult = validateStep2();
         console.log('Validation result:', validationResult);
