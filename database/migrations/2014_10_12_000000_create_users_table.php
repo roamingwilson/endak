@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('first_name');
             $table->string('last_name');
-            $table->bigInteger('phone')->unsigned()->default(123456789);
+            $table->string('phone')->unique();
             $table->string('email')->unique()->nullable();
             $table->string('role_name',64);
             $table->integer('role_id')->unsigned();

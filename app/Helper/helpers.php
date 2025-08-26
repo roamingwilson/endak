@@ -163,5 +163,26 @@ if (!function_exists('sendWhatsAppMessage')) {
     }
 }
 
+if (!function_exists('normalizePhone')) {
+    function normalizePhone($phone, $countryCode = '+966')
+    {
+        // إزالة أي أحرف غير رقمية
+        $phone = preg_replace('/[^0-9]/', '', $phone);
+
+        // إزالة رمز البلد إذا كان موجوداً في البداية
+        $countryCodeClean = preg_replace('/[^0-9]/', '', $countryCode);
+        if (strpos($phone, $countryCodeClean) === 0) {
+            $phone = substr($phone, strlen($countryCodeClean));
+        }
+
+        // إزالة الصفر من البداية إذا كان موجوداً
+        if (strpos($phone, '0') === 0) {
+            $phone = substr($phone, 1);
+        }
+
+        return $countryCode . $phone;
+    }
+}
+
 
 

@@ -10,7 +10,8 @@ class Country extends Model
     use HasFactory;
     protected $fillable = [
         'name_ar',
-        'name_en'
+        'name_en',
+        'code'
     ];
 
     public function governements()

@@ -156,6 +156,8 @@ class AuthController extends Controller
                     'unique:users',
                 ],
                 'email' => 'nullable|email|unique:users',
+                'departments' => 'nullable|array',
+                'main_departments' => 'nullable|array',
             ], [
                 'phone.string' => 'رقم الهاتف غير صحيح',
                 'phone.min' => 'رقم الهاتف يجب أن يكون 7 أرقام على الأقل',
@@ -194,17 +196,19 @@ class AuthController extends Controller
             ]);
 
             // ربط الأقسام الرئيسية والفرعية إذا كان مزود خدمة وتم إرسال الأقسام
-            if($request->role == 3) {
+            if($request->role == 3 && !empty($request->main_departments)) {
                 $mainDepartments = is_array($request->main_departments) ? $request->main_departments : [];
                 $subDepartments = is_array($request->departments) ? $request->departments : [];
 
                 // الأقسام الرئيسية
                 foreach($mainDepartments as $mainId) {
-                    UserDepartment::create([
-                        'user_id' => $user->id,
-                        'commentable_id' => $mainId,
-                        'commentable_type' => \App\Models\Department::class,
-                    ]);
+                    if (!empty($mainId)) {
+                        UserDepartment::create([
+                            'user_id' => $user->id,
+                            'commentable_id' => $mainId,
+                            'commentable_type' => \App\Models\Department::class,
+                        ]);
+                    }
                 }
 
                 // الأقسام الفرعية
@@ -244,7 +248,8 @@ class AuthController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'تم إرسال رمز التحقق إلى هاتفك عبر الواتساب'
+                'message' => 'تم إرسال رمز التحقق إلى هاتفك عبر الواتساب',
+                'otp' => $otpCode->code // إضافة رمز OTP للعرض في التطوير
             ]);
 
         } catch (\Illuminate\Validation\ValidationException $e) {
@@ -287,10 +292,11 @@ class AuthController extends Controller
             }
 
             // تحديث حالة المستخدم
+            $selectedRole = session('selected_role', $user->role_id);
             $user->update([
                 'status' => 'active',
-                'role_id' => session('selected_role'),
-                'role_name' => session('selected_role') == 1 ? 'user' : 'provider'
+                'role_id' => $selectedRole,
+                'role_name' => $selectedRole == 1 ? 'user' : 'provider'
             ]);
             Log::info('User status after update', ['id' => $user->id, 'status' => $user->fresh()->status]);
 
@@ -339,7 +345,8 @@ public function resendOtp(Request $request)
 
     return response()->json([
         'success' => true,
-        'message' => 'تم إرسال رمز تحقق جديد إلى هاتفك عبر الواتساب'
+        'message' => 'تم إرسال رمز تحقق جديد إلى هاتفك عبر الواتساب',
+        'otp' => $otpCode->code // إضافة رمز OTP للعرض في التطوير
     ]);
 }
 
@@ -383,5 +390,33 @@ public function resendOtp(Request $request)
             return redirect()->route('activate_phone')->with('error', 'الرجاء تفعيل الهاتف أولاً');
         }
         return view('auth.otp');
+    }
+
+    public function getCurrentOtp(Request $request)
+    {
+        try {
+            $request->validate([
+                'phone' => 'required|string'
+            ]);
+
+            $otpCode = OtpCode::getCurrentOtp($request->phone, 'registration');
+
+            if ($otpCode) {
+                return response()->json([
+                    'success' => true,
+                    'otp' => $otpCode
+                ]);
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'لم يتم العثور على رمز تحقق صالح'
+                ], 404);
+            }
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'حدث خطأ غير متوقع: ' . $e->getMessage()
+            ], 500);
+        }
     }
 }

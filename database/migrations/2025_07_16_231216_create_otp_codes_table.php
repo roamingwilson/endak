@@ -13,6 +13,11 @@ return new class extends Migration
     {
         Schema::create('otp_codes', function (Blueprint $table) {
             $table->id();
+            $table->string('phone');
+            $table->string('code', 4);
+            $table->string('type')->default('registration');
+            $table->boolean('is_used')->default(false);
+            $table->timestamp('expires_at');
             $table->timestamps();
         });
     }

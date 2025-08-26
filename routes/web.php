@@ -108,6 +108,7 @@ Route::middleware('guest')->group(function () {
     // OTP Routes
     Route::post('/otp/verify', [AuthController::class, 'verifyOtp'])->name('otp.verify');
     Route::post('/register/resend-otp', [AuthController::class, 'resendOtp'])->name('register.resend_otp');
+Route::post('/otp/get-current', [AuthController::class, 'getCurrentOtp'])->name('otp.get_current');
 });
 
 Route::middleware('auth')->group(function () {

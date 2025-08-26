@@ -859,7 +859,7 @@ $(document).ready(function() {
                 phone: $('input[name="phone"]').val(),
                 email: $('input[name="email"]').val(),
                 country: $('select[name="country"]').val(),
-                governement: selectedCities,
+                governement: $('select[name="governement"]').val(),
                 password: $('input[name="password"]').val(),
                 password_confirmation: $('input[name="password_confirmation"]').val(),
                 role: $('input[name="role"]:checked').val(),
@@ -870,11 +870,11 @@ $(document).ready(function() {
             success: function(response) {
                 if (response.success) {
                     otpCode = response.otp;
-                $('#phone-display').text($('input[name="phone"]').val());
+                    $('#phone-display').text($('input[name="phone"]').val());
                     $('#otp-code-display').text('كود التحقق (للعرض فقط): ' + otpCode);
                     $('#otp-demo').show();
-                startResendCountdown();
-                showStep(3);
+                    startResendCountdown();
+                    showStep(3);
                     $('[data-step]').removeClass('active');
                     $('[data-step="3"]').addClass('active');
                 }
@@ -1007,8 +1007,7 @@ $.ajax({
     method: 'POST',
     data: {
         otp: $('input[name="otp"]').val(),
-        _token: $('input[name="_token"]').val(),
-        phone: $('input[name="phone"]').val() // إضافة رقم الهاتف للتحقق
+        _token: $('input[name="_token"]').val()
     },
     success: function(response) {
         console.log(response);
@@ -1046,21 +1045,28 @@ $.ajax({
             url: '{{ route('register.resend_otp') }}',
             method: 'POST',
             data: {
-                phone: $('input[name="phone"]').val(),
                 _token: $('input[name="_token"]').val()
             },
             success: function(response) {
-                secondsLeft = 60;
-                startResendCountdown();
+                if (response.success) {
+                    otpCode = response.otp;
+                    $('#otp-code-display').text('كود التحقق (للعرض فقط): ' + otpCode);
+                    secondsLeft = 60;
+                    startResendCountdown();
 
-                const originalText = $('#resend-otp').text();
-                $('#resend-otp').text('تم الإرسال!').addClass('text-success');
-                setTimeout(() => {
-                    $('#resend-otp').text(originalText).removeClass('text-success');
-                }, 2000);
+                    const originalText = $('#resend-otp').text();
+                    $('#resend-otp').text('تم الإرسال!').addClass('text-success');
+                    setTimeout(() => {
+                        $('#resend-otp').text(originalText).removeClass('text-success');
+                    }, 2000);
+                }
             },
-            error: function() {
-                alert('حدث خطأ أثناء إعادة إرسال الرمز، يرجى المحاولة مرة أخرى');
+            error: function(xhr) {
+                let msg = 'حدث خطأ أثناء إعادة إرسال الرمز، يرجى المحاولة مرة أخرى';
+                if (xhr.responseJSON && xhr.responseJSON.error) {
+                    msg = xhr.responseJSON.error;
+                }
+                alert(msg);
             }
         });
     });
