@@ -213,11 +213,11 @@
                             <div class="mb-3">
                                 <label class="form-label"><i class="fas fa-phone"></i> رقم الهاتف</label>
                                 <div class="input-group">
-                                    <span class="input-group-text">+966</span>
+                                    <span class="input-group-text" id="country-code">+966</span>
                                     <input type="tel" name="phone" class="form-control form-control-lg" required
-                                           placeholder="5XXXXXXXX" pattern="5[0-9]{8}">
+                                           placeholder="أدخل رقم الهاتف">
                                 </div>
-                                <div class="invalid-feedback">يرجى إدخال رقم هاتف صحيح (مثال: 512345678)</div>
+                                <div class="invalid-feedback">يرجى إدخال رقم هاتف صحيح</div>
                             </div>
                             <div class="mb-3">
                                 <label class="form-label"><i class="fas fa-envelope"></i> البريد الإلكتروني (اختياري)</label>
@@ -355,9 +355,15 @@ $(document).ready(function() {
                 isValid = false;
             } else {
                 input.removeClass('is-invalid');
-                if (input.attr('name') === 'phone' && !/^5\d{8}$/.test(input.val())) {
-                    input.addClass('is-invalid');
-                    isValid = false;
+                if (input.attr('name') === 'phone') {
+                    let phone = input.val();
+                    phone = phone.replace(/^(\+|00)/, '');
+                    phone = phone.replace(/[^0-9]/g, '');
+
+                    if (phone.length < 7 || phone.length > 15) {
+                        input.addClass('is-invalid');
+                        isValid = false;
+                    }
                 }
                 if (input.attr('name') === 'password' && input.val().length < 6) {
                     input.addClass('is-invalid');
@@ -566,8 +572,14 @@ $(document).ready(function() {
     $('#country').on('change', function() {
         const countryId = $(this).val();
         const governementSelect = $('#governement');
+        const countryCodeSpan = $('#country-code');
 
         if (countryId) {
+            // تحديث رمز البلد
+            const selectedOption = $(this).find('option:selected');
+            const countryCode = selectedOption.data('code') || '+966';
+            countryCodeSpan.text(countryCode);
+
             $.ajax({
                 url: '{{ route("get.governorates") }}',
                 method: 'GET',
@@ -588,6 +600,7 @@ $(document).ready(function() {
         } else {
             governementSelect.empty();
             governementSelect.append('<option value="">اختر المحافظة</option>');
+            countryCodeSpan.text('+966');
         }
     });
 

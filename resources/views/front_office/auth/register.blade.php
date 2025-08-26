@@ -561,7 +561,7 @@
                                 <div class="invalid-feedback">يرجى اختيار البلد</div>
                                 <small class="form-text text-muted">
                                     <i class="fas fa-info-circle"></i>
-                                    يرجى اختيار البلد للحصول على المدن المرتبطة بها
+                                    يرجى اختيار البلد للحصول على المدن المرتبطة بها. السعودية هي الخيار الافتراضي
                                 </small>
                             </div>
 
@@ -1158,15 +1158,15 @@ $.ajax({
         }
     });
 
-    // Load all cities on page load
-    loadAllCities();
-
         // Ensure country is selected on page load
     $(document).ready(function() {
         // Set country to Saudi Arabia by default if not already selected
         if (!$('#country').val()) {
             $('#country').val('1').trigger('change');
         }
+
+        // Load cities for the selected country on page load
+        loadAllCities();
     });
 
     function loadAllCities() {
