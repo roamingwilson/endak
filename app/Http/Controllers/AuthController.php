@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\WhatsappOtp;
+use GreenApi\RestApi\GreenApiClient;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -140,5 +142,33 @@ class AuthController extends Controller
         $user->update($data);
 
         return back()->with('success', 'تم تحديث الملف الشخصي بنجاح');
+    }
+
+    public function sendOtp(Request $request)
+    {
+        $request->validate([
+            'phone' => 'required|string',
+        ]);
+
+        $phone = $request->input('phone');
+        // Remove any non-digit characters
+        $phone = preg_replace('/\D/', '', $phone);
+        
+        // find the user with the given phone number,
+        $user = User::where('phone', $phone)->first();
+        if (!$user) {
+            return response()->json(['message' => 'رقم الهاتف غير مسجل.'], 404);
+        }
+
+        // Generate a 6-digit OTP
+        $otp = rand(100000, 999999);
+        $otp = WhatsappOtp::create([
+            'phone' => $phone,
+            'otp' => $otp,
+            'expires_at' => now()->addMinutes(10),
+        ]);
+
+        // Send OTP via WhatsApp
+        $greenApi = new GreenApiClient( ID_INSTANCE, API_TOKEN_INSTANCE );
     }
 }

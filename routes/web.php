@@ -26,6 +26,9 @@ Route::get('/register', [AuthController::class, 'showRegistrationForm'])->name('
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
+// Log in with OTP
+Route::post('/send-otp', [AuthController::class, 'sendOtp'])->name('send-otp');
+
 // الصفحة الرئيسية
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/contact', [HomeController::class, 'contact'])->name('contact');
