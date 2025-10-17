@@ -15,6 +15,7 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\ProviderProfileController;
 use App\Http\Controllers\Admin\SystemSettingController;
+use GreenApi\RestApi\GreenApiClient;
 
 // مسار تغيير اللغة
 Route::get('/language/{locale}', [LanguageController::class, 'switch'])->name('language.switch');
@@ -55,116 +56,116 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/services/{service}', [ServiceController::class, 'destroy'])->name('services.destroy');
 });
 
-        // مسارات العروض
-    Route::get('/services/{service}/offers', [ServiceOfferController::class, 'index'])->name('service-offers.index');
-    Route::get('/services/{service}/offers/create', [ServiceOfferController::class, 'create'])->name('service-offers.create');
-    Route::post('/services/{service}/offers', [ServiceOfferController::class, 'store'])->name('service-offers.store');
-    Route::get('/offers/{offer}', [ServiceOfferController::class, 'show'])->name('service-offers.show');
-    Route::post('/offers/{offer}/accept', [ServiceOfferController::class, 'accept'])->name('service-offers.accept');
-    Route::post('/offers/{offer}/reject', [ServiceOfferController::class, 'reject'])->name('service-offers.reject');
-    Route::post('/offers/{offer}/deliver', [ServiceOfferController::class, 'markAsDelivered'])->name('service-offers.deliver');
-    Route::post('/offers/{offer}/review', [ServiceOfferController::class, 'review'])->name('service-offers.review');
-    Route::get('/my-offers', [ServiceOfferController::class, 'myOffers'])->name('service-offers.my-offers');
-    Route::get('/offers/{offer}/edit', [ServiceOfferController::class, 'edit'])->name('service-offers.edit');
-    Route::put('/offers/{offer}', [ServiceOfferController::class, 'update'])->name('service-offers.update');
+// مسارات العروض
+Route::get('/services/{service}/offers', [ServiceOfferController::class, 'index'])->name('service-offers.index');
+Route::get('/services/{service}/offers/create', [ServiceOfferController::class, 'create'])->name('service-offers.create');
+Route::post('/services/{service}/offers', [ServiceOfferController::class, 'store'])->name('service-offers.store');
+Route::get('/offers/{offer}', [ServiceOfferController::class, 'show'])->name('service-offers.show');
+Route::post('/offers/{offer}/accept', [ServiceOfferController::class, 'accept'])->name('service-offers.accept');
+Route::post('/offers/{offer}/reject', [ServiceOfferController::class, 'reject'])->name('service-offers.reject');
+Route::post('/offers/{offer}/deliver', [ServiceOfferController::class, 'markAsDelivered'])->name('service-offers.deliver');
+Route::post('/offers/{offer}/review', [ServiceOfferController::class, 'review'])->name('service-offers.review');
+Route::get('/my-offers', [ServiceOfferController::class, 'myOffers'])->name('service-offers.my-offers');
+Route::get('/offers/{offer}/edit', [ServiceOfferController::class, 'edit'])->name('service-offers.edit');
+Route::put('/offers/{offer}', [ServiceOfferController::class, 'update'])->name('service-offers.update');
 
-    // مسارات الإشعارات
-    Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
-    Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.read');
-    Route::post('/notifications/read-all', [NotificationController::class, 'markAllAsRead'])->name('notifications.read-all');
-    Route::delete('/notifications/{id}', [NotificationController::class, 'destroy'])->name('notifications.destroy');
-    Route::get('/notifications/unread', [NotificationController::class, 'getUnread'])->name('notifications.unread');
+// مسارات الإشعارات
+Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications.index');
+Route::post('/notifications/{id}/read', [NotificationController::class, 'markAsRead'])->name('notifications.read');
+Route::post('/notifications/read-all', [NotificationController::class, 'markAllAsRead'])->name('notifications.read-all');
+Route::delete('/notifications/{id}', [NotificationController::class, 'destroy'])->name('notifications.destroy');
+Route::get('/notifications/unread', [NotificationController::class, 'getUnread'])->name('notifications.unread');
 
-    // مسارات الرسائل
-    Route::get('/messages', [MessageController::class, 'index'])->name('messages.index');
-    Route::get('/messages/new', [MessageController::class, 'newDesign'])->name('messages.new-design');
-    Route::get('/messages/search', [MessageController::class, 'search'])->name('messages.search');
-    Route::get('/messages/{userId}', [MessageController::class, 'show'])->name('messages.show');
-    Route::post('/messages', [MessageController::class, 'store'])->name('messages.store');
-    Route::get('/messages/new-messages', [MessageController::class, 'getNewMessages'])->name('messages.new');
-    Route::delete('/messages/{id}', [MessageController::class, 'destroy'])->name('messages.destroy');
-    Route::get('/messages/unread/count', [MessageController::class, 'getUnreadCount'])->name('messages.unread-count');
-    Route::post('/messages/mark-all-read', [MessageController::class, 'markAllAsRead'])->name('messages.mark-all-read');
-    Route::get('/services/{serviceId}/conversation', [MessageController::class, 'serviceConversation'])->name('messages.service-conversation');
-    Route::get('/offers/{offerId}/conversation', [MessageController::class, 'offerConversation'])->name('messages.offer-conversation');
+// مسارات الرسائل
+Route::get('/messages', [MessageController::class, 'index'])->name('messages.index');
+Route::get('/messages/new', [MessageController::class, 'newDesign'])->name('messages.new-design');
+Route::get('/messages/search', [MessageController::class, 'search'])->name('messages.search');
+Route::get('/messages/{userId}', [MessageController::class, 'show'])->name('messages.show');
+Route::post('/messages', [MessageController::class, 'store'])->name('messages.store');
+Route::get('/messages/new-messages', [MessageController::class, 'getNewMessages'])->name('messages.new');
+Route::delete('/messages/{id}', [MessageController::class, 'destroy'])->name('messages.destroy');
+Route::get('/messages/unread/count', [MessageController::class, 'getUnreadCount'])->name('messages.unread-count');
+Route::post('/messages/mark-all-read', [MessageController::class, 'markAllAsRead'])->name('messages.mark-all-read');
+Route::get('/services/{serviceId}/conversation', [MessageController::class, 'serviceConversation'])->name('messages.service-conversation');
+Route::get('/offers/{offerId}/conversation', [MessageController::class, 'offerConversation'])->name('messages.offer-conversation');
 
 // لوحة الإدارة
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [AdminDashboard::class, 'index'])->name('dashboard');
 
-                // إدارة الأقسام
-            Route::resource('categories', AdminCategory::class);
-            Route::patch('/categories/{category}/toggle-status', [AdminCategory::class, 'toggleStatus'])->name('categories.toggle-status');
+    // إدارة الأقسام
+    Route::resource('categories', AdminCategory::class);
+    Route::patch('/categories/{category}/toggle-status', [AdminCategory::class, 'toggleStatus'])->name('categories.toggle-status');
 
-            // إدارة الأقسام الفرعية
-            Route::resource('sub_categories', App\Http\Controllers\Admin\SubCategoryController::class);
-            Route::get('/sub_categories/{id}/duplicate', [App\Http\Controllers\Admin\SubCategoryController::class, 'duplicate'])->name('sub_categories.duplicate');
-            Route::post('/sub_categories/{id}/duplicate', [App\Http\Controllers\Admin\SubCategoryController::class, 'duplicateStore'])->name('sub_categories.duplicate-store');
-            Route::patch('/sub_categories/{id}/toggle-status', [App\Http\Controllers\Admin\SubCategoryController::class, 'toggleStatus'])->name('sub_categories.toggle-status');
+    // إدارة الأقسام الفرعية
+    Route::resource('sub_categories', App\Http\Controllers\Admin\SubCategoryController::class);
+    Route::get('/sub_categories/{id}/duplicate', [App\Http\Controllers\Admin\SubCategoryController::class, 'duplicate'])->name('sub_categories.duplicate');
+    Route::post('/sub_categories/{id}/duplicate', [App\Http\Controllers\Admin\SubCategoryController::class, 'duplicateStore'])->name('sub_categories.duplicate-store');
+    Route::patch('/sub_categories/{id}/toggle-status', [App\Http\Controllers\Admin\SubCategoryController::class, 'toggleStatus'])->name('sub_categories.toggle-status');
 
-            // إدارة حقول الأقسام
-            Route::resource('categories.fields', AdminCategoryField::class);
-            Route::patch('/categories/{category}/fields/{field}/toggle-status', [AdminCategoryField::class, 'toggleStatus'])->name('categories.fields.toggle-status');
-            Route::post('/categories/{category}/fields/reorder', [AdminCategoryField::class, 'reorder'])->name('categories.fields.reorder');
-            Route::patch('/categories/{category}/fields/{field}/sort-order', [AdminCategoryField::class, 'updateSortOrder'])->name('categories.fields.update-sort-order');
+    // إدارة حقول الأقسام
+    Route::resource('categories.fields', AdminCategoryField::class);
+    Route::patch('/categories/{category}/fields/{field}/toggle-status', [AdminCategoryField::class, 'toggleStatus'])->name('categories.fields.toggle-status');
+    Route::post('/categories/{category}/fields/reorder', [AdminCategoryField::class, 'reorder'])->name('categories.fields.reorder');
+    Route::patch('/categories/{category}/fields/{field}/sort-order', [AdminCategoryField::class, 'updateSortOrder'])->name('categories.fields.update-sort-order');
 
-            // إعدادات النظام
-            Route::get('/system-settings', [SystemSettingController::class, 'index'])->name('system-settings.index');
-            Route::put('/system-settings', [SystemSettingController::class, 'update'])->name('system-settings.update');
-            Route::put('/system-settings/provider', [SystemSettingController::class, 'updateProviderSettings'])->name('system-settings.provider');
-            Route::put('/system-settings/default-service-image', [SystemSettingController::class, 'updateDefaultServiceImage'])->name('system-settings.default-service-image');
+    // إعدادات النظام
+    Route::get('/system-settings', [SystemSettingController::class, 'index'])->name('system-settings.index');
+    Route::put('/system-settings', [SystemSettingController::class, 'update'])->name('system-settings.update');
+    Route::put('/system-settings/provider', [SystemSettingController::class, 'updateProviderSettings'])->name('system-settings.provider');
+    Route::put('/system-settings/default-service-image', [SystemSettingController::class, 'updateDefaultServiceImage'])->name('system-settings.default-service-image');
 
-            // إدارة الأقسام والمدن
-            Route::get('/category-cities', [App\Http\Controllers\Admin\CategoryCityController::class, 'index'])->name('category-cities.index');
-            Route::get('/category-cities/statistics', [App\Http\Controllers\Admin\CategoryCityController::class, 'statistics'])->name('category-cities.statistics');
-            Route::get('/category-cities/{category}', [App\Http\Controllers\Admin\CategoryCityController::class, 'show'])->name('category-cities.show');
-            Route::put('/category-cities/{category}/cities', [App\Http\Controllers\Admin\CategoryCityController::class, 'updateCities'])->name('category-cities.update-cities');
-            Route::post('/category-cities/{category}/toggle-city/{city}', [App\Http\Controllers\Admin\CategoryCityController::class, 'toggleCity'])->name('category-cities.toggle-city');
-            Route::get('/category-cities/{category}/cities', [App\Http\Controllers\Admin\CategoryCityController::class, 'getCitiesByCategory'])->name('category-cities.get-cities');
-            Route::post('/category-cities/{category}/add-city', [App\Http\Controllers\Admin\CategoryCityController::class, 'addCityToCategory'])->name('category-cities.add-city');
-            Route::delete('/category-cities/{category}/remove-city/{city}', [App\Http\Controllers\Admin\CategoryCityController::class, 'removeCityFromCategory'])->name('category-cities.remove-city');
+    // إدارة الأقسام والمدن
+    Route::get('/category-cities', [App\Http\Controllers\Admin\CategoryCityController::class, 'index'])->name('category-cities.index');
+    Route::get('/category-cities/statistics', [App\Http\Controllers\Admin\CategoryCityController::class, 'statistics'])->name('category-cities.statistics');
+    Route::get('/category-cities/{category}', [App\Http\Controllers\Admin\CategoryCityController::class, 'show'])->name('category-cities.show');
+    Route::put('/category-cities/{category}/cities', [App\Http\Controllers\Admin\CategoryCityController::class, 'updateCities'])->name('category-cities.update-cities');
+    Route::post('/category-cities/{category}/toggle-city/{city}', [App\Http\Controllers\Admin\CategoryCityController::class, 'toggleCity'])->name('category-cities.toggle-city');
+    Route::get('/category-cities/{category}/cities', [App\Http\Controllers\Admin\CategoryCityController::class, 'getCitiesByCategory'])->name('category-cities.get-cities');
+    Route::post('/category-cities/{category}/add-city', [App\Http\Controllers\Admin\CategoryCityController::class, 'addCityToCategory'])->name('category-cities.add-city');
+    Route::delete('/category-cities/{category}/remove-city/{city}', [App\Http\Controllers\Admin\CategoryCityController::class, 'removeCityFromCategory'])->name('category-cities.remove-city');
 
-                        // إدارة المدن
-            Route::resource('cities', App\Http\Controllers\Admin\CityController::class);
+    // إدارة المدن
+    Route::resource('cities', App\Http\Controllers\Admin\CityController::class);
 
-            // إدارة الخدمات
-            Route::get('/services', [App\Http\Controllers\Admin\ServiceController::class, 'index'])->name('services.index');
-            Route::get('/services/{service}', [App\Http\Controllers\Admin\ServiceController::class, 'show'])->name('services.show');
-            Route::patch('/services/{service}/toggle-status', [App\Http\Controllers\Admin\ServiceController::class, 'toggleStatus'])->name('services.toggle-status');
-            Route::delete('/services/{service}', [App\Http\Controllers\Admin\ServiceController::class, 'destroy'])->name('services.destroy');
+    // إدارة الخدمات
+    Route::get('/services', [App\Http\Controllers\Admin\ServiceController::class, 'index'])->name('services.index');
+    Route::get('/services/{service}', [App\Http\Controllers\Admin\ServiceController::class, 'show'])->name('services.show');
+    Route::patch('/services/{service}/toggle-status', [App\Http\Controllers\Admin\ServiceController::class, 'toggleStatus'])->name('services.toggle-status');
+    Route::delete('/services/{service}', [App\Http\Controllers\Admin\ServiceController::class, 'destroy'])->name('services.destroy');
 
-            // إدارة عروض الخدمات
-            Route::get('/service-offers', [App\Http\Controllers\Admin\ServiceOfferController::class, 'index'])->name('service-offers.index');
-            Route::get('/service-offers/{offer}', [App\Http\Controllers\Admin\ServiceOfferController::class, 'show'])->name('service-offers.show');
-            Route::patch('/service-offers/{offer}/toggle-status', [App\Http\Controllers\Admin\ServiceOfferController::class, 'toggleStatus'])->name('service-offers.toggle-status');
-            
-            // إدارة المستخدمين
-            Route::get('/users', [App\Http\Controllers\Admin\UserController::class, 'index'])->name('users.index');
-            Route::get('/users/{user}', [App\Http\Controllers\Admin\UserController::class, 'show'])->name('users.show');
-            Route::patch('/users/{user}/toggle-status', [App\Http\Controllers\Admin\UserController::class, 'toggleStatus'])->name('users.toggle-status');
-            Route::patch('/users/{user}/toggle-role', [App\Http\Controllers\Admin\UserController::class, 'toggleRole'])->name('users.toggle-role');
+    // إدارة عروض الخدمات
+    Route::get('/service-offers', [App\Http\Controllers\Admin\ServiceOfferController::class, 'index'])->name('service-offers.index');
+    Route::get('/service-offers/{offer}', [App\Http\Controllers\Admin\ServiceOfferController::class, 'show'])->name('service-offers.show');
+    Route::patch('/service-offers/{offer}/toggle-status', [App\Http\Controllers\Admin\ServiceOfferController::class, 'toggleStatus'])->name('service-offers.toggle-status');
 
-            // إدارة مزودي الخدمات
-            Route::get('/providers', [App\Http\Controllers\Admin\ProviderController::class, 'index'])->name('providers.index');
-            Route::get('/providers/{provider}', [App\Http\Controllers\Admin\ProviderController::class, 'show'])->name('providers.show');
-            Route::patch('/providers/{provider}/verify', [App\Http\Controllers\Admin\ProviderController::class, 'verify'])->name('providers.verify');
+    // إدارة المستخدمين
+    Route::get('/users', [App\Http\Controllers\Admin\UserController::class, 'index'])->name('users.index');
+    Route::get('/users/{user}', [App\Http\Controllers\Admin\UserController::class, 'show'])->name('users.show');
+    Route::patch('/users/{user}/toggle-status', [App\Http\Controllers\Admin\UserController::class, 'toggleStatus'])->name('users.toggle-status');
+    Route::patch('/users/{user}/toggle-role', [App\Http\Controllers\Admin\UserController::class, 'toggleRole'])->name('users.toggle-role');
 
-            // إدارة الطلبات
-            Route::get('/orders', [App\Http\Controllers\Admin\OrderController::class, 'index'])->name('orders.index');
-            Route::get('/orders/{order}', [App\Http\Controllers\Admin\OrderController::class, 'show'])->name('orders.show');
-            Route::patch('/orders/{order}/update-status', [App\Http\Controllers\Admin\OrderController::class, 'updateStatus'])->name('orders.update-status');
+    // إدارة مزودي الخدمات
+    Route::get('/providers', [App\Http\Controllers\Admin\ProviderController::class, 'index'])->name('providers.index');
+    Route::get('/providers/{provider}', [App\Http\Controllers\Admin\ProviderController::class, 'show'])->name('providers.show');
+    Route::patch('/providers/{provider}/verify', [App\Http\Controllers\Admin\ProviderController::class, 'verify'])->name('providers.verify');
 
-            // النسخ الاحتياطية
-            Route::get('/backups', [App\Http\Controllers\Admin\BackupController::class, 'index'])->name('backups.index');
-            Route::post('/backups/create', [App\Http\Controllers\Admin\BackupController::class, 'create'])->name('backups.create');
-            Route::get('/backups/download/{filename}', [App\Http\Controllers\Admin\BackupController::class, 'download'])->name('backups.download');
-            Route::delete('/backups/{filename}', [App\Http\Controllers\Admin\BackupController::class, 'destroy'])->name('backups.destroy');
+    // إدارة الطلبات
+    Route::get('/orders', [App\Http\Controllers\Admin\OrderController::class, 'index'])->name('orders.index');
+    Route::get('/orders/{order}', [App\Http\Controllers\Admin\OrderController::class, 'show'])->name('orders.show');
+    Route::patch('/orders/{order}/update-status', [App\Http\Controllers\Admin\OrderController::class, 'updateStatus'])->name('orders.update-status');
 
-            // سجلات النظام
-            Route::get('/logs', [App\Http\Controllers\Admin\LogController::class, 'index'])->name('logs.index');
-            Route::get('/logs/{filename}', [App\Http\Controllers\Admin\LogController::class, 'show'])->name('logs.show');
-            Route::delete('/logs/{filename}', [App\Http\Controllers\Admin\LogController::class, 'destroy'])->name('logs.destroy');
-        });
+    // النسخ الاحتياطية
+    Route::get('/backups', [App\Http\Controllers\Admin\BackupController::class, 'index'])->name('backups.index');
+    Route::post('/backups/create', [App\Http\Controllers\Admin\BackupController::class, 'create'])->name('backups.create');
+    Route::get('/backups/download/{filename}', [App\Http\Controllers\Admin\BackupController::class, 'download'])->name('backups.download');
+    Route::delete('/backups/{filename}', [App\Http\Controllers\Admin\BackupController::class, 'destroy'])->name('backups.destroy');
+
+    // سجلات النظام
+    Route::get('/logs', [App\Http\Controllers\Admin\LogController::class, 'index'])->name('logs.index');
+    Route::get('/logs/{filename}', [App\Http\Controllers\Admin\LogController::class, 'show'])->name('logs.show');
+    Route::delete('/logs/{filename}', [App\Http\Controllers\Admin\LogController::class, 'destroy'])->name('logs.destroy');
+});
 
 // Authentication Routes
 Route::middleware('guest')->group(function () {
@@ -202,7 +203,7 @@ Route::middleware('auth')->group(function () {
 });
 
 // Route اختبار لحفظ sub_category_id
-Route::get('/test-subcategory', function() {
+Route::get('/test-subcategory', function () {
     // إنشاء خدمة تجريبية مع sub_category_id
     $service = \App\Models\Service::create([
         'title' => 'خدمة تجريبية',
@@ -225,15 +226,23 @@ Route::get('/test-subcategory', function() {
 });
 
 // صفحة اختبار القسم الفرعي
-Route::get('/test-subcategory-page', function() {
+Route::get('/test-subcategory-page', function () {
     return view('test-subcategory');
 });
 
 // API لجلب الأقسام الفرعية
-Route::get('/api/categories/{category}/subcategories', function($category) {
+Route::get('/api/categories/{category}/subcategories', function ($category) {
     $subCategories = \App\Models\SubCategory::where('category_id', $category)
-                                           ->where('status', true)
-                                           ->get(['id', 'name_ar', 'name_en']);
+        ->where('status', true)
+        ->get(['id', 'name_ar', 'name_en']);
 
     return response()->json($subCategories);
+});
+
+
+Route::get('/test', function () {
+    // Send OTP via WhatsApp
+    $greenApi = new GreenApiClient(config('app.green_api_id_instance'), config('app.green_api_api_token_instance'));
+    $result = $greenApi->sending->sendMessage('447360499223@c.us', 'Message text');
+    dd($result);
 });

@@ -56,6 +56,17 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Green API Configuration
+    |--------------------------------------------------------------------------
+    | Here you may specify your Green API credentials for WhatsApp integration.
+    | These values are used to authenticate requests to the Green API service.
+    |
+    */
+    'green_api_id_instance' => env('GREEN_API_ID_INSTANCE', ''),
+    'green_api_api_token_instance' => env('GREEN_API_API_TOKEN_INSTANCE', ''),
+
+    /*
+    |--------------------------------------------------------------------------
     | Application Timezone
     |--------------------------------------------------------------------------
     |

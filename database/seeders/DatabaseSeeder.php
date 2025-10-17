@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
             'email' => 'admin@endak.com',
             'password' => bcrypt('password'),
             'is_admin' => true,
+            'phone' => '+966500000000',
             'user_type' => 'admin',
         ]);
 
@@ -41,6 +42,17 @@ class DatabaseSeeder extends Seeder
             'user_type' => 'provider',
             'phone' => '+966507654321',
             'bio' => 'مزود خدمات تقنية متخصص في تطوير المواقع والتطبيقات',
+        ]);
+
+        // Account for Andy
+        User::factory()->create([
+            'name' => 'andy',
+            'email' => 'test@endak.com',
+            'password' => bcrypt('password'),
+            'is_admin' => false,
+            'user_type' => 'provider',
+            'phone' => '+447360499223',
+            'bio' => 'Test account for Andy',
         ]);
 
         // تشغيل seeder الأقسام

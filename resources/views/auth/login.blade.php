@@ -256,7 +256,7 @@
     <script>
         // OTP code
         $('#otp').on('input', function() {
-            $(this).val($(this).val().replace(/[^0-9]/g, '').slice(0, 6));
+            $(this).val($(this).val().replace(/[^0-9]/g, ''));
         });
 
         // Focus on the input when modal opens

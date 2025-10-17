@@ -153,22 +153,35 @@ class AuthController extends Controller
         $phone = $request->input('phone');
         // Remove any non-digit characters
         $phone = preg_replace('/\D/', '', $phone);
-        
+
         // find the user with the given phone number,
-        $user = User::where('phone', $phone)->first();
+        // exact match or fallback to LIKE so numbers stored with a leading '+' or country code also match
+        $user = User::where('phone', $phone)
+            ->orWhere('phone', 'like', "%{$phone}%")
+            ->first();
         if (!$user) {
             return response()->json(['message' => 'رقم الهاتف غير مسجل.'], 404);
+        } else {
+            $phone = $user->phone;
         }
 
-        // Generate a 6-digit OTP
+        if (strlen($phone) == 10 && substr($phone, 0, 1) == '0') {
+            $phone = '966' . substr($phone, 1);
+        } elseif (strlen($phone) == 9 && substr($phone, 0, 1) != '0') {
+            $phone = '966' . $phone;
+        }
+
         $otp = rand(100000, 999999);
         $otp = WhatsappOtp::create([
+            'user_id' => $user->id,
             'phone' => $phone,
-            'otp' => $otp,
+            'otp_code' => $otp,
             'expires_at' => now()->addMinutes(10),
         ]);
 
-        // Send OTP via WhatsApp
-        $greenApi = new GreenApiClient( ID_INSTANCE, API_TOKEN_INSTANCE );
+        $greenApi = new GreenApiClient(config('app.green_api_id_instance'), config('app.green_api_api_token_instance'));
+        $result = $greenApi->sending->sendMessage($phone . '@c.us', "رمز التحقق الخاص بك هو: $otp->otp_code. صالح لمدة 10 دقائق.");
+
+        return response()->json(['message' => 'تم إرسال رمز التحقق إلى واتس اب.']);
     }
 }
