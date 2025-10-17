@@ -2,34 +2,56 @@
 
 namespace App\Http\Controllers\Admin;
 
-use Carbon\Carbon;
-use App\Models\Post;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\Category;
+use App\Models\Service;
+use App\Models\User;
+use App\Models\Order;
 
 class DashboardController extends Controller
 {
-    public function index(){
-        // $this->authorize('admin_general_dashboard');
-        return view("admin.dashboard");
-    }
-    public function adminOffers(Request $request)
+    public function __construct()
     {
-        $ids = $request->bulk_ids;
-        $now = Carbon::now()->toDateTimeString();
+        $this->middleware('auth');
+        $this->middleware('admin');
+    }
 
+    /**
+     * عرض لوحة الإدارة
+     */
+    public function index()
+    {
+        // إحصائيات عامة
+        $stats = [
+            'total_users' => User::count(),
+            'total_categories' => Category::count(),
+            'total_services' => Service::count(),
+            'total_orders' => Order::count(),
+            'active_services' => Service::where('is_active', true)->count(),
+            'featured_services' => Service::where('is_featured', true)->count(),
+            'pending_orders' => Order::where('status', 'pending')->count(),
+            'completed_orders' => Order::where('status', 'completed')->count(),
+            'total_providers' => User::where('user_type', 'provider')->count(),
+            'total_offers' => \App\Models\ServiceOffer::where('status', 'pending')->count(),
+            'total_sub_categories' => \App\Models\SubCategory::count(),
+            'total_fields' => \App\Models\CategoryField::count(),
+        ];
 
+        // أحدث المستخدمين
+        $recentUsers = User::latest()->limit(5)->get();
 
-        //Update
-        if ($request->bulk_action_btn === 'update_status' && $request->status && is_array($ids) && count($ids)) {
-            $data = ['status' => $request->status];
+        // أحدث الخدمات
+        $recentServices = Service::with(['category', 'user'])->latest()->limit(5)->get();
 
-            if ($request->status == 1) {
-                $data['updated_at'] = $now;
-            }
+        // أحدث الطلبات
+        $recentOrders = Order::with(['service', 'user'])->latest()->limit(5)->get();
 
-            Post::whereIn('id', $ids)->update($data);
-            return back()->with('success', __('bulk_action_success'));
-        }
-}
+        // الأقسام الأكثر نشاطاً
+        $topCategories = Category::withCount('services')
+                                ->orderBy('services_count', 'desc')
+                                ->limit(5)
+                                ->get();
+
+        return view('admin.dashboard', compact('stats', 'recentUsers', 'recentServices', 'recentOrders', 'topCategories'));
+    }
 }

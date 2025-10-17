@@ -3,42 +3,44 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use Carbon\Carbon;
 use App\Models\Order;
+use Illuminate\Http\Request;
 
 class OrderController extends Controller
 {
-    public function index(Request  $request){
-
-
-        $ids = $request->bulk_ids;
-        $now = Carbon::now()->toDateTimeString();
-        if ($request->bulk_action_btn === 'delete' &&  is_array($ids) && count($ids)) {
-            Order::whereIn('id', $ids)->delete();
-            return back()->with('success', __('general.deleted_successfully'));
-        }
-        $orders = Order::orderBy("created_at","desc")->paginate(10);
-
-        return view("admin.orders.index", compact("orders"));
-    }
-    public function destroy($id)
+    /**
+     * عرض جميع الطلبات
+     */
+    public function index()
     {
+        $orders = Order::with(['service.category', 'user', 'provider'])
+                      ->latest()
+                      ->paginate(20);
 
-        $order = Order::where('id',$id)->first() ;
-        $order->delete();
-
-        return redirect()->route('admin.orders')->with('success' , "Deleted Successfully");
+        return view('admin.orders.index', compact('orders'));
     }
 
-    public function cancel($id)
+    /**
+     * عرض طلب معين
+     */
+    public function show(Order $order)
     {
-        $order = Order::findOrFail($id);
-        if (in_array(strtolower($order->status), ['completed', 'cancelled'])) {
-            return back()->with('error', 'لا يمكن إلغاء هذا الطلب.');
-        }
-        $order->status = 'cancelled';
-        $order->save();
-        return back()->with('success', 'تم إلغاء الطلب بنجاح.');
+        $order->load(['service.category', 'user', 'provider']);
+
+        return view('admin.orders.show', compact('order'));
+    }
+
+    /**
+     * تحديث حالة الطلب
+     */
+    public function updateStatus(Request $request, Order $order)
+    {
+        $request->validate([
+            'status' => 'required|in:pending,processing,completed,cancelled'
+        ]);
+
+        $order->update(['status' => $request->status]);
+
+        return back()->with('success', 'تم تحديث حالة الطلب بنجاح');
     }
 }

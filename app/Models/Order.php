@@ -4,35 +4,50 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Order extends Model
 {
-    use HasFactory;
-    protected $guarded = ['id'];
-    public function rate()
+    use HasFactory, SoftDeletes;
+
+    protected $fillable = [
+        'service_id',
+        'user_id',
+        'status',
+        'rating',
+        'review',
+        'total_amount',
+        'notes'
+    ];
+
+    protected $casts = [
+        'rating' => 'integer',
+        'total_amount' => 'decimal:2',
+    ];
+
+    // العلاقة مع الخدمة
+    public function service()
     {
-        return $this->hasOne(Rating::class, 'order_id', 'id');
-    }
-    public function orderItems()
-    {
-        return $this->hasMany(OrderItems::class, 'order_id', 'id');
+        return $this->belongsTo(Service::class);
     }
 
-    public function customer()
+    // العلاقة مع المستخدم
+    public function user()
     {
-        return $this->belongsTo(User::class, 'customer_id ', 'id');
+        return $this->belongsTo(User::class);
     }
 
-    public function service_provider()
+    // الحصول على حالة الطلب
+    public function getStatusTextAttribute()
     {
-        return $this->belongsTo(User::class, 'service_provider_id ', 'id');
-    }
-    public function post()
-    {
-        return $this->hasOne(Post::class, 'post_id ', 'id');
-    }
-    public function getImageUrlAttribute()
-    {
-        return asset( 'storage/' . $this->image);
+        $statuses = [
+            'pending' => 'في الانتظار',
+            'confirmed' => 'مؤكد',
+            'in_progress' => 'قيد التنفيذ',
+            'completed' => 'مكتمل',
+            'cancelled' => 'ملغي'
+        ];
+
+        return $statuses[$this->status] ?? $this->status;
     }
 }

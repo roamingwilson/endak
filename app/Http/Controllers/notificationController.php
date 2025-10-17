@@ -2,51 +2,73 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Notification as CustomNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class notificationController extends Controller
+class NotificationController extends Controller
 {
+    /**
+     * عرض جميع إشعارات المستخدم
+     */
     public function index()
     {
-        $notifications = Auth::user()->notifications()->paginate(10); // ترقيم الإشعارات
-        return view('front_office.notify.show', compact('notifications'));
+        // استخدام custom notifications
+        $notifications = CustomNotification::where('user_id', Auth::id())
+                                         ->orderBy('created_at', 'desc')
+                                         ->paginate(20);
+
+        return view('notifications.index', compact('notifications'));
     }
 
-    // تحديث حالة الإشعار كـ "مقروء"
-    public function markAsRead($notificationId)
+    /**
+     * تحديد إشعار كمقروء
+     */
+    public function markAsRead($id)
     {
-        $user = Auth::user(); // الحصول على المستخدم الحالي
+        $notification = CustomNotification::where('user_id', Auth::id())
+                                        ->findOrFail($id);
+        $notification->markAsRead();
 
-        // العثور على النوتيفيكاشن بناءً على الـ ID
-        $notification = $user->notifications()->where('id', $notificationId)->first();
-
-        // التحقق إذا كان الإشعار موجودًا
-        if ($notification) {
-            // تعيين قيمة "read_at" لتحديث حالة النوتيفيكاشن إلى "مقروء"
-            $notification->markAsRead();
-            if (request()->ajax()) {
-                return response()->json(['success' => true]);
-            }
-            return redirect()->route('notifications.index')->with('success', 'تم قراءة الإشعار بنجاح');
-        }
-
-        // إذا لم يتم العثور على الإشعار
-        return redirect()->route('notifications.index')->with('error', 'الإشعار غير موجود');
-    }
-    public function unreadNotifications()
-    {
-        return Auth::user()->unreadNotifications()->get();
+        return response()->json(['success' => true]);
     }
 
-    // تعليم جميع الإشعارات كمقروءة
+    /**
+     * تحديد جميع الإشعارات كمقروءة
+     */
     public function markAllAsRead()
     {
-        $user = Auth::user();
-        $user->unreadNotifications->markAsRead();
-        if (request()->ajax()) {
-            return response()->json(['success' => true]);
-        }
-        return redirect()->route('notifications.index')->with('success', 'تم تعليم جميع الإشعارات كمقروءة');
+        CustomNotification::where('user_id', Auth::id())
+                        ->whereNull('read_at')
+                        ->update(['read_at' => now()]);
+
+        return response()->json(['success' => true]);
+    }
+
+
+    /**
+     * حذف إشعار
+     */
+    public function destroy($id)
+    {
+        $notification = CustomNotification::where('user_id', Auth::id())
+                                        ->findOrFail($id);
+        $notification->delete();
+
+        return redirect()->back()->with('success', 'تم حذف الإشعار بنجاح');
+    }
+
+    /**
+     * الحصول على الإشعارات غير المقروءة (لـ AJAX)
+     */
+    public function getUnread()
+    {
+        $notifications = Auth::user()->unread_notifications;
+        $count = Auth::user()->unread_notifications_count;
+
+        return response()->json([
+            'notifications' => $notifications,
+            'count' => $count
+        ]);
     }
 }

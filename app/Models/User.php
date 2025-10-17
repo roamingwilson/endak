@@ -6,15 +6,10 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Laravel\Sanctum\HasApiTokens;
-use Illuminate\Database\Eloquent\Builder;
-use App\Models\UserDepartment;
-use App\Models\Department;
-use App\Models\SubDepartment;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasFactory, Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -22,19 +17,16 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
-        'first_name',
-        'last_name',
+        'name',
         'email',
         'password',
-        'role_name',
-        'role_id',
-        'about_me',
+        'is_admin',
+        'user_type',
         'phone',
-        'status',
+        'phone_verified_at',
+        'bio',
+        'avatar',
         'image',
-        'country',
-        'governement',
-        'status',
     ];
 
     /**
@@ -48,217 +40,189 @@ class User extends Authenticatable
     ];
 
     /**
-     * The attributes that should be cast.
+     * Get the attributes that should be cast.
      *
-     * @var array<string, string>
+     * @return array<string, string>
      */
-    protected $casts = [
-        'email_verified_at' => 'datetime',
-    ];
-
-
-    public function scopeFilter(Builder $builder , $filters){
-
-        // $builder->when($filters['name'] ?? false , function($builder , $value){
-        //     $builder->where('categories.name','like','%'.$value.'%');
-        // });
-
-        $builder->when($filters['status'] ?? false , function($builder , $value){
-            $builder->where('users.status', $value);
-        });
-        // if($filters['name'] ?? false){
-        //     $builder->where('name','like','%'.$filters['name'].'%');
-        // };
-        // if($filters['status'] ?? false){
-        //     $builder->where('status','=',$filters['status']);
-        // };
-    }
-    public function hasPermission($section_name)
+    protected function casts(): array
     {
-        if (!isset($this->permissions)) {
-            $sections_id = Permission::where('role_id', '=', $this->role_id)->where('allow', true)->pluck('section_id')->toArray();
-            $this->permissions = Section::whereIn('id', $sections_id)->pluck('name')->toArray();
+        return [
+            'email_verified_at' => 'datetime',
+            'password' => 'hashed',
+            'is_admin' => 'boolean',
+        ];
+    }
+
+    // الحصول على اسم الدور
+    public function getRoleNameAttribute()
+    {
+        switch ($this->user_type) {
+            case 'admin':
+                return 'مدير';
+            case 'customer':
+                return 'مستخدم عادي';
+            case 'provider':
+                return 'مزود خدمة';
+            default:
+                return 'غير محدد';
         }
-
-        return in_array($section_name, $this->permissions);
-    }
-    public function scopeActive(Builder $builder){
-        $builder->where('status' , 'active');
     }
 
-    public function rate(){
-        return $this->hasMany(Rating::class , 'user_id' , 'id');
-    }
-
-    public function orders()
-    {
-        return $this->hasMany(GeneralOrder::class, 'service_provider_id', 'id');
-    }
-
+    // العلاقة مع الخدمات
     public function services()
     {
-        return $this->hasMany(Services::class, 'provider_id', 'id');
+        return $this->hasMany(Service::class);
     }
-    public function myorders()
+
+    // العلاقة مع الطلبات
+    public function orders()
     {
-        return $this->hasMany(Order::class, 'customer_id', 'id');
+        return $this->hasMany(Order::class);
     }
 
-
-    public function rates()
+    // العلاقة مع العروض المقدمة
+    public function offers()
     {
-        return round($this->rate()->avg('rate')) ?? 0;
+        return $this->hasMany(ServiceOffer::class, 'provider_id');
     }
 
-
-    public function getFullnameAttribute()
+    // العلاقة مع الإشعارات
+    public function notifications()
     {
-        return $this->first_name . ' ' . $this->last_name;
+        return $this->hasMany(\App\Models\Notification::class);
     }
-    public function getImageUrlAttribute()
+
+    // الحصول على الإشعارات غير المقروءة
+    public function getUnreadNotificationsAttribute()
     {
-        return asset('storage/' . $this->image);
+        return $this->notifications()->whereNull('read_at')->orderBy('created_at', 'desc')->get();
     }
-    public function departments()
+
+    // الحصول على عدد الإشعارات غير المقروءة
+    public function getUnreadNotificationsCountAttribute()
     {
-        return $this->hasMany(UserDepartment::class, 'user_id');
+        return $this->notifications()->whereNull('read_at')->count();
     }
-    public function userDepartments()
+
+    // التحقق من كون المستخدم مدير
+    public function isAdmin()
     {
-        return $this->hasMany(UserDepartment::class, 'user_id');
-    }
-    public function comments()
-{
-    return $this->hasMany(GeneralComments::class, 'service_provider');
-}
-public function serv(){
-        return $this->hasMany(Services::class , 'user_id');
-}
-public function prOrder(){
-        return $this->hasMany(ProductOrder::class , 'user_id');
-}
-public function favoriteDepartments()
-{
-    return $this->belongsToMany(Department::class, 'favorites')->withTimestamps();
-}
-
-/**
- * Check if the user is currently online
- *
- * @return bool
- */
-public function isOnline()
-{
-    // If there's no last_seen_at column, we'll use a simple approach
-    // You can modify this based on your needs
-
-    // Option 1: Simple approach - consider user online if they logged in within last 5 minutes
-    if (isset($this->last_seen_at)) {
-        return $this->last_seen_at->diffInMinutes(now()) < 5;
+        return $this->is_admin;
     }
 
-    // Option 2: If you have a sessions table or cache-based approach
-    // You can implement a more sophisticated online detection here
-
-    // Option 3: Default to true for now (you can modify this logic)
-    return true;
-}
-
-/**
- * Get the user's online status with a colored indicator
- *
- * @return string
- */
-public function getOnlineStatusAttribute()
-{
-    return $this->isOnline() ? 'online' : 'offline';
-}
-
-/**
- * Get the user's online status color
- *
- * @return string
- */
-public function getOnlineStatusColorAttribute()
-{
-    return $this->isOnline() ? 'text-success' : 'text-muted';
-}
-
-    public function governementObj()
+    // التحقق من كون المستخدم مزود خدمة
+    public function isProvider()
     {
-        return $this->belongsTo(\App\Models\Governements::class, 'governement');
-    }
-    public function countryObj()
-    {
-        return $this->belongsTo(\App\Models\Country::class, 'country');
+        return $this->user_type === 'provider';
     }
 
-    /**
-     * العلاقة مع المدن التي يمكن للمزود العمل فيها
-     */
+    // العلاقة مع ملف مزود الخدمة
+    public function providerProfile()
+    {
+        return $this->hasOne(ProviderProfile::class);
+    }
+
+    // العلاقة مع أقسام مزود الخدمة
+    public function providerCategories()
+    {
+        return $this->hasMany(ProviderCategory::class);
+    }
+
+    // العلاقة مع مدن مزود الخدمة
     public function providerCities()
     {
         return $this->hasMany(ProviderCity::class);
     }
 
-    /**
-     * الحصول على المدن التي يمكن للمزود العمل فيها
-     */
-    public function getServiceCities()
+    // الحصول على الأقسام النشطة لمزود الخدمة
+    public function activeProviderCategories()
     {
-        return $this->providerCities()->with('governement')->get()->pluck('governement');
+        return $this->providerCategories()->where('is_active', true);
     }
 
-    /**
-     * التحقق من إمكانية العمل في مدينة معينة
-     */
-    public function canWorkInCity($cityId)
+    // الحصول على المدن النشطة لمزود الخدمة
+    public function activeProviderCities()
     {
-        return $this->providerCities()->where('governement_id', $cityId)->exists();
+        return $this->providerCities()->where('is_active', true);
     }
 
-    /**
-     * الحصول على جميع المدن (المختارة + المدينة الأصلية)
-     */
-    public function getAllWorkCities()
+    // التحقق من اكتمال ملف مزود الخدمة
+    public function hasCompleteProviderProfile()
     {
-        $selectedCities = $this->getServiceCities();
-        $originalCity = $this->governementObj;
-
-        $allCities = $selectedCities;
-
-        // إضافة المدينة الأصلية إذا لم تكن موجودة في المدن المختارة
-        if ($originalCity && !$selectedCities->contains('id', $originalCity->id)) {
-            $allCities->push($originalCity);
+        if (!$this->isProvider()) {
+            return false;
         }
 
-        return $allCities;
+        $profile = $this->providerProfile;
+        return $profile && $profile->isProfileComplete();
     }
 
-    /**
-     * الحصول على أسماء جميع المدن (المختارة + المدينة الأصلية)
-     */
-    public function getAllWorkCityNames()
+    // الحصول على الحد الأقصى للأقسام
+    public function getMaxCategoriesAttribute()
     {
-        $allCities = $this->getAllWorkCities();
-        $cityNames = $allCities->pluck('name_ar')->toArray();
-        $cityNamesEn = $allCities->pluck('name_en')->toArray();
+        if (!$this->isProvider()) {
+            return 0;
+        }
 
-        return array_merge($cityNames, $cityNamesEn);
+        $profile = $this->providerProfile;
+        return $profile ? $profile->max_categories : SystemSetting::get('provider_max_categories', 3);
     }
 
-    /**
-     * Get all departments (main and sub) the user is subscribed to as models.
-     */
-    public function getAllDepartments()
+    // الحصول على الحد الأقصى للمدن
+    public function getMaxCitiesAttribute()
     {
-        $mainDeps = $this->userDepartments->where('commentable_type', \App\Models\Department::class)->pluck('commentable_id')->unique();
-        $subDeps = $this->userDepartments->where('commentable_type', \App\Models\SubDepartment::class)->pluck('commentable_id')->unique();
-        $mainDepartments = \App\Models\Department::whereIn('id', $mainDeps)->get();
-        $subDepartments = \App\Models\SubDepartment::whereIn('id', $subDeps)->get();
-        return [
-            'main' => $mainDepartments,
-            'sub' => $subDepartments
-        ];
+        if (!$this->isProvider()) {
+            return 0;
+        }
+
+        $profile = $this->providerProfile;
+        return $profile ? $profile->max_cities : SystemSetting::get('provider_max_cities', 5);
+    }
+
+    // التحقق من كون المستخدم عميل
+    public function isCustomer()
+    {
+        return $this->user_type === 'customer';
+    }
+
+    // الحصول على الصورة الشخصية
+    public function getAvatarUrlAttribute()
+    {
+        if ($this->avatar) {
+            return asset('storage/' . $this->avatar);
+        }
+        return "https://ui-avatars.com/api/?name=" . urlencode($this->name) . "&background=667eea&color=fff";
+    }
+
+    // التحقق من كون المستخدم متصل
+    public function isOnline()
+    {
+        // يمكن تحسين هذا ليتحقق من آخر نشاط للمستخدم
+        // حالياً نعتبر المستخدم متصل إذا كان آخر نشاط له في آخر 5 دقائق
+        return $this->updated_at->diffInMinutes(now()) <= 5;
+    }
+
+    // العلاقة مع الرسائل المرسلة
+    public function sentMessages()
+    {
+        return $this->hasMany(Message::class, 'sender_id');
+    }
+
+    // العلاقة مع الرسائل المستلمة
+    public function receivedMessages()
+    {
+        return $this->hasMany(Message::class, 'receiver_id');
+    }
+
+    // البحث بالهاتف
+    public function findForPassport($phone)
+    {
+        return $this->where('phone', $phone)->first();
+    }
+
+    // الحصول على معرف المستخدم للمصادقة
+    public function getAuthIdentifierName()
+    {
+        return 'id';
     }
 }

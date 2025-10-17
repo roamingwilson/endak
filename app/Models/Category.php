@@ -2,107 +2,149 @@
 
 namespace App\Models;
 
-use Illuminate\Support\Facades\DB;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Category extends Model
 {
-    protected $guarded = [];
-    public $timestamps = true;
-    // public $appends = ['category_image_url'];
+    use HasFactory, SoftDeletes;
 
+    protected $fillable = [
+        'name',
+        'name_en',
+        'description',
+        'description_ar',
+        'icon',
+        'image',
+        'parent_id',
+        'is_active',
+        'voice_note_enabled',
+        'sort_order',
+        'meta_title',
+        'meta_description',
+        'slug'
+    ];
 
-    // public function getCategoryImageUrlAttribute()
-    // {
-    //     $media = Media::find($this->attributes['category_image']);
-    //     $src = ($media) ? $media->slug_ext : '';
-    //     return url('/images/uploads/' . $src);
-    // }
-    // public function getBgColorAttribute()
-    // {
-    //     $bg_color = '#303' . substr(md5($this->category_name), 0, 3);
-    //     return $bg_color;
-    // }
+    protected $casts = [
+        'is_active' => 'boolean',
+        'voice_note_enabled' => 'boolean',
+        'sort_order' => 'integer',
+    ];
 
-    public function scopeParent($query)
+    // العلاقة مع الأقسام الفرعية
+    public function children()
     {
-        return $query->where('category_id', 0)->orWhere('category_id', null);
+        return $this->hasMany(Category::class, 'parent_id');
     }
 
-
-    public function departments()
+    // العلاقة مع القسم الأب
+    public function parent()
     {
-        $foreignKey = 'category_id';
-        if (! $this->step) {
-            $foreignKey = 'parent_category_id';
-        } elseif ($this->step == 1) {
-            $foreignKey = 'second_category_id';
-        }
-
-        return $this->hasMany(Department::class, $foreignKey)->publish()->authorExist()->orderBy('created_at', 'desc');
+        return $this->belongsTo(Category::class, 'parent_id');
     }
 
-    public function products()
+    // العلاقة مع الأقسام الفرعية
+    public function subCategories()
     {
-        return $this->hasMany(Product::class, 'products_categories');
-    }
-    public function category_department()
-    {
-        $foreignKey = 'category_id';
-
-        return $this->hasMany(Department::class, $foreignKey)->publish()->authorExist();
+        return $this->hasMany(SubCategory::class);
     }
 
-
-    public function topic_departments()
+    // العلاقة مع الخدمات
+    public function services()
     {
-        return $this->belongsToMany(Department::class, 'departments_categories', 'category_id', 'department_id')->publish()->authorExist();
+        return $this->hasMany(Service::class);
     }
 
-    /**
-     * @return string
-     */
-    public function categoryNameParent()
+    // العلاقة مع حقول القسم
+    public function fields()
     {
-        $parent_id = $this->category_id;
-        $category_name = '';
+        return $this->hasMany(CategoryField::class);
+    }
 
-        if ($parent_id) {
-            $parent_category_names = [];
-            while ($parent_id) {
-                $category = DB::table('categories')->whereId($parent_id)->first();
-                $parent_id = $category->category_id;
-                $parent_category_names[] = $category->category_name;
+    // العلاقة مع المدن
+    public function cities()
+    {
+        return $this->belongsToMany(City::class, 'category_cities')
+                    ->withPivot('is_active', 'sort_order')
+                    ->withTimestamps();
+    }
+
+    // الحصول على المدن المفعلة فقط
+    public function activeCities()
+    {
+        return $this->belongsToMany(City::class, 'category_cities')
+                    ->wherePivot('is_active', true)
+                    ->withPivot('sort_order')
+                    ->orderBy('category_cities.sort_order')
+                    ->orderBy('cities.name_ar');
+    }
+
+    // الحصول على الأقسام الرئيسية فقط
+    public static function getMainCategories()
+    {
+        return self::whereNull('parent_id')
+                   ->where('is_active', true)
+                   ->orderBy('sort_order')
+                   ->get();
+    }
+
+    // الحصول على جميع الأقسام الفرعية
+    public function getAllChildren()
+    {
+        return $this->children()->with('children')->get();
+    }
+
+    // التحقق من وجود أقسام فرعية
+    public function hasChildren()
+    {
+        return $this->children()->count() > 0;
+    }
+
+    // الحصول على عدد الخدمات في القسم
+    public function getServicesCount()
+    {
+        return $this->services()->count();
+    }
+
+    // إنشاء slug تلقائياً
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($category) {
+            if (empty($category->slug)) {
+                $category->slug = \Illuminate\Support\Str::slug($category->name, '-');
             }
-            //krsort($parent_category_names);
-            $category_name .= ' → ' . implode(' → ', $parent_category_names);
+        });
+    }
+
+    // الحصول على المسار الكامل للقسم
+    public function getFullPathAttribute()
+    {
+        $path = [$this->name];
+        $parent = $this->parent;
+
+        while ($parent) {
+            array_unshift($path, $parent->name);
+            $parent = $parent->parent;
         }
-        return $category_name;
+
+        return implode(' > ', $path);
     }
 
-    public function getCategoryNameParent()
+    // الحصول على الأيقونة مع fallback
+    public function getIconAttribute($value)
     {
-        $category_name = $this->category_name . $this->categoryNameParent();
-        return $category_name;
+        return $value ?: 'fas fa-folder';
     }
 
-    public function sub_categories()
-    {
-        return $this->hasMany(Category::class, 'category_id', 'id');
-    }
-
-    public function parent_category()
-    {
-        return $this->belongsTo(Category::class, 'category_id', 'id');
-    }
-
-
-    
+    // الحصول على الصورة مع fallback
     public function getImageUrlAttribute()
     {
-        return asset('storage/' . $this->category_image);
+        if ($this->image) {
+            return asset('storage/' . $this->image);
+        }
+        return asset('images/default-category.jpg');
     }
-
-
 }
